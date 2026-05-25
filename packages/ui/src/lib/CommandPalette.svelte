@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { Kbd } from '@red-ui/ui-kit'
+  import { goto as kitGoto } from '$app/navigation'
 
   interface Command {
     id: string
@@ -37,7 +38,7 @@
   )
 
   function goto(path: string) {
-    location.hash = '#' + path
+    kitGoto(path)
     close()
   }
 

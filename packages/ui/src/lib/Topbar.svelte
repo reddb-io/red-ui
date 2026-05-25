@@ -1,19 +1,17 @@
 <script lang="ts">
   import { Badge, NodeBadge, Kbd } from '@red-ui/ui-kit'
+  import { auth } from './auth.svelte'
+  import { goto } from '$app/navigation'
 
   interface Props {
     cluster?: string
     role?: 'primary' | 'replica' | 'embedded'
     status?: 'connected' | 'connecting' | 'disconnected'
-    user?: string
-    userRole?: string
   }
   let {
     cluster = 'localhost:6379',
     role = 'embedded',
     status = 'connected',
-    user = 'guest',
-    userRole = 'reader',
   }: Props = $props()
 
   const tone = $derived(status === 'connected' ? 'ok' : status === 'connecting' ? 'warn' : 'danger')
@@ -38,10 +36,10 @@
       <span class="cmdk-keys"><Kbd>⌘</Kbd><Kbd>K</Kbd></span>
     </button>
     <div class="sep"></div>
-    <div class="user">
-      <span class="user-name">{user}</span>
-      <Badge tone="accent">{userRole}</Badge>
-    </div>
+    <button class="user" onclick={() => goto('/whoami')} title="View my permissions">
+      <span class="user-name">{auth.identity.name}</span>
+      <Badge tone="accent">{auth.identity.role}</Badge>
+    </button>
   </div>
 </header>
 
@@ -84,6 +82,7 @@
   .cmdk-keys { display: inline-flex; gap: 2px; margin-left: 4px; }
   .icon { color: var(--fg-3); }
 
-  .user { display: flex; align-items: center; gap: 8px; }
+  .user { display: flex; align-items: center; gap: 8px; background: transparent; border: 0; padding: 4px 6px; border-radius: var(--r-md); cursor: pointer; }
+  .user:hover { background: var(--bg-2); }
   .user-name { font-size: 12px; color: var(--fg-1); font-family: var(--font-mono); }
 </style>
