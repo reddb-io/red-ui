@@ -2,7 +2,15 @@
   import { connection, makeCustomConnection } from './connections.svelte'
   import { Zap, Loader2, AlertCircle, CheckCircle2, Clock, X } from 'lucide-svelte'
 
-  let url = $state(connection.active.url || '')
+  const DEFAULT_URL = 'http://localhost:18080'
+
+  function pickDefaultUrl(): string {
+    if (connection.history[0]?.url) return connection.history[0].url
+    if (connection.active.url) return connection.active.url
+    return DEFAULT_URL
+  }
+
+  let url = $state(pickDefaultUrl())
   let status = $state<'idle' | 'probing' | 'ok' | 'error'>('idle')
   let error = $state<string | null>(null)
   let rtt = $state<number | null>(null)
