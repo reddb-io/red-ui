@@ -30,11 +30,12 @@
   --color-bg-2: #181b21;
   --color-bg-3: #232730;
 
-  /* Foreground — boosted contrast on fg-0, kept fg-3 nearly invisible */
+  /* Foreground ramp — every level is WCAG AA on bg-0/bg-1.
+     fg-3 is the floor (4.5:1); below that is decorative only. */
   --color-fg-0: #f7f8fa;
-  --color-fg-1: #b8bdc5;
-  --color-fg-2: #6e747d;
-  --color-fg-3: #3d4148;
+  --color-fg-1: #c8ccd4;
+  --color-fg-2: #9ca1a9;
+  --color-fg-3: #7a7f87;
 
   /* Lines */
   --color-line-1: #181b21;
@@ -82,8 +83,9 @@
   --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SF Mono', 'Menlo', monospace;
 
+  /* ease-out-expo for ambient transitions, ease-out-quart for snappier UI */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-snap: cubic-bezier(0.25, 1, 0.5, 1);
 
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--color-line-2);
   --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--color-line-2);

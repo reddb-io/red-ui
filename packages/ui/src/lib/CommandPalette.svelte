@@ -145,7 +145,7 @@
     border-radius: var(--r-lg);
     box-shadow: var(--shadow-lg);
     overflow: hidden;
-    animation: pop 180ms var(--ease-spring);
+    animation: pop 180ms var(--ease-snap);
   }
   @keyframes fade { from { opacity: 0 } to { opacity: 1 } }
   @keyframes pop { from { opacity: 0; transform: translate(-50%, -8px) scale(0.98); } to { opacity: 1; transform: translateX(-50%) scale(1); } }

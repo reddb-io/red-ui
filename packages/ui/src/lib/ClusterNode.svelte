@@ -48,7 +48,7 @@
     border: 1px solid var(--color-line-2);
     border-radius: 8px;
     overflow: hidden;
-    transition: border-color 160ms var(--ease-out), box-shadow 160ms var(--ease-out), transform 200ms var(--ease-spring);
+    transition: border-color 160ms var(--ease-out), box-shadow 160ms var(--ease-out), transform 200ms var(--ease-snap);
     cursor: pointer;
   }
   .card:hover {

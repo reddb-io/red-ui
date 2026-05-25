@@ -137,7 +137,7 @@
     opacity: 0;
     transform-origin: center;
     transform: scale(0.4);
-    transition: opacity 320ms var(--ease-out), transform 480ms var(--ease-spring);
+    transition: opacity 320ms var(--ease-out), transform 480ms var(--ease-snap);
     transition-delay: var(--d, 0ms);
   }
   .src.visible { opacity: 1; transform: scale(1); }
@@ -157,7 +157,7 @@
     opacity: 0;
     transform-origin: 200px 160px;
     transform: scale(0.5);
-    transition: opacity 320ms var(--ease-out), transform 600ms var(--ease-spring);
+    transition: opacity 320ms var(--ease-out), transform 600ms var(--ease-snap);
   }
   .center.visible { opacity: 1; transform: scale(1); }
   .center.pulse { animation: heartbeat 1.4s ease-in-out infinite; }
