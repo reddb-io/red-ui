@@ -2,66 +2,112 @@
   import { SvelteFlow, Background, Controls, type Node, type Edge } from '@xyflow/svelte'
   import '@xyflow/svelte/dist/style.css'
   import { Badge, Card } from '@red-ui/ui-kit'
-  import { graph } from '$lib/fixtures'
   import PageHeader from '$lib/PageHeader.svelte'
+  import EmptyState from '$lib/EmptyState.svelte'
+  import { connection } from '$lib/connections.svelte'
+  import { Network } from 'lucide-svelte'
+
+  let nodes = $state.raw<Node[]>([])
+  let edges = $state.raw<Edge[]>([])
+  let nodeProps = $state<Record<string, Record<string, unknown>>>({})
+  let edgeLabels = $state<Record<string, string>>({})
+  let selectedId = $state<string | null>(null)
+  let loading = $state(false)
+  let error = $state<string | null>(null)
 
   const typeColor: Record<string, string> = {
     User: '#60a5fa',
     Project: '#ff2056',
     Org: '#4ade80',
+    default: '#7a8088',
+  }
+  function styleFor(type: string) {
+    const c = typeColor[type] ?? typeColor.default
+    return `background:${c};color:white;border-radius:9999px;padding:10px 16px;font-family:JetBrains Mono Variable;font-size:11px;border:1px solid ${c};box-shadow:0 0 0 4px color-mix(in srgb, ${c} 18%, transparent);`
   }
 
-  let nodes = $state.raw<Node[]>(
-    graph.nodes.map((n, i) => ({
-      id: n.id,
-      position: {
-        x: 120 + (i % 4) * 200,
-        y: 80 + Math.floor(i / 4) * 180,
-      },
-      data: { label: `${n.label}` },
-      style: `background:${typeColor[n.type] ?? '#7a8088'};color:white;border-radius:9999px;padding:10px 16px;font-family:JetBrains Mono;font-size:11px;border:1px solid ${typeColor[n.type]};box-shadow:0 0 0 4px color-mix(in srgb, ${typeColor[n.type]} 18%, transparent);`,
-    })),
-  )
+  $effect(() => {
+    if (!connection.probe.reachable) { nodes = []; edges = []; return }
+    const client = connection.client!
+    loading = true; error = null
+    client.query('MATCH (n)-[r]->(m) RETURN n, r, m LIMIT 100').then((res) => {
+      const rec = (res.result.records ?? []) as any[]
+      const seen = new Set<string>()
+      const ns: Node[] = []
+      const es: Edge[] = []
+      const props: Record<string, Record<string, unknown>> = {}
+      const elabels: Record<string, string> = {}
+      rec.forEach((row, i) => {
+        const gnodes = (row.nodes ?? {}) as Record<string, any>
+        const gedges = (row.edges ?? {}) as Record<string, any>
+        Object.entries(gnodes).forEach(([_alias, gn]) => {
+          const id = String((gn as any).id ?? (gn as any).rid ?? `${i}-${_alias}`)
+          if (seen.has(id)) return
+          seen.add(id)
+          const label = (gn as any).label ?? (gn as any).name ?? id
+          const type = (gn as any).type ?? 'default'
+          ns.push({
+            id,
+            position: { x: 120 + (ns.length % 6) * 180, y: 80 + Math.floor(ns.length / 6) * 160 },
+            data: { label },
+            style: styleFor(type),
+          })
+          props[id] = (gn as any).props ?? gn
+        })
+        Object.entries(gedges).forEach(([alias, ge]) => {
+          const eid = String((ge as any).id ?? `e-${i}-${alias}`)
+          const src = String((ge as any).source ?? (ge as any).from ?? '')
+          const tgt = String((ge as any).target ?? (ge as any).to ?? '')
+          if (!src || !tgt) return
+          es.push({ id: eid, source: src, target: tgt, label: (ge as any).label ?? alias, style: 'stroke:#262a31;stroke-width:1.2' })
+          elabels[eid] = (ge as any).label ?? alias
+        })
+      })
+      nodes = ns
+      edges = es
+      nodeProps = props
+      edgeLabels = elabels
+      if (ns.length && !selectedId) selectedId = ns[0].id
+      loading = false
+    }).catch((e) => { error = e.message; loading = false })
+  })
 
-  let edges = $state.raw<Edge[]>(
-    graph.edges.map((e) => ({
-      id: e.id,
-      source: e.source,
-      target: e.target,
-      label: e.label,
-      labelStyle: 'fill:#c8ccd4;font-family:JetBrains Mono;font-size:10px;',
-      labelBgStyle: 'fill:#14171c;',
-      style: 'stroke:#262a31;stroke-width:1.2',
-    })),
-  )
-
-  let selectedId = $state<string | null>('u:1')
-  const selected = $derived(graph.nodes.find((n) => n.id === selectedId))
-
-  let cypher = $state('MATCH (u:User)-[:OWNS]->(p:Project) RETURN u, p')
-
-  function onnodeclick(_e: unknown, n?: { id: string }) {
-    if (n) selectedId = n.id
-  }
+  const selectedProps = $derived(selectedId ? nodeProps[selectedId] : undefined)
 </script>
 
-<PageHeader
-  eyebrow="Explore"
-  title="Graphs"
-  subtitle="Click a node to inspect its properties and walk relationships interactively"
-/>
+{#if !connection.probe.reachable}
+  <PageHeader eyebrow="Explore" title="Graphs" />
+  <EmptyState
+    icon={Network}
+    title="No connection"
+    message="Connect to a reddb instance to query and visualize graph collections."
+  />
+{:else if loading && nodes.length === 0}
+  <PageHeader eyebrow="Explore" title="Graphs" subtitle="Querying graph collections…" />
+{:else if error}
+  <PageHeader eyebrow="Explore" title="Graphs" />
+  <EmptyState
+    icon={Network}
+    title="No graph data"
+    message="The cluster has no graph collections, or the query returned no edges. Create a collection with graph capability and add some MATCH-able data."
+    hint="Error: {error}"
+  />
+{:else if nodes.length === 0}
+  <PageHeader eyebrow="Explore" title="Graphs" />
+  <EmptyState
+    icon={Network}
+    title="No graph data"
+    message="No nodes returned from MATCH (n)-[r]->(m). Create a graph collection and add nodes with edges to see them here."
+  />
+{:else}
+  <PageHeader
+    eyebrow="Explore"
+    title="Graphs"
+    subtitle="Live · {nodes.length} nodes · {edges.length} edges"
+  />
 
-<div class="layout">
-  <section class="canvas">
-    <Card>
-      <div class="query-bar">
-        <span class="prompt">$</span>
-        <input bind:value={cypher} spellcheck="false" />
-        <button class="run">Run</button>
-      </div>
-    </Card>
-
-    <div class="flow">
+  <div class="grid grid-cols-[1fr_320px] gap-4 h-[calc(100vh-180px)]">
+    <div class="bg-bg-1 border border-line-1 rounded-lg overflow-hidden">
       <SvelteFlow
         {nodes}
         {edges}
@@ -74,120 +120,17 @@
       </SvelteFlow>
     </div>
 
-    <div class="legend">
-      {#each Object.entries(typeColor) as [type, color]}
-        <span class="leg"><span class="dot" style="background:{color}"></span> {type}</span>
-      {/each}
-    </div>
-  </section>
-
-  <aside class="inspector">
-    {#if selected}
-      <Card title="node · {selected.id}">
-        <div class="node-head">
-          <Badge tone="info">{selected.type}</Badge>
-          <span class="label">{selected.label}</span>
-        </div>
-        <div class="props">
-          {#each Object.entries(selected.props) as [k, v]}
-            <div class="prop">
-              <span class="k">{k}</span>
-              <span class="v">{String(v)}</span>
+    {#if selectedId && selectedProps}
+      <Card title="node · {selectedId}">
+        <div class="grid gap-1 font-mono text-[11px]">
+          {#each Object.entries(selectedProps) as [k, v]}
+            <div class="grid grid-cols-[80px_1fr] gap-2">
+              <span class="text-fg-3">{k}</span>
+              <span class="text-fg-1 break-all">{typeof v === 'object' ? JSON.stringify(v) : String(v)}</span>
             </div>
-          {/each}
-        </div>
-        <div class="rels">
-          <div class="rels-label">Relationships</div>
-          {#each graph.edges.filter((e) => e.source === selected.id || e.target === selected.id) as e}
-            {@const other = e.source === selected.id ? graph.nodes.find((n) => n.id === e.target) : graph.nodes.find((n) => n.id === e.source)}
-            {@const dir = e.source === selected.id ? '→' : '←'}
-            <button class="rel" onclick={() => (selectedId = other?.id ?? null)}>
-              <span class="rel-dir">{dir}</span>
-              <span class="rel-label">{e.label}</span>
-              <span class="rel-target">{other?.label}</span>
-            </button>
           {/each}
         </div>
       </Card>
     {/if}
-  </aside>
-</div>
-
-<style>
-  .layout {
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 16px;
-    height: 100%;
-  }
-  .canvas { display: grid; grid-template-rows: auto 1fr auto; gap: 12px; min-width: 0; }
-
-  .query-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-mono);
-  }
-  .prompt { color: var(--accent); font-weight: 700; }
-  .query-bar input {
-    flex: 1;
-    background: transparent;
-    border: 0;
-    color: var(--fg-0);
-    font: inherit;
-    font-size: 13px;
-    outline: 0;
-  }
-  .run {
-    background: var(--bg-2);
-    border: 1px solid var(--line-2);
-    color: var(--fg-1);
-    border-radius: var(--r-md);
-    padding: 4px 10px;
-    font-size: 12px;
-    cursor: pointer;
-  }
-  .run:hover { background: var(--bg-3); color: var(--fg-0); }
-
-  .flow {
-    background: var(--bg-1);
-    border: 1px solid var(--line-1);
-    border-radius: var(--r-lg);
-    overflow: hidden;
-    min-height: 0;
-  }
-  :global(.svelte-flow) { background: transparent !important; }
-
-  .legend { display: flex; gap: 14px; font-size: 11px; color: var(--fg-2); }
-  .leg { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); }
-  .dot { width: 8px; height: 8px; border-radius: 9999px; }
-
-  .inspector { align-self: start; }
-  .node-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .label { font-family: var(--font-mono); font-size: 13px; color: var(--fg-0); }
-  .props { display: grid; gap: 4px; padding: 8px 0; border-top: 1px solid var(--line-1); }
-  .prop { display: grid; grid-template-columns: 80px 1fr; gap: 8px; font-size: 11px; }
-  .k { color: var(--fg-3); font-family: var(--font-mono); }
-  .v { color: var(--fg-1); font-family: var(--font-mono); }
-  .rels { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line-1); }
-  .rels-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-3); margin-bottom: 8px; }
-  .rel {
-    display: grid;
-    grid-template-columns: 16px auto 1fr;
-    gap: 6px;
-    width: 100%;
-    text-align: left;
-    background: transparent;
-    border: 0;
-    padding: 6px 8px;
-    border-radius: var(--r-sm);
-    cursor: pointer;
-    color: var(--fg-1);
-    font-size: 11px;
-    font-family: var(--font-mono);
-  }
-  .rel:hover { background: var(--bg-2); }
-  .rel-dir { color: var(--accent); font-weight: 700; }
-  .rel-label { color: var(--info); }
-  .rel-target { color: var(--fg-0); overflow: hidden; text-overflow: ellipsis; }
-</style>
+  </div>
+{/if}

@@ -32,9 +32,39 @@ export interface ReplicationStatus {
   role: 'primary' | 'replica' | 'standalone'
   state?: 'healthy' | 'lagging' | 'disconnected'
   primary_addr?: string
+  /** primary perspective */
+  wal_lsn?: number
+  oldest_lsn?: number
+  replica_count?: number
+  /** replica perspective */
   last_applied_lsn?: number
   last_seen_primary_lsn?: number
   last_seen_oldest_lsn?: number
+}
+
+export interface Whoami {
+  ok: boolean
+  authenticated: boolean
+  username: string
+  role: string
+  note?: string
+}
+
+export interface AuthUser {
+  username: string
+  role?: string
+  created_at?: number
+  last_active?: number
+  mfa?: boolean
+}
+
+export interface ChangeEvent {
+  lsn: number
+  timestamp: number
+  collection: string
+  kind: string
+  operation: 'insert' | 'update' | 'delete'
+  rid?: number
 }
 
 export class RedClient {
@@ -93,6 +123,21 @@ export class RedClient {
       ok: false,
       role: 'standalone' as const,
     }))
+  }
+
+  async whoami(): Promise<Whoami> {
+    return this.json<Whoami>('/auth/whoami')
+  }
+
+  async users(): Promise<AuthUser[]> {
+    const r = await this.json<{ ok: boolean; users: AuthUser[] }>('/auth/users')
+    return r.users
+  }
+
+  async changes(sinceLsn?: number): Promise<ChangeEvent[]> {
+    const qs = sinceLsn !== undefined ? `?since=${sinceLsn}` : ''
+    const r = await this.json<{ events: ChangeEvent[] }>('/changes' + qs)
+    return r.events ?? []
   }
 
   // Convenience: turn a /query response into plain row objects.

@@ -4,7 +4,7 @@
   const items = [
     { href: '/explore/tables',      label: 'Tables',      hint: 'B' },
     { href: '/explore/graphs',      label: 'Graphs' },
-    { href: '/explore/kv',          label: 'KV / Secrets' },
+    { href: '/explore/kv',          label: 'Changes' },
     { href: '/explore/hypertables', label: 'Hypertables' },
     { href: '/explore/stats',       label: 'Stats' },
   ]

@@ -13,10 +13,9 @@ export interface ConnectionPreset {
 }
 
 export const PRESETS: ConnectionPreset[] = [
-  { id: 'fixtures',        label: 'Fixtures (offline)', url: '',                       role: 'embedded', description: 'No server — pre-baked demo data.' },
-  { id: 'embedded',        label: 'Embedded',           url: 'http://localhost:8080',  role: 'embedded', description: 'Local file via ./scripts/embedded.sh.' },
-  { id: 'docker-primary',  label: 'Docker primary',     url: 'http://localhost:18080', role: 'primary',  description: 'Docker compose primary (./docker/compose.yml).' },
-  { id: 'docker-replica',  label: 'Docker replica',     url: 'http://localhost:18081', role: 'replica',  description: 'Read-only mirror of docker primary.' },
+  { id: 'embedded',        label: 'Embedded',       url: 'http://localhost:8080',  role: 'embedded', description: 'Local file via ./scripts/embedded.sh.' },
+  { id: 'docker-primary',  label: 'Docker primary', url: 'http://localhost:18080', role: 'primary',  description: 'Docker compose primary (./docker/compose.yml).' },
+  { id: 'docker-replica',  label: 'Docker replica', url: 'http://localhost:18081', role: 'replica',  description: 'Read-only mirror of docker primary.' },
 ]
 
 interface ProbeResult {
@@ -28,7 +27,9 @@ interface ProbeResult {
 }
 
 class ConnectionStore {
-  active = $state<ConnectionPreset>(PRESETS[0])
+  // Default to docker primary — if not running, the switcher + empty states
+  // tell the user how to start it.
+  active = $state<ConnectionPreset>(PRESETS[1])
   probe = $state<ProbeResult>({ reachable: false })
 
   get client(): RedClient | null {
