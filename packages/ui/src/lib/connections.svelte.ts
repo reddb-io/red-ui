@@ -27,6 +27,15 @@ interface ProbeResult {
 }
 
 const STORAGE_KEY = 'red-ui:connection'
+const HISTORY_KEY = 'red-ui:history'
+const HISTORY_MAX = 8
+
+export interface HistoryEntry {
+  url: string
+  label: string
+  last_used: number
+  rtt_ms?: number
+}
 
 function loadStored(): ConnectionPreset | null {
   if (typeof localStorage === 'undefined') return null
@@ -46,6 +55,23 @@ function persist(c: ConnectionPreset) {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(c)) } catch {}
 }
 
+function loadHistory(): HistoryEntry[] {
+  if (typeof localStorage === 'undefined') return []
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw) as HistoryEntry[]
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+function persistHistory(entries: HistoryEntry[]) {
+  if (typeof localStorage === 'undefined') return
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(entries)) } catch {}
+}
+
 export function makeCustomConnection(url: string): ConnectionPreset {
   let host = url
   try { host = new URL(url).host } catch {}
@@ -63,9 +89,27 @@ class ConnectionStore {
   connected = $state<boolean>(false)
   active = $state<ConnectionPreset>(loadStored() ?? PRESETS[1])
   probe = $state<ProbeResult>({ reachable: false })
+  history = $state<HistoryEntry[]>(loadHistory())
 
   get client(): RedClient | null {
     return this.active.url ? new RedClient(this.active.url) : null
+  }
+
+  private record(preset: ConnectionPreset, rtt_ms?: number) {
+    const entry: HistoryEntry = {
+      url: preset.url,
+      label: preset.label,
+      last_used: Date.now(),
+      rtt_ms,
+    }
+    const filtered = this.history.filter((e) => e.url !== preset.url)
+    this.history = [entry, ...filtered].slice(0, HISTORY_MAX)
+    persistHistory(this.history)
+  }
+
+  forget(url: string) {
+    this.history = this.history.filter((e) => e.url !== url)
+    persistHistory(this.history)
   }
 
   async switch(preset: ConnectionPreset) {
@@ -89,6 +133,7 @@ class ConnectionStore {
     ])
     this.probe = { reachable: true, rtt_ms: ping.rtt_ms, stats, replication }
     this.connected = true
+    this.record(preset, ping.rtt_ms)
     return true
   }
 
