@@ -1,6 +1,44 @@
 <script lang="ts">
   import { Badge, Card, NodeBadge } from '@red-ui/ui-kit'
-  import { stats } from '$lib/fixtures'
+  import { stats as fixtureStats } from '$lib/fixtures'
+  import { connection } from '$lib/connections.svelte'
+
+  const live = $derived(connection.probe.reachable && connection.probe.stats)
+
+  const stats = $derived.by(() => {
+    if (!live || !connection.probe.stats) return fixtureStats
+    const s = connection.probe.stats
+    const r = connection.probe.replication
+    return {
+      cluster: {
+        primaries: r?.role === 'primary' || r?.role === 'standalone' ? 1 : 0,
+        replicas: r?.role === 'replica' ? 1 : 0,
+        total_size: formatBytes(s.store.total_memory_bytes),
+        keys: s.store.total_entities.toLocaleString(),
+        ops_per_sec: (s.kv?.gets ?? 0) + (s.kv?.puts ?? 0),
+      },
+      nodes: [
+        {
+          id: r?.role ?? 'standalone',
+          size_gb: +(s.store.total_memory_bytes / 1e9).toFixed(2),
+          keys_m: +(s.store.total_entities / 1e6).toFixed(3),
+          cpu: Math.round((s.active_connections / 10) * 50),
+          mem: Math.round((1 - s.system.available_memory_bytes / s.system.total_memory_bytes) * 100),
+          lag_ms: r?.last_applied_lsn !== undefined && r?.last_seen_primary_lsn !== undefined
+            ? (r.last_seen_primary_lsn - r.last_applied_lsn)
+            : 0,
+        },
+      ],
+      top_keys: fixtureStats.top_keys,
+    }
+  })
+
+  function formatBytes(b: number) {
+    if (b === 0) return '0 B'
+    if (b < 1e6) return `${(b / 1e3).toFixed(1)} KB`
+    if (b < 1e9) return `${(b / 1e6).toFixed(1)} MB`
+    return `${(b / 1e9).toFixed(2)} GB`
+  }
 
   function bar(value: number, max = 100, color = 'var(--accent)') {
     const pct = Math.min(100, (value / max) * 100)

@@ -1,2 +1,3 @@
-export * from './uri.ts'
-export * from './types.ts'
+export * from './uri'
+export * from './types'
+export * from './client'

@@ -1,4 +1,4 @@
-import type { ConnectionTarget, NodeRole, Transport } from './types.ts'
+import type { ConnectionTarget, NodeRole, Transport } from './types'
 
 const TRANSPORTS: Record<string, Transport> = {
   red: 'tcp',

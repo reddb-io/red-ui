@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseRedUri } from './uri.ts'
+import { parseRedUri } from './uri'
 
 describe('parseRedUri', () => {
   it('parses tcp with auth and db', () => {

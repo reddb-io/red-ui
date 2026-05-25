@@ -1,32 +1,21 @@
 <script lang="ts">
-  import { Badge, NodeBadge, Kbd } from '@red-ui/ui-kit'
+  import { Badge, Kbd } from '@red-ui/ui-kit'
   import { auth } from './auth.svelte'
   import { goto } from '$app/navigation'
-
-  interface Props {
-    cluster?: string
-    role?: 'primary' | 'replica' | 'embedded'
-    status?: 'connected' | 'connecting' | 'disconnected'
-  }
-  let {
-    cluster = 'localhost:6379',
-    role = 'embedded',
-    status = 'connected',
-  }: Props = $props()
-
-  const tone = $derived(status === 'connected' ? 'ok' : status === 'connecting' ? 'warn' : 'danger')
+  import ConnectionSwitcher from './ConnectionSwitcher.svelte'
 
   function openPalette() {
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, ctrlKey: true, bubbles: true }))
   }
 </script>
 
+<svelte:head><!-- preload to warm probe early --></svelte:head>
+
 <header class="topbar">
   <div class="left">
     <div class="brand">red<span class="dot">·</span>ui</div>
     <div class="sep"></div>
-    <NodeBadge {role} label={cluster} />
-    <Badge tone={tone}>{status}</Badge>
+    <ConnectionSwitcher />
   </div>
 
   <div class="right">
