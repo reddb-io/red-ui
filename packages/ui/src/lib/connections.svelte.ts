@@ -1,6 +1,6 @@
-// Live connections store. The UI picks one of these as the "active" target
-// and every data view checks `connection.client` — if null, it falls back to
-// fixtures so the app is browseable without a server running.
+// Live connections store. Persists the last working connection to
+// localStorage so the next visit skips the connect screen when the
+// remembered target is still reachable.
 
 import { RedClient, type Stats, type ReplicationStatus } from '@red-ui/protocol'
 
@@ -26,10 +26,42 @@ interface ProbeResult {
   error?: string
 }
 
+const STORAGE_KEY = 'red-ui:connection'
+
+function loadStored(): ConnectionPreset | null {
+  if (typeof localStorage === 'undefined') return null
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as ConnectionPreset
+    if (parsed?.url && parsed?.label) return parsed
+    return null
+  } catch {
+    return null
+  }
+}
+
+function persist(c: ConnectionPreset) {
+  if (typeof localStorage === 'undefined') return
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(c)) } catch {}
+}
+
+export function makeCustomConnection(url: string): ConnectionPreset {
+  let host = url
+  try { host = new URL(url).host } catch {}
+  return {
+    id: 'custom',
+    label: host || url,
+    url,
+    role: 'primary',
+    description: 'User-provided connection string.',
+  }
+}
+
 class ConnectionStore {
-  // Default to docker primary — if not running, the switcher + empty states
-  // tell the user how to start it.
-  active = $state<ConnectionPreset>(PRESETS[1])
+  /** Set after a probe succeeds for the first time — used to gate the Connect screen. */
+  connected = $state<boolean>(false)
+  active = $state<ConnectionPreset>(loadStored() ?? PRESETS[1])
   probe = $state<ProbeResult>({ reachable: false })
 
   get client(): RedClient | null {
@@ -38,7 +70,26 @@ class ConnectionStore {
 
   async switch(preset: ConnectionPreset) {
     this.active = preset
+    persist(preset)
     await this.refresh()
+  }
+
+  async tryConnect(preset: ConnectionPreset): Promise<boolean> {
+    const client = new RedClient(preset.url)
+    const ping = await client.ping()
+    if (!ping.ok) {
+      this.probe = { reachable: false, error: ping.error }
+      return false
+    }
+    this.active = preset
+    persist(preset)
+    const [stats, replication] = await Promise.all([
+      client.stats().catch(() => undefined),
+      client.replication().catch(() => undefined),
+    ])
+    this.probe = { reachable: true, rtt_ms: ping.rtt_ms, stats, replication }
+    this.connected = true
+    return true
   }
 
   async refresh() {
@@ -58,9 +109,15 @@ class ConnectionStore {
         client.replication().catch(() => undefined),
       ])
       this.probe = { reachable: true, rtt_ms: ping.rtt_ms, stats, replication }
+      this.connected = true
     } catch (e) {
       this.probe = { reachable: false, error: (e as Error).message }
     }
+  }
+
+  disconnect() {
+    this.connected = false
+    this.probe = { reachable: false }
   }
 }
 

@@ -1,37 +1,33 @@
 <script lang="ts">
   import '../app.css'
+  import { onMount } from 'svelte'
   import Splash from '$lib/Splash.svelte'
+  import Connect from '$lib/Connect.svelte'
   import Topbar from '$lib/Topbar.svelte'
   import CommandPalette from '$lib/CommandPalette.svelte'
+  import { connection } from '$lib/connections.svelte'
 
   let { children } = $props()
   let booted = $state(false)
+
+  // After splash, immediately try the remembered connection in the background.
+  // If it works, we never show the Connect screen. If it doesn't, the user
+  // sees Connect with the remembered URL pre-filled.
+  onMount(() => {
+    connection.refresh()
+  })
 </script>
 
 {#if !booted}
   <Splash onDone={() => (booted = true)} />
+{:else if !connection.connected}
+  <Connect />
+{:else}
+  <div class="app grid grid-rows-[44px_1fr] h-screen">
+    <Topbar />
+    <main class="relative overflow-hidden z-[1]">
+      {@render children?.()}
+    </main>
+    <CommandPalette />
+  </div>
 {/if}
-
-<div class="app" class:visible={booted}>
-  <Topbar />
-  <main>
-    {@render children?.()}
-  </main>
-  <CommandPalette />
-</div>
-
-<style>
-  .app {
-    display: grid;
-    grid-template-rows: 44px 1fr;
-    height: 100vh;
-    opacity: 0;
-    transition: opacity 320ms var(--ease-out) 80ms;
-  }
-  .app.visible { opacity: 1; }
-  main {
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-  }
-</style>
