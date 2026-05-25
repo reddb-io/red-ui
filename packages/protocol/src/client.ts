@@ -67,16 +67,42 @@ export interface ChangeEvent {
   rid?: number
 }
 
+export interface RedClientOptions {
+  /**
+   * When set, requests go through a same-origin proxy at this path
+   * instead of directly to baseUrl (needed because reddb doesn't send
+   * CORS headers). The proxy receives the target via X-Red-Target.
+   * Set to '/_red' in browser dev/prod; leave undefined in Tauri/Node
+   * where direct fetch works.
+   */
+  proxyPath?: string
+}
+
+function shouldProxy(opts?: RedClientOptions): string | null {
+  if (opts?.proxyPath) return opts.proxyPath
+  // Auto-detect: in a browser, fetch is subject to CORS. Use proxy by default
+  // unless caller explicitly opts out. In Tauri the user is expected to wire
+  // up Rust-side fetch and pass proxyPath: ''.
+  if (typeof window !== 'undefined') return '/_red'
+  return null
+}
+
 export class RedClient {
-  constructor(public readonly baseUrl: string) {
+  readonly baseUrl: string
+  private readonly proxyPath: string | null
+
+  constructor(baseUrl: string, opts?: RedClientOptions) {
     this.baseUrl = baseUrl.replace(/\/$/, '')
+    this.proxyPath = shouldProxy(opts)
   }
 
   private async json<T>(path: string, init?: RequestInit): Promise<T> {
-    const res = await fetch(this.baseUrl + path, {
-      ...init,
-      headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
-    })
+    const url = this.proxyPath ? `${this.proxyPath}${path}` : `${this.baseUrl}${path}`
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+    if (this.proxyPath) headers['X-Red-Target'] = this.baseUrl
+    Object.assign(headers, init?.headers as Record<string, string> | undefined)
+
+    const res = await fetch(url, { ...init, headers })
     if (!res.ok) {
       const body = await res.text().catch(() => '')
       throw new Error(`${init?.method ?? 'GET'} ${path} → ${res.status} ${body.slice(0, 200)}`)
