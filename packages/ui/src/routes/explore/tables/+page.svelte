@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Badge, Button, Card } from '@red-ui/ui-kit'
   import Can from '$lib/Can.svelte'
+  import PageHeader from '$lib/PageHeader.svelte'
   import { tables as fixtureTables, type TableSchema } from '$lib/fixtures'
   import { auth, audit } from '$lib/auth.svelte'
   import { connection } from '$lib/connections.svelte'
@@ -113,18 +114,16 @@
   </aside>
 
   <section class="main">
-    <header class="hdr">
-      <div class="h-left">
-        <h1>{selected || '—'}</h1>
-        {#if usingLive}
-          <Badge tone="ok">live</Badge>
-        {:else}
-          <Badge tone="neutral">fixtures</Badge>
-        {/if}
-        <Badge tone="neutral">{filteredRows.length} of {totalRows.toLocaleString()} rows</Badge>
-        {#if sizeLabel}<Badge tone="neutral">{sizeLabel}</Badge>{/if}
-      </div>
-      <div class="h-right">
+    <PageHeader
+      eyebrow="Table"
+      title={selected || '—'}
+      subtitle={usingLive ? `Live · ${connection.active.url} · ${connection.probe.rtt_ms}ms` : 'Fixtures — start docker compose to switch to live data'}
+    >
+      {#if usingLive}<Badge tone="ok">live</Badge>{:else}<Badge tone="neutral">fixtures</Badge>{/if}
+      <Badge tone="neutral">{filteredRows.length} of {totalRows.toLocaleString()} rows</Badge>
+      {#if sizeLabel}<Badge tone="neutral">{sizeLabel}</Badge>{/if}
+
+      {#snippet actions()}
         <input class="filter" bind:value={filter} placeholder="Filter… (any column)" />
         <Can action="write" resource="table">
           <Button size="sm" variant="primary">+ Insert row</Button>
@@ -133,8 +132,8 @@
           <Button size="sm" variant="danger">Drop table</Button>
           {#snippet fallback()}<Badge tone="neutral">read-only</Badge>{/snippet}
         </Can>
-      </div>
-    </header>
+      {/snippet}
+    </PageHeader>
 
     {#if liveError}
       <div class="banner err">
@@ -235,10 +234,6 @@
   .t-meta { font-size: 10px; color: var(--fg-3); margin-top: 2px; }
 
   .main { display: grid; grid-template-rows: auto auto 1fr; gap: 12px; min-width: 0; }
-  .hdr { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .h-left { display: flex; align-items: center; gap: 8px; }
-  .h-right { display: flex; align-items: center; gap: 6px; }
-  h1 { font-size: 18px; margin: 0; font-weight: 600; letter-spacing: -0.01em; }
   .filter {
     background: var(--bg-1); border: 1px solid var(--line-2);
     border-radius: var(--r-md); color: var(--fg-0);

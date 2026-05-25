@@ -3,6 +3,7 @@
   import Can from '$lib/Can.svelte'
   import { users } from '$lib/fixtures'
   import { auth } from '$lib/auth.svelte'
+  import PageHeader from '$lib/PageHeader.svelte'
 
   const roleColor: Record<string, 'accent' | 'info' | 'ok' | 'neutral'> = {
     owner: 'accent', dba: 'info', writer: 'ok', reader: 'neutral',
@@ -19,15 +20,20 @@
       </Card>
     </div>
   {/snippet}
-  <div class="head">
-    <h1>Users <span class="sub">· {users.length} total</span></h1>
-    <Can action="admin" resource="users">
-      <Button variant="primary" size="sm">+ Invite user</Button>
-      {#snippet fallback()}
-        <Badge tone="neutral">read-only · ask owner to invite</Badge>
-      {/snippet}
-    </Can>
-  </div>
+  <PageHeader
+    eyebrow="Admin"
+    title="Users"
+    subtitle="{users.length} total · MFA enrollment, role and tenant assignment"
+  >
+    {#snippet actions()}
+      <Can action="admin" resource="users">
+        <Button variant="primary" size="sm">+ Invite user</Button>
+        {#snippet fallback()}
+          <Badge tone="neutral">read-only · ask owner to invite</Badge>
+        {/snippet}
+      </Can>
+    {/snippet}
+  </PageHeader>
 
   <Card>
     <table>

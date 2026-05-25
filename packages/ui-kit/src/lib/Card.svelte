@@ -14,11 +14,11 @@
   )
 </script>
 
-<section class="rounded-[10px] border overflow-hidden backdrop-blur-md {cardClass} {klass}">
+<section class="rounded-lg border overflow-hidden backdrop-blur-md {cardClass} {klass}">
   {#if title}
-    <header class="px-3.5 py-2.5 text-[10px] font-mono uppercase tracking-[0.08em] text-fg-2 border-b border-line-1">
+    <header class="px-4 h-9 flex items-center font-mono text-[10px] uppercase tracking-[0.1em] text-fg-2 border-b border-line-1 bg-bg-1">
       {title}
     </header>
   {/if}
-  <div class="p-3.5">{@render children?.()}</div>
+  <div class="p-4">{@render children?.()}</div>
 </section>

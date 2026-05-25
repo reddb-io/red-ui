@@ -3,6 +3,7 @@
   import '@xyflow/svelte/dist/style.css'
   import { Badge, Card } from '@red-ui/ui-kit'
   import { graph } from '$lib/fixtures'
+  import PageHeader from '$lib/PageHeader.svelte'
 
   const typeColor: Record<string, string> = {
     User: '#60a5fa',
@@ -43,6 +44,12 @@
     if (n) selectedId = n.id
   }
 </script>
+
+<PageHeader
+  eyebrow="Explore"
+  title="Graphs"
+  subtitle="Click a node to inspect its properties and walk relationships interactively"
+/>
 
 <div class="layout">
   <section class="canvas">

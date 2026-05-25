@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Badge, Card } from '@red-ui/ui-kit'
   import { hyperSeries } from '$lib/fixtures'
+  import PageHeader from '$lib/PageHeader.svelte'
 
   let metric = $state<'cpu' | 'mem' | 'qps'>('qps')
   let brushStart = $state<number | null>(null)
@@ -87,9 +88,12 @@
   const unit = { cpu: '%', mem: '%', qps: '/s' }
 </script>
 
-<div class="layout">
-  <div class="head">
-    <h1>node_metrics <span class="sub">· hypertable · 168 points · 7d window @ 1h</span></h1>
+<PageHeader
+  eyebrow="Hypertable"
+  title="node_metrics"
+  subtitle="168 points · 7-day window @ 1h buckets · drag the chart to brush a window"
+>
+  {#snippet actions()}
     <div class="metric-switch">
       {#each ['qps', 'cpu', 'mem'] as const as m}
         <button class:active={metric === m} onclick={() => (metric = m)} style="--c: {metricColor[m]}">
@@ -97,7 +101,10 @@
         </button>
       {/each}
     </div>
-  </div>
+  {/snippet}
+</PageHeader>
+
+<div class="layout">
 
   <Card>
     <div class="chart-wrap">

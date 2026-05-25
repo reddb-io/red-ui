@@ -2,6 +2,7 @@
   import { Badge, Card, NodeBadge } from '@red-ui/ui-kit'
   import { stats as fixtureStats } from '$lib/fixtures'
   import { connection } from '$lib/connections.svelte'
+  import PageHeader from '$lib/PageHeader.svelte'
 
   const live = $derived(connection.probe.reachable && connection.probe.stats)
 
@@ -55,6 +56,12 @@
   const memSpark = Array.from({ length: 30 }, (_, i) => 40 + Math.sin(i / 3) * 10 + Math.random() * 5)
   const qpsSpark = Array.from({ length: 30 }, (_, i) => 2000 + Math.sin(i / 4) * 1500 + Math.random() * 600)
 </script>
+
+<PageHeader
+  eyebrow="Explore"
+  title="Statistics"
+  subtitle={connection.probe.reachable ? `Live from ${connection.active.label}` : 'Fixtures — connect to see live cluster metrics'}
+/>
 
 <div class="layout">
   <div class="kpis">

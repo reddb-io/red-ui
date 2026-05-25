@@ -3,6 +3,7 @@
   import Can from '$lib/Can.svelte'
   import { tenants } from '$lib/fixtures'
   import { auth } from '$lib/auth.svelte'
+  import PageHeader from '$lib/PageHeader.svelte'
 
   const planTone: Record<string, 'accent' | 'info' | 'ok' | 'neutral'> = {
     internal: 'neutral', free: 'neutral', pro: 'info', enterprise: 'accent',
@@ -18,12 +19,17 @@
       <p>Your role <code>{auth.identity.role}</code> doesn't grant <code>read:tenants</code>.</p>
     </Card>
   {/snippet}
-  <div class="head">
-    <h1>Tenants <span class="sub">· {tenants.length} active · {totalUsers} users · ${(totalMrr / 100).toLocaleString()} MRR</span></h1>
-    <Can action="admin" resource="tenants">
-      <Button variant="primary" size="sm">+ New tenant</Button>
-    </Can>
-  </div>
+  <PageHeader
+    eyebrow="Admin"
+    title="Tenants"
+    subtitle="{tenants.length} active · {totalUsers} users across all tenants · ${(totalMrr / 100).toLocaleString()} MRR"
+  >
+    {#snippet actions()}
+      <Can action="admin" resource="tenants">
+        <Button variant="primary" size="sm">+ New tenant</Button>
+      </Can>
+    {/snippet}
+  </PageHeader>
 
   <div class="grid">
     {#each tenants as t}

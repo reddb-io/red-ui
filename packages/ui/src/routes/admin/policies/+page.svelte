@@ -3,6 +3,7 @@
   import Can from '$lib/Can.svelte'
   import { policies } from '$lib/fixtures'
   import { auth } from '$lib/auth.svelte'
+  import PageHeader from '$lib/PageHeader.svelte'
 
   let selected = $state(policies[0].id)
   const policy = $derived(policies.find((p) => p.id === selected)!)
@@ -14,12 +15,17 @@
       <p>Your role <code>{auth.identity.role}</code> doesn't grant <code>read:policies</code>.</p>
     </Card>
   {/snippet}
-  <div class="head">
-    <h1>Policies <span class="sub">· {policies.length} rules · evaluated top-down</span></h1>
-    <Can action="admin" resource="policies">
-      <Button variant="primary" size="sm">+ New policy</Button>
-    </Can>
-  </div>
+  <PageHeader
+    eyebrow="Admin"
+    title="Policies"
+    subtitle="{policies.length} rules · evaluated top-down · deny takes precedence over allow"
+  >
+    {#snippet actions()}
+      <Can action="admin" resource="policies">
+        <Button variant="primary" size="sm">+ New policy</Button>
+      </Can>
+    {/snippet}
+  </PageHeader>
 
   <div class="layout">
     <Card>

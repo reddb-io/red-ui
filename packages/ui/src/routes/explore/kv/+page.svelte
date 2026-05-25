@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Badge, Button, Card } from '@red-ui/ui-kit'
   import Can from '$lib/Can.svelte'
+  import PageHeader from '$lib/PageHeader.svelte'
   import { kv, type KVEntry } from '$lib/fixtures'
   import { auth, audit } from '$lib/auth.svelte'
 
@@ -53,6 +54,12 @@
     return `${Math.round(s / 86400)}d`
   }
 </script>
+
+<PageHeader
+  eyebrow="Explore"
+  title="KV / Secrets"
+  subtitle="Configs, secrets, and ephemeral cache. Secrets are masked by default — reveal is audited."
+/>
 
 <div class="layout">
   <aside class="tree-pane">
@@ -170,7 +177,7 @@
     display: grid;
     grid-template-columns: 320px 1fr;
     gap: 16px;
-    height: 100%;
+    height: calc(100% - 80px);
   }
 
   .tree-pane {
