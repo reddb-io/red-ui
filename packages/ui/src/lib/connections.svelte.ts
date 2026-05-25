@@ -13,9 +13,9 @@ export interface ConnectionPreset {
 }
 
 export const PRESETS: ConnectionPreset[] = [
-  { id: 'embedded',        label: 'Embedded',       url: 'http://localhost:8080',  role: 'embedded', description: 'Local file via ./scripts/embedded.sh.' },
-  { id: 'docker-primary',  label: 'Docker primary', url: 'http://localhost:18080', role: 'primary',  description: 'Docker compose primary (./docker/compose.yml).' },
-  { id: 'docker-replica',  label: 'Docker replica', url: 'http://localhost:18081', role: 'replica',  description: 'Read-only mirror of docker primary.' },
+  { id: 'embedded',        label: 'Embedded',       url: 'http://localhost:5055',  role: 'embedded', description: 'Local file via ./scripts/embedded.sh.' },
+  { id: 'docker-primary',  label: 'Docker primary', url: 'http://localhost:15055', role: 'primary',  description: 'Docker compose primary (./docker/compose.yml).' },
+  { id: 'docker-replica',  label: 'Docker replica', url: 'http://localhost:25055', role: 'replica',  description: 'Read-only mirror of docker primary.' },
 ]
 
 interface ProbeResult {
@@ -72,7 +72,41 @@ function persistHistory(entries: HistoryEntry[]) {
   try { localStorage.setItem(HISTORY_KEY, JSON.stringify(entries)) } catch {}
 }
 
-export function makeCustomConnection(url: string): ConnectionPreset {
+/**
+ * Normalize a user-typed connection string to a URL the browser can speak
+ * (always http/https against the HTTP API port 5055).
+ *
+ * red://host[:port][/path]   → http://host:5055
+ * reds://host[:port][/path]  → https://host:5055
+ * http(s)://...               → unchanged
+ * host[:port]                 → http://host:port|5055
+ */
+export function normalizeUrl(input: string): string {
+  let raw = input.trim().replace(/\/$/, '')
+  if (!raw) return raw
+
+  // Bare host like "localhost" or "10.0.0.5:9000"
+  if (!/:\/\//.test(raw)) raw = 'http://' + raw
+
+  const m = raw.match(/^([a-z+]+):\/\/(.+)$/i)
+  if (!m) return raw
+  const [, scheme, rest] = m
+  const s = scheme.toLowerCase()
+
+  // Translate native reddb schemes to HTTP API
+  if (s === 'red' || s === 'red+tcp' || s === 'red+wire') {
+    const [host, _port] = rest.split('/')[0].split(':')
+    return `http://${host}:5055${rest.includes('/') ? '/' + rest.split('/').slice(1).join('/') : ''}`
+  }
+  if (s === 'reds' || s === 'red+tls') {
+    const [host] = rest.split('/')[0].split(':')
+    return `https://${host}:5055`
+  }
+  return raw
+}
+
+export function makeCustomConnection(input: string): ConnectionPreset {
+  const url = normalizeUrl(input)
   let host = url
   try { host = new URL(url).host } catch {}
   return {

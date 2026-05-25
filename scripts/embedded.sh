@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 # Launch a local embedded reddb backed by a file on disk.
-# UI then connects via http://localhost:8080.
+# UI then connects via http://localhost:5055 (HTTP API).
 #
-# Usage: ./scripts/embedded.sh [path] [http-port] [grpc-port]
+# Usage: ./scripts/embedded.sh [path] [http-port] [grpc-port] [wire-port]
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DATA_DIR="$HERE/.data"
 DB_PATH="${1:-$DATA_DIR/embedded.rdb}"
-HTTP_PORT="${2:-8080}"
-GRPC_PORT="${3:-50051}"
+HTTP_PORT="${2:-5055}"
+GRPC_PORT="${3:-5555}"
+WIRE_PORT="${4:-5050}"
 
 mkdir -p "$(dirname "$DB_PATH")"
 
@@ -22,6 +23,7 @@ echo "▸ red-ui embedded"
 echo "  file:  $DB_PATH"
 echo "  http:  http://localhost:$HTTP_PORT"
 echo "  grpc:  127.0.0.1:$GRPC_PORT"
+echo "  wire:  127.0.0.1:$WIRE_PORT"
 echo "  ui:    http://localhost:1420  (pnpm dev)"
 echo ""
 

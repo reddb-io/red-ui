@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Seed a running reddb instance with realistic fixtures so the UI has
-# something interesting to render. Targets http://localhost:8080 by default.
+# something interesting to render. Targets the docker primary by default.
 #
 # Usage: ./scripts/seed.sh [base-url]
 set -euo pipefail
 
-BASE="${1:-http://localhost:8080}"
+BASE="${1:-http://localhost:15055}"
 
 wait_for_ready() {
   local i=0

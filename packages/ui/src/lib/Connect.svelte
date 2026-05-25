@@ -2,7 +2,7 @@
   import { connection, makeCustomConnection } from './connections.svelte'
   import { Zap, Loader2, AlertCircle, CheckCircle2, Clock, X } from 'lucide-svelte'
 
-  const DEFAULT_URL = 'http://localhost:18080'
+  const DEFAULT_URL = 'red://localhost'
 
   function pickDefaultUrl(): string {
     if (connection.history[0]?.url) return connection.history[0].url
@@ -70,7 +70,7 @@
       <input
         bind:value={url}
         spellcheck="false"
-        placeholder="http://localhost:8080"
+        placeholder="red://localhost"
         class="w-full h-11 px-3.5 mb-2 bg-bg-1 border border-line-2 rounded-md font-mono text-[14px] text-fg-0 outline-none transition-colors focus:border-accent focus:bg-bg-0 placeholder:text-fg-3"
       />
 
