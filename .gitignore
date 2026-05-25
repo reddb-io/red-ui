@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+.svelte-kit/
+.turbo/
+.DS_Store
+*.log
+
+# Tauri
+apps/desktop/src-tauri/target/
+apps/desktop/src-tauri/gen/
+apps/desktop/src-tauri/WixTools/
+
+# env
+.env
+.env.local
+.env.*.local

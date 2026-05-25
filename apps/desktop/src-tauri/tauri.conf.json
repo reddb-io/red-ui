@@ -1,0 +1,49 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "red-ui",
+  "version": "0.0.0",
+  "identifier": "io.reddb.ui",
+  "build": {
+    "beforeDevCommand": "pnpm --filter @red-ui/ui dev",
+    "beforeBuildCommand": "pnpm --filter @red-ui/ui build",
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../../packages/ui/build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "red-ui",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 900,
+        "minHeight": 600,
+        "decorations": true,
+        "transparent": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "DeveloperTool",
+    "shortDescription": "reddb client",
+    "longDescription": "Universal client for reddb — embedded, server, docker, cluster."
+  },
+  "plugins": {
+    "deep-link": {
+      "desktop": {
+        "schemes": ["red", "red+tls", "red+unix", "red+http", "red+https"]
+      }
+    }
+  }
+}

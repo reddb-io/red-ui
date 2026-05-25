@@ -1,0 +1,90 @@
+@import url('https://rsms.me/inter/inter.css');
+
+:root {
+  /* Surfaces — near-black with cool tint, Linear/Vercel territory */
+  --bg-0: #07080a;
+  --bg-1: #0c0e11;
+  --bg-2: #14171c;
+  --bg-3: #1c2027;
+
+  /* Foreground */
+  --fg-0: #f4f5f7;
+  --fg-1: #c8ccd4;
+  --fg-2: #7a8088;
+  --fg-3: #4a4f57;
+
+  /* Borders */
+  --line-1: #1a1d22;
+  --line-2: #262a31;
+  --line-3: #353a42;
+
+  /* Surgical accent — red of reddb, used sparingly */
+  --accent: #ff2056;
+  --accent-soft: rgba(255, 32, 86, 0.12);
+  --accent-glow: rgba(255, 32, 86, 0.45);
+
+  /* Semantic */
+  --ok: #4ade80;
+  --warn: #fbbf24;
+  --danger: #ff5470;
+  --info: #60a5fa;
+
+  /* Node roles */
+  --role-primary: #ff2056;
+  --role-replica: #60a5fa;
+  --role-embedded: #4ade80;
+
+  /* Geometry */
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 10px;
+  --r-xl: 14px;
+
+  /* Typography */
+  --font-sans: 'Inter Tight', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Berkeley Mono', ui-monospace, monospace;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Shadows */
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--line-2);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--line-2);
+}
+
+@supports (font-variation-settings: normal) {
+  :root { --font-sans: 'InterVariable', 'Inter Tight', 'Inter', system-ui, sans-serif; }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  background: var(--bg-0);
+  color: var(--fg-0);
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
+  letter-spacing: -0.005em;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Subtle ambient grid — Linear-style background texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(255, 32, 86, 0.04), transparent 60%),
+    linear-gradient(var(--line-1) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-1) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 0;
+}
+
+button, input, select { font-family: inherit; color: inherit; }
+
+::selection { background: var(--accent-soft); color: var(--fg-0); }

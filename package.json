@@ -1,0 +1,18 @@
+{
+  "name": "red-ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.33.3",
+  "scripts": {
+    "dev": "pnpm --filter @red-ui/ui dev",
+    "build": "pnpm -r build",
+    "desktop:dev": "pnpm --filter @red-ui/desktop tauri dev",
+    "desktop:build": "pnpm --filter @red-ui/desktop tauri build",
+    "check": "pnpm -r check",
+    "test": "pnpm -r test"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
