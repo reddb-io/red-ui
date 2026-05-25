@@ -30,8 +30,9 @@
   )
 
   const filtered = $derived.by(() => {
-    if (brushStart === null || brushEnd === null) return hyperSeries
-    const [a, b] = [Math.min(brushStart, brushEnd), Math.max(brushStart, brushEnd)]
+    const s = brushStart, e = brushEnd
+    if (s === null || e === null) return hyperSeries
+    const [a, b] = [Math.min(s, e), Math.max(s, e)]
     return hyperSeries.filter((p) => p.t >= a && p.t <= b)
   })
 
@@ -74,9 +75,10 @@
   function clearBrush() { brushStart = null; brushEnd = null }
 
   const brushRect = $derived.by(() => {
-    if (brushStart === null || brushEnd === null) return null
-    const startIdx = hyperSeries.findIndex((p) => p.t === Math.min(brushStart, brushEnd))
-    const endIdx = hyperSeries.findIndex((p) => p.t === Math.max(brushStart, brushEnd))
+    const s = brushStart, e = brushEnd
+    if (s === null || e === null) return null
+    const startIdx = hyperSeries.findIndex((p) => p.t === Math.min(s, e))
+    const endIdx = hyperSeries.findIndex((p) => p.t === Math.max(s, e))
     if (startIdx < 0 || endIdx < 0) return null
     return { x: x(startIdx), w: x(endIdx) - x(startIdx) }
   })

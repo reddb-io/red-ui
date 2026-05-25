@@ -69,7 +69,7 @@
               onclick={() => (selectedKey = entry.key)}
             >
               <span class="leaf-icon">
-                {#if entry.type === 'secret'}🔒{:else if entry.type === 'json'}{ }{:else}∙{/if}
+                {#if entry.type === 'secret'}🔒{:else if entry.type === 'json'}&#123;&#125;{:else}∙{/if}
               </span>
               <span class="leaf-name">{k}</span>
               <span class="leaf-type">{entry.type}</span>
