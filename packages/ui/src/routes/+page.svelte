@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { SvelteFlow, Background, Controls, type Node, type Edge } from '@xyflow/svelte'
+  import { SvelteFlow, Background, BackgroundVariant, Controls, type Node, type Edge } from '@xyflow/svelte'
   import '@xyflow/svelte/dist/style.css'
   import { Badge, Card, NodeBadge } from '@red-ui/ui-kit'
   import EmptyState from '$lib/EmptyState.svelte'
+  import ClusterNode from '$lib/ClusterNode.svelte'
   import { connection, PRESETS } from '$lib/connections.svelte'
   import { RedClient, type Stats, type ReplicationStatus } from '@red-ui/protocol'
   import { ServerCrash } from 'lucide-svelte'
@@ -18,6 +19,9 @@
 
   let known = $state<KnownNode[]>([])
   let loading = $state(true)
+  let selectedId = $state<string | null>(null)
+
+  const nodeTypes = { cluster: ClusterNode as any }
 
   async function probeAll() {
     const results = await Promise.all(
@@ -29,12 +33,9 @@
             client.replication().catch(() => undefined),
           ])
           return {
-            id: p.id,
-            preset: p,
-            reachable: true,
+            id: p.id, preset: p, reachable: true,
             role: replication?.role ?? 'standalone',
-            stats,
-            replication,
+            stats, replication,
           } as KnownNode
         } catch {
           return { id: p.id, preset: p, reachable: false, role: 'standalone' as const }
@@ -53,49 +54,54 @@
 
   const liveNodes = $derived(known.filter((k) => k.reachable))
 
-  // Build SvelteFlow graph from real nodes
   const flowNodes = $derived<Node[]>(
     liveNodes.map((k, i) => {
-      const c = k.role === 'primary' ? '#ff2056' : k.role === 'replica' ? '#60a5fa' : '#4ade80'
-      const sub = k.stats
-        ? `${k.stats.store.collection_count} colls · ${k.stats.store.total_entities.toLocaleString()} ents`
-        : ''
+      // Layout: primary center, replicas right, embedded left
+      const slot = k.role === 'primary' ? 0 : k.role === 'replica' ? 1 : -1
       return {
         id: k.id,
-        position: { x: 200 + (i % 3) * 240, y: 100 + Math.floor(i / 3) * 200 },
-        data: { label: `${k.preset.label}\n${sub}` },
-        style: `background:${c};color:white;border-radius:10px;padding:10px 14px;border:1px solid ${c};box-shadow:0 0 0 4px color-mix(in srgb, ${c} 18%, transparent);font-family:JetBrains Mono Variable;font-size:11px;white-space:pre-line;text-align:center;min-width:160px;`,
+        type: 'cluster',
+        position: { x: 320 + slot * 320, y: 200 },
+        data: {
+          label: k.preset.label,
+          role: k.role,
+          collections: k.stats?.store.collection_count ?? 0,
+          entities: k.stats?.store.total_entities ?? 0,
+          url: k.preset.url,
+        },
       }
     }),
   )
 
   const flowEdges = $derived<Edge[]>(
     liveNodes
-      .filter((k) => k.role === 'replica' && k.replication?.primary_addr)
+      .filter((k) => k.role === 'replica')
       .map((replica) => {
-        // Find which known primary that addr resolves to (best-effort by port match)
         const primary = liveNodes.find((p) => p.role === 'primary')
         if (!primary) return null
+        const lag = replica.replication?.last_applied_lsn !== undefined && replica.replication?.last_seen_primary_lsn !== undefined
+          ? replica.replication.last_seen_primary_lsn - replica.replication.last_applied_lsn
+          : null
+        const inSync = lag === 0
         return {
           id: `${primary.id}-${replica.id}`,
           source: primary.id,
           target: replica.id,
+          type: 'smoothstep',
           animated: true,
-          style: 'stroke:#60a5fa;stroke-width:1.4',
-          label: replica.replication?.last_applied_lsn !== undefined && replica.replication?.last_seen_primary_lsn !== undefined
-            ? (replica.replication.last_seen_primary_lsn - replica.replication.last_applied_lsn === 0
-                ? '✓ in sync'
-                : `lag ${replica.replication.last_seen_primary_lsn - replica.replication.last_applied_lsn}`)
-            : '',
-          labelStyle: 'fill:#c8ccd4;font-family:JetBrains Mono Variable;font-size:10px',
-          labelBgStyle: 'fill:#14171c',
+          style: `stroke:${inSync ? '#4ade80' : '#fbbf24'};stroke-width:1.5;opacity:0.6`,
+          label: lag === null ? '' : inSync ? '✓ in sync' : `lag ${lag}`,
+          labelStyle: `fill:${inSync ? '#4ade80' : '#fbbf24'};font-family:JetBrains Mono Variable;font-size:10px;font-weight:500`,
+          labelBgStyle: 'fill:#0c0e11;stroke:#262a31;stroke-width:1',
+          labelBgPadding: [6, 4],
+          labelBgBorderRadius: 4,
         } as Edge
       })
       .filter((e): e is Edge => e !== null),
   )
 
-  let selectedId = $state<string | null>(null)
   const selected = $derived(known.find((k) => k.id === selectedId))
+  const totalEntities = $derived(liveNodes.reduce((s, k) => s + (k.stats?.store.total_entities ?? 0), 0))
 </script>
 
 {#if loading}
@@ -107,100 +113,121 @@
     <EmptyState
       icon={ServerCrash}
       title="No reachable nodes"
-      message="None of the configured reddb endpoints responded. Start one and the topology will populate automatically (auto-refreshes every 5s)."
+      message="None of the configured reddb endpoints responded. Start one and the topology will populate automatically."
       hint="docker compose -f docker/compose.yml up -d"
     />
-    <div class="grid gap-2 mt-6 max-w-md mx-auto font-mono text-[11px]">
-      {#each known as k}
-        <div class="flex items-center justify-between bg-bg-1 border border-line-1 rounded px-3 py-2">
-          <span class="text-fg-1">{k.preset.label}</span>
-          <code class="text-fg-3">{k.preset.url}</code>
-          <Badge tone="danger">unreachable</Badge>
-        </div>
-      {/each}
-    </div>
   </div>
 {:else}
   <div class="absolute inset-0">
     <SvelteFlow
       nodes={flowNodes}
       edges={flowEdges}
+      {nodeTypes}
       fitView
-      fitViewOptions={{ padding: 0.3 }}
+      fitViewOptions={{ padding: 0.25, maxZoom: 1 }}
       proOptions={{ hideAttribution: true }}
+      nodesDraggable={false}
+      nodesConnectable={false}
       onnodeclick={(e) => (selectedId = e.node.id)}
     >
-      <Background bgColor="transparent" patternColor="#1c2027" gap={28} />
+      <Background variant={BackgroundVariant.Dots} bgColor="transparent" patternColor="#1c2027" gap={32} size={1} />
       <Controls position="bottom-right" />
     </SvelteFlow>
   </div>
 
-  <!-- Floating summary -->
-  <div class="absolute top-4 left-4 z-10 w-72">
+  <!-- Floating summary (top-left) -->
+  <div class="absolute top-4 left-4 z-10 w-64">
     <Card title="cluster">
-      <div class="grid gap-1.5 font-mono text-[11px]">
-        {#each liveNodes as k}
-          <button
-            class="grid grid-cols-[auto_1fr_auto] gap-2 items-center px-2 py-1.5 rounded text-left bg-transparent border-0 cursor-pointer hover:bg-bg-2 {selectedId === k.id ? 'bg-bg-2' : ''}"
-            onclick={() => (selectedId = k.id)}
-          >
-            <NodeBadge role={k.role === 'primary' ? 'primary' : k.role === 'replica' ? 'replica' : 'embedded'} label={k.role} />
-            <code class="text-fg-1 truncate">{k.preset.label}</code>
-            <code class="text-fg-3 text-[10px]">{k.stats?.store.total_entities ?? 0}</code>
-          </button>
-        {/each}
-      </div>
-      <div class="mt-3 pt-3 border-t border-line-1 grid grid-cols-2 gap-2 text-[11px] font-mono">
+      <div class="grid grid-cols-2 gap-3 mb-3 pb-3 border-b border-line-1">
         <div>
           <div class="type-label">reachable</div>
-          <div class="text-fg-0 mt-0.5">{liveNodes.length} of {known.length}</div>
+          <div class="font-mono text-fg-0 text-[18px] font-semibold mt-0.5">
+            {liveNodes.length}<span class="text-fg-3 text-[11px] font-normal ml-1">of {known.length}</span>
+          </div>
         </div>
         <div>
           <div class="type-label">entities</div>
-          <div class="text-accent mt-0.5">{liveNodes.reduce((s, k) => s + (k.stats?.store.total_entities ?? 0), 0).toLocaleString()}</div>
+          <div class="font-mono text-accent text-[18px] font-semibold mt-0.5">{totalEntities.toLocaleString()}</div>
         </div>
+      </div>
+
+      <div class="grid gap-1">
+        {#each liveNodes as k}
+          <button
+            class={[
+              'flex items-center gap-2.5 px-2 py-1.5 rounded text-left bg-transparent border-0 cursor-pointer transition-colors',
+              selectedId === k.id ? 'bg-bg-2' : 'hover:bg-bg-2'
+            ].join(' ')}
+            onclick={() => (selectedId = k.id)}
+          >
+            <span class={[
+              'w-1.5 h-1.5 rounded-full shrink-0',
+              k.role === 'primary' ? 'bg-role-primary' : k.role === 'replica' ? 'bg-role-replica' : 'bg-role-embedded'
+            ].join(' ')}></span>
+            <span class="font-mono text-[11px] text-fg-1 flex-1 truncate">{k.preset.label}</span>
+            <span class="font-mono text-[10px] text-fg-3">{k.stats?.store.total_entities.toLocaleString() ?? 0}</span>
+          </button>
+        {/each}
       </div>
     </Card>
   </div>
 
-  <!-- Inspector -->
+  <!-- Floating inspector (top-right) -->
   {#if selected}
     <div class="absolute top-4 right-4 z-10 w-80">
       <Card title="node · {selected.id}" floating>
-        <div class="grid gap-1.5 font-mono text-[11px]">
-          <div class="grid grid-cols-[70px_1fr] gap-2">
-            <span class="text-fg-3">label</span><code class="text-fg-0">{selected.preset.label}</code>
+        <div class="grid gap-2 font-mono text-[11px]">
+          <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+            <span class="text-fg-3">label</span>
+            <span class="text-fg-0">{selected.preset.label}</span>
           </div>
-          <div class="grid grid-cols-[70px_1fr] gap-2">
-            <span class="text-fg-3">url</span><code class="text-fg-0 break-all">{selected.preset.url}</code>
+          <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+            <span class="text-fg-3">url</span>
+            <code class="text-fg-0 break-all">{selected.preset.url}</code>
           </div>
-          <div class="grid grid-cols-[70px_1fr] gap-2">
+          <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
             <span class="text-fg-3">role</span>
             <span><NodeBadge role={selected.role === 'primary' ? 'primary' : selected.role === 'replica' ? 'replica' : 'embedded'} label={selected.role} /></span>
           </div>
           {#if selected.stats}
-            <div class="grid grid-cols-[70px_1fr] gap-2">
-              <span class="text-fg-3">collections</span><code class="text-fg-0">{selected.stats.store.collection_count}</code>
+            <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+              <span class="text-fg-3">collections</span>
+              <span class="text-fg-0">{selected.stats.store.collection_count}</span>
             </div>
-            <div class="grid grid-cols-[70px_1fr] gap-2">
-              <span class="text-fg-3">entities</span><code class="text-accent">{selected.stats.store.total_entities.toLocaleString()}</code>
+            <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+              <span class="text-fg-3">entities</span>
+              <span class="text-accent">{selected.stats.store.total_entities.toLocaleString()}</span>
             </div>
-            <div class="grid grid-cols-[70px_1fr] gap-2">
-              <span class="text-fg-3">uptime</span><code class="text-fg-0">{Math.round((Date.now() - selected.stats.started_at_unix_ms) / 1000)}s</code>
+            <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+              <span class="text-fg-3">uptime</span>
+              <span class="text-fg-0">{Math.round((Date.now() - selected.stats.started_at_unix_ms) / 1000)}s</span>
             </div>
           {/if}
           {#if selected.replication}
+            <div class="pt-2 mt-1 border-t border-line-1"></div>
             {#if selected.replication.role === 'primary'}
-              <div class="grid grid-cols-[70px_1fr] gap-2">
-                <span class="text-fg-3">wal lsn</span><code class="text-fg-0">{selected.replication.wal_lsn}</code>
+              <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+                <span class="text-fg-3">wal lsn</span>
+                <span class="text-fg-0">{selected.replication.wal_lsn}</span>
               </div>
-              <div class="grid grid-cols-[70px_1fr] gap-2">
-                <span class="text-fg-3">replicas</span><code class="text-fg-0">{selected.replication.replica_count}</code>
+              <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+                <span class="text-fg-3">replicas</span>
+                <span class="text-fg-0">{selected.replication.replica_count ?? 0}</span>
               </div>
             {:else if selected.replication.role === 'replica'}
-              <div class="grid grid-cols-[70px_1fr] gap-2">
-                <span class="text-fg-3">lsn</span><code class="text-fg-0">{selected.replication.last_applied_lsn} / {selected.replication.last_seen_primary_lsn}</code>
+              <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+                <span class="text-fg-3">applied</span>
+                <span class="text-fg-0">{selected.replication.last_applied_lsn} <span class="text-fg-3">/ {selected.replication.last_seen_primary_lsn}</span></span>
               </div>
+              {#if selected.replication.last_applied_lsn !== undefined && selected.replication.last_seen_primary_lsn !== undefined}
+                {@const lag = selected.replication.last_seen_primary_lsn - selected.replication.last_applied_lsn}
+                <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+                  <span class="text-fg-3">lag</span>
+                  <span>
+                    {#if lag === 0}<Badge tone="ok">in sync</Badge>{:else}<Badge tone="warn">{lag} lsn</Badge>{/if}
+                  </span>
+                </div>
+              {/if}
             {/if}
           {/if}
         </div>
@@ -208,3 +235,36 @@
     </div>
   {/if}
 {/if}
+
+<!-- Hide xyflow's connection handles entirely -->
+<style>
+  :global(.svelte-flow__handle) {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    width: 1px !important;
+    height: 1px !important;
+  }
+  :global(.svelte-flow__node-cluster) {
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+  }
+  :global(.svelte-flow__edge-path) {
+    stroke-linecap: round;
+  }
+  :global(.svelte-flow__controls button) {
+    background: var(--color-bg-1) !important;
+    border-bottom: 1px solid var(--color-line-1) !important;
+    color: var(--color-fg-2) !important;
+  }
+  :global(.svelte-flow__controls button:hover) {
+    background: var(--color-bg-2) !important;
+    color: var(--color-fg-0) !important;
+  }
+  :global(.svelte-flow__controls) {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid var(--color-line-2) !important;
+    border-radius: 6px !important;
+    overflow: hidden;
+  }
+</style>
