@@ -2,37 +2,23 @@
   interface Props {
     title?: string
     floating?: boolean
+    class?: string
     children?: import('svelte').Snippet
   }
-  let { title, floating = false, children }: Props = $props()
+  let { title, floating = false, class: klass = '', children }: Props = $props()
+
+  const cardClass = $derived(
+    floating
+      ? 'bg-bg-1/[0.92] border-line-2 shadow-[0_16px_48px_rgba(0,0,0,0.6)]'
+      : 'bg-bg-1 border-line-1'
+  )
 </script>
 
-<section class="card" class:floating>
-  {#if title}<header>{title}</header>{/if}
-  <div class="body">{@render children?.()}</div>
+<section class="rounded-[10px] border overflow-hidden backdrop-blur-md {cardClass} {klass}">
+  {#if title}
+    <header class="px-3.5 py-2.5 text-[10px] font-mono uppercase tracking-[0.08em] text-fg-2 border-b border-line-1">
+      {title}
+    </header>
+  {/if}
+  <div class="p-3.5">{@render children?.()}</div>
 </section>
-
-<style>
-  .card {
-    background: var(--bg-1);
-    border: 1px solid var(--line-1);
-    border-radius: var(--r-lg);
-    overflow: hidden;
-    backdrop-filter: blur(8px);
-  }
-  .floating {
-    background: color-mix(in srgb, var(--bg-1) 92%, transparent);
-    border-color: var(--line-2);
-    box-shadow: var(--shadow-lg);
-  }
-  header {
-    padding: 10px 14px;
-    font-size: 10px;
-    font-family: var(--font-mono);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--fg-2);
-    border-bottom: 1px solid var(--line-1);
-  }
-  .body { padding: 14px; }
-</style>

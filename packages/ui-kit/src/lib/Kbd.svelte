@@ -3,22 +3,6 @@
   let { children }: Props = $props()
 </script>
 
-<kbd>{@render children?.()}</kbd>
-
-<style>
-  kbd {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 5px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--fg-1);
-    background: var(--bg-2);
-    border: 1px solid var(--line-2);
-    border-bottom-width: 2px;
-    border-radius: var(--r-sm);
-  }
-</style>
+<kbd class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1.5 font-mono text-[10px] text-fg-1 bg-bg-2 border border-line-2 border-b-2 rounded-sm">
+  {@render children?.()}
+</kbd>

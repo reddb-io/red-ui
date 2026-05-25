@@ -1,5 +1,5 @@
 <script lang="ts">
-  import '@red-ui/ui-kit/tokens.css'
+  import '../app.css'
   import Splash from '$lib/Splash.svelte'
   import Topbar from '$lib/Topbar.svelte'
   import CommandPalette from '$lib/CommandPalette.svelte'

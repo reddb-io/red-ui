@@ -4,47 +4,67 @@
 
   const actions: Action[] = ['read', 'write', 'delete', 'reveal', 'admin']
   const resources: Resource[] = ['table', 'graph', 'kv', 'secret', 'hypertable', 'stats', 'users', 'policies', 'tenants']
-
   const roles: Array<typeof auth.identity.role> = ['reader', 'writer', 'dba', 'owner']
 </script>
 
-<div class="layout">
-  <div class="hero">
-    <div class="avatar">{auth.identity.name[0].toUpperCase()}</div>
-    <div class="identity">
-      <h1>{auth.identity.name}</h1>
-      <div class="meta">
+<div class="grid gap-3.5 p-5 max-w-[1100px] mx-auto">
+  <!-- Hero -->
+  <div class="grid grid-cols-[auto_1fr_auto] items-center gap-4 p-5 bg-bg-1 border border-line-1 rounded-[10px]">
+    <div class="w-16 h-16 rounded-full grid place-items-center font-mono text-[26px] font-semibold text-white bg-gradient-to-br from-accent to-info">
+      {auth.identity.name[0].toUpperCase()}
+    </div>
+    <div>
+      <h1 class="m-0 text-[22px] font-semibold tracking-tight">{auth.identity.name}</h1>
+      <div class="flex items-center gap-2 mt-1 text-fg-2 text-[13px]">
         <Badge tone="accent">{auth.identity.role}</Badge>
         <span>·</span>
-        <code>{auth.identity.tenant}</code>
+        <code class="font-mono">{auth.identity.tenant}</code>
       </div>
     </div>
-    <div class="role-switch">
-      <span class="rs-label">Demo: switch role</span>
-      <div class="rs-buttons">
+
+    <div class="text-right">
+      <span class="block font-mono text-[10px] uppercase tracking-[0.08em] text-fg-3 mb-1.5">Demo: switch role</span>
+      <div class="inline-flex bg-bg-2 border border-line-2 rounded-md p-0.5">
         {#each roles as r}
-          <button class:active={auth.identity.role === r} onclick={() => auth.switchRole(r)}>{r}</button>
+          <button
+            onclick={() => auth.switchRole(r)}
+            class={[
+              'bg-transparent border-0 px-2.5 py-1 font-mono text-[11px] cursor-pointer rounded-sm transition-colors',
+              auth.identity.role === r ? 'bg-bg-0 text-accent shadow-[inset_0_0_0_1px_var(--color-accent)]' : 'text-fg-2 hover:text-fg-1'
+            ].join(' ')}
+          >
+            {r}
+          </button>
         {/each}
       </div>
     </div>
   </div>
 
+  <!-- Permission matrix -->
   <Card title="effective permissions">
-    <p class="hint">Green = you can do it. Gray = you cannot. Hover for the reason.</p>
-    <table class="perm">
+    <p class="text-fg-3 text-xs m-0 mb-3">Green = you can do it. Gray = you cannot. Hover for the reason.</p>
+    <table class="w-full border-collapse font-mono text-xs">
       <thead>
         <tr>
-          <th></th>
-          {#each actions as a}<th>{a}</th>{/each}
+          <th class="p-2 text-center text-fg-3 text-[10px] uppercase tracking-[0.06em] font-medium border-b border-line-2"></th>
+          {#each actions as a}
+            <th class="p-2 text-center text-fg-3 text-[10px] uppercase tracking-[0.06em] font-medium border-b border-line-2">{a}</th>
+          {/each}
         </tr>
       </thead>
       <tbody>
         {#each resources as r}
           <tr>
-            <td class="res">{r}</td>
+            <td class="p-2 text-left text-fg-0 font-medium border-b border-line-1">{r}</td>
             {#each actions as a}
               {@const ok = auth.can(a, r)}
-              <td class="cell" class:ok class:no={!ok} title={ok ? 'allowed' : auth.whyDenied(a, r) ?? ''}>
+              <td
+                title={ok ? 'allowed' : auth.whyDenied(a, r) ?? ''}
+                class={[
+                  'p-2 text-center border-b border-line-1',
+                  ok ? 'text-ok font-semibold bg-ok/[0.06]' : 'text-fg-3'
+                ].join(' ')}
+              >
                 {ok ? '✓' : '·'}
               </td>
             {/each}
@@ -54,15 +74,16 @@
     </table>
   </Card>
 
-  <div class="row">
+  <!-- Grants + Denies -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
     <Card title="grants · {auth.identity.grants.length}">
-      <div class="list">
+      <div class="grid gap-1 font-mono text-xs">
         {#each auth.identity.grants as g}
-          <div class="grant">
+          <div class="grid grid-cols-[60px_auto_16px_auto_1fr] items-center gap-2 px-2 py-1.5 rounded-sm hover:bg-bg-2">
             <Badge tone="ok">allow</Badge>
-            <code>{g.action}</code>
-            <span class="arrow">→</span>
-            <code>{g.resource}</code>
+            <code class="text-fg-0">{g.action}</code>
+            <span class="text-fg-3 text-center">→</span>
+            <code class="text-fg-0">{g.resource}</code>
           </div>
         {/each}
       </div>
@@ -70,16 +91,16 @@
 
     <Card title="denies · {auth.identity.denies.length}">
       {#if auth.identity.denies.length === 0}
-        <p class="empty">No explicit denies. Anything not in grants falls through to default-deny.</p>
+        <p class="text-fg-3 text-xs font-mono m-0">No explicit denies. Anything not in grants falls through to default-deny.</p>
       {:else}
-        <div class="list">
+        <div class="grid gap-1 font-mono text-xs">
           {#each auth.identity.denies as d}
-            <div class="grant deny">
+            <div class="grid grid-cols-[60px_auto_16px_auto] items-center gap-2 px-2 py-1.5 rounded-sm hover:bg-bg-2">
               <Badge tone="danger">deny</Badge>
-              <code>{d.action}</code>
-              <span class="arrow">→</span>
-              <code>{d.resource}</code>
-              <div class="reason">{d.reason}</div>
+              <code class="text-fg-0">{d.action}</code>
+              <span class="text-fg-3 text-center">→</span>
+              <code class="text-fg-0">{d.resource}</code>
+              <div class="col-span-full pl-[76px] text-fg-3 text-[10px]">{d.reason}</div>
             </div>
           {/each}
         </div>
@@ -87,57 +108,3 @@
     </Card>
   </div>
 </div>
-
-<style>
-  .layout { display: grid; gap: 14px; padding: 16px 20px; max-width: 1100px; margin: 0 auto; }
-
-  .hero {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 16px;
-    padding: 20px;
-    background: var(--bg-1);
-    border: 1px solid var(--line-1);
-    border-radius: var(--r-lg);
-  }
-  .avatar {
-    width: 64px; height: 64px;
-    border-radius: 9999px;
-    background: linear-gradient(135deg, var(--accent), var(--info));
-    color: white;
-    display: grid; place-items: center;
-    font-family: var(--font-mono); font-size: 26px; font-weight: 600;
-  }
-  .identity h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
-  .meta { display: flex; align-items: center; gap: 8px; margin-top: 4px; color: var(--fg-2); font-size: 13px; }
-  .meta code { font-family: var(--font-mono); }
-
-  .role-switch { text-align: right; }
-  .rs-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-3); display: block; margin-bottom: 6px; }
-  .rs-buttons { display: inline-flex; background: var(--bg-2); border: 1px solid var(--line-2); border-radius: var(--r-md); padding: 2px; }
-  .rs-buttons button { background: transparent; border: 0; color: var(--fg-2); padding: 4px 10px; font-family: var(--font-mono); font-size: 11px; cursor: pointer; border-radius: var(--r-sm); }
-  .rs-buttons button.active { background: var(--bg-0); color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
-
-  .hint { color: var(--fg-3); font-size: 12px; margin: 0 0 12px; }
-
-  .perm { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 12px; }
-  .perm th { padding: 8px; text-align: center; color: var(--fg-3); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; border-bottom: 1px solid var(--line-2); }
-  .perm td { padding: 8px; text-align: center; border-bottom: 1px solid var(--line-1); }
-  .res { text-align: left !important; color: var(--fg-0); font-weight: 500; }
-  .cell.ok { color: var(--ok); font-weight: 600; background: color-mix(in srgb, var(--ok) 6%, transparent); }
-  .cell.no { color: var(--fg-3); }
-
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  @media (max-width: 800px) { .row { grid-template-columns: 1fr; } }
-
-  .list { display: grid; gap: 4px; font-family: var(--font-mono); font-size: 12px; }
-  .grant { display: grid; grid-template-columns: 60px auto 16px auto 1fr; align-items: center; gap: 8px; padding: 6px 8px; border-radius: var(--r-sm); }
-  .grant:hover { background: var(--bg-2); }
-  .grant.deny { grid-template-columns: 60px auto 16px auto; }
-  .grant .reason { grid-column: 1 / -1; color: var(--fg-3); font-size: 10px; padding-left: 76px; }
-  .arrow { color: var(--fg-3); text-align: center; }
-  code { color: var(--fg-0); }
-
-  .empty { color: var(--fg-3); font-size: 12px; font-family: var(--font-mono); margin: 0; }
-</style>
