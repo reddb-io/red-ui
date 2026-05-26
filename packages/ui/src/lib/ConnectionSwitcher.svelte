@@ -1,18 +1,25 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { Badge } from '@red-ui/ui-kit'
-  import { connection, PRESETS, type ConnectionPreset } from './connections.svelte'
+  import type { Connection } from '@red-ui/protocol'
+  import { connection, provider, PRESETS } from './connections.svelte'
 
   let open = $state(false)
+  let items = $state<Connection[]>(PRESETS)
 
   onMount(() => {
+    provider.list().then((list) => (items = list))
     connection.refresh()
     const id = setInterval(() => connection.refresh(), 5000)
     return () => clearInterval(id)
   })
 
-  function pick(p: ConnectionPreset) {
-    connection.switch(p)
+  async function pick(c: Connection) {
+    const preset = PRESETS.find((p) => p.id === c.id) ?? {
+      ...c,
+      description: 'Saved connection.',
+    }
+    await connection.switch(preset as any)
     open = false
   }
 
@@ -41,14 +48,14 @@
     <div class="scrim" onclick={() => (open = false)} role="presentation"></div>
     <div class="menu">
       <div class="menu-label">Targets</div>
-      {#each PRESETS as p}
+      {#each items as p}
         <button class="opt" class:active={p.id === connection.active.id} onclick={() => pick(p)}>
           <div class="opt-head">
             <span class="opt-label">{p.label}</span>
-            <Badge tone={p.role === 'primary' ? 'accent' : p.role === 'replica' ? 'info' : 'neutral'}>{p.role}</Badge>
+            <Badge tone={p.role === 'primary' ? 'accent' : p.role === 'replica' ? 'info' : 'neutral'}>{p.role ?? 'primary'}</Badge>
           </div>
           <div class="opt-url">{p.url || '— no network —'}</div>
-          <div class="opt-desc">{p.description}</div>
+          <div class="opt-desc">{p.description ?? ''}</div>
         </button>
       {/each}
 
