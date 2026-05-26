@@ -4,13 +4,21 @@
   import Splash from '$lib/Splash.svelte'
   import Topbar from '$lib/Topbar.svelte'
   import CommandPalette from '$lib/CommandPalette.svelte'
+  import MasterPasswordDialog from '$lib/MasterPasswordDialog.svelte'
   import { connection } from '$lib/connections.svelte'
+  import { secureStore } from '$lib/secureStore.svelte'
 
   let { children } = $props()
   let booted = $state(false)
 
   onMount(() => {
     connection.refresh()
+  })
+
+  // Once the secure store binds (Tauri at boot / web after unlock), hydrate
+  // history URLs from the encrypted store so the dropdown can reconnect.
+  $effect(() => {
+    if (secureStore.store) connection.hydrateUrls()
   })
 </script>
 
@@ -23,5 +31,6 @@
       {@render children?.()}
     </main>
     <CommandPalette />
+    <MasterPasswordDialog />
   </div>
 {/if}

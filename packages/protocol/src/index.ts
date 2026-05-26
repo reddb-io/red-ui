@@ -1,3 +1,6 @@
 export * from './uri'
 export * from './types'
 export * from './client'
+export * from './secure-store'
+export * from './web-encrypted-store'
+export * from './tauri-encrypted-store'
