@@ -8,7 +8,7 @@
     "dev": "pnpm --filter @red-ui/ui dev",
     "build": "pnpm -r build",
     "desktop:dev": "pnpm --filter @red-ui/desktop tauri dev",
-    "desktop:build": "pnpm --filter @red-ui/desktop tauri build",
+    "desktop:build": "pnpm --filter @red-ui/desktop run build:tauri",
     "check": "pnpm -r check",
     "test": "pnpm -r test"
   },
