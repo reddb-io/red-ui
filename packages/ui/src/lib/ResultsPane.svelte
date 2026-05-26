@@ -2,9 +2,19 @@
   import { connection } from '$lib/connections.svelte'
   import { tabs, type Tab } from '$lib/tabs.svelte'
   import { registry } from '$lib/renderers'
+  import type { Capability } from '$lib/renderers'
   import LiveChanges from '$lib/LiveChanges.svelte'
   import type { QueryResult } from '@red-ui/protocol'
   import { X, Activity, Database, Plus } from 'lucide-svelte'
+
+  const OVERRIDE_CHOICES: { value: '' | Capability; label: string }[] = [
+    { value: '', label: 'Auto' },
+    { value: 'table', label: 'Table' },
+    { value: 'graph', label: 'Graph' },
+    { value: 'hypertable', label: 'Chart' },
+    { value: 'kv', label: 'KV' },
+    { value: 'json', label: 'JSON' },
+  ]
 
   let results = $state<Record<string, QueryResult | null>>({})
   let errors = $state<Record<string, string>>({})
@@ -54,6 +64,17 @@
     tabs.open({ kind: 'live-changes', label: 'live · global', key: 'global' })
     menuOpen = false
   }
+
+  function onOverrideChange(tab: Tab, e: Event) {
+    const value = (e.currentTarget as HTMLSelectElement).value as '' | Capability
+    tabs.setOverride(tab.id, value === '' ? undefined : value)
+  }
+
+  function defaultCapabilityLabel(tab: Tab, result: QueryResult | null | undefined): string {
+    if (tab.capability) return tab.capability
+    if (result?.capability) return result.capability
+    return 'auto'
+  }
 </script>
 
 <div class="h-full flex flex-col">
@@ -94,7 +115,26 @@
       </div>
     {/if}
 
-    <div class="relative ml-auto flex items-stretch">
+    {#if tabs.active && (tabs.active.kind === 'collection' || tabs.active.kind === 'query')}
+      {@const activeTab = tabs.active}
+      {@const activeResult = results[activeTab.id]}
+      <div class="ml-auto flex items-center gap-2 px-2 text-[11px] font-mono text-fg-3">
+        <span>{defaultCapabilityLabel(activeTab, activeResult)}</span>
+        <span class="text-fg-3">· override:</span>
+        <select
+          class="bg-bg-1 text-fg-1 border border-line-1 rounded px-1 py-0.5"
+          aria-label="Renderer override"
+          value={activeTab.overrideCapability ?? ''}
+          onchange={(e) => onOverrideChange(activeTab, e)}
+        >
+          {#each OVERRIDE_CHOICES as choice (choice.value)}
+            <option value={choice.value}>{choice.label}</option>
+          {/each}
+        </select>
+      </div>
+    {/if}
+
+    <div class="relative {tabs.active && (tabs.active.kind === 'collection' || tabs.active.kind === 'query') ? '' : 'ml-auto'} flex items-stretch">
       <button
         type="button"
         class="px-2 inline-flex items-center text-fg-3 hover:text-fg-1"
