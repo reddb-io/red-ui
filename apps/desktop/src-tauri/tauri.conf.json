@@ -7,7 +7,7 @@
     "beforeDevCommand": "pnpm --filter @red-ui/ui dev",
     "beforeBuildCommand": "pnpm --filter @red-ui/ui build",
     "devUrl": "http://localhost:1420",
-    "frontendDist": "../../packages/ui/build"
+    "frontendDist": "../../../packages/ui/build"
   },
   "app": {
     "windows": [
