@@ -17,3 +17,24 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm -r check
       - run: pnpm -r test
+      # Smoke build: catches TypeScript / Svelte compile errors that
+      # `svelte-check` doesn't flag (e.g. a $effect feedback loop only
+      # caught when the runtime is wired up).
+      - run: pnpm --filter @red-ui/ui build
+
+  tauri:
+    # Verify the Rust shell still compiles on every PR; doesn't bundle
+    # installers (that's the release workflow's job) — just runs
+    # `cargo check` against the same workspace tauri-action will later use.
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+      - name: linux deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libssl-dev
+      - run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml

@@ -5,8 +5,22 @@ on:
     tags: ['v*']
   workflow_dispatch:
 
+# Signing secrets (all optional — the workflow falls back to unsigned
+# builds when a secret is missing):
+#   TAURI_SIGNING_PRIVATE_KEY    — Tauri updater signing key (for autoUpdate)
+#   TAURI_SIGNING_PRIVATE_KEY_PASSWORD
+#   APPLE_CERTIFICATE             — base64-encoded .p12 (Developer ID Application)
+#   APPLE_CERTIFICATE_PASSWORD
+#   APPLE_SIGNING_IDENTITY        — e.g. "Developer ID Application: …"
+#   APPLE_ID                      — Apple ID for notarization
+#   APPLE_PASSWORD                — app-specific password
+#   APPLE_TEAM_ID
+#   WINDOWS_CERTIFICATE           — base64-encoded .pfx
+#   WINDOWS_CERTIFICATE_PASSWORD
+
 jobs:
-  build:
+  tauri:
+    name: tauri · ${{ matrix.platform }}
     permissions:
       contents: write
     strategy:
@@ -56,6 +70,20 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Tauri updater signing — empty values are tolerated by
+          # tauri-action and produce unsigned builds (no autoUpdate).
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # macOS code signing + notarization
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # Windows code signing
+          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+          WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
         with:
           projectPath: apps/desktop
           tagName: ${{ github.ref_name }}
@@ -64,7 +92,55 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
-  pwa:
+  pwa-build:
+    name: pwa · build + zip
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    outputs:
+      zip-name: ${{ steps.pack.outputs.zip-name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+
+      # The "root" build is for the `red` binary to embed (BASE_PATH=''),
+      # while the Pages build deploys under /red-ui (BASE_PATH=/red-ui).
+      # We build both so the release ships an embeddable bundle AND
+      # Pages always reflects the latest tag.
+      - name: build pwa (root, for embedding)
+        env:
+          BASE_PATH: ''
+        run: pnpm --filter @red-ui/ui build
+
+      - name: pack zip
+        id: pack
+        run: |
+          name="red-ui-${{ github.ref_name }}-web.zip"
+          (cd packages/ui/build && zip -r -q "$GITHUB_WORKSPACE/$name" .)
+          echo "zip-name=$name" >> "$GITHUB_OUTPUT"
+
+      # Attach the zipped bundle to the draft release the tauri matrix
+      # opened (or create it if matrix hasn't run yet). softprops/action-gh-release
+      # appends without overwriting.
+      - name: attach to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.pack.outputs.zip-name }}
+          tag_name: ${{ github.ref_name }}
+          draft: true
+          name: 'red-ui ${{ github.ref_name }}'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pwa-bundle
+          path: packages/ui/build
+
+  pwa-pages:
+    name: pwa · github pages
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -80,7 +156,10 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @red-ui/ui build
+      - name: build pwa (Pages, BASE_PATH=/red-ui)
+        env:
+          BASE_PATH: /red-ui
+        run: pnpm --filter @red-ui/ui build
       - uses: actions/upload-pages-artifact@v3
         with:
           path: packages/ui/build
