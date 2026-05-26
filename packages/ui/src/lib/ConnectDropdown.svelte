@@ -50,9 +50,9 @@
     return `${Math.round(d / 86_400_000)}d ago`
   }
 
-  function forget(e: MouseEvent, u: string) {
+  function forget(e: MouseEvent, id: string) {
     e.stopPropagation()
-    connection.forget(u)
+    connection.forgetById(id)
   }
 
   function toggle() {
@@ -159,11 +159,12 @@
               <div class="group flex items-center gap-1 rounded hover:bg-bg-2 transition-colors">
                 <button
                   type="button"
-                  onclick={() => attempt(h.url)}
-                  disabled={status === 'probing'}
+                  onclick={() => h.url && attempt(h.url)}
+                  disabled={status === 'probing' || !h.url}
+                  title={h.url ? undefined : 'Unlock credentials to reconnect'}
                   class="flex-1 flex items-center justify-between gap-3 px-2 py-1.5 text-left cursor-pointer bg-transparent border-0 disabled:cursor-not-allowed disabled:opacity-50 min-w-0"
                 >
-                  <code class="font-mono text-[11px] text-fg-1 truncate">{h.url}</code>
+                  <code class="font-mono text-[11px] text-fg-1 truncate">{h.url ?? h.label}</code>
                   <span class="font-mono text-[10px] text-fg-3 shrink-0 flex items-center gap-1.5">
                     {#if h.rtt_ms !== undefined}<span>{h.rtt_ms}ms</span>{/if}
                     <span>{fmtRel(h.last_used)}</span>
@@ -171,7 +172,7 @@
                 </button>
                 <button
                   type="button"
-                  onclick={(e) => forget(e, h.url)}
+                  onclick={(e) => forget(e, h.id)}
                   title="Remove from history"
                   class="opacity-0 group-hover:opacity-100 p-1 mr-0.5 text-fg-3 hover:text-danger transition-all cursor-pointer bg-transparent border-0"
                 >

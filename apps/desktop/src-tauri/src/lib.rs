@@ -21,6 +21,39 @@ async fn tcp_ping(host: String, port: u16) -> Result<PingResult, String> {
     Ok(PingResult { ok: true, rtt_ms: start.elapsed().as_millis() })
 }
 
+// OS keychain bridge for the EncryptedStore (issue #5). Three commands —
+// set, get, delete — wrap the `keyring` crate so the JS layer (via
+// TauriEncryptedStore) never touches platform-specific code paths.
+//
+// `get` returns Option<String>; missing entries resolve to null on the JS
+// side rather than throwing, matching the WebEncryptedStore contract.
+
+#[tauri::command]
+fn keychain_set(service: String, key: String, value: String) -> Result<(), String> {
+    let entry = keyring::Entry::new(&service, &key).map_err(|e| e.to_string())?;
+    entry.set_password(&value).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn keychain_get(service: String, key: String) -> Result<Option<String>, String> {
+    let entry = keyring::Entry::new(&service, &key).map_err(|e| e.to_string())?;
+    match entry.get_password() {
+        Ok(v) => Ok(Some(v)),
+        Err(keyring::Error::NoEntry) => Ok(None),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+#[tauri::command]
+fn keychain_delete(service: String, key: String) -> Result<(), String> {
+    let entry = keyring::Entry::new(&service, &key).map_err(|e| e.to_string())?;
+    match entry.delete_credential() {
+        Ok(()) => Ok(()),
+        Err(keyring::Error::NoEntry) => Ok(()),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
 #[tauri::command]
 async fn docker_exec(container: String, cmd: Vec<String>) -> Result<String, String> {
     let output = tokio::process::Command::new("docker")
@@ -48,7 +81,13 @@ pub fn run() {
             });
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![tcp_ping, docker_exec])
+        .invoke_handler(tauri::generate_handler![
+            tcp_ping,
+            docker_exec,
+            keychain_set,
+            keychain_get,
+            keychain_delete,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

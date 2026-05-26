@@ -6,8 +6,10 @@
   import StatusBar from '$lib/StatusBar.svelte'
   import CommandPalette from '$lib/CommandPalette.svelte'
   import ShortcutOverlay from '$lib/ShortcutOverlay.svelte'
+  import MasterPasswordDialog from '$lib/MasterPasswordDialog.svelte'
   import { connection } from '$lib/connections.svelte'
   import { theme } from '$lib/theme.svelte'
+  import { secureStore } from '$lib/secureStore.svelte'
 
   let { children } = $props()
   let booted = $state(false)
@@ -24,6 +26,12 @@
     const id = setInterval(() => connection.refresh(), REFRESH_MS)
     return () => clearInterval(id)
   })
+
+  // Once the secure store binds (Tauri at boot / web after unlock), hydrate
+  // history URLs from the encrypted store so the dropdown can reconnect.
+  $effect(() => {
+    if (secureStore.store) connection.hydrateUrls()
+  })
 </script>
 
 {#if !booted}
@@ -37,5 +45,6 @@
     </main>
     <CommandPalette />
     <ShortcutOverlay />
+    <MasterPasswordDialog />
   </div>
 {/if}
