@@ -5,7 +5,7 @@
 
   interface Command {
     id: string
-    group: 'navigate' | 'connect' | 'data' | 'admin' | 'action'
+    group: 'navigate' | 'action'
     label: string
     hint?: string
     shortcut?: string
@@ -18,17 +18,7 @@
   let inputEl: HTMLInputElement | undefined = $state()
 
   const commands: Command[] = [
-    { id: 'connect', group: 'connect', label: 'Connect to instance…', hint: 'red://…', shortcut: 'C', run: () => goto('/connect') },
-    { id: 'topology', group: 'navigate', label: 'Open topology', hint: 'cluster map', shortcut: 'T', run: () => goto('/') },
-    { id: 'tables', group: 'data', label: 'Browse tables', shortcut: 'B', run: () => goto('/explore/tables') },
-    { id: 'graphs', group: 'data', label: 'Browse graphs', run: () => goto('/explore/graphs') },
-    { id: 'kv', group: 'data', label: 'Browse KV (configs & secrets)', run: () => goto('/explore/kv') },
-    { id: 'hyper', group: 'data', label: 'Browse hypertables', run: () => goto('/explore/hypertables') },
-    { id: 'stats', group: 'data', label: 'Statistics', run: () => goto('/explore/stats') },
-    { id: 'users', group: 'admin', label: 'Manage users', run: () => goto('/admin/users') },
-    { id: 'policies', group: 'admin', label: 'Manage policies', run: () => goto('/admin/policies') },
-    { id: 'tenants', group: 'admin', label: 'Manage tenants', run: () => goto('/admin/tenants') },
-    { id: 'whoami', group: 'action', label: 'Show my permissions', hint: 'whoami', run: () => goto('/whoami') },
+    { id: 'home', group: 'navigate', label: 'Open workspace', hint: 'home', shortcut: 'H', run: () => goto('/') },
   ]
 
   const filtered = $derived(
@@ -71,12 +61,9 @@
     return () => window.removeEventListener('keydown', onKey)
   })
 
-  const groupOrder = ['connect', 'navigate', 'data', 'admin', 'action'] as const
+  const groupOrder = ['navigate', 'action'] as const
   const groupLabel: Record<string, string> = {
-    connect: 'Connect',
     navigate: 'Navigate',
-    data: 'Data',
-    admin: 'Admin',
     action: 'Actions',
   }
 </script>
