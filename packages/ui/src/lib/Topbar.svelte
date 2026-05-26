@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { Badge, Kbd } from '@red-ui/ui-kit'
-  import { auth } from './auth.svelte'
-  import { goto } from '$app/navigation'
-  import ConnectionSwitcher from './ConnectionSwitcher.svelte'
+  import { Kbd } from '@red-ui/ui-kit'
+  import ConnectDropdown from './ConnectDropdown.svelte'
   import { Search } from 'lucide-svelte'
 
   function openPalette() {
@@ -16,7 +14,7 @@
       red<span class="text-accent mx-px">·</span>ui
     </div>
     <div class="w-px h-[18px] bg-line-2"></div>
-    <ConnectionSwitcher />
+    <ConnectDropdown />
   </div>
 
   <div class="flex items-center gap-2.5">
@@ -27,17 +25,6 @@
       <Search class="size-3.5 text-fg-3" />
       <span>Search or run</span>
       <span class="inline-flex gap-0.5 ml-1"><Kbd>⌘</Kbd><Kbd>K</Kbd></span>
-    </button>
-
-    <div class="w-px h-[18px] bg-line-2"></div>
-
-    <button
-      onclick={() => goto('/whoami')}
-      title="View my permissions"
-      class="flex items-center gap-2 bg-transparent border-0 px-1.5 py-1 rounded-md cursor-pointer hover:bg-bg-2 transition-colors"
-    >
-      <span class="text-xs text-fg-1 font-mono">{auth.identity.name}</span>
-      <Badge tone="accent">{auth.identity.role}</Badge>
     </button>
   </div>
 </header>
