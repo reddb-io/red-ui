@@ -5,6 +5,9 @@ on:
     tags: ['v*']
   workflow_dispatch:
 
+# Runners: Blacksmith-hosted, matching reddb-io/reddb's setup.
+# 8vcpu for the heavy Rust+webview Tauri builds; 4vcpu elsewhere.
+#
 # Signing secrets (all optional — the workflow falls back to unsigned
 # builds when a secret is missing):
 #   TAURI_SIGNING_PRIVATE_KEY    — Tauri updater signing key (for autoUpdate)
@@ -27,11 +30,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: macos-latest
+          - platform: blacksmith-6vcpu-macos-15
             args: '--target universal-apple-darwin'
-          - platform: ubuntu-22.04
+          - platform: blacksmith-8vcpu-ubuntu-2404
             args: ''
-          - platform: windows-latest
+          - platform: blacksmith-8vcpu-windows-2025
             args: ''
 
     runs-on: ${{ matrix.platform }}
@@ -40,7 +43,6 @@ jobs:
 
       - name: install pnpm
         uses: pnpm/action-setup@v4
-        with: { version: 10 }
 
       - name: install node
         uses: actions/setup-node@v4
@@ -51,7 +53,7 @@ jobs:
       - name: install rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ contains(matrix.platform, 'macos') && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: rust cache
         uses: swatinem/rust-cache@v2
@@ -59,7 +61,7 @@ jobs:
           workspaces: apps/desktop/src-tauri
 
       - name: linux deps
-        if: matrix.platform == 'ubuntu-22.04'
+        if: contains(matrix.platform, 'ubuntu')
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libssl-dev
@@ -94,7 +96,7 @@ jobs:
 
   pwa-build:
     name: pwa · build + zip
-    runs-on: ubuntu-22.04
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     permissions:
       contents: write
     outputs:
@@ -102,7 +104,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with: { version: 10 }
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
@@ -141,7 +142,7 @@ jobs:
 
   pwa-pages:
     name: pwa · github pages
-    runs-on: ubuntu-22.04
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     permissions:
       contents: read
       pages: write
@@ -152,7 +153,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with: { version: 10 }
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile

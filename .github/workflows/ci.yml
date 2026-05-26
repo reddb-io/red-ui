@@ -5,13 +5,15 @@ on:
     branches: [main]
   pull_request:
 
+# Blacksmith-hosted runners (matching reddb-io/reddb's pattern) — same
+# GitHub Actions semantics, dramatically faster boots and SSDs.
+
 jobs:
   check:
-    runs-on: ubuntu-22.04
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with: { version: 10 }
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
@@ -26,7 +28,7 @@ jobs:
     # Verify the Rust shell still compiles on every PR; doesn't bundle
     # installers (that's the release workflow's job) — just runs
     # `cargo check` against the same workspace tauri-action will later use.
-    runs-on: ubuntu-22.04
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
