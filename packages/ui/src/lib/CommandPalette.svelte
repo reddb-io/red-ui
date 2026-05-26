@@ -3,9 +3,11 @@
   import { Kbd } from '@red-ui/ui-kit'
   import { goto as kitGoto } from '$app/navigation'
 
+  type Group = 'navigate' | 'data' | 'actions' | 'view'
+
   interface Command {
     id: string
-    group: 'navigate' | 'action'
+    group: Group
     label: string
     hint?: string
     shortcut?: string
@@ -17,8 +19,27 @@
   let active = $state(0)
   let inputEl: HTMLInputElement | undefined = $state()
 
+  function fire(name: string) {
+    window.dispatchEvent(new CustomEvent(name))
+  }
+
+  function toggleTheme() {
+    const root = document.documentElement
+    root.classList.toggle('theme-light')
+  }
+
   const commands: Command[] = [
-    { id: 'home', group: 'navigate', label: 'Open workspace', hint: 'home', shortcut: 'H', run: () => goto('/') },
+    { id: 'home', group: 'navigate', label: 'Open workspace', hint: '/', run: () => goto('/') },
+    { id: 'topology', group: 'navigate', label: 'Open topology', hint: '/cluster', run: () => goto('/cluster') },
+
+    { id: 'new-query', group: 'data', label: 'New query', shortcut: '⌘T', run: () => { fire('red:new-query'); close() } },
+
+    { id: 'open-connect', group: 'actions', label: 'Open Connect dropdown', shortcut: '⌘⇧C', run: () => { fire('red:open-connect'); close() } },
+    { id: 'apply-pending', group: 'actions', label: 'Apply pending changes', run: () => { fire('red:apply-pending'); close() } },
+    { id: 'discard-pending', group: 'actions', label: 'Discard pending changes', run: () => { fire('red:discard-pending'); close() } },
+
+    { id: 'toggle-theme', group: 'view', label: 'Toggle theme', run: () => { toggleTheme(); close() } },
+    { id: 'show-shortcuts', group: 'view', label: 'Show keyboard shortcuts', shortcut: '?', run: () => { close(); fire('red:open-shortcuts') } },
   ]
 
   const filtered = $derived(
@@ -38,14 +59,36 @@
     active = 0
   }
 
+  function isTypingTarget(el: EventTarget | null): boolean {
+    if (!(el instanceof HTMLElement)) return false
+    if (el.isContentEditable) return true
+    const tag = el.tagName
+    return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT'
+  }
+
   function onKey(e: KeyboardEvent) {
     const mod = e.metaKey || e.ctrlKey
-    if (mod && e.key.toLowerCase() === 'k') {
+    const k = e.key.toLowerCase()
+
+    if (mod && k === 'k') {
       e.preventDefault()
       open = !open
       if (open) setTimeout(() => inputEl?.focus(), 0)
       return
     }
+
+    // Global accelerators wired here so they fire regardless of focus.
+    if (mod && e.shiftKey && k === 'c') {
+      e.preventDefault()
+      fire('red:open-connect')
+      return
+    }
+    if (mod && !e.shiftKey && k === 't' && !isTypingTarget(e.target)) {
+      e.preventDefault()
+      fire('red:new-query')
+      return
+    }
+
     if (!open) return
     if (e.key === 'Escape') { close(); return }
     if (e.key === 'ArrowDown') { e.preventDefault(); active = Math.min(active + 1, filtered.length - 1) }
@@ -58,13 +101,23 @@
 
   onMount(() => {
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    const onOpen = () => {
+      open = true
+      setTimeout(() => inputEl?.focus(), 0)
+    }
+    window.addEventListener('red:open-palette', onOpen)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      window.removeEventListener('red:open-palette', onOpen)
+    }
   })
 
-  const groupOrder = ['navigate', 'action'] as const
-  const groupLabel: Record<string, string> = {
+  const groupOrder: Group[] = ['navigate', 'data', 'actions', 'view']
+  const groupLabel: Record<Group, string> = {
     navigate: 'Navigate',
-    action: 'Actions',
+    data: 'Data',
+    actions: 'Actions',
+    view: 'View',
   }
 </script>
 
@@ -88,7 +141,7 @@
         {@const items = filtered.filter((c) => c.group === g)}
         {#if items.length}
           <div class="group-label">{groupLabel[g]}</div>
-          {#each items as cmd, i}
+          {#each items as cmd}
             {@const idx = filtered.indexOf(cmd)}
             <button
               class="row"

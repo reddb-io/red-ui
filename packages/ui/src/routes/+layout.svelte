@@ -5,6 +5,7 @@
   import Topbar from '$lib/Topbar.svelte'
   import StatusBar from '$lib/StatusBar.svelte'
   import CommandPalette from '$lib/CommandPalette.svelte'
+  import ShortcutOverlay from '$lib/ShortcutOverlay.svelte'
   import { connection } from '$lib/connections.svelte'
 
   let { children } = $props()
@@ -29,5 +30,6 @@
       {@render children?.()}
     </main>
     <CommandPalette />
+    <ShortcutOverlay />
   </div>
 {/if}
