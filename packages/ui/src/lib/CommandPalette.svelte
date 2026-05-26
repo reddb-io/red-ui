@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { Kbd } from '@red-ui/ui-kit'
   import { goto as kitGoto } from '$app/navigation'
+  import { theme } from './theme.svelte'
 
   type Group = 'navigate' | 'data' | 'actions' | 'view'
 
@@ -23,11 +24,6 @@
     window.dispatchEvent(new CustomEvent(name))
   }
 
-  function toggleTheme() {
-    const root = document.documentElement
-    root.classList.toggle('theme-light')
-  }
-
   const commands: Command[] = [
     { id: 'home', group: 'navigate', label: 'Open workspace', hint: '/', run: () => goto('/') },
     { id: 'topology', group: 'navigate', label: 'Open topology', hint: '/cluster', run: () => goto('/cluster') },
@@ -38,7 +34,7 @@
     { id: 'apply-pending', group: 'actions', label: 'Apply pending changes', run: () => { fire('red:apply-pending'); close() } },
     { id: 'discard-pending', group: 'actions', label: 'Discard pending changes', run: () => { fire('red:discard-pending'); close() } },
 
-    { id: 'toggle-theme', group: 'view', label: 'Toggle theme', run: () => { toggleTheme(); close() } },
+    { id: 'toggle-theme', group: 'view', label: 'Toggle theme (light / dark)', hint: 'theme', run: () => { theme.toggle(); close() } },
     { id: 'show-shortcuts', group: 'view', label: 'Show keyboard shortcuts', shortcut: '?', run: () => { close(); fire('red:open-shortcuts') } },
   ]
 

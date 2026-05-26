@@ -3,9 +3,17 @@
 @import '@fontsource-variable/jetbrains-mono';
 
 /* ============================================================================
-   Design tokens. Linear/Vercel vibe — dark, dense, surgical accent.
+   Design tokens. Linear/Vercel vibe — surgical accent, contemporary type.
 
-   Hierarchy of layers (lowest to highest in z, darkest to lightest in color):
+   Two themes live here:
+     - default (`:root`, no data-theme or `data-theme="light"`): light, white-leaning.
+     - opt-in (`:root[data-theme="dark"]`): dark, near-black with green tint.
+
+   Light is default for both OSS and cloud first-load. Dark is opt-in via the
+   topbar toggle / Cmd-K command. Selection is persisted in localStorage and
+   applied before paint by an inline script in app.html.
+
+   Hierarchy of layers (lowest to highest in z):
      bg-0  — page background (the deepest base)
      bg-1  — primary surfaces (cards, panels, topbar)
      bg-2  — interactive surfaces (buttons, inputs, hover)
@@ -16,47 +24,49 @@
      fg-1  — body text, secondary headings
      fg-2  — labels, meta, captions, muted UI text
      fg-3  — disabled, "tertiary noise" (e.g. helper hints)
-
-   Lines:
-     line-1 — internal section dividers (super subtle)
-     line-2 — component borders (default)
-     line-3 — hover/active border emphasis
    ============================================================================ */
 
 @theme {
-  /* Surfaces — tightened ramp for clearer separation between layers */
-  --color-bg-0: #050607;
-  --color-bg-1: #0d0f13;
-  --color-bg-2: #181b21;
-  --color-bg-3: #232730;
+  /* Surfaces — light, white-leaning ramp.
+     bg-0 white, surfaces step up in grey via the zinc family. */
+  --color-bg-0: #ffffff;
+  --color-bg-1: #fafafa;
+  --color-bg-2: #f4f4f5;
+  --color-bg-3: #e7e7ea;
 
   /* Foreground ramp — every level is WCAG AA on bg-0/bg-1.
-     fg-3 is the floor (4.5:1); below that is decorative only. */
-  --color-fg-0: #f7f8fa;
-  --color-fg-1: #c8ccd4;
-  --color-fg-2: #9ca1a9;
-  --color-fg-3: #7a7f87;
+     fg-3 floor is ~4.8:1 on white; below that is decorative only. */
+  --color-fg-0: #0a0a0b;
+  --color-fg-1: #3f3f46;
+  --color-fg-2: #52525b;
+  --color-fg-3: #71717a;
 
   /* Lines */
-  --color-line-1: #181b21;
-  --color-line-2: #2a2e36;
-  --color-line-3: #3d424b;
+  --color-line-1: #ececef;
+  --color-line-2: #d4d4d8;
+  --color-line-3: #a1a1aa;
 
-  /* Surgical accent */
-  --color-accent: #ff2056;
-  --color-accent-soft: rgba(255, 32, 86, 0.12);
-  --color-accent-glow: rgba(255, 32, 86, 0.45);
+  /* Surgical accent — rose 600. #ff2056 vibrates on white and fails AA when
+     paired with white text on accent fills; the slightly darker chroma
+     (#e11d48) keeps the same reddb identity while clearing 4.5:1 against
+     white surfaces and against white button labels. */
+  --color-accent: #e11d48;
+  --color-accent-soft: rgba(225, 29, 72, 0.10);
+  --color-accent-glow: rgba(225, 29, 72, 0.30);
 
-  /* Semantic */
-  --color-ok: #4ade80;
-  --color-warn: #fbbf24;
-  --color-danger: #ff5470;
-  --color-info: #60a5fa;
+  /* Semantic — darker variants so they stay AA on white surfaces */
+  --color-ok: #16a34a;
+  --color-warn: #b45309;
+  --color-danger: #dc2626;
+  --color-info: #2563eb;
 
   /* Node roles */
-  --color-role-primary: #ff2056;
-  --color-role-replica: #60a5fa;
-  --color-role-embedded: #4ade80;
+  --color-role-primary: #e11d48;
+  --color-role-replica: #2563eb;
+  --color-role-embedded: #16a34a;
+
+  /* Ambient glow — soft red wash at top of viewport, scaled per theme */
+  --color-ambient-glow: rgba(225, 29, 72, 0.04);
 
   /* Geometry */
   --radius-sm: 3px;
@@ -87,11 +97,47 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-snap: cubic-bezier(0.25, 1, 0.5, 1);
 
+  /* Shadows — light variant: smaller alpha, slate tint */
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 0 0 1px var(--color-line-2);
+  --shadow-lg: 0 16px 48px rgba(15, 23, 42, 0.14), 0 0 0 1px var(--color-line-2);
+}
+
+/* Dark theme — opt-in via `data-theme="dark"` on the document root. */
+:root[data-theme='dark'] {
+  --color-bg-0: #050607;
+  --color-bg-1: #0d0f13;
+  --color-bg-2: #181b21;
+  --color-bg-3: #232730;
+
+  --color-fg-0: #f7f8fa;
+  --color-fg-1: #c8ccd4;
+  --color-fg-2: #9ca1a9;
+  --color-fg-3: #7a7f87;
+
+  --color-line-1: #181b21;
+  --color-line-2: #2a2e36;
+  --color-line-3: #3d424b;
+
+  --color-accent: #ff2056;
+  --color-accent-soft: rgba(255, 32, 86, 0.12);
+  --color-accent-glow: rgba(255, 32, 86, 0.45);
+
+  --color-ok: #4ade80;
+  --color-warn: #fbbf24;
+  --color-danger: #ff5470;
+  --color-info: #60a5fa;
+
+  --color-role-primary: #ff2056;
+  --color-role-replica: #60a5fa;
+  --color-role-embedded: #4ade80;
+
+  --color-ambient-glow: rgba(255, 32, 86, 0.06);
+
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--color-line-2);
   --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--color-line-2);
 }
 
-/* shadcn-svelte semantic aliases */
+/* shadcn-svelte semantic aliases — driven by the active theme's tokens */
 @layer base {
   :root {
     --background: var(--color-bg-0);
@@ -165,13 +211,14 @@
     color: var(--color-fg-1);
   }
 
-  /* Ambient grid — much subtler than before (96px squares, lower opacity) */
+  /* Ambient grid — 96px squares; lines use line-1 so the texture
+     reads as "barely there" in both themes. */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
     background-image:
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255, 32, 86, 0.06), transparent),
+      radial-gradient(ellipse 80% 50% at 50% -10%, var(--color-ambient-glow), transparent),
       linear-gradient(var(--color-line-1) 1px, transparent 1px),
       linear-gradient(90deg, var(--color-line-1) 1px, transparent 1px);
     background-size: 100% 100%, 96px 96px, 96px 96px;
@@ -182,7 +229,8 @@
 
   ::selection { background: var(--color-accent-soft); color: var(--color-fg-0); }
 
-  /* Default scrollbar styling */
+  /* Default scrollbar styling — border matches page bg so the thumb
+     "floats" off the surface in both themes. */
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--color-line-2); border-radius: 8px; border: 2px solid var(--color-bg-0); }
