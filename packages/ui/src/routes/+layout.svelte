@@ -12,6 +12,7 @@
   import { theme } from '$lib/theme.svelte'
   import { secureStore } from '$lib/secureStore.svelte'
   import { pendingChanges, buildUpdateSql, type CommitOutcome } from '$lib/pending-changes.svelte'
+  import { queryTabs } from '$lib/query-tabs.svelte'
 
   let { children } = $props()
   let booted = $state(false)
@@ -29,8 +30,10 @@
     const client = connection.client
     if (!client) {
       pendingChanges.setExecutor(null)
+      queryTabs.setExecutor(null)
       return
     }
+    queryTabs.setExecutor((sql) => client.query(sql))
     pendingChanges.setExecutor(async (changes) =>
       Promise.all(
         changes.map(async (c): Promise<CommitOutcome> => {

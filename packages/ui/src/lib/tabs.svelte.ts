@@ -80,6 +80,10 @@ class TabsStore {
     }
   }
 
+  rename(id: string, label: string): void {
+    this.tabs = this.tabs.map((t) => (t.id === id ? { ...t, label } : t))
+  }
+
   setOverride(id: string, capability: Capability | undefined): void {
     this.tabs = this.tabs.map((t) =>
       t.id === id ? { ...t, overrideCapability: capability } : t,
