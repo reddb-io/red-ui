@@ -1,13 +1,16 @@
 <script lang="ts">
   import { connection } from '$lib/connections.svelte'
   import LiveChanges from '$lib/LiveChanges.svelte'
-  import { Database, Table2, Plug, Plus, X } from 'lucide-svelte'
+  import SchemaTree from '$lib/SchemaTree.svelte'
+  import { CAPABILITY_GLYPHS, type Capability } from '$lib/capability'
+  import { Database, Plus, X } from 'lucide-svelte'
 
   const connected = $derived(connection.connected)
 
   type Tab =
     | { id: string; kind: 'welcome' }
     | { id: string; kind: 'live-changes'; collection?: string }
+    | { id: string; kind: 'collection'; collection: string; capability: Capability }
 
   let tabs = $state<Tab[]>([{ id: 'welcome', kind: 'welcome' }])
   let activeId = $state<string>('welcome')
@@ -24,6 +27,14 @@
     menuOpen = false
   }
 
+  function openCollection(collection: string, capability: Capability) {
+    const id = `coll:${collection}`
+    if (!tabs.some((t) => t.id === id)) {
+      tabs = [...tabs, { id, kind: 'collection', collection, capability }]
+    }
+    activeId = id
+  }
+
   function closeTab(id: string) {
     if (tabs.length === 1) return
     const idx = tabs.findIndex((t) => t.id === id)
@@ -33,6 +44,7 @@
 
   function tabLabel(t: Tab): string {
     if (t.kind === 'welcome') return 'Workspace'
+    if (t.kind === 'collection') return t.collection
     return t.collection ? `live · ${t.collection}` : 'live · global'
   }
 </script>
@@ -40,23 +52,7 @@
 <div class="h-full grid grid-cols-[260px_1fr] bg-bg-0 text-fg-1">
   <!-- SchemaTree (left) -->
   <aside class="row-start-1 col-start-1 border-r border-line-1 bg-bg-0 overflow-y-auto">
-    <div class="px-3 py-2 border-b border-line-1 flex items-center gap-2 text-fg-3">
-      <Table2 class="size-3.5" />
-      <span class="type-label">Schema</span>
-    </div>
-    <div class="p-3">
-      {#if connected}
-        <div class="text-[12px] font-mono text-fg-3">
-          {connection.probe.stats?.store.collection_count ?? 0} collections
-        </div>
-      {:else}
-        <div class="flex flex-col items-start gap-2 text-[12px] text-fg-3 font-mono leading-relaxed">
-          <Plug class="size-4 text-fg-3" />
-          <span>No schema to show.</span>
-          <span>Connect to a reddb instance to inspect collections.</span>
-        </div>
-      {/if}
-    </div>
+    <SchemaTree onopen={openCollection} />
   </aside>
 
   <!-- ResultsPane (center) -->
@@ -151,6 +147,18 @@
         </div>
       {:else if active.kind === 'live-changes'}
         <LiveChanges collection={active.collection} />
+      {:else if active.kind === 'collection'}
+        <div class="h-full grid place-items-center p-6">
+          <div class="text-center max-w-md">
+            <div class="font-mono text-3xl text-fg-3 mb-3" aria-hidden="true">
+              {CAPABILITY_GLYPHS[active.capability].glyph}
+            </div>
+            <h2 class="type-h2 m-0 mb-2">{active.collection}</h2>
+            <p class="text-fg-3 text-[12px] font-mono m-0">
+              {CAPABILITY_GLYPHS[active.capability].label} · ResultsPane lands with #7
+            </p>
+          </div>
+        </div>
       {/if}
     </div>
   </section>
