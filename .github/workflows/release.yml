@@ -70,6 +70,19 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Build the SvelteKit bundle explicitly here, before tauri-action
+      # invokes its own beforeBuildCommand. The first attempt failed
+      # because tauri-action's path resolution didn't pick up the
+      # bundle that beforeBuildCommand had just written (likely a
+      # working-directory mismatch in the monorepo). Building once
+      # ahead of time guarantees `packages/ui/build` exists when
+      # tauri-action validates `frontendDist`.
+      - name: build frontend (pwa bundle for embedding)
+        run: pnpm --filter @red-ui/ui build
+
+      - name: verify frontend bundle
+        run: ls -la packages/ui/build/ && test -f packages/ui/build/index.html
+
       - name: build tauri
         uses: tauri-apps/tauri-action@v0
         env:
