@@ -9,6 +9,14 @@
 // Labels should describe the *intent* of the call ("schema · collections",
 // "tales · SELECT", "grimm_graph · edges + nodes"), not the raw URL —
 // that's what makes the panel readable when scanning during an incident.
+//
+// All $state reads/writes inside `track` are wrapped in `untrack()`. Why:
+// callers commonly invoke `track()` from inside a `$effect` (e.g. the
+// layout's connection.refresh on unlock). If we read+write `log`/`inflight`
+// without untrack, the effect would track those as dependencies and our
+// own writes would re-fire it — infinite loop (`effect_update_depth_exceeded`).
+
+import { untrack } from 'svelte'
 
 export interface ActivityEntry {
   id: number
@@ -35,21 +43,29 @@ class ActivityStore {
       durationMs: null,
       status: 'pending',
     }
-    this.log = [entry, ...this.log].slice(0, MAX_LOG)
-    this.inflight += 1
+    untrack(() => {
+      this.log = [entry, ...this.log].slice(0, MAX_LOG)
+      this.inflight += 1
+    })
     try {
       const result = await op()
-      this.update(id, { durationMs: Date.now() - entry.startedAt, status: 'ok' })
+      untrack(() =>
+        this.update(id, { durationMs: Date.now() - entry.startedAt, status: 'ok' }),
+      )
       return result
     } catch (err) {
-      this.update(id, {
-        durationMs: Date.now() - entry.startedAt,
-        status: 'error',
-        error: (err as Error).message,
-      })
+      untrack(() =>
+        this.update(id, {
+          durationMs: Date.now() - entry.startedAt,
+          status: 'error',
+          error: (err as Error).message,
+        }),
+      )
       throw err
     } finally {
-      this.inflight = Math.max(0, this.inflight - 1)
+      untrack(() => {
+        this.inflight = Math.max(0, this.inflight - 1)
+      })
     }
   }
 
@@ -61,12 +77,14 @@ class ActivityStore {
    * reality (e.g. a fetch that never resolves due to a dropped socket).
    * Clears the counter and marks remaining pending entries as errored. */
   reset() {
-    this.log = this.log.map((e) =>
-      e.status === 'pending'
-        ? { ...e, status: 'error', error: 'reset by user', durationMs: Date.now() - e.startedAt }
-        : e,
-    )
-    this.inflight = 0
+    untrack(() => {
+      this.log = this.log.map((e) =>
+        e.status === 'pending'
+          ? { ...e, status: 'error', error: 'reset by user', durationMs: Date.now() - e.startedAt }
+          : e,
+      )
+      this.inflight = 0
+    })
   }
 }
 
