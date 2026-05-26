@@ -9,7 +9,7 @@
   import { Plug, Database } from 'lucide-svelte'
 
   interface Props {
-    onopen?: (collection: string, capability: Capability) => void
+    onopen?: (collection: string, capability: Capability, forceNew: boolean) => void
   }
   let { onopen }: Props = $props()
 
@@ -37,8 +37,6 @@
     try {
       const names = await client.collections()
       const user = names.filter((n) => !isInternalCollection(n)).sort()
-      // Render the list first with `table` defaults so the user sees structure
-      // immediately, then patch in detected capabilities as each probe lands.
       items = user.map((name) => ({ name, capability: 'table' as Capability }))
       const probes = user.map(async (name) => {
         const cap = await detectCapability(client, name)
@@ -55,12 +53,15 @@
   }
 
   $effect(() => {
-    // Re-probe on active connection change. Touching both deps keeps Svelte
-    // tracking honest if connected flips while the URL stays put.
     void connected
     void activeUrl
     refresh()
   })
+
+  function handleClick(e: MouseEvent, item: Item) {
+    const forceNew = e.metaKey || e.ctrlKey
+    onopen?.(item.name, item.capability, forceNew)
+  }
 </script>
 
 <div class="px-3 py-2 border-b border-line-1 flex items-center justify-between text-fg-3">
@@ -100,8 +101,8 @@
         <button
           type="button"
           class="w-full flex items-center gap-2 px-3 py-1 text-left font-mono text-[12px] text-fg-2 hover:bg-bg-1 hover:text-fg-0 focus:bg-bg-1 focus:text-fg-0 focus:outline-none transition-colors"
-          title={`${g.label} · ${item.name}`}
-          onclick={() => onopen?.(item.name, item.capability)}
+          title={`${g.label} · ${item.name} · Cmd/Ctrl+click for new tab`}
+          onclick={(e) => handleClick(e, item)}
         >
           <span class="inline-block w-4 text-center text-fg-3" aria-hidden="true">{g.glyph}</span>
           <span class="truncate">{item.name}</span>
