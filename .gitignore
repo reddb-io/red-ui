@@ -18,3 +18,5 @@ apps/desktop/src-tauri/WixTools/
 
 # Local embedded data
 .data/
+.red/tmp/
+.red/state/
