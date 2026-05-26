@@ -1,7 +1,8 @@
 <script lang="ts">
   import { Kbd } from '@red-ui/ui-kit'
   import ConnectDropdown from './ConnectDropdown.svelte'
-  import { Search } from 'lucide-svelte'
+  import { Search, Sun, Moon } from 'lucide-svelte'
+  import { theme } from './theme.svelte'
 
   function openPalette() {
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, ctrlKey: true, bubbles: true }))
@@ -18,6 +19,19 @@
   </div>
 
   <div class="flex items-center gap-2.5">
+    <button
+      type="button"
+      onclick={() => theme.toggle()}
+      title={theme.current === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+      aria-label={theme.current === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+      class="inline-flex items-center justify-center size-7 bg-bg-2 border border-line-2 rounded-md text-fg-2 cursor-pointer transition-colors hover:border-line-3 hover:text-fg-0"
+    >
+      {#if theme.current === 'dark'}
+        <Sun class="size-3.5" />
+      {:else}
+        <Moon class="size-3.5" />
+      {/if}
+    </button>
     <button
       onclick={openPalette}
       class="inline-flex items-center gap-2 h-7 pl-2.5 pr-2 bg-bg-2 border border-line-2 rounded-md text-fg-2 cursor-pointer text-xs transition-colors hover:border-line-3 hover:text-fg-1"

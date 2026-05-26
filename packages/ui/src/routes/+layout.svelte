@@ -6,11 +6,17 @@
   import StatusBar from '$lib/StatusBar.svelte'
   import CommandPalette from '$lib/CommandPalette.svelte'
   import { connection } from '$lib/connections.svelte'
+  import { theme } from '$lib/theme.svelte'
 
   let { children } = $props()
   let booted = $state(false)
 
   const REFRESH_MS = 5000
+
+  // The inline script in app.html has already set data-theme on <html>;
+  // init() syncs the store's reactive state with localStorage so toggles
+  // start from the persisted value rather than the in-memory default.
+  theme.init()
 
   onMount(() => {
     connection.refresh()

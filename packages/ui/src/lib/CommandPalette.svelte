@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { Kbd } from '@red-ui/ui-kit'
   import { goto as kitGoto } from '$app/navigation'
+  import { theme } from './theme.svelte'
 
   interface Command {
     id: string
@@ -19,6 +20,16 @@
 
   const commands: Command[] = [
     { id: 'home', group: 'navigate', label: 'Open workspace', hint: 'home', shortcut: 'H', run: () => goto('/') },
+    {
+      id: 'toggle-theme',
+      group: 'action',
+      label: 'Toggle theme (light / dark)',
+      hint: 'theme',
+      run: () => {
+        theme.toggle()
+        close()
+      },
+    },
   ]
 
   const filtered = $derived(
