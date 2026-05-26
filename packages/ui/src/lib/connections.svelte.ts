@@ -1,16 +1,20 @@
-// Live connections store. Persists the last working connection to
-// localStorage so the next visit skips the connect screen when the
-// remembered target is still reachable.
+// Live connections store. Delegates list/connect/whoami to a LocalUrlProvider
+// from @red-ui/protocol (the deep-module seam) and layers reactive Svelte
+// state on top: which connection is active, its live probe (stats +
+// replication), and a connected flag that gates the Connect screen.
 
-import { RedClient, type Stats, type ReplicationStatus } from '@red-ui/protocol'
+import {
+  LocalUrlProvider,
+  localStorageHistory,
+  RedClient,
+  type Connection,
+  type ConnectionProvider,
+  type HistoryEntry,
+  type ReplicationStatus,
+  type Stats,
+} from '@red-ui/protocol'
 
-export interface ConnectionPreset {
-  id: string
-  label: string
-  url: string
-  role: 'primary' | 'replica' | 'embedded'
-  description: string
-}
+export type ConnectionPreset = Connection & { description: string }
 
 export const PRESETS: ConnectionPreset[] = [
   { id: 'embedded',        label: 'Embedded',       url: 'http://localhost:5055',  role: 'embedded', description: 'Local file via ./scripts/embedded.sh.' },
@@ -28,14 +32,8 @@ interface ProbeResult {
 
 const STORAGE_KEY = 'red-ui:connection'
 const HISTORY_KEY = 'red-ui:history'
-const HISTORY_MAX = 8
 
-export interface HistoryEntry {
-  url: string
-  label: string
-  last_used: number
-  rtt_ms?: number
-}
+export type { HistoryEntry }
 
 function loadStored(): ConnectionPreset | null {
   if (typeof localStorage === 'undefined') return null
@@ -55,23 +53,6 @@ function persist(c: ConnectionPreset) {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(c)) } catch {}
 }
 
-function loadHistory(): HistoryEntry[] {
-  if (typeof localStorage === 'undefined') return []
-  try {
-    const raw = localStorage.getItem(HISTORY_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw) as HistoryEntry[]
-    return Array.isArray(parsed) ? parsed : []
-  } catch {
-    return []
-  }
-}
-
-function persistHistory(entries: HistoryEntry[]) {
-  if (typeof localStorage === 'undefined') return
-  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(entries)) } catch {}
-}
-
 /**
  * Normalize a user-typed connection string to a URL the browser can speak
  * (always http/https against the HTTP API port 5055).
@@ -85,7 +66,6 @@ export function normalizeUrl(input: string): string {
   let raw = input.trim().replace(/\/$/, '')
   if (!raw) return raw
 
-  // Bare host like "localhost" or "10.0.0.5:9000"
   if (!/:\/\//.test(raw)) raw = 'http://' + raw
 
   const m = raw.match(/^([a-z+]+):\/\/(.+)$/i)
@@ -93,9 +73,8 @@ export function normalizeUrl(input: string): string {
   const [, scheme, rest] = m
   const s = scheme.toLowerCase()
 
-  // Translate native reddb schemes to HTTP API
   if (s === 'red' || s === 'red+tcp' || s === 'red+wire') {
-    const [host, _port] = rest.split('/')[0].split(':')
+    const [host] = rest.split('/')[0].split(':')
     return `http://${host}:5055${rest.includes('/') ? '/' + rest.split('/').slice(1).join('/') : ''}`
   }
   if (s === 'reds' || s === 'red+tls') {
@@ -110,7 +89,7 @@ export function makeCustomConnection(input: string): ConnectionPreset {
   let host = url
   try { host = new URL(url).host } catch {}
   return {
-    id: 'custom',
+    id: url,
     label: host || url,
     url,
     role: 'primary',
@@ -118,32 +97,45 @@ export function makeCustomConnection(input: string): ConnectionPreset {
   }
 }
 
+// Shared provider — one per browser tab. Backed by localStorage so the
+// Connect screen and the ConnectionSwitcher dropdown share the same history.
+export const provider: ConnectionProvider & {
+  forget(url: string): void
+} = new LocalUrlProvider({
+  presets: PRESETS,
+  history: localStorageHistory(HISTORY_KEY),
+})
+
 class ConnectionStore {
   /** Set after a probe succeeds for the first time — used to gate the Connect screen. */
   connected = $state<boolean>(false)
   active = $state<ConnectionPreset>(loadStored() ?? PRESETS[1])
   probe = $state<ProbeResult>({ reachable: false })
-  history = $state<HistoryEntry[]>(loadHistory())
+  history = $state<HistoryEntry[]>([])
+
+  constructor() {
+    this.history = this.loadHistorySnapshot()
+  }
+
+  private loadHistorySnapshot(): HistoryEntry[] {
+    if (typeof localStorage === 'undefined') return []
+    try {
+      const raw = localStorage.getItem(HISTORY_KEY)
+      if (!raw) return []
+      const parsed = JSON.parse(raw) as HistoryEntry[]
+      return Array.isArray(parsed) ? parsed : []
+    } catch {
+      return []
+    }
+  }
 
   get client(): RedClient | null {
     return this.active.url ? new RedClient(this.active.url) : null
   }
 
-  private record(preset: ConnectionPreset, rtt_ms?: number) {
-    const entry: HistoryEntry = {
-      url: preset.url,
-      label: preset.label,
-      last_used: Date.now(),
-      rtt_ms,
-    }
-    const filtered = this.history.filter((e) => e.url !== preset.url)
-    this.history = [entry, ...filtered].slice(0, HISTORY_MAX)
-    persistHistory(this.history)
-  }
-
   forget(url: string) {
-    this.history = this.history.filter((e) => e.url !== url)
-    persistHistory(this.history)
+    provider.forget(url)
+    this.history = this.loadHistorySnapshot()
   }
 
   async switch(preset: ConnectionPreset) {
@@ -153,22 +145,22 @@ class ConnectionStore {
   }
 
   async tryConnect(preset: ConnectionPreset): Promise<boolean> {
-    const client = new RedClient(preset.url)
-    const ping = await client.ping()
-    if (!ping.ok) {
-      this.probe = { reachable: false, error: ping.error }
+    try {
+      const active = await provider.connect(preset.id)
+      this.active = { ...preset, ...active.connection, description: preset.description }
+      persist(this.active)
+      const [stats, replication] = await Promise.all([
+        active.client.stats().catch(() => undefined),
+        active.client.replication().catch(() => undefined),
+      ])
+      this.probe = { reachable: true, rtt_ms: active.rtt_ms, stats, replication }
+      this.connected = true
+      this.history = this.loadHistorySnapshot()
+      return true
+    } catch (e) {
+      this.probe = { reachable: false, error: (e as Error).message }
       return false
     }
-    this.active = preset
-    persist(preset)
-    const [stats, replication] = await Promise.all([
-      client.stats().catch(() => undefined),
-      client.replication().catch(() => undefined),
-    ])
-    this.probe = { reachable: true, rtt_ms: ping.rtt_ms, stats, replication }
-    this.connected = true
-    this.record(preset, ping.rtt_ms)
-    return true
   }
 
   async refresh() {

@@ -1,3 +1,5 @@
 export * from './uri'
 export * from './types'
 export * from './client'
+export * from './connection-provider'
+export * from './local-url-provider'
