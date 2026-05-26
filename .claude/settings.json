@@ -1,0 +1,7 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "bash ${CLAUDE_PLUGIN_ROOT}/skills/engineering/afk/scripts/statusline.sh",
+    "refreshInterval": 5
+  }
+}

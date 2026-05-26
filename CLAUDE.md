@@ -13,6 +13,20 @@ Universal client for [reddb](https://github.com/reddb-io/reddb) — connects to 
 
 The HTTP client lives in `packages/protocol`. In browser it goes through a Vite middleware proxy at `/_red` (carries `X-Red-Target`) because reddb sends no CORS headers.
 
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues on `reddb-io/red-ui`. See `.red/agents/issue-tracker.md`.
+
+### Triage labels
+
+Canonical five-role vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `.red/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `.red/CONTEXT.md` (TBD) + `.red/adr/` at the repo root. See `.red/agents/domain.md`.
+
 ## Design Context
 
 ### Users
