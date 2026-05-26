@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { connection, makeCustomConnection } from './connections.svelte'
   import { Zap, Loader2, AlertCircle, CheckCircle2, Clock, X, Plug, ChevronDown } from 'lucide-svelte'
 
@@ -58,6 +59,15 @@
     open = !open
     if (open) setTimeout(() => inputEl?.focus(), 0)
   }
+
+  onMount(() => {
+    const onOpen = () => {
+      open = true
+      setTimeout(() => inputEl?.focus(), 0)
+    }
+    window.addEventListener('red:open-connect', onOpen)
+    return () => window.removeEventListener('red:open-connect', onOpen)
+  })
 
   const dotClass = $derived(
     connection.connected ? 'bg-ok' : status === 'error' ? 'bg-danger' : 'bg-fg-3'
