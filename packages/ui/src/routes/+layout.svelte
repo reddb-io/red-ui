@@ -7,12 +7,44 @@
   import CommandPalette from '$lib/CommandPalette.svelte'
   import ShortcutOverlay from '$lib/ShortcutOverlay.svelte'
   import MasterPasswordDialog from '$lib/MasterPasswordDialog.svelte'
+  import PendingChangesPanel from '$lib/PendingChangesPanel.svelte'
   import { connection } from '$lib/connections.svelte'
   import { theme } from '$lib/theme.svelte'
   import { secureStore } from '$lib/secureStore.svelte'
+  import { pendingChanges, buildUpdateSql, type CommitOutcome } from '$lib/pending-changes.svelte'
 
   let { children } = $props()
   let booted = $state(false)
+  let pendingOpen = $state(false)
+
+  onMount(() => {
+    const handler = () => (pendingOpen = true)
+    window.addEventListener('red:open-pending-changes', handler as EventListener)
+    return () => window.removeEventListener('red:open-pending-changes', handler as EventListener)
+  })
+
+  // Wire the commit executor to the active client. Re-binds whenever the
+  // underlying client changes (connect / disconnect / switch).
+  $effect(() => {
+    const client = connection.client
+    if (!client) {
+      pendingChanges.setExecutor(null)
+      return
+    }
+    pendingChanges.setExecutor(async (changes) =>
+      Promise.all(
+        changes.map(async (c): Promise<CommitOutcome> => {
+          try {
+            const r = await client.query(buildUpdateSql(c))
+            if (!r.ok) return { id: c.id, ok: false, error: r.error ?? 'query failed' }
+            return { id: c.id, ok: true }
+          } catch (e) {
+            return { id: c.id, ok: false, error: (e as Error).message }
+          }
+        }),
+      ),
+    )
+  })
 
   const REFRESH_MS = 5000
 
@@ -46,5 +78,6 @@
     <CommandPalette />
     <ShortcutOverlay />
     <MasterPasswordDialog />
+    <PendingChangesPanel open={pendingOpen} onClose={() => (pendingOpen = false)} />
   </div>
 {/if}

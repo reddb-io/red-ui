@@ -1,7 +1,14 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
   import { connection } from './connections.svelte'
-  import { ArrowRight } from 'lucide-svelte'
+  import { pendingChanges } from './pending-changes.svelte'
+  import { ArrowRight, FilePenLine } from 'lucide-svelte'
+
+  const pendingCount = $derived(pendingChanges.count)
+
+  function openPending() {
+    window.dispatchEvent(new CustomEvent('red:open-pending-changes'))
+  }
 
   const connected = $derived(connection.connected)
   const role = $derived<'primary' | 'replica' | 'standalone' | 'embedded'>(
@@ -102,6 +109,19 @@
       </span>
     {/if}
   </div>
+
+  {#if pendingCount > 0}
+    <button
+      type="button"
+      onclick={openPending}
+      data-no-nav
+      aria-label={`${pendingCount} pending changes`}
+      class="inline-flex items-center gap-1.5 px-3 text-accent hover:bg-bg-2/60 transition-colors cursor-pointer bg-transparent border-0 border-l border-line-1"
+    >
+      <FilePenLine class="size-3" />
+      <span class="tabular-nums">Pending changes ({pendingCount})</span>
+    </button>
+  {/if}
 
   {#if !connected}
     <button
