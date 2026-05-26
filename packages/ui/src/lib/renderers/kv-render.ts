@@ -20,16 +20,30 @@ export interface KvNode {
   children: KvNode[]
 }
 
+function findKeyCol(cols: ReadonlyArray<string>): string | null {
+  // Exact preferred names, then any column ending in `_key` (our seed uses
+  // `fact_key`/`fact_value`; other apps might use `cfg_key`, etc).
+  return (
+    cols.find((c) => c.toLowerCase() === 'key') ??
+    cols.find((c) => c.toLowerCase() === 'k') ??
+    cols.find((c) => /(^|_)key$/i.test(c)) ??
+    null
+  )
+}
+
+function findValueCol(cols: ReadonlyArray<string>): string | null {
+  return (
+    cols.find((c) => c.toLowerCase() === 'value') ??
+    cols.find((c) => c.toLowerCase() === 'v') ??
+    cols.find((c) => /(^|_)value$/i.test(c)) ??
+    null
+  )
+}
+
 export function extractKv(result: QueryResult): KvEntry[] {
   const cols = result.result.columns
-  const keyCol =
-    cols.find((c) => c === 'key') ??
-    cols.find((c) => c === 'k') ??
-    cols.find((c) => c.toLowerCase() === 'key')
-  const valueCol =
-    cols.find((c) => c === 'value') ??
-    cols.find((c) => c === 'v') ??
-    cols.find((c) => c.toLowerCase() === 'value')
+  const keyCol = findKeyCol(cols)
+  const valueCol = findValueCol(cols)
   if (!keyCol || !valueCol) return []
   return result.result.records.map((r) => ({
     key: String(r.values[keyCol] ?? ''),
@@ -39,11 +53,26 @@ export function extractKv(result: QueryResult): KvEntry[] {
 
 export function hasKvShape(result: QueryResult): boolean {
   const cols = result.result?.columns ?? []
-  const lower = cols.map((c) => c.toLowerCase())
-  return (
-    (lower.includes('key') || lower.includes('k')) &&
-    (lower.includes('value') || lower.includes('v'))
-  )
+  return findKeyCol(cols) !== null && findValueCol(cols) !== null
+}
+
+/**
+ * Flatten a KV tree under `prefix` into a plain object so the toolbar's
+ * JSON view can render the prefix as a single navigable record.
+ */
+export function flattenUnderPrefix(entries: KvEntry[], prefix: string): Record<string, unknown> {
+  const out: Record<string, unknown> = {}
+  for (const e of entries) {
+    if (!e.key.startsWith(prefix)) continue
+    const rest = e.key.slice(prefix.length).replace(/^\/+/, '')
+    if (!rest) {
+      // exact match → use a sentinel "$value" so the prefix root has a slot
+      out.$value = e.value
+      continue
+    }
+    out[rest] = e.value
+  }
+  return out
 }
 
 export function buildTree(entries: KvEntry[]): KvNode {

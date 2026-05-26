@@ -167,6 +167,78 @@ export function chartGeometry(
   }
 }
 
+export interface BucketPoint {
+  /** Bucket start in epoch ms. */
+  t: number
+  /** Number of points falling into this bucket. */
+  count: number
+  /** Sum of metric values in this bucket. */
+  sum: number
+}
+
+/**
+ * Bucket a series into fixed-size windows (default 1 minute). Returns
+ * one BucketPoint per bucket *between* minT and maxT inclusive — empty
+ * buckets get count=0 so the bar chart shows gaps in writes instead of
+ * collapsing them. The user goal is "writes per minute": a bucket whose
+ * count is 0 is meaningful information.
+ */
+export function bucketSeries(series: HypertableSeries, bucketMs = 60_000): BucketPoint[] {
+  if (series.points.length === 0) return []
+  const firstT = series.points[0].t
+  const lastT = series.points[series.points.length - 1].t
+  const start = Math.floor(firstT / bucketMs) * bucketMs
+  const end = Math.floor(lastT / bucketMs) * bucketMs
+  const buckets = new Map<number, BucketPoint>()
+  for (let t = start; t <= end; t += bucketMs) {
+    buckets.set(t, { t, count: 0, sum: 0 })
+  }
+  for (const p of series.points) {
+    const key = Math.floor(p.t / bucketMs) * bucketMs
+    const b = buckets.get(key)
+    if (!b) continue
+    b.count += 1
+    b.sum += p.v
+  }
+  return [...buckets.values()].sort((a, b) => a.t - b.t)
+}
+
+export interface BucketGeometry {
+  width: number
+  height: number
+  padding: number
+  bars: { x: number; y: number; w: number; h: number; bucket: BucketPoint }[]
+  maxCount: number
+}
+
+export function bucketGeometry(
+  buckets: BucketPoint[],
+  width = CHART_WIDTH,
+  height = CHART_HEIGHT,
+  padding = CHART_PADDING,
+): BucketGeometry | null {
+  if (buckets.length === 0) return null
+  const maxCount = buckets.reduce((m, b) => Math.max(m, b.count), 0)
+  if (maxCount === 0) return null
+  const w = width - padding * 2
+  const h = height - padding * 2
+  // Leave a 1-px gutter between bars so dense traces still read as bars.
+  const slot = w / buckets.length
+  const barWidth = Math.max(1, slot - 1)
+  const bars = buckets.map((bucket, i) => {
+    const ratio = bucket.count / maxCount
+    const barH = ratio * h
+    return {
+      x: padding + i * slot,
+      y: padding + h - barH,
+      w: barWidth,
+      h: barH,
+      bucket,
+    }
+  })
+  return { width, height, padding, bars, maxCount }
+}
+
 export function renderHypertableHtml(result: QueryResult, metric?: string): string {
   const series = extractSeries(result, metric)
   if (!series) return '<section class="hypertable empty">No timeseries shape detected.</section>'

@@ -113,6 +113,32 @@ class SecureStoreSvc {
     this.store = null
     if (this.backend === 'web') this.locked = true
   }
+
+  /**
+   * Nuclear option: wipe every red-ui artifact from this browser and
+   * return to a clean "new install" state. Removes the encrypted
+   * envelopes (`red-ui:secure:*`), the active-connection pin
+   * (`red-ui:connection`), the history labels (`red-ui:history`), and
+   * the theme preference (`red-ui:theme`) — everything else is in-memory
+   * only and resets when the page reloads.
+   */
+  wipe() {
+    if (typeof localStorage === 'undefined') return
+    const drop: string[] = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i)
+      if (!k) continue
+      if (k.startsWith(NAMESPACE + ':')) drop.push(k)
+      else if (k.startsWith('red-ui:')) drop.push(k)
+    }
+    for (const k of drop) localStorage.removeItem(k)
+    this.store = null
+    if (this.backend === 'web') {
+      this.locked = true
+      this.needsSetup = true
+    }
+    this.error = null
+  }
 }
 
 export const secureStore = new SecureStoreSvc()

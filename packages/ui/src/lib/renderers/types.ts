@@ -13,6 +13,10 @@ export type Capability =
 export interface RendererProps {
   result: QueryResult
   collection?: string
+  /** When true, reddb system fields (rid, collection, kind, tenant,
+   * created_at, updated_at) are shown ahead of user fields. Default false:
+   * the user-defined shape is what they're trying to read. */
+  showSystem?: boolean
 }
 
 export interface CapabilityRenderer {

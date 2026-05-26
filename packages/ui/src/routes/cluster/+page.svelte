@@ -5,6 +5,8 @@
   import EmptyState from '$lib/EmptyState.svelte'
   import ClusterNode from '$lib/ClusterNode.svelte'
   import { PRESETS } from '$lib/connections.svelte'
+  import { secureStore } from '$lib/secureStore.svelte'
+  import { activity } from '$lib/activity.svelte'
   import { theme } from '$lib/theme.svelte'
   import { RedClient, type Stats, type ReplicationStatus } from '@red-ui/protocol'
   import { ServerCrash } from 'lucide-svelte'
@@ -21,6 +23,14 @@
   let known = $state<KnownNode[]>([])
   let loading = $state(true)
   let selectedId = $state<string | null>(null)
+  // Per-preset failure tracking. Dead nodes back off to one probe per ~60s
+  // instead of one per 5s so unreachable presets (e.g. embedded with no
+  // local file-backed reddb running) don't flood DevTools with native
+  // fetch errors. Browser logs network failures before catch() executes,
+  // so the only fix is to attempt the request less often.
+  const failCount = new Map<string, number>()
+  const lastAttempt = new Map<string, number>()
+  const DEAD_BACKOFF_MS = 60_000
 
   const nodeTypes = { cluster: ClusterNode as any }
 
@@ -38,20 +48,35 @@
   })
 
   async function probeAll() {
+    const now = Date.now()
     const results = await Promise.all(
       PRESETS.map(async (p) => {
+        const fails = failCount.get(p.id) ?? 0
+        const last = lastAttempt.get(p.id) ?? 0
+        // After 2 consecutive failures, only retry once per DEAD_BACKOFF_MS.
+        // Carry the previous (unreachable) snapshot through so the UI stays stable.
+        if (fails >= 2 && now - last < DEAD_BACKOFF_MS) {
+          return known.find((k) => k.id === p.id) ?? {
+            id: p.id, preset: p, reachable: false, role: 'standalone' as const,
+          }
+        }
+        lastAttempt.set(p.id, now)
         const client = new RedClient(p.url)
         try {
           const [stats, replication] = await Promise.all([
-            client.stats(),
-            client.replication().catch(() => undefined),
+            activity.track(`cluster · ${p.label} stats`, () => client.stats()),
+            activity
+              .track(`cluster · ${p.label} replication`, () => client.replication())
+              .catch(() => undefined),
           ])
+          failCount.set(p.id, 0)
           return {
             id: p.id, preset: p, reachable: true,
             role: replication?.role ?? 'standalone',
             stats, replication,
           } as KnownNode
         } catch {
+          failCount.set(p.id, fails + 1)
           return { id: p.id, preset: p, reachable: false, role: 'standalone' as const }
         }
       }),
@@ -61,6 +86,9 @@
   }
 
   $effect(() => {
+    // Same hard lock gate as the workspace: don't probe nodes until the
+    // user authenticates this session.
+    if (secureStore.locked) return
     probeAll()
     const id = setInterval(probeAll, 5000)
     return () => clearInterval(id)
@@ -253,6 +281,10 @@
 <!-- xyflow chrome — keep handles invisible and route control colors through tokens
      so light/dark themes both look right. -->
 <style>
+  :global(.svelte-flow) {
+    background-color: var(--color-bg-0) !important;
+    --xy-background-color-default: var(--color-bg-0);
+  }
   :global(.svelte-flow__handle) {
     opacity: 0 !important;
     pointer-events: none !important;
@@ -266,6 +298,10 @@
   }
   :global(.svelte-flow__edge-path) {
     stroke-linecap: round;
+  }
+  :global(.svelte-flow__edge-textbg) {
+    fill: var(--color-bg-1) !important;
+    stroke: var(--color-line-2) !important;
   }
   :global(.svelte-flow__controls) {
     box-shadow: var(--shadow-md) !important;

@@ -73,7 +73,9 @@ export async function detectCapability(
     if (Array.isArray(rc)) {
       for (const t of rc) if (typeof t === 'string') tags.push(t)
     } else if (typeof rc === 'string') {
-      tags.push(rc)
+      // reddb stamps comma-separated capabilities ("graph,graph_node");
+      // split so each individual tag has a chance to match an alias.
+      for (const t of rc.split(/[,\s]+/)) if (t) tags.push(t)
     }
     return pickCapability(tags)
   } catch {

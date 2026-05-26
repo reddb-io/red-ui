@@ -7,6 +7,7 @@ import type { QueryResult, QueryRow } from '@red-ui/protocol'
 export interface GraphNode {
   id: string
   label: string
+  /** Full underlying row/object — surfaced when the user clicks a node. */
   data: Record<string, unknown>
 }
 
@@ -15,6 +16,8 @@ export interface GraphEdge {
   source: string
   target: string
   label?: string
+  /** Full underlying row/object — surfaced when the user clicks an edge. */
+  data?: Record<string, unknown>
 }
 
 export interface GraphData {
@@ -61,6 +64,8 @@ export function extractGraph(result: QueryResult): GraphData {
   const edges = new Map<string, GraphEdge>()
 
   for (const rec of result.result.records as QueryRow[]) {
+    // Shape A: graph-query result (`MATCH … RETURN n, r, m`).
+    // reddb populates `nodes`/`edges` maps on each row keyed by alias.
     if (rec.nodes) {
       for (const value of Object.values(rec.nodes)) {
         if (!value || typeof value !== 'object') continue
@@ -86,7 +91,40 @@ export function extractGraph(result: QueryResult): GraphData {
             source: ends.source,
             target: ends.target,
             label: label !== undefined ? String(label) : undefined,
+            data: edge,
           })
+        }
+      }
+    }
+
+    // Shape B: row-shape from `SELECT * FROM <graph>` where each row IS a
+    // node OR an edge, discriminated by reddb's `kind` system column.
+    const row = (rec as QueryRow & { values?: Record<string, unknown> }).values
+    if (row && typeof row === 'object') {
+      const kind = row.kind
+      if (kind === 'node') {
+        const id = pickNodeId(row)
+        if (id && !nodes.has(id)) {
+          nodes.set(id, { id, label: pickNodeLabel(row, id), data: row })
+        }
+      } else if (kind === 'edge') {
+        const s = row.from_rid ?? row.from
+        const t = row.to_rid ?? row.to
+        if (s !== undefined && s !== null && t !== undefined && t !== null) {
+          const source = String(s)
+          const target = String(t)
+          const label = row.label ?? row.type ?? row.rel
+          const rid = row.rid ?? row.id ?? `${source}->${target}`
+          const key = `e:${rid}`
+          if (!edges.has(key)) {
+            edges.set(key, {
+              id: key,
+              source,
+              target,
+              label: label !== undefined ? String(label) : undefined,
+              data: row,
+            })
+          }
         }
       }
     }
@@ -98,11 +136,13 @@ export function extractGraph(result: QueryResult): GraphData {
 export function hasGraphShape(result: QueryResult): boolean {
   const records = result.result?.records as QueryRow[] | undefined
   if (!records || records.length === 0) return false
-  return records.some(
-    (r) =>
-      (r.nodes && Object.keys(r.nodes).length > 0) ||
-      (r.edges && Object.keys(r.edges).length > 0),
-  )
+  return records.some((r) => {
+    if (r.nodes && Object.keys(r.nodes).length > 0) return true
+    if (r.edges && Object.keys(r.edges).length > 0) return true
+    const row = (r as QueryRow & { values?: Record<string, unknown> }).values
+    if (row && (row.kind === 'node' || row.kind === 'edge')) return true
+    return false
+  })
 }
 
 /**

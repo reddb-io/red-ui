@@ -1,14 +1,18 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { goto } from '$app/navigation'
+  import { page } from '$app/state'
   import { connection } from '$lib/connections.svelte'
+  import { secureStore } from '$lib/secureStore.svelte'
+  import { activity } from '$lib/activity.svelte'
   import { tabs, type Tab } from '$lib/tabs.svelte'
   import { queryTabs } from '$lib/query-tabs.svelte'
   import { registry } from '$lib/renderers'
   import type { Capability } from '$lib/renderers'
   import LiveChanges from '$lib/LiveChanges.svelte'
   import QueryEditor from '$lib/QueryEditor.svelte'
-  import type { QueryResult } from '@red-ui/protocol'
-  import { X, Activity, Database, Plus, FileCode2 } from 'lucide-svelte'
+  import type { QueryResult, RedClient } from '@red-ui/protocol'
+  import { X, Activity, Database, Plus, FileCode2, EyeOff, Eye } from 'lucide-svelte'
 
   const OVERRIDE_CHOICES: { value: '' | Capability; label: string }[] = [
     { value: '', label: 'Auto' },
@@ -33,7 +37,79 @@
     }
   })
 
+  /**
+   * Fetch a meaningful sub-graph: pull a window of edges first, then the
+   * nodes those edges actually reference (plus a few unconnected ones for
+   * context). A flat `SELECT *` on a CREATE GRAPH collection returns
+   * nodes-then-edges in insertion order, so without this split the first
+   * N rows are all nodes and zero edges land in the renderer.
+   */
+  async function fetchGraphSubgraph(client: RedClient, collection: string) {
+    const EDGE_LIMIT = 5000
+    // reddb's WHERE rid IN (…) silently returns 0 once the list size
+    // exceeds a small threshold (somewhere around 8 in 1.3.0). Chunk to
+    // stay safely under that ceiling and union the results.
+    const IN_CHUNK = 5
+    // Run node-batch queries in parallel but bounded so we don't slam the
+    // server. 8 concurrent fits ~1k batches in roughly a second.
+    const CONCURRENCY = 8
+
+    const edgesRes = await activity.track(
+      `${collection} · edges (LIMIT ${EDGE_LIMIT})`,
+      () => client.query(
+        `SELECT * FROM ${collection} WHERE from_rid IS NOT NULL LIMIT ${EDGE_LIMIT}`,
+      ),
+    )
+    const rids = new Set<number>()
+    for (const rec of edgesRes.result.records) {
+      const f = rec.values.from_rid
+      const t = rec.values.to_rid
+      if (typeof f === 'number') rids.add(f)
+      if (typeof t === 'number') rids.add(t)
+    }
+
+    const ridList = [...rids]
+    const totalChunks = Math.ceil(ridList.length / IN_CHUNK)
+    const chunks: { idx: number; ids: string }[] = []
+    for (let i = 0; i < ridList.length; i += IN_CHUNK) {
+      chunks.push({
+        idx: Math.floor(i / IN_CHUNK) + 1,
+        ids: ridList.slice(i, i + IN_CHUNK).join(','),
+      })
+    }
+
+    const nodeRecords: typeof edgesRes.result.records = []
+    let nodesRes = edgesRes // template for shape
+
+    // Bounded-concurrency worker pool. Each worker pulls the next chunk
+    // off the shared cursor; that pattern keeps CONCURRENCY requests in
+    // flight without spawning a Promise per chunk up-front.
+    let cursor = 0
+    async function worker() {
+      while (cursor < chunks.length) {
+        const my = chunks[cursor++]
+        const r = await activity.track(
+          `${collection} · nodes ${my.idx}/${totalChunks}`,
+          () => client.query(`SELECT * FROM ${collection} WHERE rid IN (${my.ids})`),
+        )
+        nodeRecords.push(...r.result.records)
+        nodesRes = r
+      }
+    }
+    await Promise.all(Array.from({ length: CONCURRENCY }, worker))
+
+    return {
+      ...nodesRes,
+      record_count: nodeRecords.length + edgesRes.result.records.length,
+      result: {
+        ...nodesRes.result,
+        records: [...nodeRecords, ...edgesRes.result.records],
+      },
+    }
+  }
+
   $effect(() => {
+    if (secureStore.locked) return
     const client = connection.client
     if (!client) return
     for (const tab of tabs.tabs) {
@@ -41,14 +117,15 @@
       if (tab.kind !== 'collection') continue
       results[tab.id] = null
       const collection = tab.key
-      client
-        .query(`SELECT * FROM ${collection} LIMIT 200`)
-        .then((r) => {
-          results[tab.id] = r
-        })
-        .catch((e) => {
-          errors[tab.id] = (e as Error).message
-        })
+      const job = tab.capability === 'graph'
+        ? fetchGraphSubgraph(client, collection)
+        : activity.track(
+            `${collection} · SELECT * (LIMIT 200)`,
+            () => client.query(`SELECT * FROM ${collection} LIMIT 200`),
+          )
+      job
+        .then((r) => { results[tab.id] = r })
+        .catch((e) => { errors[tab.id] = (e as Error).message })
     }
   })
 
@@ -61,10 +138,18 @@
         : true
       if (!ok) return
     }
+    // If we're closing the collection that owns the current URL, the
+    // /c/[collection] route would just re-open the tab on every render.
+    // Navigate away so the URL stays in sync with what's open.
+    const closingUrlOwner = tab?.kind === 'collection' && tab.key === page.params.collection
     tabs.close(id, previousActiveId)
     queryTabs.remove(id)
     delete results[id]
     delete errors[id]
+    if (closingUrlOwner) {
+      const next = tabs.tabs.find((t) => t.kind === 'collection')
+      goto(next ? `/c/${encodeURIComponent(next.key)}` : '/', { replaceState: true })
+    }
   }
 
   function openNewQuery() {
@@ -115,29 +200,41 @@
       <div class="flex items-stretch overflow-x-auto">
         {#each tabs.tabs as tab (tab.id)}
           {@const isActive = tab.id === tabs.activeId}
-          <button
-            type="button"
-            class={[
-              'group flex items-center gap-2 px-3 py-1.5 text-[12px] font-mono border-r border-line-1 whitespace-nowrap',
-              isActive
-                ? 'bg-bg-1 text-fg-1 border-b-2 border-b-accent -mb-px'
-                : 'text-fg-3 hover:text-fg-1 hover:bg-bg-1/40',
-            ].join(' ')}
-            onclick={() => tabs.focus(tab.id)}
-            title={tab.label}
-          >
-            <span class="truncate max-w-[180px]">{tab.label}</span>
-            <span
-              class="opacity-60 group-hover:opacity-100 hover:bg-bg-2 rounded p-0.5"
-              role="button"
-              tabindex="-1"
-              aria-label="Close tab"
-              onclick={(e) => closeTab(e as unknown as MouseEvent, tab.id)}
-              onkeydown={(e) => { if (e.key === 'Enter') closeTab(e as unknown as MouseEvent, tab.id) }}
-            >
-              <X class="size-3" />
-            </span>
-          </button>
+          {@const cls = [
+            'group flex items-center gap-2 px-3 py-1.5 text-[12px] font-mono border-r border-line-1 whitespace-nowrap no-underline',
+            isActive
+              ? 'bg-bg-1 text-fg-1 border-b-2 border-b-accent -mb-px'
+              : 'text-fg-3 hover:text-fg-1 hover:bg-bg-1/40',
+          ].join(' ')}
+          {#if tab.kind === 'collection'}
+            <a href="/c/{encodeURIComponent(tab.key)}" class={cls} title={tab.label}>
+              <span class="truncate max-w-[180px]">{tab.label}</span>
+              <span
+                class="opacity-60 group-hover:opacity-100 hover:bg-bg-2 rounded p-0.5"
+                role="button"
+                tabindex="-1"
+                aria-label="Close tab"
+                onclick={(e) => closeTab(e as unknown as MouseEvent, tab.id)}
+                onkeydown={(e) => { if (e.key === 'Enter') closeTab(e as unknown as MouseEvent, tab.id) }}
+              >
+                <X class="size-3" />
+              </span>
+            </a>
+          {:else}
+            <button type="button" class={cls} onclick={() => tabs.focus(tab.id)} title={tab.label}>
+              <span class="truncate max-w-[180px]">{tab.label}</span>
+              <span
+                class="opacity-60 group-hover:opacity-100 hover:bg-bg-2 rounded p-0.5"
+                role="button"
+                tabindex="-1"
+                aria-label="Close tab"
+                onclick={(e) => closeTab(e as unknown as MouseEvent, tab.id)}
+                onkeydown={(e) => { if (e.key === 'Enter') closeTab(e as unknown as MouseEvent, tab.id) }}
+              >
+                <X class="size-3" />
+              </span>
+            </button>
+          {/if}
         {/each}
       </div>
     {/if}
@@ -146,6 +243,25 @@
       {@const activeTab = tabs.active}
       {@const activeResult = results[activeTab.id]}
       <div class="ml-auto flex items-center gap-2 px-2 text-[11px] font-mono text-fg-3">
+        <button
+          type="button"
+          onclick={() => tabs.setShowSystem(activeTab.id, !activeTab.showSystemColumns)}
+          title={activeTab.showSystemColumns ? 'Hide reddb system columns (rid, collection, kind, tenant, created_at, updated_at)' : 'Show reddb system columns'}
+          aria-pressed={activeTab.showSystemColumns ?? false}
+          class={[
+            'inline-flex items-center gap-1 h-6 px-1.5 rounded border transition-colors cursor-pointer',
+            activeTab.showSystemColumns
+              ? 'border-accent/40 bg-accent/10 text-accent'
+              : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+          ].join(' ')}
+        >
+          {#if activeTab.showSystemColumns}
+            <Eye class="size-3" />
+          {:else}
+            <EyeOff class="size-3" />
+          {/if}
+          <span>sys</span>
+        </button>
         <span>{defaultCapabilityLabel(activeTab, activeResult)}</span>
         <span class="text-fg-3">· override:</span>
         <select
@@ -241,7 +357,11 @@
         {:else}
           {@const renderer = pickRenderer(tab, result)}
           {@const Renderer = renderer.component}
-          <Renderer {result} collection={tab.kind === 'collection' ? tab.key : undefined} />
+          <Renderer
+            {result}
+            collection={tab.kind === 'collection' ? tab.key : undefined}
+            showSystem={tab.showSystemColumns ?? false}
+          />
         {/if}
       {/if}
     {/if}

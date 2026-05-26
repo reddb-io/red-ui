@@ -56,7 +56,12 @@
   // start from the persisted value rather than the in-memory default.
   theme.init()
 
-  onMount(() => {
+  // Hard lock gate: while the secure store is locked, no automatic
+  // network traffic should fire. The user hasn't yet authenticated this
+  // session, so probing the configured URL would leak its existence and
+  // shape to anyone watching the network panel.
+  $effect(() => {
+    if (secureStore.locked) return
     connection.refresh()
     const id = setInterval(() => connection.refresh(), REFRESH_MS)
     return () => clearInterval(id)

@@ -21,6 +21,7 @@ import {
   type Stats,
 } from '@red-ui/protocol'
 import { secureStore } from './secureStore.svelte'
+import { activity } from './activity.svelte'
 
 export type ConnectionPreset = Connection & { description: string }
 
@@ -301,12 +302,15 @@ class ConnectionStore {
 
   async tryConnect(preset: ConnectionPreset): Promise<boolean> {
     try {
-      const active = await provider.connect(preset.id)
+      const active = await activity.track(
+        `connect · ${preset.label}`,
+        () => provider.connect(preset.id),
+      )
       this.active = { ...preset, ...active.connection, description: preset.description }
       persist(this.active)
       const [stats, replication] = await Promise.all([
-        active.client.stats().catch(() => undefined),
-        active.client.replication().catch(() => undefined),
+        activity.track(`connect · ${preset.label} stats`, () => active.client.stats()).catch(() => undefined),
+        activity.track(`connect · ${preset.label} replication`, () => active.client.replication()).catch(() => undefined),
       ])
       this.probe = { reachable: true, rtt_ms: active.rtt_ms, stats, replication }
       this.connected = true
@@ -324,14 +328,14 @@ class ConnectionStore {
       return
     }
     try {
-      const ping = await client.ping()
+      const ping = await activity.track(`heartbeat · ${this.active.label}`, () => client.ping())
       if (!ping.ok) {
         this.probe = { reachable: false, error: ping.error }
         return
       }
       const [stats, replication] = await Promise.all([
-        client.stats().catch(() => undefined),
-        client.replication().catch(() => undefined),
+        activity.track(`heartbeat · stats`, () => client.stats()).catch(() => undefined),
+        activity.track(`heartbeat · replication`, () => client.replication()).catch(() => undefined),
       ])
       this.probe = { reachable: true, rtt_ms: ping.rtt_ms, stats, replication }
       this.connected = true

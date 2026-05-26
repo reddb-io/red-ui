@@ -1,11 +1,30 @@
 <script lang="ts">
-  import { Lock, Loader2, AlertCircle, KeyRound } from 'lucide-svelte'
+  import { Lock, Loader2, AlertCircle, KeyRound, Trash2 } from 'lucide-svelte'
   import { secureStore } from './secureStore.svelte'
+  import { connection } from './connections.svelte'
 
   let password = $state('')
   let confirm = $state('')
   let busy = $state(false)
+  let confirmingWipe = $state(false)
   let inputEl: HTMLInputElement | undefined = $state()
+
+  function startWipe() {
+    secureStore.error = null
+    confirmingWipe = true
+  }
+
+  function cancelWipe() {
+    confirmingWipe = false
+  }
+
+  function doWipe() {
+    secureStore.wipe()
+    password = ''
+    confirm = ''
+    confirmingWipe = false
+    setTimeout(() => inputEl?.focus(), 0)
+  }
 
   const needsSetup = $derived(secureStore.needsSetup)
   const error = $derived(secureStore.error)
@@ -34,6 +53,11 @@
     if (ok) {
       password = ''
       confirm = ''
+      // Belt + suspenders: the layout's reactive $effect already kicks
+      // connection.refresh() once locked flips, but firing it here too
+      // means the connect dot updates within the same microtask the
+      // dialog disappears — no "I unlocked but nothing happened" lag.
+      connection.refresh()
     }
   }
 </script>
@@ -99,6 +123,44 @@
         {#if error}
           <AlertCircle class="size-3 text-danger" />
           <span class="text-danger truncate">{error}</span>
+        {/if}
+      </div>
+
+      <!-- Start fresh: when the user can't unlock (forgot the password,
+           wedged state, etc.) the only path forward is to wipe the
+           encrypted store entirely. There's no recovery — the password
+           is the key. Two-step confirmation prevents accidental clicks. -->
+      <div class="mt-3 pt-3 border-t border-line-1 text-[11px] font-mono">
+        {#if !confirmingWipe}
+          <button
+            type="button"
+            onclick={startWipe}
+            class="inline-flex items-center gap-1.5 text-fg-3 hover:text-danger transition-colors cursor-pointer bg-transparent border-0 p-0"
+          >
+            <Trash2 class="size-3" />
+            <span>Start fresh — wipe this browser</span>
+          </button>
+        {:else}
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-danger">Erase the encrypted store and all saved connections?</span>
+          </div>
+          <div class="flex items-center gap-2 mt-1.5">
+            <button
+              type="button"
+              onclick={doWipe}
+              class="inline-flex items-center gap-1.5 px-2 py-1 rounded border border-danger/40 bg-danger/10 text-danger hover:bg-danger/20 cursor-pointer"
+            >
+              <Trash2 class="size-3" />
+              Yes, wipe
+            </button>
+            <button
+              type="button"
+              onclick={cancelWipe}
+              class="px-2 py-1 rounded border border-line-2 text-fg-2 hover:text-fg-0 cursor-pointer"
+            >
+              Cancel
+            </button>
+          </div>
         {/if}
       </div>
     </form>

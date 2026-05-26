@@ -20,6 +20,10 @@ export interface Tab {
   capability?: Capability
   /** Renderer override (slice #9 wires the UI; the field exists today). */
   overrideCapability?: Capability
+  /** Show reddb system fields (rid, collection, kind, tenant, …) as a
+   * prefix block ahead of user columns. Default false so the table shows
+   * what the user wrote. */
+  showSystemColumns?: boolean
 }
 
 function uid(): string {
@@ -87,6 +91,12 @@ class TabsStore {
   setOverride(id: string, capability: Capability | undefined): void {
     this.tabs = this.tabs.map((t) =>
       t.id === id ? { ...t, overrideCapability: capability } : t,
+    )
+  }
+
+  setShowSystem(id: string, show: boolean): void {
+    this.tabs = this.tabs.map((t) =>
+      t.id === id ? { ...t, showSystemColumns: show } : t,
     )
   }
 

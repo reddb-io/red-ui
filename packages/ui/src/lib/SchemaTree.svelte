@@ -1,22 +1,23 @@
 <script lang="ts">
   import { connection } from './connections.svelte'
+  import { secureStore } from './secureStore.svelte'
+  import { activity } from './activity.svelte'
   import {
     CAPABILITY_GLYPHS,
     detectCapability,
     isInternalCollection,
     type Capability,
   } from './capability'
-  import { Plug, Database } from 'lucide-svelte'
-
-  interface Props {
-    onopen?: (collection: string, capability: Capability, forceNew: boolean) => void
-  }
-  let { onopen }: Props = $props()
+  import { page } from '$app/state'
+  import { Plug, Database, Lock } from 'lucide-svelte'
 
   interface Item {
     name: string
     capability: Capability
   }
+
+  // URL is the source of truth for which collection is selected.
+  const activeCollection = $derived(page.params.collection ?? null)
 
   let items = $state<Item[]>([])
   let loading = $state(false)
@@ -35,14 +36,16 @@
     error = null
     const token = activeUrl
     try {
-      const names = await client.collections()
+      const names = await activity.track('schema · list collections', () => client.collections())
       const user = names.filter((n) => !isInternalCollection(n)).sort()
       items = user.map((name) => ({ name, capability: 'table' as Capability }))
-      const probes = user.map(async (name) => {
-        const cap = await detectCapability(client, name)
-        if (token !== activeUrl) return
-        items = items.map((it) => (it.name === name ? { ...it, capability: cap } : it))
-      })
+      const probes = user.map((name) =>
+        activity.track(`schema · probe ${name}`, async () => {
+          const cap = await detectCapability(client, name)
+          if (token !== activeUrl) return
+          items = items.map((it) => (it.name === name ? { ...it, capability: cap } : it))
+        }),
+      )
       await Promise.all(probes)
     } catch (e) {
       error = (e as Error).message
@@ -53,15 +56,14 @@
   }
 
   $effect(() => {
+    // Block all probing until the secure store is unlocked, so the
+    // network panel doesn't leak the schema before the user authenticates.
+    if (secureStore.locked) return
     void connected
     void activeUrl
     refresh()
   })
 
-  function handleClick(e: MouseEvent, item: Item) {
-    const forceNew = e.metaKey || e.ctrlKey
-    onopen?.(item.name, item.capability, forceNew)
-  }
 </script>
 
 <div class="px-3 py-2 border-b border-line-1 flex items-center justify-between text-fg-3">
@@ -74,7 +76,13 @@
   {/if}
 </div>
 
-{#if !connected}
+{#if secureStore.locked}
+  <div class="p-3 flex flex-col items-start gap-2 text-[12px] text-fg-3 font-mono leading-relaxed">
+    <Lock class="size-4 text-accent" />
+    <span class="text-fg-1">Locked.</span>
+    <span>Enter your master password to load the schema.</span>
+  </div>
+{:else if !connected}
   <div class="p-3 flex flex-col items-start gap-2 text-[12px] text-fg-3 font-mono leading-relaxed">
     <Plug class="size-4 text-fg-3" />
     <span>No schema to show.</span>
@@ -97,17 +105,21 @@
   <ul class="py-1" role="list">
     {#each items as item (item.name)}
       {@const g = CAPABILITY_GLYPHS[item.capability]}
+      {@const active = item.name === activeCollection}
       <li>
-        <button
-          type="button"
-          class="w-full flex items-center gap-2 px-3 py-1 text-left font-mono text-[12px] text-fg-2 hover:bg-bg-1 hover:text-fg-0 focus:bg-bg-1 focus:text-fg-0 focus:outline-none transition-colors"
-          title={`${g.label} · ${item.name} · Cmd/Ctrl+click for new tab`}
-          onclick={(e) => handleClick(e, item)}
+        <a
+          href="/c/{encodeURIComponent(item.name)}"
+          aria-current={active ? 'page' : undefined}
+          title={`${g.label} · ${item.name}`}
+          class={[
+            'w-full flex items-center gap-2 px-3 py-1 font-mono text-[12px] no-underline transition-colors',
+            active ? 'bg-bg-1 text-fg-0' : 'text-fg-2 hover:bg-bg-1 hover:text-fg-0',
+          ].join(' ')}
         >
           <span class="inline-block w-4 text-center text-fg-3" aria-hidden="true">{g.glyph}</span>
           <span class="truncate">{item.name}</span>
           <span class="sr-only">{g.label}</span>
-        </button>
+        </a>
       </li>
     {/each}
   </ul>
