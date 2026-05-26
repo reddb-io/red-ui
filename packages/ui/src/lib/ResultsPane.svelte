@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { connection } from '$lib/connections.svelte'
   import { tabs, type Tab } from '$lib/tabs.svelte'
+  import { queryTabs } from '$lib/query-tabs.svelte'
   import { registry } from '$lib/renderers'
   import LiveChanges from '$lib/LiveChanges.svelte'
+  import QueryEditor from '$lib/QueryEditor.svelte'
   import type { QueryResult } from '@red-ui/protocol'
-  import { X, Activity, Database, Plus } from 'lucide-svelte'
+  import { X, Activity, Database, Plus, FileCode2 } from 'lucide-svelte'
 
   let results = $state<Record<string, QueryResult | null>>({})
   let errors = $state<Record<string, string>>({})
@@ -41,10 +44,34 @@
 
   function closeTab(e: MouseEvent, id: string) {
     e.stopPropagation()
+    const tab = tabs.tabs.find((t) => t.id === id)
+    if (tab?.kind === 'query' && queryTabs.isDirty(id)) {
+      const ok = typeof window !== 'undefined'
+        ? window.confirm('Discard unsaved query in this tab?')
+        : true
+      if (!ok) return
+    }
     tabs.close(id, previousActiveId)
+    queryTabs.remove(id)
     delete results[id]
     delete errors[id]
   }
+
+  function openNewQuery() {
+    const label = queryTabs.nextLabel()
+    const tab = tabs.open(
+      { kind: 'query', label, key: label, capability: 'table' },
+      true,
+    )
+    queryTabs.ensure(tab.id)
+    menuOpen = false
+  }
+
+  onMount(() => {
+    const onNewQuery = () => openNewQuery()
+    window.addEventListener('red:new-query', onNewQuery)
+    return () => window.removeEventListener('red:new-query', onNewQuery)
+  })
 
   function pickRenderer(tab: Tab, result: QueryResult) {
     return registry.pick(tab.capability ?? (result.capability as any), result, tab.overrideCapability)
@@ -110,6 +137,15 @@
         >
           <button
             type="button"
+            class="w-full text-left px-2 py-1 rounded hover:bg-bg-2 text-fg-1 flex items-center gap-2"
+            onclick={openNewQuery}
+          >
+            <FileCode2 class="size-3.5 text-fg-3" />
+            <span class="flex-1">New query</span>
+            <span class="text-fg-3 text-[10px]">⌘T</span>
+          </button>
+          <button
+            type="button"
             class="w-full text-left px-2 py-1 rounded hover:bg-bg-2 text-fg-1"
             onclick={openLiveChanges}
           >
@@ -144,6 +180,8 @@
       {@const tab = tabs.active}
       {#if tab.kind === 'live-changes'}
         <LiveChanges collection={undefined} />
+      {:else if tab.kind === 'query'}
+        <QueryEditor tabId={tab.id} fallbackLabel={tab.key} />
       {:else if tab.kind === 'welcome'}
         <div class="h-full grid place-items-center text-fg-3 text-[12px] font-mono">
           Workspace
