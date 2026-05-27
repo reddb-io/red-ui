@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { QueryResult } from '@red-ui/protocol'
-import { buildTree, extractKv, hasKvShape, renderKvHtml } from './kv-render'
+import { buildTree, extractKv, hasKvShape, materializeKvJson, renderKvHtml } from './kv-render'
 
 const FIXTURE: QueryResult = {
   ok: true,
@@ -63,6 +63,33 @@ describe('buildTree', () => {
     expect(auth.children.map((c) => c.name)).toEqual(['jwt', 'ttl'])
     expect(auth.children[0].fullKey).toBe('config/auth/jwt')
     expect(auth.children[0].value).toBe('secret')
+  })
+})
+
+describe('materializeKvJson', () => {
+  it('turns slash-delimited keys into nested JSON', () => {
+    expect(materializeKvJson(extractKv(FIXTURE), '')).toEqual({
+      config: {
+        auth: {
+          jwt: 'secret',
+          ttl: 3600,
+        },
+        db: {
+          url: 'red://localhost',
+        },
+      },
+    })
+  })
+
+  it('keeps exact prefix values under $value when children also exist', () => {
+    const entries = [
+      { key: 'config/auth', value: 'enabled' },
+      { key: 'config/auth/ttl', value: 3600 },
+    ]
+    expect(materializeKvJson(entries, 'config/auth')).toEqual({
+      $value: 'enabled',
+      ttl: 3600,
+    })
   })
 })
 

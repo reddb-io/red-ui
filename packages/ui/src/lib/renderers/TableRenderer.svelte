@@ -1,7 +1,9 @@
 <script lang="ts">
   import type { QueryResult } from '@red-ui/protocol'
+  import { connection } from '$lib/connections.svelte'
+  import { activity } from '$lib/activity.svelte'
   import { pendingChanges } from '$lib/pending-changes.svelte'
-  import { Filter, X } from 'lucide-svelte'
+  import { Columns3, Filter, Loader2, Play, RotateCw, X } from 'lucide-svelte'
   import {
     formatCell,
     identityKind,
@@ -20,9 +22,36 @@
 
   let { result, collection, showSystem = false }: Props = $props()
 
-  const allRows = $derived(visibleRows(result))
-  const columns = $derived(visibleColumns(result, { showSystem }))
+  let overrideResult = $state<QueryResult | null>(null)
+  const activeResult = $derived(overrideResult ?? result)
+  const allRows = $derived(visibleRows(activeResult))
+  const columns = $derived(visibleColumns(activeResult, { showSystem }))
   const pkCol = $derived(inferPkColumn(columns))
+  const queryableColumns = $derived(columns.filter((c) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(c)))
+
+  let selectOpen = $state(false)
+  let selectedColumns = $state<Record<string, boolean>>({})
+  let selectLimit = $state(200)
+  let selecting = $state(false)
+  let selectError = $state<string | null>(null)
+
+  $effect(() => {
+    const next = { ...selectedColumns }
+    let changed = false
+    for (const col of queryableColumns) {
+      if (next[col] === undefined) {
+        next[col] = true
+        changed = true
+      }
+    }
+    for (const col of Object.keys(next)) {
+      if (!queryableColumns.includes(col)) {
+        delete next[col]
+        changed = true
+      }
+    }
+    if (changed) selectedColumns = next
+  })
 
   // ─── filters ────────────────────────────────────────────────────────────
   // Per-column substring filter, case-insensitive. The toolbar shows a
@@ -54,6 +83,51 @@
 
   function clearAllFilters() {
     filters = {}
+  }
+
+  function safeCollectionName(): string | null {
+    if (!collection) return null
+    const safe = collection.replace(/[^A-Za-z0-9_./-]/g, '')
+    return safe.length > 0 ? safe : null
+  }
+
+  function selectedProjection(): string {
+    const cols = queryableColumns.filter((c) => selectedColumns[c])
+    return cols.length === 0 || cols.length === queryableColumns.length ? '*' : cols.join(', ')
+  }
+
+  function selectSql(): string | null {
+    const safe = safeCollectionName()
+    if (!safe) return null
+    return `SELECT ${selectedProjection()} FROM ${safe} LIMIT ${selectLimit}`
+  }
+
+  async function runSelect() {
+    const client = connection.client
+    const sql = selectSql()
+    if (!client || !sql) return
+    selecting = true
+    selectError = null
+    try {
+      const r = await activity.track(`${collection} · ${sql}`, () => client.query(sql))
+      if (!r.ok) {
+        selectError = r.error ?? 'query failed'
+        return
+      }
+      overrideResult = r
+      filters = {}
+      editing = null
+    } catch (e) {
+      selectError = (e as Error).message
+    } finally {
+      selecting = false
+    }
+  }
+
+  function resetSelect() {
+    overrideResult = null
+    filters = {}
+    selectError = null
   }
 
   let editing = $state<{ row: number; col: string } | null>(null)
@@ -99,13 +173,52 @@
 </script>
 
 <div class="flex h-full flex-col text-fg-1">
-  {#if !result.ok || !result.result.records.length}
+  {#if !activeResult.ok}
     <div class="flex-1 grid place-items-center text-fg-3 text-[12px] font-mono p-6">
-      {result.ok ? 'Empty result.' : (result.error ?? 'Query failed.')}
+      {activeResult.error ?? 'Query failed.'}
     </div>
   {:else}
-    <!-- Toolbar: per-column filters -->
+    <!-- Toolbar: SELECT + per-column filters -->
     <div class="border-b border-line-1 px-3 py-1.5 flex items-center gap-2 text-[11px] font-mono bg-bg-1/40">
+      {#if collection}
+        <button
+          type="button"
+          onclick={() => (selectOpen = !selectOpen)}
+          aria-pressed={selectOpen}
+          title="Build a SELECT for this collection"
+          class={[
+            'inline-flex items-center gap-1.5 h-6 px-2 rounded border transition-colors cursor-pointer',
+            selectOpen
+              ? 'border-accent/40 bg-accent/10 text-accent'
+              : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+          ].join(' ')}
+        >
+          <Columns3 class="size-3" />
+          <span>select</span>
+        </button>
+        <button
+          type="button"
+          onclick={runSelect}
+          disabled={selecting || !connection.connected}
+          class="inline-flex items-center gap-1 h-6 px-2 rounded border border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+          title="Run the current SELECT against reddb"
+        >
+          {#if selecting}<Loader2 class="size-3 animate-spin" />{:else}<Play class="size-3" />{/if}
+          run
+        </button>
+        {#if overrideResult}
+          <button
+            type="button"
+            onclick={resetSelect}
+            class="inline-flex items-center gap-1 h-6 px-2 rounded border border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2 cursor-pointer"
+            title="Return to the original result"
+          >
+            <RotateCw class="size-3" />
+            reset
+          </button>
+        {/if}
+        <div class="h-4 w-px bg-line-1"></div>
+      {/if}
       <button
         type="button"
         onclick={() => (filtersOpen = !filtersOpen)}
@@ -139,6 +252,74 @@
         {rows.length.toLocaleString()}{#if activeFilterCount > 0} of {allRows.length.toLocaleString()}{/if} rows
       </div>
     </div>
+
+    {#if selectOpen && collection}
+      <div class="border-b border-line-1 bg-bg-1/20 px-3 py-2 text-[11px] font-mono">
+        <div class="mb-2 flex items-center gap-2">
+          <span class="text-fg-3">columns:</span>
+          <button
+            type="button"
+            class="rounded border border-line-1 px-1.5 py-0.5 text-fg-3 hover:text-fg-1 hover:border-line-2"
+            onclick={() => {
+              const next: Record<string, boolean> = {}
+              for (const col of queryableColumns) next[col] = true
+              selectedColumns = next
+            }}
+          >
+            all
+          </button>
+          <button
+            type="button"
+            class="rounded border border-line-1 px-1.5 py-0.5 text-fg-3 hover:text-fg-1 hover:border-line-2"
+            onclick={() => (selectedColumns = {})}
+          >
+            none
+          </button>
+          <label class="ml-auto inline-flex items-center gap-1.5 text-fg-3">
+            limit
+            <select
+              class="bg-bg-1 text-fg-1 border border-line-1 rounded px-1 py-0.5"
+              value={selectLimit}
+              onchange={(e) => (selectLimit = Number((e.currentTarget as HTMLSelectElement).value))}
+            >
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+              <option value={200}>200</option>
+              <option value={500}>500</option>
+              <option value={1000}>1k</option>
+            </select>
+          </label>
+        </div>
+        <div class="flex flex-wrap gap-1">
+          {#each queryableColumns as col (col)}
+            <label
+              class={[
+                'inline-flex h-5 items-center gap-1 rounded border px-1.5 cursor-pointer',
+                selectedColumns[col] ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line-1 text-fg-3 hover:text-fg-1',
+              ].join(' ')}
+            >
+              <input
+                type="checkbox"
+                class="sr-only"
+                checked={selectedColumns[col] ?? false}
+                onchange={(e) => (selectedColumns = { ...selectedColumns, [col]: (e.currentTarget as HTMLInputElement).checked })}
+              />
+              {col}
+            </label>
+          {/each}
+        </div>
+        <div class="mt-2 flex items-center gap-2 text-fg-3">
+          <code class="min-w-0 flex-1 truncate rounded border border-line-1 bg-bg-0 px-2 py-1 text-fg-1">{selectSql() ?? 'No collection selected'}</code>
+          {#if selectError}<span class="text-warn">{selectError}</span>{/if}
+        </div>
+      </div>
+    {/if}
+
+    {#if !activeResult.result.records.length}
+      <div class="flex-1 grid place-items-center text-fg-3 text-[12px] font-mono p-6">
+        Empty result.
+      </div>
+    {:else}
 
     <div class="flex-1 overflow-auto">
       <table class="w-full border-collapse text-[12px] font-mono">
@@ -245,12 +426,13 @@
     </div>
     <div class="border-t border-line-1 px-3 py-1.5 text-[11px] font-mono text-fg-3 flex items-center gap-3">
       <span>
-        {rows.length} of {result.record_count} rows
+        {rows.length} of {activeResult.record_count} rows
         {#if activeFilterCount > 0}· filtered{/if}
         {#if collection}· <span class="text-fg-2">{collection}</span>{/if}
       </span>
       <span>· double-click a cell to stage edit</span>
       {#if pkCol}<span>· pk <code class="text-fg-2">{pkCol}</code></span>{/if}
     </div>
+    {/if}
   {/if}
 </div>

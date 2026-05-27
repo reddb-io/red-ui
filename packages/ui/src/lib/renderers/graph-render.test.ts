@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { QueryResult } from '@red-ui/protocol'
-import { extractGraph, hasGraphShape, renderGraphHtml } from './graph-render'
+import { compareGraphNodesByCentrality, extractGraph, graphNodeCentrality, graphNodeIncomingSizeScales, hasGraphShape, renderGraphHtml } from './graph-render'
 
 const FIXTURE: QueryResult = {
   ok: true,
@@ -106,6 +106,59 @@ describe('extractGraph', () => {
     const { nodes, edges } = extractGraph(r)
     expect(nodes).toHaveLength(0)
     expect(edges).toHaveLength(0)
+  })
+})
+
+describe('graphNodeCentrality', () => {
+  it('counts in/out degree and sorts higher-score nodes first', () => {
+    const { nodes, edges } = extractGraph(FIXTURE)
+    const centrality = graphNodeCentrality(nodes, edges)
+
+    expect(centrality.get('1')).toMatchObject({ degree: 2, outDegree: 2, inDegree: 0, score: 2 })
+    expect(centrality.get('2')).toMatchObject({ degree: 1, outDegree: 0, inDegree: 1, score: 1 })
+
+    const sorted = [...nodes].sort((a, b) => compareGraphNodesByCentrality(a, b, centrality))
+    expect(sorted.map((n) => n.label)).toEqual(['Ada', 'Grace', 'Linus'])
+  })
+
+  it('uses explicit centrality scores when the server provides them', () => {
+    const graph = {
+      nodes: [
+        { id: '1', label: 'Low degree, high centrality', data: { centrality_score: 99 } },
+        { id: '2', label: 'High degree', data: {} },
+        { id: '3', label: 'Leaf', data: {} },
+      ],
+      edges: [
+        { id: 'a', source: '2', target: '3' },
+      ],
+    }
+    const centrality = graphNodeCentrality(graph.nodes, graph.edges)
+    const sorted = [...graph.nodes].sort((a, b) => compareGraphNodesByCentrality(a, b, centrality))
+
+    expect(centrality.get('1')?.score).toBe(99)
+    expect(sorted[0].id).toBe('1')
+  })
+
+  it('tiers node size from incoming edge count', () => {
+    const nodes = Array.from({ length: 10 }, (_, i) => ({
+      id: String(i),
+      label: `n${i}`,
+      data: {},
+    }))
+    const edges = nodes.flatMap((target, incoming) =>
+      Array.from({ length: incoming }, (_, i) => ({
+        id: `${i}->${target.id}`,
+        source: '0',
+        target: target.id,
+      })),
+    )
+    const centrality = graphNodeCentrality(nodes, edges)
+    const scales = graphNodeIncomingSizeScales(nodes, centrality)
+
+    expect(scales.get('1')).toBe(1)
+    expect(scales.get('5')).toBe(1.25)
+    expect(scales.get('8')).toBe(1.5)
+    expect(scales.get('9')).toBe(2)
   })
 })
 

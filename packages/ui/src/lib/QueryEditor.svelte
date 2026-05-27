@@ -4,6 +4,7 @@
   import { queryTabs, deriveQueryLabel } from '$lib/query-tabs.svelte'
   import { tabs } from '$lib/tabs.svelte'
   import { registry } from '$lib/renderers'
+  import type { Capability } from '$lib/renderers'
   import { Kbd } from '@red-ui/ui-kit'
 
   interface Props {
@@ -19,6 +20,7 @@
   })
 
   const qs = $derived(queryTabs.states[tabId])
+  const tab = $derived(tabs.tabs.find((t) => t.id === tabId))
 
   let textareaEl: HTMLTextAreaElement | undefined = $state()
 
@@ -43,7 +45,7 @@
 
   function pickRenderer() {
     if (!qs?.result) return null
-    return registry.pick(qs.result.capability as any, qs.result)
+    return registry.pick(qs.result.capability as Capability | undefined, qs.result, tab?.overrideCapability)
   }
 </script>
 
@@ -108,7 +110,7 @@
       {@const renderer = pickRenderer()}
       {#if renderer}
         {@const Renderer = renderer.component}
-        <Renderer result={qs.result} />
+        <Renderer result={qs.result} showSystem={tab?.showSystemColumns ?? false} />
       {/if}
     {/if}
   </div>

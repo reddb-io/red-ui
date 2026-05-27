@@ -6,6 +6,8 @@ import {
   type SseFactory,
 } from './cdc-stream-client'
 
+type ChangesFn = (sinceLsn?: number) => Promise<ChangeEvent[]>
+
 function ev(lsn: number, overrides: Partial<ChangeEvent> = {}): ChangeEvent {
   return {
     lsn,
@@ -168,7 +170,7 @@ describe('CDCStreamClient — SSE transport', () => {
 
 describe('CDCStreamClient — REST fallback', () => {
   it('falls back to REST polling when SSE probe returns false (e.g. 404)', async () => {
-    const changes = vi.fn<[number?], Promise<ChangeEvent[]>>()
+    const changes = vi.fn<ChangesFn>()
     changes.mockResolvedValueOnce([ev(1), ev(2)])
     changes.mockResolvedValueOnce([ev(3)])
     changes.mockResolvedValue([])
@@ -193,7 +195,7 @@ describe('CDCStreamClient — REST fallback', () => {
   })
 
   it('REST polling reconnects on failure with backoff and resumes from lastSeen', async () => {
-    const changes = vi.fn<[number?], Promise<ChangeEvent[]>>()
+    const changes = vi.fn<ChangesFn>()
     changes.mockResolvedValueOnce([ev(1)])
     changes.mockRejectedValueOnce(new Error('boom'))
     changes.mockResolvedValueOnce([ev(2)])
@@ -221,7 +223,7 @@ describe('CDCStreamClient — REST fallback', () => {
   })
 
   it('close() stops REST polling', async () => {
-    const changes = vi.fn<[number?], Promise<ChangeEvent[]>>().mockResolvedValue([])
+    const changes = vi.fn<ChangesFn>().mockResolvedValue([])
     const client = new CDCStreamClient({
       client: { changes },
       sseFactory: null,

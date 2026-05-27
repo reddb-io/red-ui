@@ -8,7 +8,7 @@
   import { secureStore } from '$lib/secureStore.svelte'
   import { activity } from '$lib/activity.svelte'
   import { theme } from '$lib/theme.svelte'
-  import { RedClient, type Stats, type ReplicationStatus } from '@red-ui/protocol'
+  import { RedClient, type ClusterStatus, type Stats, type ReplicationStatus } from '@red-ui/protocol'
   import { ServerCrash } from 'lucide-svelte'
 
   interface KnownNode {
@@ -18,6 +18,7 @@
     role: 'primary' | 'replica' | 'standalone'
     stats?: Stats
     replication?: ReplicationStatus
+    cluster?: ClusterStatus
   }
 
   let known = $state<KnownNode[]>([])
@@ -63,17 +64,20 @@
         lastAttempt.set(p.id, now)
         const client = new RedClient(p.url)
         try {
-          const [stats, replication] = await Promise.all([
+          const [stats, replication, cluster] = await Promise.all([
             activity.track(`cluster · ${p.label} stats`, () => client.stats()),
             activity
               .track(`cluster · ${p.label} replication`, () => client.replication())
+              .catch(() => undefined),
+            activity
+              .track(`cluster · ${p.label} status`, () => client.clusterStatus())
               .catch(() => undefined),
           ])
           failCount.set(p.id, 0)
           return {
             id: p.id, preset: p, reachable: true,
             role: replication?.role ?? 'standalone',
-            stats, replication,
+            stats, replication, cluster,
           } as KnownNode
         } catch {
           failCount.set(p.id, fails + 1)
@@ -144,6 +148,107 @@
 
   const selected = $derived(known.find((k) => k.id === selectedId))
   const totalEntities = $derived(liveNodes.reduce((s, k) => s + (k.stats?.store.total_entities ?? 0), 0))
+
+  function deploymentLabel(node: KnownNode): string {
+    const mode = node.cluster?.deployment?.mode
+    if (mode) return mode
+    if (node.preset.id === 'embedded') return 'embedded file endpoint'
+    if (node.preset.id.startsWith('docker-')) return 'server · docker preset'
+    return 'server endpoint'
+  }
+
+  function deploymentEvidence(node: KnownNode): string {
+    const d = node.cluster?.deployment
+    if (d?.file_path) return d.file_path
+    if (d?.container_id || d?.image) return [d.container_id, d.image].filter(Boolean).join(' · ')
+    if (d?.configured_by || d?.process_kind) return [d.configured_by, d.process_kind].filter(Boolean).join(' · ')
+    if (node.preset.id === 'embedded') return node.preset.description
+    if (node.preset.id.startsWith('docker-')) return node.preset.description
+    return 'reddb has not exposed process/container metadata yet'
+  }
+
+  function deploymentTone(node: KnownNode): 'neutral' | 'ok' | 'info' | 'warn' | 'danger' | 'accent' {
+    const mode = node.cluster?.deployment?.mode
+    if (mode === 'docker') return 'info'
+    if (mode === 'embedded') return 'ok'
+    if (mode === 'replicated') return 'accent'
+    if (node.preset.id.startsWith('docker-')) return 'info'
+    if (node.preset.id === 'embedded') return 'ok'
+    return 'neutral'
+  }
+
+  function fmtBytes(bytes: number | undefined): string {
+    if (bytes === undefined || !Number.isFinite(bytes)) return 'not exposed'
+    if (bytes >= 1024 ** 3) return `${(bytes / 1024 ** 3).toFixed(1)} GiB`
+    if (bytes >= 1024 ** 2) return `${(bytes / 1024 ** 2).toFixed(1)} MiB`
+    if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KiB`
+    return `${bytes} B`
+  }
+
+  function fmtPct(used: number, total: number): string {
+    if (total <= 0) return 'n/a'
+    return `${Math.round((used / total) * 100)}%`
+  }
+
+  function uptime(ms: number): string {
+    const s = Math.max(0, Math.round((Date.now() - ms) / 1000))
+    if (s >= 86400) return `${Math.floor(s / 86400)}d ${Math.floor((s % 86400) / 3600)}h`
+    if (s >= 3600) return `${Math.floor(s / 3600)}h ${Math.floor((s % 3600) / 60)}m`
+    if (s >= 60) return `${Math.floor(s / 60)}m ${s % 60}s`
+    return `${s}s`
+  }
+
+  function replicationLag(node: KnownNode): number | null {
+    const r = node.replication
+    if (r?.last_applied_lsn === undefined || r.last_seen_primary_lsn === undefined) return null
+    return r.last_seen_primary_lsn - r.last_applied_lsn
+  }
+
+  function ramUsed(stats: Stats): number {
+    return stats.system.total_memory_bytes - stats.system.available_memory_bytes
+  }
+
+  function firstNumber(...values: Array<number | undefined>): number | undefined {
+    return values.find((v) => v !== undefined && Number.isFinite(v))
+  }
+
+  function fmtRate(value: number | undefined): string {
+    return value === undefined || !Number.isFinite(value) ? 'not exposed' : `${value.toLocaleString(undefined, { maximumFractionDigits: 1 })}/s`
+  }
+
+  function fmtMs(value: number | undefined): string {
+    return value === undefined || !Number.isFinite(value) ? 'not exposed' : `${value.toLocaleString(undefined, { maximumFractionDigits: 1 })} ms`
+  }
+
+  function storageLine(node: KnownNode): string {
+    const used = node.cluster?.storage?.used_bytes
+    const capacity = node.cluster?.storage?.capacity_bytes
+    const free = node.cluster?.storage?.free_bytes
+    if (used === undefined && capacity === undefined && free === undefined) return 'not exposed'
+    if (used !== undefined && capacity !== undefined) return `${fmtBytes(used)} / ${fmtBytes(capacity)} (${fmtPct(used, capacity)})`
+    if (used !== undefined && free !== undefined) return `${fmtBytes(used)} used · ${fmtBytes(free)} free`
+    if (capacity !== undefined && free !== undefined) return `${fmtBytes(free)} free / ${fmtBytes(capacity)}`
+    return fmtBytes(used ?? capacity ?? free)
+  }
+
+  function missingTelemetryExposed(node: KnownNode, item: string): boolean | ClusterStatus['deployment'] | ClusterStatus['storage'] | ClusterStatus['throughput'] {
+    if (item === 'storage capacity') return node.cluster?.storage
+    if (item === 'wal size bytes') return node.cluster?.wal?.size_bytes !== undefined
+    if (item === 'throughput') return node.cluster?.throughput
+    if (item === 'avg response time') return node.cluster?.throughput?.avg_response_ms !== undefined
+    if (item === 'cpu usage') return node.cluster?.system?.cpu_usage_percent !== undefined
+    if (item === 'deployment metadata') return node.cluster?.deployment
+    return false
+  }
+
+  const missingClusterTelemetry = [
+    'storage capacity',
+    'wal size bytes',
+    'throughput',
+    'avg response time',
+    'cpu usage',
+    'deployment metadata',
+  ]
 </script>
 
 {#if loading}
@@ -216,62 +321,159 @@
 
   <!-- Floating inspector (top-right) -->
   {#if selected}
-    <div class="absolute top-4 right-4 z-10 w-80">
+    <div class="absolute top-4 right-4 z-10 w-[420px] max-h-[calc(100vh-96px)] overflow-auto">
       <Card title="node · {selected.id}" floating>
         <div class="grid gap-2 font-mono text-[11px]">
-          <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+          <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
             <span class="text-fg-3">label</span>
             <span class="text-fg-0">{selected.preset.label}</span>
           </div>
-          <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+          <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
             <span class="text-fg-3">url</span>
             <code class="text-fg-0 break-all">{selected.preset.url}</code>
           </div>
-          <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+          <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+            <span class="text-fg-3">deployment</span>
+            <span>
+              <Badge tone={deploymentTone(selected)}>
+                {deploymentLabel(selected)}
+              </Badge>
+            </span>
+          </div>
+          <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+            <span class="text-fg-3">evidence</span>
+            <span class="text-fg-1">{deploymentEvidence(selected)}</span>
+          </div>
+          <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
             <span class="text-fg-3">role</span>
             <span><NodeBadge role={selected.role === 'primary' ? 'primary' : selected.role === 'replica' ? 'replica' : 'embedded'} label={selected.role} /></span>
           </div>
+          <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+            <span class="text-fg-3">replicas</span>
+            <span class="text-fg-0">
+              {#if selected.replication?.role === 'primary'}
+                {selected.replication.replica_count ?? 0}
+              {:else if selected.replication?.role === 'replica'}
+                connected to {selected.replication.primary_addr ?? 'primary'}
+              {:else}
+                none exposed
+              {/if}
+            </span>
+          </div>
           {#if selected.stats}
-            <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+            <div class="pt-2 mt-1 border-t border-line-1"></div>
+            <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+              <span class="text-fg-3">host</span>
+              <span class="text-fg-0">{selected.stats.system.hostname} · {selected.stats.system.os}/{selected.stats.system.arch}</span>
+            </div>
+            <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+              <span class="text-fg-3">process</span>
+              <span class="text-fg-0">pid {selected.stats.system.pid}</span>
+            </div>
+            <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+              <span class="text-fg-3">connections</span>
+              <span class="text-fg-0">{selected.stats.active_connections} active <span class="text-fg-3">/ {selected.stats.idle_connections} idle</span></span>
+            </div>
+            <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
               <span class="text-fg-3">collections</span>
               <span class="text-fg-0">{selected.stats.store.collection_count}</span>
             </div>
-            <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+            <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
               <span class="text-fg-3">entities</span>
               <span class="text-accent">{selected.stats.store.total_entities.toLocaleString()}</span>
             </div>
-            <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+            <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+              <span class="text-fg-3">cross refs</span>
+              <span class="text-fg-0">{selected.stats.store.cross_ref_count.toLocaleString()}</span>
+            </div>
+            <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+              <span class="text-fg-3">store memory</span>
+              <span class="text-fg-0">{fmtBytes(selected.stats.store.total_memory_bytes)}</span>
+            </div>
+            <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+              <span class="text-fg-3">storage</span>
+              <span class="text-fg-0">{storageLine(selected)}</span>
+            </div>
+            <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+              <span class="text-fg-3">ram</span>
+              <span class="text-fg-0">
+                {fmtBytes(firstNumber(selected.cluster?.system?.memory_used_bytes, ramUsed(selected.stats)))} used
+                <span class="text-fg-3">
+                  / {fmtBytes(firstNumber(selected.cluster?.system?.memory_total_bytes, selected.stats.system.total_memory_bytes))}
+                  ({fmtPct(firstNumber(selected.cluster?.system?.memory_used_bytes, ramUsed(selected.stats)) ?? 0, firstNumber(selected.cluster?.system?.memory_total_bytes, selected.stats.system.total_memory_bytes) ?? 0)})
+                </span>
+              </span>
+            </div>
+            <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+              <span class="text-fg-3">cpu</span>
+              <span class="text-fg-0">
+                {selected.stats.system.cpu_cores} cores
+                <span class="text-fg-3">· {selected.cluster?.system?.cpu_usage_percent === undefined ? 'usage not exposed' : `${selected.cluster.system.cpu_usage_percent}%`}</span>
+              </span>
+            </div>
+            <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+              <span class="text-fg-3">requests/sec</span>
+              <span class="text-fg-0">{fmtRate(selected.cluster?.throughput?.requests_per_second)}</span>
+            </div>
+            <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+              <span class="text-fg-3">read/write</span>
+              <span class="text-fg-0">{fmtRate(selected.cluster?.throughput?.reads_per_second)} <span class="text-fg-3">/ {fmtRate(selected.cluster?.throughput?.writes_per_second)}</span></span>
+            </div>
+            <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+              <span class="text-fg-3">avg response</span>
+              <span class="text-fg-0">{fmtMs(selected.cluster?.throughput?.avg_response_ms)}</span>
+            </div>
+            <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
               <span class="text-fg-3">uptime</span>
-              <span class="text-fg-0">{Math.round((Date.now() - selected.stats.started_at_unix_ms) / 1000)}s</span>
+              <span class="text-fg-0">{uptime(selected.stats.started_at_unix_ms)}</span>
             </div>
           {/if}
           {#if selected.replication}
             <div class="pt-2 mt-1 border-t border-line-1"></div>
             {#if selected.replication.role === 'primary'}
-              <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+              <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
                 <span class="text-fg-3">wal lsn</span>
-                <span class="text-fg-0">{selected.replication.wal_lsn}</span>
+                <span class="text-fg-0">{selected.cluster?.wal?.lsn ?? selected.replication.wal_lsn}</span>
               </div>
-              <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+              <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+                <span class="text-fg-3">wal size</span>
+                <span class="text-fg-0">{fmtBytes(selected.cluster?.wal?.size_bytes)}</span>
+              </div>
+              <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
+                <span class="text-fg-3">oldest lsn</span>
+                <span class="text-fg-0">{selected.cluster?.wal?.oldest_lsn ?? selected.replication.oldest_lsn ?? 'not exposed'}</span>
+              </div>
+              <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
                 <span class="text-fg-3">replicas</span>
-                <span class="text-fg-0">{selected.replication.replica_count ?? 0}</span>
+                <span class="text-fg-0">{selected.cluster?.replication?.replica_count ?? selected.replication.replica_count ?? 0}</span>
               </div>
             {:else if selected.replication.role === 'replica'}
-              <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+              <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
                 <span class="text-fg-3">applied</span>
                 <span class="text-fg-0">{selected.replication.last_applied_lsn} <span class="text-fg-3">/ {selected.replication.last_seen_primary_lsn}</span></span>
               </div>
-              {#if selected.replication.last_applied_lsn !== undefined && selected.replication.last_seen_primary_lsn !== undefined}
-                {@const lag = selected.replication.last_seen_primary_lsn - selected.replication.last_applied_lsn}
-                <div class="grid grid-cols-[60px_1fr] gap-3 items-baseline">
+              {@const lag = replicationLag(selected)}
+              {#if lag !== null}
+                <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
                   <span class="text-fg-3">lag</span>
                   <span>
-                    {#if lag === 0}<Badge tone="ok">in sync</Badge>{:else}<Badge tone="warn">{lag} lsn</Badge>{/if}
+                    {#if lag === 0}<Badge tone="ok">in sync</Badge>{:else}<Badge tone="warn">{selected.cluster?.replication?.lag_ms ? `${selected.cluster.replication.lag_ms} ms` : `${selected.cluster?.replication?.lag_lsn ?? lag} lsn`}</Badge>{/if}
                   </span>
                 </div>
               {/if}
             {/if}
           {/if}
+          <div class="pt-2 mt-1 border-t border-line-1"></div>
+          <div class="grid grid-cols-[120px_1fr] gap-3 items-start">
+            <span class="text-fg-3">not exposed</span>
+            <span class="flex flex-wrap gap-1">
+              {#each missingClusterTelemetry as item}
+                {#if !missingTelemetryExposed(selected, item)}
+                  <span class="rounded border border-line-1 px-1.5 py-0.5 text-[10px] text-fg-3">{item}</span>
+                {/if}
+              {/each}
+            </span>
+          </div>
         </div>
       </Card>
     </div>

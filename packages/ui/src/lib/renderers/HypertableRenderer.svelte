@@ -2,6 +2,7 @@
   import type { QueryResult } from '@red-ui/protocol'
   import { Activity, BarChart3, LineChart, X } from 'lucide-svelte'
   import {
+    ALL_METRICS,
     bucketGeometry,
     bucketSeries,
     chartGeometry,
@@ -17,7 +18,7 @@
 
   let { result, collection }: Props = $props()
 
-  let metric = $state<string | undefined>(undefined)
+  let metric = $state<string | undefined>(ALL_METRICS)
   let chartMode = $state<'line' | 'rate'>('rate')
   let bucketMs = $state(60_000)
   let selectedBucket = $state<BucketPoint | null>(null)
@@ -44,13 +45,46 @@
     }
   }
 
+  function renderLogValue(v: unknown): string {
+    if (v === null || v === undefined) return ''
+    if (typeof v === 'object') return JSON.stringify(v)
+    return String(v)
+  }
+
+  function logPayload(p: { raw: Record<string, unknown> }): string {
+    const parts: string[] = []
+    const metricName = series?.metricNameColumn ? p.raw[series.metricNameColumn] : undefined
+    if (metricName !== undefined) parts.push(String(metricName))
+    const tags = p.raw.tags
+    if (tags && typeof tags === 'object') {
+      const tagText = Object.entries(tags as Record<string, unknown>)
+        .map(([k, v]) => `${k}=${renderLogValue(v)}`)
+        .join(' ')
+      if (tagText) parts.push(tagText)
+    }
+    const event = p.raw.event ?? p.raw.action ?? p.raw.message ?? p.raw.payload
+    if (event !== undefined) parts.push(renderLogValue(event))
+    return parts.join(' · ')
+  }
+
   function bucketLabel(opt: number): string {
     if (opt === 1000) return '1s'
     if (opt === 10_000) return '10s'
     if (opt === 60_000) return '1min'
     if (opt === 300_000) return '5min'
+    if (opt === 600_000) return '10min'
     if (opt === 3_600_000) return '1hr'
     return `${opt}ms`
+  }
+
+  function metricLabel(m: string): string {
+    return m === ALL_METRICS ? 'all writes' : m
+  }
+
+  function activeMetricLabel(): string {
+    if (!series) return ''
+    if (!metric || metric === ALL_METRICS) return 'all writes'
+    return metric
   }
 </script>
 
@@ -97,7 +131,7 @@
           bind:value={metric}
         >
           {#each series.metrics as m (m)}
-            <option value={m}>{m}</option>
+            <option value={m}>{metricLabel(m)}</option>
           {/each}
         </select>
       </label>
@@ -114,6 +148,7 @@
             <option value={10_000}>10s</option>
             <option value={60_000}>1min</option>
             <option value={300_000}>5min</option>
+            <option value={600_000}>10min</option>
             <option value={3_600_000}>1hr</option>
           </select>
         </label>
@@ -132,7 +167,8 @@
       {/if}
 
       <div class="ml-auto text-fg-3">
-        {visiblePoints.length.toLocaleString()}{#if selectedBucket} of {series.points.length.toLocaleString()}{/if} pts
+        <span class="text-fg-2">{activeMetricLabel()}</span>
+        · {visiblePoints.length.toLocaleString()}{#if selectedBucket} of {series.points.length.toLocaleString()}{/if} inserts
         {#if collection}· <span class="text-fg-2">{collection}</span>{/if}
       </div>
     </div>
@@ -181,20 +217,28 @@
       {/if}
     </div>
 
-    <!-- Rows -->
+    <!-- Event log -->
     <div class="flex-1 min-h-0 overflow-auto">
       <table class="w-full border-collapse text-[12px] font-mono">
         <thead class="sticky top-0 bg-bg-1 z-10">
           <tr class="border-b border-line-1 text-fg-3">
-            <th class="px-2 py-1.5 text-left font-normal">{series.timeColumn}</th>
-            <th class="px-2 py-1.5 text-right font-normal">{series.metricColumn}</th>
+            <th class="px-2 py-1.5 text-left font-normal">time</th>
+            {#if series.metricNameColumn}
+              <th class="px-2 py-1.5 text-left font-normal">metric</th>
+            {/if}
+            <th class="px-2 py-1.5 text-right font-normal">value</th>
+            <th class="px-2 py-1.5 text-left font-normal">log</th>
           </tr>
         </thead>
         <tbody>
           {#each visiblePoints as p, i (i)}
             <tr class="border-b border-line-1/60 hover:bg-bg-1/40">
               <td class="px-2 py-1">{fmtT(p.t)}</td>
-              <td class="px-2 py-1 text-right">{p.v}</td>
+              {#if series.metricNameColumn}
+                <td class="px-2 py-1 text-fg-2">{String(p.raw[series.metricNameColumn] ?? '')}</td>
+              {/if}
+              <td class="px-2 py-1 text-right text-accent">{p.v}</td>
+              <td class="px-2 py-1 text-fg-2">{logPayload(p)}</td>
             </tr>
           {/each}
         </tbody>
@@ -202,7 +246,7 @@
     </div>
 
     <div class="border-t border-line-1 px-3 py-1.5 text-[11px] font-mono text-fg-3">
-      {visiblePoints.length} points{collection ? ' · ' : ''}{collection ?? ''}
+      {visiblePoints.length} inserts{collection ? ' · ' : ''}{collection ?? ''}
       {#if selectedBucket}· bucket {fmtT(selectedBucket.t)} (+{bucketLabel(bucketMs)}){/if}
     </div>
   {/if}

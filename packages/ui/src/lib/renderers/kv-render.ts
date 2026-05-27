@@ -75,6 +75,47 @@ export function flattenUnderPrefix(entries: KvEntry[], prefix: string): Record<s
   return out
 }
 
+/**
+ * Materialize slash-delimited KV keys as a nested JSON object. Exact prefix
+ * values share space with children through `$value`, so `a=1` and `a/b=2`
+ * remain representable without dropping either value.
+ */
+export function materializeKvJson(entries: KvEntry[], prefix: string): Record<string, unknown> {
+  const root: Record<string, unknown> = {}
+  for (const entry of entries) {
+    if (!entry.key.startsWith(prefix)) continue
+    const rest = entry.key.slice(prefix.length).replace(/^\/+/, '')
+    const segments = rest.split('/').filter(Boolean)
+    if (segments.length === 0) {
+      root.$value = entry.value
+      continue
+    }
+    let cursor = root
+    for (let i = 0; i < segments.length; i += 1) {
+      const segment = segments[i]
+      if (i === segments.length - 1) {
+        const existing = cursor[segment]
+        if (existing && typeof existing === 'object' && !Array.isArray(existing)) {
+          ;(existing as Record<string, unknown>).$value = entry.value
+        } else {
+          cursor[segment] = entry.value
+        }
+        continue
+      }
+      const existing = cursor[segment]
+      if (!existing || typeof existing !== 'object' || Array.isArray(existing)) {
+        const next: Record<string, unknown> = {}
+        if (existing !== undefined) next.$value = existing
+        cursor[segment] = next
+        cursor = next
+      } else {
+        cursor = existing as Record<string, unknown>
+      }
+    }
+  }
+  return root
+}
+
 export function buildTree(entries: KvEntry[]): KvNode {
   const root: KvNode = { name: '', fullKey: null, value: undefined, children: [] }
   for (const entry of entries) {

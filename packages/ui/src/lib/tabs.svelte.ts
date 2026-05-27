@@ -18,6 +18,8 @@ export interface Tab {
   key: string
   /** Optional capability hint forwarded to the renderer registry. */
   capability?: Capability
+  /** URL-level collection subpage (`graph`, `svg`, `table`, `json`, …). */
+  subpage?: string
   /** Renderer override (slice #9 wires the UI; the field exists today). */
   overrideCapability?: Capability
   /** Show reddb system fields (rid, collection, kind, tenant, …) as a
@@ -47,8 +49,12 @@ class TabsStore {
     if (!forceNew) {
       const existing = this.tabs.find((t) => t.kind === spec.kind && t.key === spec.key)
       if (existing) {
+        const updated = { ...existing, ...spec, id: existing.id }
+        this.tabs = this.tabs.map((t) =>
+          t === existing ? updated : t,
+        )
         this.activeId = existing.id
-        return existing
+        return updated
       }
     }
     const tab: Tab = { ...spec, id: uid() }

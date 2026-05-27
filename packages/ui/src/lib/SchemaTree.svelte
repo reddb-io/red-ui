@@ -8,8 +8,9 @@
     isInternalCollection,
     type Capability,
   } from './capability'
+  import { collectionPageHref, defaultSubpage } from './collection-pages'
   import { page } from '$app/state'
-  import { Plug, Database, Lock } from 'lucide-svelte'
+  import { Plug, Database, Lock, Search, X } from 'lucide-svelte'
 
   interface Item {
     name: string
@@ -22,9 +23,25 @@
   let items = $state<Item[]>([])
   let loading = $state(false)
   let error = $state<string | null>(null)
+  let search = $state('')
+  let capabilityFilter = $state<Capability | 'all'>('all')
 
   const connected = $derived(connection.connected)
   const activeUrl = $derived(connection.active.url)
+  const capabilityCounts = $derived.by(() => {
+    const counts = new Map<Capability, number>()
+    for (const item of items) counts.set(item.capability, (counts.get(item.capability) ?? 0) + 1)
+    return [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0]))
+  })
+  const filteredItems = $derived.by(() => {
+    const q = search.trim().toLowerCase()
+    return items.filter((item) => {
+      if (capabilityFilter !== 'all' && item.capability !== capabilityFilter) return false
+      if (!q) return true
+      const g = CAPABILITY_GLYPHS[item.capability]
+      return item.name.toLowerCase().includes(q) || g.label.toLowerCase().includes(q)
+    })
+  })
 
   async function refresh() {
     const client = connection.client
@@ -102,13 +119,59 @@
     <code class="px-2 py-1 bg-bg-2 border border-line-1 rounded text-[11px]">./scripts/seed.sh {activeUrl}</code>
   </div>
 {:else}
+  <div class="p-2 border-b border-line-1 grid gap-2">
+    <div class="flex items-center gap-1.5 h-7 rounded border border-line-1 bg-bg-0 px-2 text-[11px] font-mono">
+      <Search class="size-3 text-fg-3" />
+      <input
+        type="text"
+        bind:value={search}
+        placeholder="search collections…"
+        class="min-w-0 flex-1 bg-transparent text-fg-1 outline-none placeholder:text-fg-3"
+      />
+      {#if search}
+        <button type="button" class="text-fg-3 hover:text-fg-1 cursor-pointer" aria-label="Clear collection search" onclick={() => (search = '')}>
+          <X class="size-3" />
+        </button>
+      {/if}
+    </div>
+
+    <div class="flex flex-wrap gap-1">
+      <button
+        type="button"
+        onclick={() => (capabilityFilter = 'all')}
+        class={[
+          'h-5 rounded border px-1.5 font-mono text-[10px] cursor-pointer transition-colors',
+          capabilityFilter === 'all' ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+        ].join(' ')}
+      >
+        all {items.length}
+      </button>
+      {#each capabilityCounts as [cap, count] (cap)}
+        {@const g = CAPABILITY_GLYPHS[cap]}
+        <button
+          type="button"
+          onclick={() => (capabilityFilter = cap)}
+          title={g.label}
+          class={[
+            'h-5 rounded border px-1.5 font-mono text-[10px] cursor-pointer transition-colors',
+            capabilityFilter === cap ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+          ].join(' ')}
+        >
+          {g.glyph} {count}
+        </button>
+      {/each}
+    </div>
+  </div>
   <ul class="py-1" role="list">
-    {#each items as item (item.name)}
+    {#if filteredItems.length === 0}
+      <li class="px-3 py-2 font-mono text-[12px] text-fg-3">No matching collections.</li>
+    {/if}
+    {#each filteredItems as item (item.name)}
       {@const g = CAPABILITY_GLYPHS[item.capability]}
       {@const active = item.name === activeCollection}
       <li>
         <a
-          href="/c/{encodeURIComponent(item.name)}"
+          href={collectionPageHref(item.name, defaultSubpage(item.capability))}
           aria-current={active ? 'page' : undefined}
           title={`${g.label} · ${item.name}`}
           class={[

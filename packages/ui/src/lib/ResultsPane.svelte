@@ -7,12 +7,13 @@
   import { activity } from '$lib/activity.svelte'
   import { tabs, type Tab } from '$lib/tabs.svelte'
   import { queryTabs } from '$lib/query-tabs.svelte'
+  import { collectionPageHref, defaultSubpage, subpageCapability } from '$lib/collection-pages'
   import { registry } from '$lib/renderers'
   import type { Capability } from '$lib/renderers'
   import LiveChanges from '$lib/LiveChanges.svelte'
   import QueryEditor from '$lib/QueryEditor.svelte'
-  import type { QueryResult, RedClient } from '@red-ui/protocol'
-  import { X, Activity, Database, Plus, FileCode2, EyeOff, Eye } from 'lucide-svelte'
+  import type { CollectionMetadata, QueryResult, RedClient } from '@red-ui/protocol'
+  import { X, Activity, Database, Plus, FileCode2, EyeOff, Eye, Info } from 'lucide-svelte'
 
   const OVERRIDE_CHOICES: { value: '' | Capability; label: string }[] = [
     { value: '', label: 'Auto' },
@@ -20,14 +21,23 @@
     { value: 'graph', label: 'Graph' },
     { value: 'hypertable', label: 'Chart' },
     { value: 'kv', label: 'KV' },
+    { value: 'vector', label: 'Vector' },
+    { value: 'queue', label: 'Queue' },
+    { value: 'stats', label: 'Stats' },
+    { value: 'diff', label: 'Diff' },
+    { value: 'document', label: 'Document' },
     { value: 'json', label: 'JSON' },
   ]
 
   let results = $state<Record<string, QueryResult | null>>({})
   let errors = $state<Record<string, string>>({})
+  let resultKeys = $state<Record<string, string>>({})
+  let metadata = $state<Record<string, CollectionMetadata | null>>({})
+  let metadataErrors = $state<Record<string, string>>({})
   let previousActiveId = $state<string | null>(null)
   let lastActiveId: string | null = null
   let menuOpen = $state(false)
+  let metadataOpen = $state(false)
 
   $effect(() => {
     const current = tabs.activeId
@@ -46,6 +56,7 @@
    */
   async function fetchGraphSubgraph(client: RedClient, collection: string) {
     const EDGE_LIMIT = 5000
+    const CENTRALITY_LIMIT = 100
     // reddb's WHERE rid IN (…) silently returns 0 once the list size
     // exceeds a small threshold (somewhere around 8 in 1.3.0). Chunk to
     // stay safely under that ceiling and union the results.
@@ -54,12 +65,35 @@
     // server. 8 concurrent fits ~1k batches in roughly a second.
     const CONCURRENCY = 8
 
-    const edgesRes = await activity.track(
-      `${collection} · edges (LIMIT ${EDGE_LIMIT})`,
-      () => client.query(
-        `SELECT * FROM ${collection} WHERE from_rid IS NOT NULL LIMIT ${EDGE_LIMIT}`,
+    const [edgesRes, centralityRes] = await Promise.all([
+      activity.track(
+        `${collection} · edges (LIMIT ${EDGE_LIMIT})`,
+        () => client.query(
+          `SELECT * FROM ${collection} WHERE from_rid IS NOT NULL LIMIT ${EDGE_LIMIT}`,
+        ),
       ),
-    )
+      activity.track(
+        `${collection} · centrality (LIMIT ${CENTRALITY_LIMIT})`,
+        () => client.query(`GRAPH CENTRALITY LIMIT ${CENTRALITY_LIMIT}`),
+      ).catch(() => null),
+    ])
+
+    const centralityByRid = new Map<number, { score: number; rank: number; label?: string }>()
+    if (centralityRes?.ok) {
+      centralityRes.result.records.forEach((rec, index) => {
+        const rawId = rec.values.node_id ?? rec.values.rid ?? rec.values.id
+        const rawScore = rec.values.score ?? rec.values.centrality_score ?? rec.values.centrality
+        const id = typeof rawId === 'number' ? rawId : typeof rawId === 'string' ? Number(rawId) : NaN
+        const score = typeof rawScore === 'number' ? rawScore : typeof rawScore === 'string' ? Number(rawScore) : NaN
+        if (!Number.isFinite(id) || !Number.isFinite(score)) return
+        centralityByRid.set(id, {
+          score,
+          rank: index + 1,
+          label: typeof rec.values.label === 'string' ? rec.values.label : undefined,
+        })
+      })
+    }
+
     const rids = new Set<number>()
     for (const rec of edgesRes.result.records) {
       const f = rec.values.from_rid
@@ -67,6 +101,7 @@
       if (typeof f === 'number') rids.add(f)
       if (typeof t === 'number') rids.add(t)
     }
+    for (const rid of centralityByRid.keys()) rids.add(rid)
 
     const ridList = [...rids]
     const totalChunks = Math.ceil(ridList.length / IN_CHUNK)
@@ -92,7 +127,20 @@
           `${collection} · nodes ${my.idx}/${totalChunks}`,
           () => client.query(`SELECT * FROM ${collection} WHERE rid IN (${my.ids})`),
         )
-        nodeRecords.push(...r.result.records)
+        nodeRecords.push(...r.result.records.map((rec) => {
+          const rid = rec.values.rid
+          const centrality = typeof rid === 'number' ? centralityByRid.get(rid) : undefined
+          if (!centrality) return rec
+          return {
+            ...rec,
+            values: {
+              ...rec.values,
+              centrality_score: centrality.score,
+              centrality_rank: centrality.rank,
+              centrality_label: centrality.label,
+            },
+          }
+        }))
         nodesRes = r
       }
     }
@@ -108,17 +156,102 @@
     }
   }
 
+  function safeCollectionName(collection: string): string {
+    return collection.replace(/[^A-Za-z0-9_./-]/g, '')
+  }
+
+  function sqlString(s: string): string {
+    return `'${s.replace(/'/g, "''")}'`
+  }
+
+  async function fetchCollectionModel(client: RedClient, collection: string): Promise<string | null> {
+    try {
+      const r = await client.query(`SELECT model FROM red.collections WHERE name = ${sqlString(collection)} LIMIT 1`)
+      const model = r.result.records[0]?.values.model
+      return typeof model === 'string' ? model : null
+    } catch {
+      return null
+    }
+  }
+
+  async function fetchStatsCollection(client: RedClient, collection: string) {
+    const safe = safeCollectionName(collection)
+    const model = await fetchCollectionModel(client, collection)
+    if (model === 'hll') return client.query(`HLL INFO ${safe}`)
+    if (model === 'sketch') return client.query(`SKETCH INFO ${safe}`)
+    if (model === 'filter') return client.query(`FILTER INFO ${safe}`)
+    if (model === 'mixed') {
+      for (const query of [`HLL INFO ${safe}`, `SKETCH INFO ${safe}`, `FILTER INFO ${safe}`]) {
+        try {
+          return await client.query(query)
+        } catch {
+          // Try the next probabilistic read form before falling back to SELECT.
+        }
+      }
+    }
+    try {
+      return await client.query(`SELECT * FROM ${safe} LIMIT 200`)
+    } catch {
+      for (const query of [`HLL INFO ${safe}`, `SKETCH INFO ${safe}`, `FILTER INFO ${safe}`]) {
+        try {
+          return await client.query(query)
+        } catch {
+          // Try the next probabilistic read form.
+        }
+      }
+      throw new Error(`No stats read form worked for ${collection}`)
+    }
+  }
+
+  async function fetchVectorPreview(client: RedClient, collection: string) {
+    const safe = safeCollectionName(collection)
+    const sample = await client.query(`SELECT * FROM ${safe} LIMIT 1`)
+    const dimension = sample.result.records[0]?.values.dimension
+    const dim = typeof dimension === 'number' && Number.isFinite(dimension) && dimension > 0
+      ? Math.min(4096, Math.floor(dimension))
+      : 3
+    const vector = Array.from({ length: dim }, (_, i) => i === 0 ? '1.0' : '0.0').join(', ')
+    return client.query(`VECTOR SEARCH ${safe} SIMILAR TO [${vector}] INCLUDE VECTORS LIMIT 200`)
+  }
+
   $effect(() => {
     if (secureStore.locked) return
     const client = connection.client
     if (!client) return
     for (const tab of tabs.tabs) {
-      if (results[tab.id] !== undefined || errors[tab.id]) continue
       if (tab.kind !== 'collection') continue
+      const subpage = tab.subpage ?? defaultSubpage(tab.capability)
+      const shouldFetchGraph = subpage === 'graph' || subpage === 'svg'
+      const shouldFetchQueue = subpage === 'queue' || tab.capability === 'queue'
+      const shouldFetchVector = subpage === 'vector' || tab.capability === 'vector'
+      const shouldFetchStats = subpage === 'stats' || tab.capability === 'stats'
+      const fetchMode = shouldFetchGraph ? 'graph-subgraph' : shouldFetchQueue ? 'queue-peek' : shouldFetchVector ? 'vector-search' : shouldFetchStats ? 'stats-info' : tab.capability ?? 'unknown'
+      const cacheKey = `${tab.key}:${subpage}:${fetchMode}`
+      if (resultKeys[tab.id] && resultKeys[tab.id] !== cacheKey) {
+        delete results[tab.id]
+        delete errors[tab.id]
+      }
+      if (results[tab.id] !== undefined || errors[tab.id]) continue
       results[tab.id] = null
+      resultKeys[tab.id] = cacheKey
       const collection = tab.key
-      const job = tab.capability === 'graph'
+      const job = shouldFetchGraph
         ? fetchGraphSubgraph(client, collection)
+        : shouldFetchQueue
+          ? activity.track(
+              `${collection} · QUEUE PEEK (LIMIT 200)`,
+              () => client.query(`QUEUE PEEK ${collection} 200`),
+            )
+        : shouldFetchVector
+          ? activity.track(
+              `${collection} · VECTOR SEARCH (LIMIT 200)`,
+              () => fetchVectorPreview(client, collection),
+            )
+        : shouldFetchStats
+          ? activity.track(
+              `${collection} · stats preview`,
+              () => fetchStatsCollection(client, collection),
+            )
         : activity.track(
             `${collection} · SELECT * (LIMIT 200)`,
             () => client.query(`SELECT * FROM ${collection} LIMIT 200`),
@@ -126,6 +259,21 @@
       job
         .then((r) => { results[tab.id] = r })
         .catch((e) => { errors[tab.id] = (e as Error).message })
+    }
+  })
+
+  $effect(() => {
+    if (!metadataOpen) return
+    if (secureStore.locked) return
+    const client = connection.client
+    if (!client) return
+    for (const tab of tabs.tabs) {
+      if (tab.kind !== 'collection') continue
+      if (metadata[tab.id] !== undefined || metadataErrors[tab.id]) continue
+      metadata[tab.id] = null
+      activity.track(`metadata · ${tab.key}`, () => client.collection(tab.key))
+        .then((m) => { metadata[tab.id] = m })
+        .catch((e) => { metadataErrors[tab.id] = (e as Error).message })
     }
   })
 
@@ -146,16 +294,19 @@
     queryTabs.remove(id)
     delete results[id]
     delete errors[id]
+    delete resultKeys[id]
+    delete metadata[id]
+    delete metadataErrors[id]
     if (closingUrlOwner) {
       const next = tabs.tabs.find((t) => t.kind === 'collection')
-      goto(next ? `/c/${encodeURIComponent(next.key)}` : '/', { replaceState: true })
+      goto(next ? collectionPageHref(next.key, next.subpage ?? defaultSubpage(next.capability)) : '/', { replaceState: true })
     }
   }
 
   function openNewQuery() {
     const label = queryTabs.nextLabel()
     const tab = tabs.open(
-      { kind: 'query', label, key: label, capability: 'table' },
+      { kind: 'query', label, key: label },
       true,
     )
     queryTabs.ensure(tab.id)
@@ -169,7 +320,8 @@
   })
 
   function pickRenderer(tab: Tab, result: QueryResult) {
-    return registry.pick(tab.capability ?? (result.capability as any), result, tab.overrideCapability)
+    const cap = subpageCapability(tab.subpage, tab.capability ?? (result.capability as Capability | undefined))
+    return registry.pick(cap, result, tab.overrideCapability)
   }
 
   function openLiveChanges() {
@@ -183,9 +335,19 @@
   }
 
   function defaultCapabilityLabel(tab: Tab, result: QueryResult | null | undefined): string {
+    if (tab.subpage) return tab.subpage
     if (tab.capability) return tab.capability
     if (result?.capability) return result.capability
     return 'auto'
+  }
+
+  function actionAllowed(v: NonNullable<CollectionMetadata['actions']>[string]): { allowed: boolean; reason?: string } {
+    if (typeof v === 'boolean') return { allowed: v }
+    return { allowed: v.allowed, reason: v.reason }
+  }
+
+  function objectKeys(v: unknown): string[] {
+    return v && typeof v === 'object' && !Array.isArray(v) ? Object.keys(v as Record<string, unknown>) : []
   }
 </script>
 
@@ -207,7 +369,7 @@
               : 'text-fg-3 hover:text-fg-1 hover:bg-bg-1/40',
           ].join(' ')}
           {#if tab.kind === 'collection'}
-            <a href="/c/{encodeURIComponent(tab.key)}" class={cls} title={tab.label}>
+            <a href={collectionPageHref(tab.key, tab.subpage ?? defaultSubpage(tab.capability))} class={cls} title={tab.label}>
               <span class="truncate max-w-[180px]">{tab.label}</span>
               <span
                 class="opacity-60 group-hover:opacity-100 hover:bg-bg-2 rounded p-0.5"
@@ -243,6 +405,23 @@
       {@const activeTab = tabs.active}
       {@const activeResult = results[activeTab.id]}
       <div class="ml-auto flex items-center gap-2 px-2 text-[11px] font-mono text-fg-3">
+        {#if activeTab.kind === 'collection'}
+          <button
+            type="button"
+            onclick={() => (metadataOpen = !metadataOpen)}
+            title={metadataOpen ? 'Hide collection metadata' : 'Show collection metadata'}
+            aria-pressed={metadataOpen}
+            class={[
+              'inline-flex items-center gap-1 h-6 px-1.5 rounded border transition-colors cursor-pointer',
+              metadataOpen
+                ? 'border-accent/40 bg-accent/10 text-accent'
+                : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+            ].join(' ')}
+          >
+            <Info class="size-3" />
+            <span>meta</span>
+          </button>
+        {/if}
         <button
           type="button"
           onclick={() => tabs.setShowSystem(activeTab.id, !activeTab.showSystemColumns)}
@@ -357,11 +536,82 @@
         {:else}
           {@const renderer = pickRenderer(tab, result)}
           {@const Renderer = renderer.component}
-          <Renderer
-            {result}
-            collection={tab.kind === 'collection' ? tab.key : undefined}
-            showSystem={tab.showSystemColumns ?? false}
-          />
+          <div class="h-full flex flex-col">
+            {#if metadataOpen}
+              {@const meta = metadata[tab.id]}
+              {@const metaErr = metadataErrors[tab.id]}
+              <div class="border-b border-line-1 bg-bg-1/30 px-3 py-2 text-[11px] font-mono">
+                {#if metaErr}
+                  <div class="flex items-start gap-2 text-fg-3">
+                    <Info class="mt-0.5 size-3.5 text-warn" />
+                    <div>
+                      <div class="text-warn">Collection metadata unavailable.</div>
+                      <div class="mt-0.5 break-words">{metaErr}</div>
+                    </div>
+                  </div>
+                {:else if !meta}
+                  <div class="text-fg-3">Loading metadata…</div>
+                {:else}
+                  <div class="grid grid-cols-[minmax(160px,0.8fr)_1.2fr] gap-3">
+                    <div class="grid grid-cols-[78px_1fr] gap-x-2 gap-y-1">
+                      <span class="text-fg-3">name</span>
+                      <span class="text-fg-0 truncate">{meta.name ?? tab.key}</span>
+                      <span class="text-fg-3">kind</span>
+                      <span class="text-accent">{meta.kind ?? meta.capability ?? tab.capability ?? 'unknown'}</span>
+                      <span class="text-fg-3">tenant</span>
+                      <span class="text-fg-1">{meta.tenant ?? 'not exposed'}</span>
+                      <span class="text-fg-3">indexes</span>
+                      <span class="text-fg-1">{meta.indexes?.length ?? 0}</span>
+                    </div>
+
+                    <div class="grid gap-1">
+                      <div class="flex flex-wrap gap-1">
+                        {#if meta.capability}
+                          <span class="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-accent">{meta.capability}</span>
+                        {/if}
+                        {#each meta.capabilities ?? [] as cap}
+                          <span class="rounded border border-line-1 px-1.5 py-0.5 text-fg-2">{cap}</span>
+                        {/each}
+                        {#if objectKeys(meta.schema).length > 0}
+                          <span class="rounded border border-line-1 px-1.5 py-0.5 text-fg-2">schema {objectKeys(meta.schema).length}</span>
+                        {/if}
+                        {#if objectKeys(meta.retention).length > 0}
+                          <span class="rounded border border-line-1 px-1.5 py-0.5 text-fg-2">retention</span>
+                        {/if}
+                      </div>
+
+                      {#if meta.actions && objectKeys(meta.actions).length > 0}
+                        <div class="mt-1 flex flex-wrap gap-1">
+                          {#each Object.entries(meta.actions) as [action, value]}
+                            {@const state = actionAllowed(value)}
+                            <span
+                              class={[
+                                'rounded border px-1.5 py-0.5',
+                                state.allowed ? 'border-ok/30 bg-ok/10 text-ok' : 'border-danger/30 bg-danger/10 text-danger',
+                              ].join(' ')}
+                              title={state.reason}
+                            >
+                              {action}: {state.allowed ? 'allow' : 'deny'}
+                            </span>
+                          {/each}
+                        </div>
+                      {:else}
+                        <div class="mt-1 text-fg-3">Action grants not exposed.</div>
+                      {/if}
+                    </div>
+                  </div>
+                {/if}
+              </div>
+            {/if}
+            <div class="flex-1 min-h-0">
+              <Renderer
+                {result}
+                collection={tab.kind === 'collection' ? tab.key : undefined}
+                subpage={tab.kind === 'collection' ? tab.subpage : undefined}
+                showSystem={tab.showSystemColumns ?? false}
+              />
+            </div>
+          </div>
         {/if}
       {/if}
     {/if}

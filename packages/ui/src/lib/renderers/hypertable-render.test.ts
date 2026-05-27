@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { QueryResult } from '@red-ui/protocol'
 import {
+  ALL_METRICS,
   chartGeometry,
   extractSeries,
   hasHypertableShape,
@@ -55,6 +56,19 @@ describe('numericColumns', () => {
     }
     expect(numericColumns(r, 'time')).toEqual(['cpu'])
   })
+
+  it('excludes system time and envelope columns from metric choices', () => {
+    const r: QueryResult = {
+      ...FIXTURE,
+      result: {
+        columns: ['timestamp', 'created_at', 'updated_at', 'timestamp_ns', 'rid', 'value'],
+        records: [
+          { values: { timestamp: 1, created_at: 2, updated_at: 3, timestamp_ns: 4, rid: 5, value: 9 } },
+        ],
+      },
+    }
+    expect(numericColumns(r, 'timestamp')).toEqual(['value'])
+  })
 })
 
 describe('hasHypertableShape', () => {
@@ -86,6 +100,51 @@ describe('extractSeries', () => {
     const s = extractSeries(FIXTURE, 'mem')!
     expect(s.metricColumn).toBe('mem')
     expect(s.points.map((p) => p.v)).toEqual([200, 220, 210])
+  })
+
+  it('treats metric/value rows as an all-writes event series by default', () => {
+    const r: QueryResult = {
+      ok: true,
+      query: 'SELECT * FROM ingest_log',
+      capability: 'hypertable',
+      record_count: 3,
+      result: {
+        columns: ['timestamp', 'metric', 'value', 'created_at', 'tags'],
+        records: [
+          { values: { timestamp: 3, metric: 'queue.enqueue', value: 2, created_at: 30, tags: { phase: 'queue' } } },
+          { values: { timestamp: 1, metric: 'queue.enqueue', value: 1, created_at: 10, tags: { phase: 'queue' } } },
+          { values: { timestamp: 2, metric: 'graph.edge', value: 9, created_at: 20, tags: { phase: 'graph' } } },
+        ],
+      },
+    }
+
+    const s = extractSeries(r)!
+    expect(s.metricColumn).toBe('value')
+    expect(s.metricNameColumn).toBe('metric')
+    expect(s.metrics).toEqual([ALL_METRICS, 'graph.edge', 'queue.enqueue'])
+    expect(s.points.map((p) => p.v)).toEqual([1, 9, 2])
+    expect(s.points[0].raw.tags).toEqual({ phase: 'queue' })
+  })
+
+  it('can filter metric/value rows to one named metric', () => {
+    const r: QueryResult = {
+      ok: true,
+      query: 'SELECT * FROM ingest_log',
+      capability: 'hypertable',
+      record_count: 3,
+      result: {
+        columns: ['timestamp', 'metric', 'value', 'created_at', 'tags'],
+        records: [
+          { values: { timestamp: 3, metric: 'queue.enqueue', value: 2, created_at: 30, tags: { phase: 'queue' } } },
+          { values: { timestamp: 1, metric: 'queue.enqueue', value: 1, created_at: 10, tags: { phase: 'queue' } } },
+          { values: { timestamp: 2, metric: 'graph.edge', value: 9, created_at: 20, tags: { phase: 'graph' } } },
+        ],
+      },
+    }
+
+    const s = extractSeries(r, 'queue.enqueue')!
+    expect(s.metrics).toEqual([ALL_METRICS, 'graph.edge', 'queue.enqueue'])
+    expect(s.points.map((p) => p.v)).toEqual([1, 2])
   })
 })
 

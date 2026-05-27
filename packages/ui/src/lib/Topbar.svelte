@@ -2,7 +2,7 @@
   import { Kbd } from '@red-ui/ui-kit'
   import ConnectDropdown from './ConnectDropdown.svelte'
   import ActivityIndicator from './ActivityIndicator.svelte'
-  import { Search, Sun, Moon, Network, Database } from 'lucide-svelte'
+  import { Search, Sun, Moon, Network, Database, FileCode2, Shield } from 'lucide-svelte'
   import { theme } from './theme.svelte'
   import { page } from '$app/state'
 
@@ -10,8 +10,10 @@
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, ctrlKey: true, bubbles: true }))
   }
 
-  const onWorkspace = $derived(page.url.pathname === '/' || page.url.pathname.startsWith('/c/'))
+  const onQuery = $derived(page.url.pathname.startsWith('/query'))
+  const onCollections = $derived(page.url.pathname === '/' || page.url.pathname.startsWith('/collections') || page.url.pathname.startsWith('/c/'))
   const onCluster = $derived(page.url.pathname.startsWith('/cluster'))
+  const onSecurity = $derived(page.url.pathname.startsWith('/security'))
 </script>
 
 <header class="h-11 flex items-center justify-between px-3.5 bg-bg-1/80 backdrop-blur-md border-b border-line-1 relative z-10">
@@ -24,16 +26,28 @@
     <div class="w-px h-[18px] bg-line-2 ml-1"></div>
     <nav class="flex items-center gap-0.5">
       <a
-        href="/"
-        title="Workspace"
-        aria-current={onWorkspace ? 'page' : undefined}
+        href="/query"
+        title="Query"
+        aria-current={onQuery ? 'page' : undefined}
         class={[
           'inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs no-underline transition-colors',
-          onWorkspace ? 'bg-bg-2 text-fg-0' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
+          onQuery ? 'bg-bg-2 text-fg-0' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
+        ].join(' ')}
+      >
+        <FileCode2 class="size-3.5" />
+        <span>Query</span>
+      </a>
+      <a
+        href="/collections"
+        title="Collections"
+        aria-current={onCollections ? 'page' : undefined}
+        class={[
+          'inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs no-underline transition-colors',
+          onCollections ? 'bg-bg-2 text-fg-0' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
         ].join(' ')}
       >
         <Database class="size-3.5" />
-        <span>Workspace</span>
+        <span>Collections</span>
       </a>
       <a
         href="/cluster"
@@ -46,6 +60,18 @@
       >
         <Network class="size-3.5" />
         <span>Cluster</span>
+      </a>
+      <a
+        href="/security"
+        title="Security"
+        aria-current={onSecurity ? 'page' : undefined}
+        class={[
+          'inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs no-underline transition-colors',
+          onSecurity ? 'bg-bg-2 text-fg-0' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
+        ].join(' ')}
+      >
+        <Shield class="size-3.5" />
+        <span>Security</span>
       </a>
     </nav>
   </div>

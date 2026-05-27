@@ -9,12 +9,23 @@
 
 import type { QueryResult } from '@red-ui/protocol'
 
-const TIME_KEYS = ['time', 'timestamp', 'ts', 'created_at', 'event_time', 'bucket']
+export const ALL_METRICS = '__all__'
+
+const TIME_KEYS = ['time', 'timestamp', 'ts', 'event_time', 'bucket', 'created_at']
+const SYSTEM_NUMERIC_KEYS = new Set([
+  'created_at',
+  'updated_at',
+  'time',
+  'timestamp',
+  'timestamp_ns',
+  'rid',
+  'tenant',
+])
 
 export interface HypertablePoint {
   t: number
   v: number
-  raw: { t: unknown; v: unknown }
+  raw: Record<string, unknown>
 }
 
 export interface HypertableSeries {
@@ -22,6 +33,7 @@ export interface HypertableSeries {
   metricColumn: string
   metrics: string[]
   points: HypertablePoint[]
+  metricNameColumn: string | null
 }
 
 export const CHART_WIDTH = 640
@@ -82,6 +94,7 @@ export function numericColumns(result: QueryResult, exclude: string | null): str
   for (const c of cols) {
     if (c === exclude) continue
     if (c.startsWith('red_')) continue
+    if (SYSTEM_NUMERIC_KEYS.has(c.toLowerCase())) continue
     const sample = records.find((r) => r.values[c] !== null && r.values[c] !== undefined)
     if (!sample) continue
     if (isNumericValue(sample.values[c])) out.push(c)
@@ -101,6 +114,47 @@ export function extractSeries(
 ): HypertableSeries | null {
   const timeColumn = pickTimeColumn(result)
   if (!timeColumn) return null
+  const metricNameColumn = result.result.columns.find((c) => c.toLowerCase() === 'metric') ?? null
+  const valueColumn = result.result.columns.find((c) => c.toLowerCase() === 'value') ?? null
+  if (metricNameColumn && valueColumn) {
+    const names = new Set<string>()
+    const allPoints: HypertablePoint[] = []
+    for (const rec of result.result.records) {
+      const name = rec.values[metricNameColumn]
+      const value = rec.values[valueColumn]
+      if ((typeof name === 'string' || typeof name === 'number') && isNumericValue(value)) {
+        names.add(String(name))
+        const t = toTimestamp(rec.values[timeColumn])
+        if (t !== null) allPoints.push({ t, v: toNumber(value), raw: rec.values })
+      }
+    }
+    const metrics = [...names].sort()
+    if (metrics.length > 0) {
+      if (!metric || metric === ALL_METRICS) {
+        allPoints.sort((a, b) => a.t - b.t)
+        return {
+          timeColumn,
+          metricColumn: valueColumn,
+          metrics: [ALL_METRICS, ...metrics],
+          points: allPoints,
+          metricNameColumn,
+        }
+      }
+      const selectedMetric = metrics.includes(metric) ? metric : metrics[0]
+      const points: HypertablePoint[] = []
+      for (const rec of result.result.records) {
+        if (String(rec.values[metricNameColumn]) !== selectedMetric) continue
+        const t = toTimestamp(rec.values[timeColumn])
+        if (t === null) continue
+        const vRaw = rec.values[valueColumn]
+        if (!isNumericValue(vRaw)) continue
+        points.push({ t, v: toNumber(vRaw), raw: rec.values })
+      }
+      points.sort((a, b) => a.t - b.t)
+      return { timeColumn, metricColumn: valueColumn, metrics: [ALL_METRICS, ...metrics], points, metricNameColumn }
+    }
+  }
+
   const metrics = numericColumns(result, timeColumn)
   if (metrics.length === 0) return null
   const metricColumn = metric && metrics.includes(metric) ? metric : metrics[0]
@@ -111,10 +165,10 @@ export function extractSeries(
     const t = toTimestamp(tRaw)
     if (t === null) continue
     if (!isNumericValue(vRaw)) continue
-    points.push({ t, v: toNumber(vRaw), raw: { t: tRaw, v: vRaw } })
+    points.push({ t, v: toNumber(vRaw), raw: rec.values })
   }
   points.sort((a, b) => a.t - b.t)
-  return { timeColumn, metricColumn, metrics, points }
+  return { timeColumn, metricColumn, metrics, points, metricNameColumn: null }
 }
 
 export interface ChartGeometry {

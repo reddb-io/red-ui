@@ -5,6 +5,16 @@ export interface QueryRow {
   values: Record<string, unknown>
   edges?: Record<string, unknown>
   nodes?: Record<string, unknown>
+  paths?: unknown[]
+  vector_results?: Array<{
+    id?: number | string
+    collection?: string
+    distance?: number
+    vector?: number[]
+    metadata?: Record<string, unknown>
+    linked_node?: string
+    linked_row?: [string, number]
+  }>
 }
 
 export interface QueryResult {
@@ -18,6 +28,19 @@ export interface QueryResult {
   error?: string
 }
 
+export interface CollectionMetadata {
+  ok?: boolean
+  name: string
+  kind?: string
+  capability?: string
+  capabilities?: string[]
+  schema?: Record<string, unknown>
+  indexes?: Array<Record<string, unknown>>
+  retention?: Record<string, unknown>
+  tenant?: string
+  actions?: Record<string, boolean | { allowed: boolean; reason?: string }>
+}
+
 export interface Stats {
   active_connections: number
   idle_connections: number
@@ -25,6 +48,44 @@ export interface Stats {
   store: { collection_count: number; cross_ref_count: number; total_entities: number; total_memory_bytes: number }
   system: { arch: string; cpu_cores: number; hostname: string; os: string; pid: number; total_memory_bytes: number; available_memory_bytes: number }
   kv?: { gets: number; puts: number; deletes: number; cas_success: number; cas_conflict: number }
+}
+
+export interface ClusterStatus {
+  ok?: boolean
+  deployment?: {
+    mode?: 'embedded' | 'server' | 'docker' | 'replicated' | string
+    file_path?: string
+    process_kind?: string
+    container_id?: string
+    image?: string
+    configured_by?: string
+  }
+  storage?: {
+    capacity_bytes?: number
+    used_bytes?: number
+    free_bytes?: number
+  }
+  wal?: {
+    size_bytes?: number
+    lsn?: number
+    oldest_lsn?: number
+  }
+  throughput?: {
+    requests_per_second?: number
+    reads_per_second?: number
+    writes_per_second?: number
+    avg_response_ms?: number
+  }
+  system?: {
+    cpu_usage_percent?: number
+    memory_used_bytes?: number
+    memory_total_bytes?: number
+  }
+  replication?: {
+    replica_count?: number
+    lag_ms?: number
+    lag_lsn?: number
+  }
 }
 
 export interface ReplicationStatus {
@@ -58,6 +119,27 @@ export interface AuthUser {
   mfa?: boolean
 }
 
+export interface AuthTenant {
+  id?: string
+  name?: string
+  slug?: string
+  role?: string
+  grants?: string[]
+  created_at?: number
+}
+
+export interface AuthPolicy {
+  id?: string
+  name?: string
+  tenant?: string
+  principal?: string
+  resource?: string
+  action?: string
+  effect?: 'allow' | 'deny' | string
+  description?: string
+  created_at?: number
+}
+
 export interface ChangeEvent {
   lsn: number
   timestamp: number
@@ -87,6 +169,18 @@ function shouldProxy(opts?: RedClientOptions): string | null {
   return null
 }
 
+const unsupportedCollectionMetadata = new Set<string>()
+const collectionMetadataSupportProbe = new Map<string, Promise<boolean>>()
+
+function isUnsupportedCollectionMetadataRoute(e: unknown): boolean {
+  const message = e instanceof Error ? e.message : String(e)
+  return message.includes('route not found: GET /collections/')
+}
+
+function unsupportedCollectionMetadataError(baseUrl: string): Error {
+  return new Error(`GET /collections/:name unsupported by this reddb server (${baseUrl})`)
+}
+
 export class RedClient {
   readonly baseUrl: string
   private readonly proxyPath: string | null
@@ -114,6 +208,10 @@ export class RedClient {
     return this.json<Stats>('/stats')
   }
 
+  async clusterStatus(): Promise<ClusterStatus> {
+    return this.json<ClusterStatus>('/cluster/status')
+  }
+
   async ping(): Promise<{ ok: true; rtt_ms: number } | { ok: false; error: string }> {
     const start = performance.now()
     try {
@@ -127,6 +225,42 @@ export class RedClient {
   async collections(): Promise<string[]> {
     const r = await this.json<{ collections: string[] }>('/collections')
     return r.collections
+  }
+
+  async collection(name: string): Promise<CollectionMetadata> {
+    if (unsupportedCollectionMetadata.has(this.baseUrl)) {
+      throw unsupportedCollectionMetadataError(this.baseUrl)
+    }
+
+    const path = `/collections/${encodeURIComponent(name)}`
+    const inFlightProbe = collectionMetadataSupportProbe.get(this.baseUrl)
+    if (inFlightProbe) {
+      const supported = await inFlightProbe
+      if (!supported) throw unsupportedCollectionMetadataError(this.baseUrl)
+      return this.json<CollectionMetadata>(path)
+    }
+
+    let resolveProbe: (supported: boolean) => void
+    const probe = new Promise<boolean>((resolve) => {
+      resolveProbe = resolve
+    })
+    collectionMetadataSupportProbe.set(this.baseUrl, probe)
+
+    try {
+      const metadata = await this.json<CollectionMetadata>(path)
+      resolveProbe!(true)
+      return metadata
+    } catch (e) {
+      if (isUnsupportedCollectionMetadataRoute(e)) {
+        unsupportedCollectionMetadata.add(this.baseUrl)
+        resolveProbe!(false)
+      } else {
+        resolveProbe!(true)
+      }
+      throw e
+    } finally {
+      collectionMetadataSupportProbe.delete(this.baseUrl)
+    }
   }
 
   async createCollection(name: string): Promise<void> {
@@ -158,6 +292,16 @@ export class RedClient {
   async users(): Promise<AuthUser[]> {
     const r = await this.json<{ ok: boolean; users: AuthUser[] }>('/auth/users')
     return r.users
+  }
+
+  async tenants(): Promise<AuthTenant[]> {
+    const r = await this.json<{ ok: boolean; tenants: AuthTenant[] }>('/auth/tenants')
+    return r.tenants ?? []
+  }
+
+  async policies(): Promise<AuthPolicy[]> {
+    const r = await this.json<{ ok: boolean; policies: AuthPolicy[] }>('/auth/policies')
+    return r.policies ?? []
   }
 
   async changes(sinceLsn?: number): Promise<ChangeEvent[]> {

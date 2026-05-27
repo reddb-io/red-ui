@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { QueryResult } from '@red-ui/protocol'
   import { Braces, ListTree, Search, X } from 'lucide-svelte'
-  import { buildTree, extractKv, flattenUnderPrefix, formatValue, type KvNode } from './kv-render'
+  import { buildTree, extractKv, formatValue, materializeKvJson, type KvNode } from './kv-render'
 
   interface Props {
     result: QueryResult
@@ -22,7 +22,7 @@
     prefix.trim() ? entries.filter((e) => e.key.startsWith(prefix.trim())) : entries,
   )
   const tree = $derived(buildTree(filteredEntries))
-  const jsonObject = $derived(flattenUnderPrefix(entries, prefix.trim()))
+  const jsonObject = $derived(materializeKvJson(entries, prefix.trim()))
 
   function preview(v: unknown): string {
     const s = formatValue(v)

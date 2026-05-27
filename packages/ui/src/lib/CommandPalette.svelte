@@ -25,8 +25,10 @@
   }
 
   const commands: Command[] = [
-    { id: 'home', group: 'navigate', label: 'Open workspace', hint: '/', run: () => goto('/') },
-    { id: 'topology', group: 'navigate', label: 'Open topology', hint: '/cluster', run: () => goto('/cluster') },
+    { id: 'query', group: 'navigate', label: 'Open query', hint: '/query', run: () => goto('/query') },
+    { id: 'collections', group: 'navigate', label: 'Open collections', hint: '/collections', run: () => goto('/collections') },
+    { id: 'topology', group: 'navigate', label: 'Open cluster', hint: '/cluster', run: () => goto('/cluster') },
+    { id: 'security', group: 'navigate', label: 'Open security', hint: '/security', run: () => goto('/security') },
 
     { id: 'new-query', group: 'data', label: 'New query', shortcut: '⌘T', run: () => { fire('red:new-query'); close() } },
 
