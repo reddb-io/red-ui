@@ -8,12 +8,21 @@
   import { tabs, type Tab } from '$lib/tabs.svelte'
   import { queryTabs } from '$lib/query-tabs.svelte'
   import { collectionPageHref, defaultSubpage, subpageCapability } from '$lib/collection-pages'
+  import {
+    collectionCatalogBadges,
+    collectionCatalogFromRow,
+    collectionCatalogQuery,
+    formatBytes,
+    formatCount,
+    type CollectionCatalogMetadata,
+  } from '$lib/collection-catalog'
   import { registry } from '$lib/renderers'
   import type { Capability } from '$lib/renderers'
+  import CollectionHistory from '$lib/CollectionHistory.svelte'
   import LiveChanges from '$lib/LiveChanges.svelte'
   import QueryEditor from '$lib/QueryEditor.svelte'
   import type { CollectionMetadata, QueryResult, RedClient } from '@red-ui/protocol'
-  import { X, Activity, Database, Plus, FileCode2, EyeOff, Eye, Info } from 'lucide-svelte'
+  import { X, Activity, Database, Plus, FileCode2, EyeOff, Eye, Info, HardDrive, Rows3, Layers3, ScanLine, GitBranch } from 'lucide-svelte'
 
   const OVERRIDE_CHOICES: { value: '' | Capability; label: string }[] = [
     { value: '', label: 'Auto' },
@@ -32,8 +41,11 @@
   let results = $state<Record<string, QueryResult | null>>({})
   let errors = $state<Record<string, string>>({})
   let resultKeys = $state<Record<string, string>>({})
+  let catalogMetadata = $state<Record<string, CollectionCatalogMetadata | null>>({})
+  let catalogErrors = $state<Record<string, string>>({})
   let metadata = $state<Record<string, CollectionMetadata | null>>({})
   let metadataErrors = $state<Record<string, string>>({})
+  let historyOpen = $state<Record<string, boolean>>({})
   let previousActiveId = $state<string | null>(null)
   let lastActiveId: string | null = null
   let menuOpen = $state(false)
@@ -164,6 +176,13 @@
     return `'${s.replace(/'/g, "''")}'`
   }
 
+  async function fetchCollectionCatalog(client: RedClient, collection: string): Promise<CollectionCatalogMetadata> {
+    const r = await client.query(collectionCatalogQuery(collection))
+    const meta = collectionCatalogFromRow(r.result.records[0])
+    if (!meta) throw new Error(`${collection} was not found in red.collections`)
+    return meta
+  }
+
   async function fetchCollectionModel(client: RedClient, collection: string): Promise<string | null> {
     try {
       const r = await client.query(`SELECT model FROM red.collections WHERE name = ${sqlString(collection)} LIMIT 1`)
@@ -203,15 +222,10 @@
     }
   }
 
-  async function fetchVectorPreview(client: RedClient, collection: string) {
+  async function fetchVectorSeed(client: RedClient, collection: string) {
     const safe = safeCollectionName(collection)
-    const sample = await client.query(`SELECT * FROM ${safe} LIMIT 1`)
-    const dimension = sample.result.records[0]?.values.dimension
-    const dim = typeof dimension === 'number' && Number.isFinite(dimension) && dimension > 0
-      ? Math.min(4096, Math.floor(dimension))
-      : 3
-    const vector = Array.from({ length: dim }, (_, i) => i === 0 ? '1.0' : '0.0').join(', ')
-    return client.query(`VECTOR SEARCH ${safe} SIMILAR TO [${vector}] INCLUDE VECTORS LIMIT 200`)
+    const r = await client.query(`SELECT * FROM ${safe} LIMIT 200`)
+    return { ...r, capability: r.capability ?? 'vector' }
   }
 
   $effect(() => {
@@ -225,7 +239,7 @@
       const shouldFetchQueue = subpage === 'queue' || tab.capability === 'queue'
       const shouldFetchVector = subpage === 'vector' || tab.capability === 'vector'
       const shouldFetchStats = subpage === 'stats' || tab.capability === 'stats'
-      const fetchMode = shouldFetchGraph ? 'graph-subgraph' : shouldFetchQueue ? 'queue-peek' : shouldFetchVector ? 'vector-search' : shouldFetchStats ? 'stats-info' : tab.capability ?? 'unknown'
+      const fetchMode = shouldFetchGraph ? 'graph-subgraph' : shouldFetchQueue ? 'queue-peek' : shouldFetchVector ? 'vector-inspector' : shouldFetchStats ? 'stats-info' : tab.capability ?? 'unknown'
       const cacheKey = `${tab.key}:${subpage}:${fetchMode}`
       if (resultKeys[tab.id] && resultKeys[tab.id] !== cacheKey) {
         delete results[tab.id]
@@ -244,8 +258,8 @@
             )
         : shouldFetchVector
           ? activity.track(
-              `${collection} · VECTOR SEARCH (LIMIT 200)`,
-              () => fetchVectorPreview(client, collection),
+              `${collection} · vector inspector seed`,
+              () => fetchVectorSeed(client, collection),
             )
         : shouldFetchStats
           ? activity.track(
@@ -259,6 +273,20 @@
       job
         .then((r) => { results[tab.id] = r })
         .catch((e) => { errors[tab.id] = (e as Error).message })
+    }
+  })
+
+  $effect(() => {
+    if (secureStore.locked) return
+    const client = connection.client
+    if (!client) return
+    for (const tab of tabs.tabs) {
+      if (tab.kind !== 'collection') continue
+      if (catalogMetadata[tab.id] !== undefined || catalogErrors[tab.id]) continue
+      catalogMetadata[tab.id] = null
+      activity.track(`catalog · ${tab.key}`, () => fetchCollectionCatalog(client, tab.key))
+        .then((m) => { catalogMetadata[tab.id] = m })
+        .catch((e) => { catalogErrors[tab.id] = (e as Error).message })
     }
   })
 
@@ -295,8 +323,11 @@
     delete results[id]
     delete errors[id]
     delete resultKeys[id]
+    delete catalogMetadata[id]
+    delete catalogErrors[id]
     delete metadata[id]
     delete metadataErrors[id]
+    delete historyOpen[id]
     if (closingUrlOwner) {
       const next = tabs.tabs.find((t) => t.kind === 'collection')
       goto(next ? collectionPageHref(next.key, next.subpage ?? defaultSubpage(next.capability)) : '/', { replaceState: true })
@@ -421,6 +452,21 @@
             <Info class="size-3" />
             <span>meta</span>
           </button>
+          <button
+            type="button"
+            onclick={() => (historyOpen = { ...historyOpen, [activeTab.id]: !(historyOpen[activeTab.id] ?? false) })}
+            title={historyOpen[activeTab.id] ? 'Hide version history' : 'Show version history and diffs'}
+            aria-pressed={historyOpen[activeTab.id] ?? false}
+            class={[
+              'inline-flex items-center gap-1 h-6 px-1.5 rounded border transition-colors cursor-pointer',
+              historyOpen[activeTab.id]
+                ? 'border-accent/40 bg-accent/10 text-accent'
+                : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+            ].join(' ')}
+          >
+            <GitBranch class="size-3" />
+            <span>history</span>
+          </button>
         {/if}
         <button
           type="button"
@@ -536,7 +582,71 @@
         {:else}
           {@const renderer = pickRenderer(tab, result)}
           {@const Renderer = renderer.component}
+          {@const catalog = catalogMetadata[tab.id]}
+          {@const catalogErr = catalogErrors[tab.id]}
           <div class="h-full flex flex-col">
+            <div class="border-b border-line-1 bg-bg-1/35 px-3 py-2">
+              {#if catalogErr}
+                <div class="flex items-center gap-2 text-[11px] font-mono text-fg-3">
+                  <Info class="size-3.5 text-warn" />
+                  <span>Catalog metadata unavailable.</span>
+                  <span class="truncate">{catalogErr}</span>
+                </div>
+              {:else if !catalog}
+                <div class="flex items-center gap-2 text-[11px] font-mono text-fg-3">
+                  <Database class="size-3.5" />
+                  <span>Loading collection catalog…</span>
+                </div>
+              {:else}
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+                  <div class="min-w-[180px] flex-1">
+                    <div class="flex items-center gap-2">
+                      <span class="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-accent">
+                        {catalog.model ?? 'collection'}
+                      </span>
+                      <span class="truncate font-mono text-[12px] text-fg-0">{catalog.name}</span>
+                    </div>
+                    <div class="mt-1 flex flex-wrap gap-1">
+                      {#each collectionCatalogBadges(catalog) as badge}
+                        <span class="rounded border border-line-1 bg-bg-0/70 px-1.5 py-0.5 font-mono text-[10px] text-fg-2">{badge}</span>
+                      {/each}
+                      {#if collectionCatalogBadges(catalog).length === 0}
+                        <span class="font-mono text-[10px] text-fg-3">No type-specific catalog fields.</span>
+                      {/if}
+                    </div>
+                  </div>
+
+                  <div class="flex flex-wrap items-center gap-2 font-mono text-[11px]">
+                    <div class="inline-flex min-w-[94px] items-center gap-1.5 rounded border border-line-1 bg-bg-0/70 px-2 py-1">
+                      <Rows3 class="size-3.5 text-fg-3" />
+                      <span class="text-fg-0">{formatCount(catalog.entities)}</span>
+                      <span class="text-fg-3">entities</span>
+                    </div>
+                    <div class="inline-flex min-w-[92px] items-center gap-1.5 rounded border border-line-1 bg-bg-0/70 px-2 py-1">
+                      <HardDrive class="size-3.5 text-fg-3" />
+                      <span class="text-fg-0">{formatBytes(catalog.onDiskBytes)}</span>
+                      <span class="text-fg-3">disk</span>
+                    </div>
+                    <div class="inline-flex min-w-[92px] items-center gap-1.5 rounded border border-line-1 bg-bg-0/70 px-2 py-1">
+                      <Activity class="size-3.5 text-fg-3" />
+                      <span class="text-fg-0">{formatBytes(catalog.inMemoryBytes)}</span>
+                      <span class="text-fg-3">mem</span>
+                    </div>
+                    <div class="inline-flex min-w-[78px] items-center gap-1.5 rounded border border-line-1 bg-bg-0/70 px-2 py-1">
+                      <Layers3 class="size-3.5 text-fg-3" />
+                      <span class="text-fg-0">{formatCount(catalog.segments)}</span>
+                      <span class="text-fg-3">seg</span>
+                    </div>
+                    <div class="inline-flex min-w-[78px] items-center gap-1.5 rounded border border-line-1 bg-bg-0/70 px-2 py-1">
+                      <ScanLine class="size-3.5 text-fg-3" />
+                      <span class="text-fg-0">{formatCount(catalog.indices)}</span>
+                      <span class="text-fg-3">idx</span>
+                    </div>
+                  </div>
+                </div>
+              {/if}
+            </div>
+
             {#if metadataOpen}
               {@const meta = metadata[tab.id]}
               {@const metaErr = metadataErrors[tab.id]}
@@ -603,10 +713,16 @@
                 {/if}
               </div>
             {/if}
+            {#if historyOpen[tab.id]}
+              <div class="h-[320px] min-h-[240px] border-b border-line-1">
+                <CollectionHistory client={connection.client ?? undefined} collection={tab.key} />
+              </div>
+            {/if}
             <div class="flex-1 min-h-0">
               <Renderer
                 {result}
                 collection={tab.kind === 'collection' ? tab.key : undefined}
+                client={connection.client ?? undefined}
                 subpage={tab.kind === 'collection' ? tab.subpage : undefined}
                 showSystem={tab.showSystemColumns ?? false}
               />

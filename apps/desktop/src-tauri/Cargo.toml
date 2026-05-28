@@ -1,6 +1,6 @@
 [package]
 name = "red-ui"
-version = "0.0.1"
+version = "0.1.0"
 description = "reddb universal client"
 authors = ["reddb-io"]
 edition = "2021"

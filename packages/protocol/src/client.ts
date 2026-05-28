@@ -145,8 +145,53 @@ export interface ChangeEvent {
   timestamp: number
   collection: string
   kind: string
-  operation: 'insert' | 'update' | 'delete'
+  operation: 'insert' | 'update' | 'delete' | 'refresh'
   rid?: number
+}
+
+export interface VcsEnvelope<T> {
+  ok: boolean
+  result: T
+  error?: string
+}
+
+export interface CollectionVcsState {
+  collection: string
+  versioned: boolean
+}
+
+export interface VcsAuthor {
+  name: string
+  email: string
+}
+
+export interface VcsCommit {
+  hash: string
+  root_xid?: number
+  parents: string[]
+  height?: number
+  author?: VcsAuthor
+  committer?: VcsAuthor
+  message: string
+  timestamp_ms: number
+  signature?: string
+}
+
+export interface VcsDiffEntry {
+  collection: string
+  entity_id: string
+  change: 'added' | 'removed' | 'modified' | string
+  before?: unknown
+  after?: unknown
+}
+
+export interface VcsDiff {
+  from: string
+  to: string
+  added: number
+  removed: number
+  modified: number
+  entries: VcsDiffEntry[]
 }
 
 export interface RedClientOptions {
@@ -278,6 +323,41 @@ export class RedClient {
     return this.json<QueryResult>('/query', { method: 'POST', body: JSON.stringify({ query }) })
   }
 
+  async collectionVcs(name: string): Promise<CollectionVcsState> {
+    const r = await this.json<VcsEnvelope<CollectionVcsState>>(`/collections/${encodeURIComponent(name)}/vcs`)
+    return r.result
+  }
+
+  async setCollectionVcs(name: string, versioned: boolean): Promise<CollectionVcsState> {
+    const r = await this.json<VcsEnvelope<CollectionVcsState>>(`/collections/${encodeURIComponent(name)}/vcs`, {
+      method: 'PUT',
+      body: JSON.stringify({ versioned }),
+    })
+    return r.result
+  }
+
+  async commits(opts: { from?: string; to?: string; branch?: string; limit?: number; skip?: number; noMerges?: boolean } = {}): Promise<VcsCommit[]> {
+    const qs = new URLSearchParams()
+    if (opts.from) qs.set('from', opts.from)
+    if (opts.to) qs.set('to', opts.to)
+    if (opts.branch) qs.set('branch', opts.branch)
+    if (opts.limit !== undefined) qs.set('limit', String(opts.limit))
+    if (opts.skip !== undefined) qs.set('skip', String(opts.skip))
+    if (opts.noMerges !== undefined) qs.set('no_merges', String(opts.noMerges))
+    const suffix = qs.toString() ? `?${qs}` : ''
+    const r = await this.json<VcsEnvelope<VcsCommit[]>>(`/repo/commits${suffix}`)
+    return r.result
+  }
+
+  async commitDiff(from: string, to: string, opts: { collection?: string; summary?: boolean } = {}): Promise<VcsDiff> {
+    const qs = new URLSearchParams()
+    if (opts.collection) qs.set('collection', opts.collection)
+    if (opts.summary !== undefined) qs.set('summary', String(opts.summary))
+    const suffix = qs.toString() ? `?${qs}` : ''
+    const r = await this.json<VcsEnvelope<VcsDiff>>(`/repo/commits/${encodeURIComponent(from)}/diff/${encodeURIComponent(to)}${suffix}`)
+    return r.result
+  }
+
   async replication(): Promise<ReplicationStatus> {
     return this.json<ReplicationStatus>('/replication/status').catch(() => ({
       ok: false,
@@ -304,10 +384,14 @@ export class RedClient {
     return r.policies ?? []
   }
 
-  async changes(sinceLsn?: number): Promise<ChangeEvent[]> {
-    const qs = sinceLsn !== undefined ? `?since=${sinceLsn}` : ''
-    const r = await this.json<{ events: ChangeEvent[] }>('/changes' + qs)
-    return r.events ?? []
+  async changes(sinceLsn?: number, opts: { collection?: string; limit?: number } = {}): Promise<ChangeEvent[]> {
+    const qs = new URLSearchParams()
+    if (sinceLsn !== undefined) qs.set('since_lsn', String(sinceLsn))
+    if (opts.limit !== undefined) qs.set('limit', String(opts.limit))
+    const suffix = qs.toString() ? `?${qs}` : ''
+    const r = await this.json<{ events: ChangeEvent[] }>('/changes' + suffix)
+    const events = r.events ?? []
+    return opts.collection ? events.filter((e) => e.collection === opts.collection) : events
   }
 
   // Convenience: turn a /query response into plain row objects.

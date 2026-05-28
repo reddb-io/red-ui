@@ -155,7 +155,7 @@ describe('collection capability detection', () => {
     await expect(detectCapability(statsClient, 'red_stats')).resolves.toBe('stats')
   })
 
-  it('infers diff shape from before/after rows', async () => {
+  it('keeps before/after tables as tables unless a diff renderer is explicitly requested', async () => {
     const client = {
       query: vi.fn(async () => ({
         ...result(undefined),
@@ -166,7 +166,7 @@ describe('collection capability detection', () => {
       })),
     } as unknown as RedClient
 
-    await expect(detectCapability(client, 'grimm_branch_diff')).resolves.toBe('diff')
+    await expect(detectCapability(client, 'grimm_branch_diff')).resolves.toBe('table')
   })
 
   it('infers document shape from document rows', async () => {

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { QueryResult } from '@red-ui/protocol'
   import { Braces, GitCompareArrows, Search, X } from 'lucide-svelte'
-  import { extractDiffEntries, formatDiffValue, summarizeDiff, type DiffEntry } from './diff-render'
+  import { diffEntryFields, extractDiffEntries, formatDiffValue, summarizeDiff, type DiffEntry } from './diff-render'
 
   interface Props {
     result: QueryResult
@@ -13,6 +13,7 @@
   let mode = $state<'summary' | 'raw'>('summary')
   let filter = $state('')
   let selected = $state<DiffEntry | null>(null)
+  let showUnchanged = $state(false)
 
   const entries = $derived(extractDiffEntries(result))
   const summary = $derived(summarizeDiff(entries))
@@ -29,6 +30,15 @@
     )
   })
   const active = $derived(selected ?? filtered[0] ?? null)
+  const activeFields = $derived(active ? diffEntryFields(active) : [])
+  const visibleFields = $derived(showUnchanged ? activeFields : activeFields.filter((field) => field.status !== 'unchanged'))
+
+  function statusClass(status: string): string {
+    if (status === 'added') return 'text-ok'
+    if (status === 'removed') return 'text-danger'
+    if (status === 'modified') return 'text-accent'
+    return 'text-fg-3'
+  }
 </script>
 
 <div class="flex h-full flex-col text-fg-1">
@@ -108,14 +118,59 @@
               <span class="text-fg-3">change</span><span class="text-accent">{active.change}</span>
               <span class="text-fg-3">entity</span><span class="text-fg-0">{active.entityId ?? active.id}</span>
               <span class="text-fg-3">collection</span><span class="text-fg-0">{active.collection ?? '-'}</span>
+              {#if active.note}
+                <span class="text-fg-3">note</span><span class="text-fg-1">{active.note}</span>
+              {/if}
             </div>
+
+            {#if activeFields.length > 0}
+              <div class="mb-3 border border-line-1">
+                <div class="flex items-center gap-2 border-b border-line-1 bg-bg-1 px-2 py-1.5">
+                  <span class="text-fg-0">field diff</span>
+                  <span class="text-fg-3">{visibleFields.length}/{activeFields.length} fields</span>
+                  <label class="ml-auto inline-flex items-center gap-1 text-fg-3">
+                    <input type="checkbox" bind:checked={showUnchanged} class="size-3 accent-current" />
+                    unchanged
+                  </label>
+                </div>
+                {#if visibleFields.length === 0}
+                  <div class="px-2 py-2 text-fg-3">No changed fields in this row.</div>
+                {:else}
+                  <table class="w-full border-collapse">
+                    <thead class="bg-bg-0 text-fg-3">
+                      <tr class="border-b border-line-1">
+                        <th class="w-[110px] px-2 py-1 text-left font-normal">status</th>
+                        <th class="w-[150px] px-2 py-1 text-left font-normal">field</th>
+                        <th class="px-2 py-1 text-left font-normal">before</th>
+                        <th class="px-2 py-1 text-left font-normal">after</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {#each visibleFields as field (field.field)}
+                        <tr class="border-b border-line-1/60 last:border-b-0">
+                          <td class={['px-2 py-1 align-top', statusClass(field.status)].join(' ')}>{field.status}</td>
+                          <td class="px-2 py-1 align-top text-fg-0">{field.field}</td>
+                          <td class="max-w-[260px] px-2 py-1 align-top text-fg-2">
+                            <pre class="whitespace-pre-wrap break-words">{formatDiffValue(field.before)}</pre>
+                          </td>
+                          <td class="max-w-[260px] px-2 py-1 align-top text-fg-2">
+                            <pre class="whitespace-pre-wrap break-words">{formatDiffValue(field.after)}</pre>
+                          </td>
+                        </tr>
+                      {/each}
+                    </tbody>
+                  </table>
+                {/if}
+              </div>
+            {/if}
+
             <div class="grid grid-cols-2 gap-3">
               <section class="min-w-0">
-                <div class="type-label mb-1">before</div>
+                <div class="type-label mb-1">full before</div>
                 <pre class="min-h-[160px] whitespace-pre-wrap break-words rounded border border-line-1 bg-bg-1 p-2 text-fg-1">{formatDiffValue(active.before)}</pre>
               </section>
               <section class="min-w-0">
-                <div class="type-label mb-1">after</div>
+                <div class="type-label mb-1">full after</div>
                 <pre class="min-h-[160px] whitespace-pre-wrap break-words rounded border border-line-1 bg-bg-1 p-2 text-fg-1">{formatDiffValue(active.after)}</pre>
               </section>
             </div>

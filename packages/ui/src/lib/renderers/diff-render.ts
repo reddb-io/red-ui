@@ -12,6 +12,13 @@ export interface DiffEntry {
   values: Record<string, unknown>
 }
 
+export interface DiffFieldChange {
+  field: string
+  before: unknown
+  after: unknown
+  status: 'added' | 'removed' | 'modified' | 'unchanged'
+}
+
 const CHANGE_COLUMNS = ['change', 'change_type', 'operation', 'op']
 const COLLECTION_COLUMNS = ['target_collection', 'collection_name', 'diff_collection']
 const ENTITY_COLUMNS = ['entity_id', 'row_id', 'rid', 'id']
@@ -73,6 +80,39 @@ export function summarizeDiff(entries: DiffEntry[]) {
   const counts = new Map<string, number>()
   for (const entry of entries) counts.set(entry.change, (counts.get(entry.change) ?? 0) + 1)
   return [...counts.entries()].sort(([a], [b]) => a.localeCompare(b))
+}
+
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === 'object' && !Array.isArray(value)
+}
+
+function stableValue(value: unknown): string {
+  if (value === undefined) return '__red_ui_undefined__'
+  if (isPlainRecord(value)) {
+    return JSON.stringify(Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b))))
+  }
+  return JSON.stringify(value)
+}
+
+export function diffEntryFields(entry: DiffEntry): DiffFieldChange[] {
+  const before = isPlainRecord(entry.before) ? entry.before : {}
+  const after = isPlainRecord(entry.after) ? entry.after : {}
+  const fields = new Set([...Object.keys(before), ...Object.keys(after)])
+
+  return [...fields].sort((a, b) => a.localeCompare(b)).map((field) => {
+    const beforeHas = Object.prototype.hasOwnProperty.call(before, field)
+    const afterHas = Object.prototype.hasOwnProperty.call(after, field)
+    const previous = before[field]
+    const next = after[field]
+    const status = !beforeHas && afterHas
+      ? 'added'
+      : beforeHas && !afterHas
+        ? 'removed'
+        : stableValue(previous) === stableValue(next)
+          ? 'unchanged'
+          : 'modified'
+    return { field, before: previous, after: next, status }
+  })
 }
 
 export function formatDiffValue(value: unknown): string {

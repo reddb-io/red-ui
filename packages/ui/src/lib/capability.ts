@@ -141,7 +141,6 @@ function inferCapabilityFromShape(r: QueryResult): Capability | null {
   if (kind === 'kv' || (has('key') && has('value'))) return 'kv'
   if (hasAny(['message', 'payload', 'body']) && hasAny(['message_id', 'state', 'status', 'consumer', 'delivery_state'])) return 'queue'
   if (hasAny(['timestamp', 'time', 'ts', 'event_time', 'bucket']) && hasAny(['value', 'count', 'metric'])) return 'hypertable'
-  if (hasAny(['change', 'change_type']) && hasAny(['before', 'after', 'before_state', 'after_state', 'entity_id', 'row_id'])) return 'diff'
   if (hasAny(['metric', 'stat', 'name', 'table']) && hasAny(['value', 'count', 'total', 'avg', 'rate', 'row_count', 'page_count', 'cardinality', 'memory_bytes'])) return 'stats'
   return null
 }

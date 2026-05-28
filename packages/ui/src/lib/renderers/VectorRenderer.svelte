@@ -1,20 +1,44 @@
 <script lang="ts">
-  import type { QueryResult } from '@red-ui/protocol'
-  import { Braces, Gauge, ListFilter, Search, X } from 'lucide-svelte'
-  import { compactValue, extractVectors, scalarLabel, vectorMagnitude, type VectorRow } from './vector-render'
+  import type { QueryResult, RedClient } from '@red-ui/protocol'
+  import { Braces, Gauge, ListFilter, LoaderCircle, Play, Rows3, Search, X } from 'lucide-svelte'
+  import {
+    buildVectorSearchQuery,
+    compactValue,
+    extractVectors,
+    isSyntheticVectorPreview,
+    isVectorSearchResult,
+    parseVectorInput,
+    scalarLabel,
+    vectorMagnitude,
+    type VectorRow,
+  } from './vector-render'
 
   interface Props {
     result: QueryResult
     collection?: string
+    client?: RedClient
   }
 
-  let { result, collection }: Props = $props()
+  let { result, collection, client }: Props = $props()
 
+  let surface = $state<'browse' | 'search'>('browse')
   let mode = $state<'metadata' | 'vector' | 'scalar'>('metadata')
+  let source = $state<'text' | 'vector'>('text')
+  let queryText = $state('')
+  let queryVector = $state('')
+  let limit = $state(20)
   let filter = $state('')
   let selected = $state<VectorRow | null>(null)
+  let searchResult = $state<QueryResult | null>(null)
+  let searching = $state(false)
+  let searchError = $state<string | null>(null)
 
-  const rows = $derived(extractVectors(result))
+  const browseRows = $derived(extractVectors(result))
+  const declaredDimension = $derived(browseRows.find((row) => row.dimension > 0)?.dimension ?? null)
+  const incomingSearchResult = $derived(searchResult ?? (isVectorSearchResult(result) ? result : null))
+  const searchRows = $derived(incomingSearchResult ? extractVectors(incomingSearchResult) : [])
+  const rows = $derived(surface === 'search' ? searchRows : browseRows)
+  const syntheticPreview = $derived(incomingSearchResult ? isSyntheticVectorPreview(incomingSearchResult) : false)
   const filtered = $derived.by(() => {
     const q = filter.trim().toLowerCase()
     if (!q) return rows
@@ -25,6 +49,7 @@
   })
   const active = $derived(selected ?? filtered[0] ?? null)
   const maxMagnitude = $derived(Math.max(1, ...filtered.map((row) => vectorMagnitude(row.vector))))
+  const hasSearch = $derived(incomingSearchResult !== null)
 
   function preview(row: VectorRow): string {
     const entries = Object.entries(row.metadata).slice(0, 3)
@@ -36,15 +61,180 @@
     const max = Math.max(1, ...vector.map((x) => Math.abs(x)))
     return Math.max(2, Math.abs(value) / max * 100)
   }
+
+  async function runSearch() {
+    if (!client || !collection) {
+      searchError = 'No active RedDB connection for vector search.'
+      return
+    }
+    searchError = null
+    searching = true
+    try {
+      const text = queryText.trim()
+      if (source === 'text' && text.length === 0) {
+        throw new Error('Enter text for RedDB to embed.')
+      }
+      const query = source === 'text'
+        ? buildVectorSearchQuery(collection, { kind: 'text', text }, limit)
+        : buildVectorSearchQuery(collection, { kind: 'vector', vector: parseVectorInput(queryVector) }, limit)
+      const next = await client.query(query)
+      searchResult = next
+      selected = null
+      surface = 'search'
+      mode = 'metadata'
+    } catch (e) {
+      searchError = (e as Error).message
+    } finally {
+      searching = false
+    }
+  }
 </script>
 
 <div class="flex h-full flex-col text-fg-1">
-  {#if rows.length === 0}
-    <div class="flex-1 grid place-items-center text-fg-3 text-[12px] font-mono p-6">
-      No vector shape in this result.
+  <div class="border-b border-line-1 bg-bg-1/40 px-3 py-2 font-mono text-[11px]">
+    <div class="flex flex-wrap items-center gap-2">
+      <div class="inline-flex shrink-0 overflow-hidden rounded border border-line-2">
+        <button
+          type="button"
+          class={['inline-flex h-7 items-center gap-1 px-2 transition-colors', surface === 'browse' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+          onclick={() => { surface = 'browse'; selected = null }}
+          aria-pressed={surface === 'browse'}
+        >
+          <Rows3 class="size-3" />
+          browse
+        </button>
+        <button
+          type="button"
+          class={['inline-flex h-7 items-center gap-1 border-l border-line-2 px-2 transition-colors', surface === 'search' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+          onclick={() => { surface = 'search'; selected = null }}
+          aria-pressed={surface === 'search'}
+        >
+          <Search class="size-3" />
+          search
+        </button>
+      </div>
+
+      {#if surface === 'search'}
+        <div class="inline-flex shrink-0 overflow-hidden rounded border border-line-2">
+          <button
+            type="button"
+            class={['inline-flex h-7 items-center gap-1 px-2 transition-colors', source === 'text' ? 'bg-bg-3 text-fg-0' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+            onclick={() => (source = 'text')}
+            aria-pressed={source === 'text'}
+          >
+            text
+          </button>
+          <button
+            type="button"
+            class={['inline-flex h-7 items-center gap-1 border-l border-line-2 px-2 transition-colors', source === 'vector' ? 'bg-bg-3 text-fg-0' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+            onclick={() => (source = 'vector')}
+            aria-pressed={source === 'vector'}
+          >
+            vector
+          </button>
+        </div>
+
+        <div class="min-w-[260px] flex-1">
+          {#if source === 'text'}
+            <input
+              type="text"
+              bind:value={queryText}
+              placeholder="text query…"
+              class="h-7 w-full rounded border border-line-1 bg-bg-0 px-2 text-fg-1 outline-none placeholder:text-fg-3 focus:border-line-3"
+              onkeydown={(e) => { if (e.key === 'Enter') void runSearch() }}
+            />
+          {:else}
+            <input
+              type="text"
+              bind:value={queryVector}
+              placeholder="[0.12, -0.04, 0.91, …]"
+              class="h-7 w-full rounded border border-line-1 bg-bg-0 px-2 text-fg-1 outline-none placeholder:text-fg-3 focus:border-line-3"
+              onkeydown={(e) => { if (e.key === 'Enter') void runSearch() }}
+            />
+          {/if}
+        </div>
+
+        <label class="inline-flex h-7 items-center gap-1 rounded border border-line-1 bg-bg-0 px-2 text-fg-3">
+          <span>limit</span>
+          <input
+            type="number"
+            min="1"
+            max="200"
+            bind:value={limit}
+            class="w-12 bg-transparent text-right text-fg-1 outline-none"
+          />
+        </label>
+
+        <button
+          type="button"
+          class={[
+            'inline-flex h-7 items-center gap-1 rounded border px-2 transition-colors',
+            searching
+              ? 'border-line-1 bg-bg-2 text-fg-3'
+              : 'border-accent/40 bg-accent text-white hover:bg-accent/90',
+          ].join(' ')}
+          disabled={searching}
+          onclick={() => void runSearch()}
+        >
+          {#if searching}
+            <LoaderCircle class="size-3 animate-spin" />
+          {:else}
+            <Play class="size-3" />
+          {/if}
+          search
+        </button>
+      {:else}
+        <div class="inline-flex items-center gap-1.5 border border-line-1 rounded px-2 py-1 bg-bg-0">
+          <Search class="size-3 text-fg-3" />
+          <input
+            type="text"
+            bind:value={filter}
+            placeholder="filter rows…"
+            class="bg-transparent text-fg-1 outline-none w-[180px] placeholder:text-fg-3"
+          />
+          {#if filter}
+            <button type="button" onclick={() => (filter = '')} class="text-fg-3 hover:text-fg-1 cursor-pointer" aria-label="Clear vector row filter">
+              <X class="size-3" />
+            </button>
+          {/if}
+        </div>
+      {/if}
+
+      <div class="ml-auto flex items-center gap-2 text-fg-3">
+        <span>{declaredDimension ? `${declaredDimension}d` : 'dimension n/a'}</span>
+        {#if collection}<span>{collection}</span>{/if}
+      </div>
+    </div>
+
+    {#if searchError}
+      <div class="mt-1.5 text-warn">{searchError}</div>
+    {/if}
+  </div>
+
+  {#if surface === 'search' && syntheticPreview}
+    <div class="border-b border-line-1 bg-bg-1/30 px-3 py-1.5 text-[11px] font-mono text-fg-3">
+      Preview search: distances and scores are computed against the synthetic basis vector
+      <span class="text-fg-1">[1, 0, 0, …]</span>.
+    </div>
+  {/if}
+
+  {#if surface === 'search' && searchRows.length === 0}
+    <div class="flex-1 grid place-items-center p-6 text-center font-mono text-[12px] text-fg-3">
+      <div>
+        <Search class="mx-auto mb-3 size-7 text-fg-3" strokeWidth={1.4} />
+        <div class="text-fg-1">{hasSearch ? 'No search results.' : 'No vector search has been run.'}</div>
+        <div class="mt-1">Text queries are embedded by RedDB.</div>
+      </div>
+    </div>
+  {:else if rows.length === 0}
+    <div class="flex-1 grid place-items-center p-6 text-center font-mono text-[12px] text-fg-3">
+      <div>
+        <Rows3 class="mx-auto mb-3 size-7 text-fg-3" strokeWidth={1.4} />
+        <div class="text-fg-1">No vector rows returned.</div>
+      </div>
     </div>
   {:else}
-    <div class="border-b border-line-1 px-3 py-1.5 flex items-center gap-2 text-[11px] font-mono bg-bg-1/40">
+    <div class="border-b border-line-1 px-3 py-1.5 flex items-center gap-2 text-[11px] font-mono bg-bg-0">
       <div class="inline-flex border border-line-2 rounded overflow-hidden">
         <button
           type="button"
@@ -71,28 +261,30 @@
           aria-pressed={mode === 'scalar'}
         >
           <Gauge class="size-3" />
-          turbovec
+          scores
         </button>
       </div>
 
-      <div class="inline-flex items-center gap-1.5 border border-line-1 rounded px-2 py-1 bg-bg-0">
-        <Search class="size-3 text-fg-3" />
-        <input
-          type="text"
-          bind:value={filter}
-          placeholder="id or metadata…"
-          class="bg-transparent text-fg-1 outline-none w-[180px] placeholder:text-fg-3"
-        />
-        {#if filter}
-          <button type="button" onclick={() => (filter = '')} class="text-fg-3 hover:text-fg-1 cursor-pointer" aria-label="Clear vector filter">
-            <X class="size-3" />
-          </button>
-        {/if}
-      </div>
+      {#if surface === 'search'}
+        <div class="inline-flex items-center gap-1.5 border border-line-1 rounded px-2 py-1 bg-bg-0">
+          <Search class="size-3 text-fg-3" />
+          <input
+            type="text"
+            bind:value={filter}
+            placeholder="filter results…"
+            class="bg-transparent text-fg-1 outline-none w-[180px] placeholder:text-fg-3"
+          />
+          {#if filter}
+            <button type="button" onclick={() => (filter = '')} class="text-fg-3 hover:text-fg-1 cursor-pointer" aria-label="Clear vector result filter">
+              <X class="size-3" />
+            </button>
+          {/if}
+        </div>
+      {/if}
 
       <div class="ml-auto text-fg-3">
-        {filtered.length.toLocaleString()}{#if filter} of {rows.length.toLocaleString()}{/if} vectors
-        {#if collection}· <span class="text-fg-2">{collection}</span>{/if}
+        {filtered.length.toLocaleString()}{#if filter} of {rows.length.toLocaleString()}{/if}
+        {surface === 'search' ? ' results' : ' rows'}
       </div>
     </div>
 
@@ -110,7 +302,7 @@
             <div class="flex items-baseline gap-2">
               <span class="text-accent">{row.id}</span>
               <span class="text-fg-3">{row.dimension}d</span>
-              {#if row.scalar !== null}<span class="ml-auto text-fg-1" title={scalarLabel(row)}>{row.scalar.toFixed(4)}</span>{/if}
+              {#if surface === 'search' && row.scalar !== null}<span class="ml-auto text-fg-1" title={scalarLabel(row)}>{row.scalar.toFixed(4)}</span>{/if}
             </div>
             {#if preview(row)}
               <div class="mt-0.5 truncate text-fg-3">{preview(row)}</div>
@@ -136,13 +328,9 @@
               <div class="text-fg-3">vector column</div>
               <div class="text-fg-0">{active.vectorColumn}</div>
             {/if}
-            {#if active.scalarColumn}
-              <div class="text-fg-3">turbovec scalar</div>
-              <div class="text-fg-0">{active.scalarColumn}</div>
-            {/if}
-            {#if active.vectorColumn && active.scalarColumn}
-              <div class="text-fg-3">materialized from</div>
-              <div class="text-fg-1">{active.vectorColumn} → {active.scalarColumn}</div>
+            {#if surface === 'search' && active.scalarColumn}
+              <div class="text-fg-3">ranking metric</div>
+              <div class="text-fg-0">{scalarLabel(active)}</div>
             {/if}
             {#each Object.entries(active.metadata) as [k, v]}
               <div class="text-fg-3 truncate">{k}</div>
@@ -179,7 +367,7 @@
             <thead class="sticky top-0 bg-bg-0">
               <tr class="border-b border-line-1 text-fg-3">
                 <th class="px-2 py-1.5 text-left font-normal">id</th>
-                <th class="px-2 py-1.5 text-right font-normal">turbovec scalar</th>
+                <th class="px-2 py-1.5 text-right font-normal">ranking metric</th>
                 <th class="px-2 py-1.5 text-right font-normal">magnitude</th>
               </tr>
             </thead>

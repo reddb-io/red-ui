@@ -28,4 +28,45 @@ describe('RedClient collection metadata probing', () => {
     expect(results.every((r) => r.status === 'rejected')).toBe(true)
     expect(fetchMock).toHaveBeenCalledTimes(1)
   })
+
+  it('calls VCS collection and diff endpoints with the RedDB envelope shape', async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input)
+      if (url.endsWith('/collections/products/vcs')) {
+        return Response.json({ ok: true, result: { collection: 'products', versioned: true } })
+      }
+      if (url.includes('/repo/commits/a/diff/b?collection=products')) {
+        return Response.json({
+          ok: true,
+          result: { from: 'a', to: 'b', added: 1, removed: 0, modified: 0, entries: [] },
+        })
+      }
+      return Response.json({ ok: true, result: [] })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const client = new RedClient('http://reddb.test', { proxyPath: '' })
+
+    await expect(client.collectionVcs('products')).resolves.toEqual({ collection: 'products', versioned: true })
+    await expect(client.commitDiff('a', 'b', { collection: 'products' })).resolves.toMatchObject({ added: 1 })
+  })
+
+  it('polls changes with since_lsn and filters collection client-side', async () => {
+    const fetchMock = vi.fn(async () => Response.json({
+      events: [
+        { lsn: 1, timestamp: 1, operation: 'insert', collection: 'a', kind: 'table' },
+        { lsn: 2, timestamp: 1, operation: 'update', collection: 'b', kind: 'table' },
+      ],
+    }))
+    vi.stubGlobal('fetch', fetchMock)
+
+    const client = new RedClient('http://reddb.test', { proxyPath: '' })
+    await expect(client.changes(7, { collection: 'b', limit: 10 })).resolves.toEqual([
+      { lsn: 2, timestamp: 1, operation: 'update', collection: 'b', kind: 'table' },
+    ])
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://reddb.test/changes?since_lsn=7&limit=10',
+      expect.any(Object),
+    )
+  })
 })

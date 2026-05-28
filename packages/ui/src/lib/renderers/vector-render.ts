@@ -93,13 +93,62 @@ export function vectorMagnitude(v: number[]): number {
 }
 
 export function scalarLabel(row: Pick<VectorRow, 'scalarColumn'>): string {
-  if (!row.scalarColumn) return 'TurboVec scalar'
-  if (/turbovec/i.test(row.scalarColumn)) return row.scalarColumn
-  return `TurboVec scalar · ${row.scalarColumn}`
+  if (!row.scalarColumn) return 'ranking metric'
+  if (/distance/i.test(row.scalarColumn)) return `search distance · ${row.scalarColumn}`
+  if (/similarity/i.test(row.scalarColumn)) return `similarity score · ${row.scalarColumn}`
+  if (/score/i.test(row.scalarColumn)) return `score · ${row.scalarColumn}`
+  if (/turbovec|scalar/i.test(row.scalarColumn)) return `scalar projection · ${row.scalarColumn}`
+  if (/magnitude|norm/i.test(row.scalarColumn)) return `vector magnitude · ${row.scalarColumn}`
+  return `ranking metric · ${row.scalarColumn}`
 }
 
 export function compactValue(v: unknown): string {
   if (v === null || v === undefined) return 'NULL'
   if (typeof v === 'object') return JSON.stringify(v)
   return String(v)
+}
+
+export function isSyntheticVectorPreview(result: QueryResult): boolean {
+  return /^VECTOR\s+SEARCH\s+\S+\s+SIMILAR\s+TO\s+\[1(?:\.0)?,\s*0(?:\.0)?/i.test(result.query.trim())
+}
+
+export function isVectorSearchResult(result: QueryResult): boolean {
+  return /^VECTOR\s+SEARCH\s+/i.test(result.query.trim())
+}
+
+export function parseVectorInput(input: string): number[] {
+  const numbers = input
+    .replace(/[\[\]]/g, ' ')
+    .split(/[,\s]+/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map(Number)
+  if (numbers.length === 0) throw new Error('Paste a numeric vector first.')
+  const invalid = numbers.find((n) => !Number.isFinite(n))
+  if (invalid !== undefined) throw new Error('Vector contains a non-numeric value.')
+  return numbers
+}
+
+export function formatVectorLiteral(vector: number[]): string {
+  return `[${vector.map((n) => Number(n.toPrecision(8))).join(', ')}]`
+}
+
+function sqlString(s: string): string {
+  return `'${s.replace(/'/g, "''")}'`
+}
+
+function safeCollectionName(name: string): string {
+  return name.replace(/[^A-Za-z0-9_./-]/g, '')
+}
+
+export function buildVectorSearchQuery(
+  collection: string,
+  source: { kind: 'text'; text: string } | { kind: 'vector'; vector: number[] },
+  limit: number,
+): string {
+  const boundedLimit = Math.max(1, Math.min(200, Math.floor(Number(limit) || 20)))
+  const literal = source.kind === 'text'
+    ? sqlString(source.text)
+    : formatVectorLiteral(source.vector)
+  return `VECTOR SEARCH ${safeCollectionName(collection)} SIMILAR TO ${literal} INCLUDE VECTORS LIMIT ${boundedLimit}`
 }

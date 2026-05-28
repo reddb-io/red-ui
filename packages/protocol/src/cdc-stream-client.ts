@@ -162,7 +162,9 @@ class CDCSubscription implements Subscription {
     const tick = async () => {
       if (this.closed) return
       try {
-        const events = await this.parent.opts.client.changes(this.lastSeenLsn)
+        const events = this.opts.collection
+          ? await this.parent.opts.client.changes(this.lastSeenLsn, { collection: this.opts.collection })
+          : await this.parent.opts.client.changes(this.lastSeenLsn)
         if (this.closed) return
         for (const e of events) this.emit(e)
         this.backoffIdx = 0
