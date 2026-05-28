@@ -9,7 +9,7 @@
   import { activity } from '$lib/activity.svelte'
   import { theme } from '$lib/theme.svelte'
   import { RedClient, type ClusterStatus, type Stats, type ReplicationStatus } from '@red-ui/protocol'
-  import { ServerCrash } from 'lucide-svelte'
+  import { Lock, ServerCrash } from 'lucide-svelte'
 
   interface KnownNode {
     id: string
@@ -91,8 +91,15 @@
 
   $effect(() => {
     // Same hard lock gate as the workspace: don't probe nodes until the
-    // user authenticates this session.
-    if (secureStore.locked) return
+    // user authenticates this session — automatic probes would leak the
+    // configured topology to anyone watching the network panel. Flip
+    // `loading` off so the UI shows a locked EmptyState instead of an
+    // infinite "Probing…" message.
+    if (secureStore.locked) {
+      loading = false
+      return
+    }
+    loading = true
     probeAll()
     const id = setInterval(probeAll, 5000)
     return () => clearInterval(id)
@@ -254,6 +261,14 @@
 {#if loading}
   <div class="absolute inset-0 grid place-items-center text-fg-3 font-mono text-[12px]">
     Probing reachable nodes…
+  </div>
+{:else if secureStore.locked}
+  <div class="p-6">
+    <EmptyState
+      icon={Lock}
+      title="Locked"
+      message="Unlock the secure store to probe configured nodes. Automatic probes are paused until you authenticate this session."
+    />
   </div>
 {:else if liveNodes.length === 0}
   <div class="p-6">
