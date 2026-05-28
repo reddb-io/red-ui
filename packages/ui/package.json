@@ -20,6 +20,7 @@
     "bits-ui": "^2.18.1",
     "clsx": "^2.1.1",
     "graphology": "^0.26.0",
+    "graphology-communities-louvain": "^2.0.2",
     "graphology-layout-forceatlas2": "^0.10.1",
     "lucide-svelte": "^0.475.0",
     "sigma": "^3.0.3",

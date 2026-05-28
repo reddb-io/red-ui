@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { QueryResult } from '@red-ui/protocol'
   import { onDestroy, onMount } from 'svelte'
-  import { compareGraphNodesByCentrality, extractGraph, graphNodeCentrality, graphNodeIncomingSizeScales, type GraphNode, type GraphEdge } from './graph-render'
+  import { colorForCommunity, compareGraphNodesByCentrality, extractGraph, graphNodeCentrality, graphNodeIncomingSizeScales, runGraphLayout, type GraphNode, type GraphEdge } from './graph-render'
   import { collectionPageHref } from '$lib/collection-pages'
   import { connection } from '$lib/connections.svelte'
   import { activity } from '$lib/activity.svelte'
@@ -39,7 +39,7 @@
 
   // ─── view state ─────────────────────────────────────────────────────────
   let viewMode = $state<'canvas' | 'svg' | 'table'>('canvas')
-  let canvasLimit = $state(10000)
+  let canvasLimit = $state(25000)
   let labelFilter = $state('')
   let selectedNode = $state<GraphNode | null>(null)
   let selectedEdge = $state<GraphEdge | null>(null)
@@ -425,21 +425,25 @@
     return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 4)
   })
 
+  // Community-aware positions: Louvain → ForceAtlas2. Clusters group
+  // spatially, hubs gravitate to community centres, edge crossings drop.
+  // See packages/ui/src/lib/renderers/graph-render.ts → runGraphLayout.
+  const layout = $derived(runGraphLayout(drawNodes, drawEdges))
+
   const fallbackSvgNodes = $derived.by<FallbackSvgNode[]>(() => {
-    const total = drawNodes.length
-    const goldenAngle = Math.PI * (3 - Math.sqrt(5))
-    return drawNodes.map((node, i) => {
+    return drawNodes.map((node) => {
       const type = String(node.data.node_type ?? 'node')
       const incomingScale = nodeSizeScales.get(node.id) ?? 1
-      const rankPct = total <= 1 ? 0 : i / (total - 1)
-      const radius = Math.pow(rankPct, 0.72) * 45
-      const angle = i * goldenAngle
+      const pos = layout.get(node.id)
+      // Community tint as primary color so clusters read at a glance;
+      // type still drives the radius/stroke contract.
+      const color = pos ? colorForCommunity(pos.community) : colorForType(type)
       return {
         ...node,
-        x: 50 + Math.cos(angle) * radius,
-        y: 50 + Math.sin(angle) * radius,
+        x: pos?.x ?? 50,
+        y: pos?.y ?? 50,
         r: nodeVisualRadius(type, incomingScale),
-        color: colorForType(type),
+        color,
       }
     })
   })
@@ -805,7 +809,8 @@
             <option value={2000}>2k</option>
             <option value={5000}>5k</option>
             <option value={10000}>10k</option>
-            <option value={50000}>all</option>
+            <option value={25000}>25k</option>
+            <option value={50000}>50k</option>
           </select>
         </label>
       {/if}

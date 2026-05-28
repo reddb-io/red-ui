@@ -3,6 +3,9 @@
 // (which checks the adjacency-list / DOM-free shape).
 
 import type { QueryResult, QueryRow } from '@red-ui/protocol'
+import Graph from 'graphology'
+import louvain from 'graphology-communities-louvain'
+import forceAtlas2 from 'graphology-layout-forceatlas2'
 
 export interface GraphNode {
   id: string
@@ -282,4 +285,136 @@ function escapeHtml(s: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
+}
+
+export interface GraphLayoutNode {
+  x: number
+  y: number
+  community: number
+}
+
+export type GraphLayout = Map<string, GraphLayoutNode>
+
+// Deterministic seed so consecutive renders of the same query don't jitter.
+// Mulberry32 — small, fast, good enough for FA2 initialisation.
+function seededRng(seed: number): () => number {
+  let s = seed >>> 0
+  return () => {
+    s = (s + 0x6d2b79f5) >>> 0
+    let t = s
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+/**
+ * Compute a community-aware layout for the graph.
+ *
+ * Pipeline: Louvain detects communities, ForceAtlas2 positions nodes so
+ * communities cluster spatially. Output is normalised to a [0, 100] box
+ * matching the existing renderer's coordinate space, with a 5% padding so
+ * nodes don't touch the viewport edge.
+ *
+ * Disconnected / trivial graphs (0–1 nodes, or no edges) bypass FA2 and
+ * fall back to a simple grid so the renderer still has positions.
+ */
+export function runGraphLayout(nodes: GraphNode[], edges: GraphEdge[]): GraphLayout {
+  const out: GraphLayout = new Map()
+  if (nodes.length === 0) return out
+  if (nodes.length === 1) {
+    out.set(nodes[0].id, { x: 50, y: 50, community: 0 })
+    return out
+  }
+
+  const g = new Graph({ type: 'undirected', multi: false, allowSelfLoops: true })
+  const rng = seededRng(nodes.length * 131 + edges.length)
+
+  // Initial positions on a unit circle — FA2 can't start from all-zero
+  // (force vectors collapse). Random-ish placement breaks symmetry.
+  const tau = Math.PI * 2
+  nodes.forEach((n, i) => {
+    const angle = (i / nodes.length) * tau + rng() * 0.1
+    g.addNode(n.id, { x: Math.cos(angle), y: Math.sin(angle) })
+  })
+
+  for (const e of edges) {
+    if (!g.hasNode(e.source) || !g.hasNode(e.target)) continue
+    if (e.source === e.target) continue
+    // Collapse parallel edges so the simple undirected graph stays valid;
+    // FA2 doesn't gain anything from multiplicity here.
+    if (g.hasEdge(e.source, e.target)) continue
+    g.addEdge(e.source, e.target)
+  }
+
+  // Louvain needs at least one edge; degenerate graphs get every node in
+  // its own community and a grid fallback below.
+  if (g.size === 0) {
+    const cols = Math.ceil(Math.sqrt(nodes.length))
+    nodes.forEach((n, i) => {
+      const row = Math.floor(i / cols)
+      const col = i % cols
+      out.set(n.id, {
+        x: 10 + (col / Math.max(1, cols - 1)) * 80,
+        y: 10 + (row / Math.max(1, cols - 1)) * 80,
+        community: i,
+      })
+    })
+    return out
+  }
+
+  louvain.assign(g, { nodeCommunityAttribute: 'community', rng })
+
+  const settings = forceAtlas2.inferSettings(g)
+  forceAtlas2.assign(g, {
+    iterations: nodes.length > 200 ? 120 : 200,
+    settings: {
+      ...settings,
+      strongGravityMode: true,
+      gravity: 1.2,
+      scalingRatio: 10,
+      barnesHutOptimize: nodes.length > 500,
+    },
+  })
+
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity
+  g.forEachNode((_, attrs) => {
+    if (attrs.x < minX) minX = attrs.x
+    if (attrs.x > maxX) maxX = attrs.x
+    if (attrs.y < minY) minY = attrs.y
+    if (attrs.y > maxY) maxY = attrs.y
+  })
+  const spanX = maxX - minX || 1
+  const spanY = maxY - minY || 1
+  const PAD = 5
+  const RANGE = 100 - PAD * 2
+
+  g.forEachNode((id, attrs) => {
+    out.set(id, {
+      x: PAD + ((attrs.x - minX) / spanX) * RANGE,
+      y: PAD + ((attrs.y - minY) / spanY) * RANGE,
+      community: (attrs.community as number) ?? 0,
+    })
+  })
+
+  return out
+}
+
+/**
+ * Stable, distinguishable hue per community. The first ~12 communities
+ * pick from a hand-tuned palette; beyond that, golden-angle on the hue
+ * wheel keeps neighbours distinct without coordination.
+ *
+ * Saturation/lightness are theme-aware so the palette reads well on the
+ * dark canvas without going neon.
+ */
+export function colorForCommunity(community: number, dark: boolean = true): string {
+  const PALETTE = [200, 25, 145, 290, 50, 175, 320, 95, 0, 260, 220, 130]
+  const hue =
+    community < PALETTE.length
+      ? PALETTE[community]
+      : (PALETTE[0] + community * 137.508) % 360
+  const sat = dark ? 62 : 58
+  const light = dark ? 60 : 48
+  return `hsl(${hue.toFixed(0)} ${sat}% ${light}%)`
 }

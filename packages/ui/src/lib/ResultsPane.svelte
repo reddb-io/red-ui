@@ -67,7 +67,7 @@
    * N rows are all nodes and zero edges land in the renderer.
    */
   async function fetchGraphSubgraph(client: RedClient, collection: string) {
-    const EDGE_LIMIT = 5000
+    const EDGE_LIMIT = 50000
     const CENTRALITY_LIMIT = 100
     // reddb's WHERE rid IN (…) silently returns 0 once the list size
     // exceeds a small threshold (somewhere around 8 in 1.3.0). Chunk to

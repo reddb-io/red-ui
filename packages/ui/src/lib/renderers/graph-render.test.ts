@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { QueryResult } from '@red-ui/protocol'
-import { compareGraphNodesByCentrality, extractGraph, graphNodeCentrality, graphNodeIncomingSizeScales, hasGraphShape, renderGraphHtml } from './graph-render'
+import { compareGraphNodesByCentrality, extractGraph, graphNodeCentrality, graphNodeIncomingSizeScales, hasGraphShape, renderGraphHtml, runGraphLayout, type GraphEdge, type GraphNode } from './graph-render'
 
 const FIXTURE: QueryResult = {
   ok: true,
@@ -159,6 +159,91 @@ describe('graphNodeCentrality', () => {
     expect(scales.get('5')).toBe(1.25)
     expect(scales.get('8')).toBe(1.5)
     expect(scales.get('9')).toBe(2)
+  })
+})
+
+describe('runGraphLayout', () => {
+  const makeNode = (id: string): GraphNode => ({ id, label: id, data: {} })
+  const makeEdge = (source: string, target: string): GraphEdge => ({
+    id: `${source}->${target}`,
+    source,
+    target,
+  })
+
+  it('returns empty map for empty input', () => {
+    expect(runGraphLayout([], []).size).toBe(0)
+  })
+
+  it('places a single node at the centre', () => {
+    const out = runGraphLayout([makeNode('a')], [])
+    expect(out.get('a')).toEqual({ x: 50, y: 50, community: 0 })
+  })
+
+  it('outputs positions inside the [0, 100] viewport', () => {
+    const nodes = Array.from({ length: 30 }, (_, i) => makeNode(`n${i}`))
+    const edges: GraphEdge[] = []
+    for (let i = 0; i < nodes.length - 1; i++) edges.push(makeEdge(`n${i}`, `n${i + 1}`))
+    const out = runGraphLayout(nodes, edges)
+    for (const pos of out.values()) {
+      expect(pos.x).toBeGreaterThanOrEqual(0)
+      expect(pos.x).toBeLessThanOrEqual(100)
+      expect(pos.y).toBeGreaterThanOrEqual(0)
+      expect(pos.y).toBeLessThanOrEqual(100)
+    }
+  })
+
+  it('clusters communities spatially on a two-clique graph', () => {
+    // Two K4 cliques joined by one bridge edge. Louvain should detect the
+    // two communities and ForceAtlas2 should pull each clique together
+    // while pushing them apart — intra-clique distance < cross-clique.
+    const left = ['l1', 'l2', 'l3', 'l4']
+    const right = ['r1', 'r2', 'r3', 'r4']
+    const nodes = [...left, ...right].map(makeNode)
+    const edges: GraphEdge[] = []
+    for (const a of left) for (const b of left) if (a < b) edges.push(makeEdge(a, b))
+    for (const a of right) for (const b of right) if (a < b) edges.push(makeEdge(a, b))
+    edges.push(makeEdge('l1', 'r1'))
+
+    const out = runGraphLayout(nodes, edges)
+    const leftCommunities = new Set(left.map((id) => out.get(id)!.community))
+    const rightCommunities = new Set(right.map((id) => out.get(id)!.community))
+    expect(leftCommunities.size).toBe(1)
+    expect(rightCommunities.size).toBe(1)
+    expect([...leftCommunities][0]).not.toBe([...rightCommunities][0])
+
+    const dist = (a: string, b: string) => {
+      const pa = out.get(a)!
+      const pb = out.get(b)!
+      return Math.hypot(pa.x - pb.x, pa.y - pb.y)
+    }
+    let intra = 0
+    let intraN = 0
+    for (const group of [left, right]) {
+      for (const a of group) for (const b of group) if (a < b) {
+        intra += dist(a, b)
+        intraN++
+      }
+    }
+    let cross = 0
+    let crossN = 0
+    for (const a of left) for (const b of right) {
+      cross += dist(a, b)
+      crossN++
+    }
+    expect(intra / intraN).toBeLessThan(cross / crossN)
+  })
+
+  it('is deterministic across runs (seeded RNG)', () => {
+    const nodes = Array.from({ length: 10 }, (_, i) => makeNode(`n${i}`))
+    const edges: GraphEdge[] = []
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        if ((i + j) % 3 === 0) edges.push(makeEdge(`n${i}`, `n${j}`))
+      }
+    }
+    const a = runGraphLayout(nodes, edges)
+    const b = runGraphLayout(nodes, edges)
+    for (const id of a.keys()) expect(a.get(id)).toEqual(b.get(id))
   })
 })
 
