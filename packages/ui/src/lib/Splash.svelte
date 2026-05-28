@@ -11,11 +11,11 @@
 
   onMount(() => {
     const inT = setTimeout(() => (stage = 1), 20)
-    const outT = setTimeout(() => (stage = 2), 200)
+    const outT = setTimeout(() => (stage = 2), 800)
     const closeT = setTimeout(() => {
       visible = false
       onDone?.()
-    }, 300)
+    }, 1000)
     return () => {
       clearTimeout(inT)
       clearTimeout(outT)
