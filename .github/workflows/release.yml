@@ -155,33 +155,40 @@ jobs:
           name: pwa-bundle
           path: packages/ui/build
 
-  # pwa-pages is disabled until GitHub Pages is manually enabled in
-  # the repo settings (Settings → Pages → Source: GitHub Actions). The
-  # v0.0.1 attempt failed with HTTP 404 on the Pages API for that reason.
-  # Uncomment after enabling.
+  # Deploy the Web Surface to Cloudflare Pages → ui.reddb.io (ADR-0005).
+  # Built with BASE_PATH='' because this is a dedicated host, not a subpath.
+  # The deploy step self-skips when CLOUDFLARE_* secrets are absent, mirroring
+  # the unsigned-build fallback in the tauri job, so forks/PRs don't fail.
   #
-  # pwa-pages:
-  #   name: pwa · github pages
-  #   runs-on: blacksmith-4vcpu-ubuntu-2404
-  #   permissions:
-  #     contents: read
-  #     pages: write
-  #     id-token: write
-  #   environment:
-  #     name: github-pages
-  #     url: ${{ steps.deploy.outputs.page_url }}
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: pnpm/action-setup@v4
-  #     - uses: actions/setup-node@v4
-  #       with: { node-version: 22, cache: pnpm }
-  #     - run: pnpm install --frozen-lockfile
-  #     - name: build pwa (Pages, BASE_PATH=/red-ui)
-  #       env:
-  #         BASE_PATH: /red-ui
-  #       run: pnpm --filter @red-ui/ui build
-  #     - uses: actions/upload-pages-artifact@v3
-  #       with:
-  #         path: packages/ui/build
-  #     - id: deploy
-  #       uses: actions/deploy-pages@v4
+  # Required repo secrets:
+  #   CLOUDFLARE_API_TOKEN   — scoped token with "Cloudflare Pages: Edit"
+  #   CLOUDFLARE_ACCOUNT_ID  — the reddb.io Cloudflare account id
+  # The ui.reddb.io custom domain / DNS binding is owned by rio-infra.
+  pwa-pages:
+    name: pwa · cloudflare pages
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+
+      - name: build pwa (root, for ui.reddb.io)
+        env:
+          BASE_PATH: ''
+        run: pnpm --filter @red-ui/ui build
+
+      - name: deploy to cloudflare pages
+        if: ${{ env.CLOUDFLARE_API_TOKEN != '' }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >-
+            pages deploy packages/ui/build
+            --project-name=red-ui
+            --branch=main
+            --commit-hash=${{ github.sha }}
