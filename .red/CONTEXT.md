@@ -33,8 +33,12 @@ The shared parameter set both entry points use to open red-ui pre-configured: `c
 _Avoid_: deep-link params, query string
 
 **Session Handoff Token**:
-A short-lived, single-use, target-scoped token minted by reddb.io so an app without the `.reddb.io` cookie (the native Standalone Surface, or any cross-app jump) can authenticate to a target; verified by the target via reddb.io's JWKS — trusted by the managed fleet by default, by BYO servers via opt-in issuer registration.
+A short-lived, single-use, target-scoped token minted by reddb.io and used for **all** data-plane access (Web and native alike); verified by the target via reddb.io's JWKS — trusted by the managed fleet by default, by BYO servers via opt-in issuer registration. The `.reddb.io` cookie authenticates only the control plane (to mint this token) and is never presented to a server.
 _Avoid_: session, credential, API key
+
+**Capability negotiation**:
+The boot-time probe by which one red-ui version serves servers of many versions — it reads the target's version/capabilities and *hides* (not greys out) controls the server can't honour, consistent with the project's permission-aware "absent, not disabled" rule. The `client.ts` unsupported-route probe is the seed.
+_Avoid_: version check, feature flag
 
 ## Relationships
 
@@ -47,3 +51,4 @@ _Avoid_: session, credential, API key
 
 - "embedded" is overloaded: an **Embedded (Surface)** is how *red-ui* is delivered, distinct from reddb's *embedded deployment mode* (how the *database* runs). Same word, different layer.
 - "connection string" / `cs` was used to mean a local file path (`?cs=/home/user/mydb.rdb`) — resolved: a hosted page cannot read a path, so `cs` is always a browser-reachable URL. Turning a file into a URL is the job of a local launcher (`red ui <file>`), not the Web Surface.
+- "vault only in Standalone" (an early claim) vs the Web Surface authenticating directly against an untrusted BYO server — resolved: the **Web Surface persists the target label only, never the secret** (secret is session-only, in-memory). The full credential vault (master-password / OS keychain) remains a **Standalone**-only feature. Managed targets use the Session Handoff Token and persist nothing.

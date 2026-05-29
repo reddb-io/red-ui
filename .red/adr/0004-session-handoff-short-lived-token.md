@@ -13,11 +13,14 @@ From the reddb.io control plane a user clicks "open", and we offer **both**
 and "open in browser" (`ui.reddb.io/?…`). The goal is to open red-ui *already
 connected* to the chosen server, reusing the user's reddb.io identity.
 
-The Web path can lean on the `Domain=.reddb.io` cookie when the target is a
-managed `*.reddb.io` server. The **native** path cannot: a freshly-launched
-Tauri app holds no browser cookie, so the session must cross the app boundary
-explicitly. Putting a durable credential in a URL or process argv would leak a
-long-lived secret into shell history, logs, and referrers.
+A naive design would let the Web path lean on the `Domain=.reddb.io` cookie to
+reach a managed server directly. We reject that (see Decision below): a
+`.reddb.io` cookie is broadcast to every subdomain — including arbitrary nested
+ones — so a cookie that grants *data-plane* access is a standing leak risk, and
+the native path can't use a browser cookie at all. The session must cross app
+and origin boundaries explicitly, and putting a durable credential in a URL or
+process argv would leak a long-lived secret into shell history, logs, and
+referrers.
 
 This also interacts with ADR-0002: because the browser talks to the server
 directly, whatever proves identity must be presentable by the client and
@@ -37,6 +40,13 @@ verifies it against reddb.io's published **JWKS**:
 
 Targets that don't trust reddb.io (plain localhost, un-registered BYO) fall back
 to that server's own authentication in red-ui.
+
+**The `.reddb.io` cookie authenticates the control plane only** — it proves
+reddb.io identity so the control plane can *mint* handoff tokens. It is never
+presented to a data-plane server. Server access is **always** via the
+short-lived token, uniformly for the Web and native paths. This removes any
+broadly-scoped, data-granting cookie, so a leak to an untrusted `*.reddb.io`
+subdomain cannot grant database access.
 
 ## Consequences
 
