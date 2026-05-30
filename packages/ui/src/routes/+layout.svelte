@@ -1,6 +1,9 @@
 <script lang="ts">
   import '../app.css'
   import { onMount } from 'svelte'
+  import { goto } from '$app/navigation'
+  import { base } from '$app/paths'
+  import { parseOpenContract } from '@red-ui/protocol'
   import Splash from '$lib/Splash.svelte'
   import Topbar from '$lib/Topbar.svelte'
   import StatusBar from '$lib/StatusBar.svelte'
@@ -8,7 +11,7 @@
   import ShortcutOverlay from '$lib/ShortcutOverlay.svelte'
   import MasterPasswordDialog from '$lib/MasterPasswordDialog.svelte'
   import PendingChangesPanel from '$lib/PendingChangesPanel.svelte'
-  import { connection } from '$lib/connections.svelte'
+  import { connection, makeCustomConnection } from '$lib/connections.svelte'
   import { theme } from '$lib/theme.svelte'
   import { secureStore } from '$lib/secureStore.svelte'
   import { pendingChanges, buildUpdateSql, type CommitOutcome } from '$lib/pending-changes.svelte'
@@ -22,6 +25,34 @@
     const handler = () => (pendingOpen = true)
     window.addEventListener('red:open-pending-changes', handler as EventListener)
     return () => window.removeEventListener('red:open-pending-changes', handler as EventListener)
+  })
+
+  // Open Contract bootstrap (issue #20): when this bundle is opened with a
+  // target in the URL (`?cs=…`, optional `#token=…`, optional `?to=…`), boot
+  // straight against it instead of waiting for the user to pick a connection
+  // in the topbar. This is the URL source the broader Connection Bootstrap
+  // (#19) will later fold into its priority ladder.
+  onMount(() => {
+    const { contract } = parseOpenContract(window.location)
+    if (!contract.cs && !contract.to) return
+
+    // The token travels only in the #hash and is consume-on-read: strip it
+    // from the address bar so it never lingers in history and is never
+    // written to persistent storage. (No handoff consumer exists yet in this
+    // slice; reading + discarding satisfies the never-persist invariant.)
+    if (contract.token) {
+      const url = new URL(window.location.href)
+      url.hash = ''
+      history.replaceState(history.state, '', url.toString())
+    }
+
+    if (contract.cs) {
+      // Bypass the Connect screen by connecting directly to the target.
+      connection.tryConnect(makeCustomConnection(contract.cs))
+    }
+    if (contract.to) {
+      goto(`${base}${contract.to}`, { replaceState: true })
+    }
   })
 
   // Wire the commit executor to the active client. Re-binds whenever the

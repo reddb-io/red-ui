@@ -1,4 +1,5 @@
 export * from './uri'
+export * from './open-contract'
 export * from './types'
 export * from './client'
 export * from './connection-provider'
