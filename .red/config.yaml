@@ -1,11 +1,24 @@
-# .red/config.yaml — per-project plugin settings (consumed by /afk and friends)
-# Uncomment any line to override the default.
+afk:
+  runner: claude
+  hooks:
+    # red-ui is a pnpm workspace; a fresh git worktree has no node_modules
+    # (pnpm keeps them at the workspace root with symlinks the worktree can't
+    # inherit). Without deps the worktree can't run vitest/vite, the inner
+    # agent flees to the primary checkout, and feedback gates false-fail.
+    # Installing into the worktree before the runner boots keeps the agent
+    # working in isolation and makes the feedback loop valid.
+    pre_worker: "cd \"$RED_AFK_WORKSPACE\" && pnpm install --frozen-lockfile"
 
-# afk:
-#   default_runner: claude        # fallback runner when no explicit signal
-#   fleet:
-#     target: 2                   # default supervisor worker target
-#   hooks:
-#     defaults:
-#       cargo: true               # ship cargo isolation on Rust projects
-#       gradle: true              # ship gradle isolation when GRADLE_USER_HOME_BASE is set
+reddb:
+  url: http://localhost:5055
+  token: ${RED_DB_TOKEN}
+
+editor:
+  cdn: true
+
+memory:
+  enabled: false
+
+reddb_DISABLED_BENCH:
+  url: http://localhost:5055
+  token: ${RED_DB_TOKEN}
