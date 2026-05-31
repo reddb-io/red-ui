@@ -2,6 +2,18 @@
   import { Lock, Loader2, AlertCircle, KeyRound, Trash2 } from 'lucide-svelte'
   import { secureStore } from './secureStore.svelte'
   import { connection } from './connections.svelte'
+  import { detectSurface, surfaceGatesBoot } from './surface'
+
+  const surface = detectSurface()
+  // Only the web vault dialog is a *password* prompt. It appears when this
+  // Surface gates boot on a secret — i.e. web with existing envelopes. A
+  // credential-less web boot (nothing saved yet) skips it entirely, and the
+  // standalone Surface unlocks via the OS keychain, never this dialog.
+  const gated = $derived(
+    secureStore.backend === 'web' &&
+      secureStore.locked &&
+      surfaceGatesBoot(surface, !secureStore.needsSetup),
+  )
 
   let password = $state('')
   let confirm = $state('')
@@ -62,7 +74,7 @@
   }
 </script>
 
-{#if secureStore.backend === 'web' && secureStore.locked}
+{#if gated}
   <div
     class="fixed inset-0 z-[100] flex items-center justify-center bg-bg-0/70 backdrop-blur-sm motion-reduce:backdrop-blur-none"
     role="dialog"

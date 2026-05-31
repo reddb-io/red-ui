@@ -277,14 +277,37 @@ export const provider: ConnectionProvider & {
   history: historyStore,
 })
 
+// The active target at boot. A connection that came from the URL or the
+// persisted last-used choice is a *resolved* target — the user (or host)
+// explicitly pointed at it, so probing it is expected. Falling back to a
+// built-in preset is just a default the user has not chosen, so the boot
+// gate must not fire network traffic against it automatically.
+function initialTarget(): { active: ConnectionPreset; resolved: boolean } {
+  const fromLocation = loadLocationConnection()
+  if (fromLocation) return { active: fromLocation, resolved: true }
+  const stored = loadStored()
+  if (stored) return { active: stored, resolved: true }
+  return { active: PRESETS[1], resolved: false }
+}
+
 class ConnectionStore {
   /** Set after a probe succeeds for the first time — used to gate the Connect screen. */
   connected = $state<boolean>(false)
-  active = $state<ConnectionPreset>(loadLocationConnection() ?? loadStored() ?? PRESETS[1])
+  active = $state<ConnectionPreset>(PRESETS[1])
+  /**
+   * True once a target has been explicitly resolved — from the URL, the
+   * persisted last-used connection, or a user action (switch/connect).
+   * While false the active connection is only a default preset, and the
+   * boot gate must not start automatic probing against it.
+   */
+  targetResolved = $state<boolean>(false)
   probe = $state<ProbeResult>({ reachable: false })
   history = $state<HistoryEntry[]>([])
 
   constructor() {
+    const init = initialTarget()
+    this.active = init.active
+    this.targetResolved = init.resolved
     this.history = historyStore.uiEntries()
     historyStore.setOnChange(() => { this.history = historyStore.uiEntries() })
   }
@@ -308,11 +331,13 @@ class ConnectionStore {
 
   async switch(preset: ConnectionPreset) {
     this.active = preset
+    this.targetResolved = true
     persist(preset)
     await this.refresh()
   }
 
   async tryConnect(preset: ConnectionPreset): Promise<boolean> {
+    this.targetResolved = true
     try {
       const active = await activity.track(
         `connect · ${preset.label}`,

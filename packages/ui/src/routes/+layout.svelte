@@ -11,6 +11,7 @@
   import { connection } from '$lib/connections.svelte'
   import { theme } from '$lib/theme.svelte'
   import { secureStore } from '$lib/secureStore.svelte'
+  import { detectSurface, surfaceGatesBoot } from '$lib/surface'
   import { pendingChanges, buildUpdateSql, type CommitOutcome } from '$lib/pending-changes.svelte'
   import { queryTabs } from '$lib/query-tabs.svelte'
 
@@ -51,17 +52,33 @@
 
   const REFRESH_MS = 5000
 
+  // Which Surface are we? The boot gate is Surface-aware: a credential-less
+  // Surface (Embeddable Lib, or hosted web with nothing saved yet) must not
+  // be blocked by the master-password vault. The Standalone (Desktop) Surface
+  // keeps its keychain-backed vault. See $lib/surface + ADR 0001.
+  const surface = detectSurface()
+
+  // The vault gates boot only when this Surface owns a secret to protect
+  // (web with existing envelopes, or standalone always) *and* it is still
+  // locked. On web, `needsSetup` is true exactly when no envelope exists yet,
+  // so `!needsSetup` means "a secret already exists".
+  const bootGated = $derived(
+    surfaceGatesBoot(surface, !secureStore.needsSetup) && secureStore.locked,
+  )
+
   // The inline script in app.html has already set data-theme on <html>;
   // init() syncs the store's reactive state with localStorage so toggles
   // start from the persisted value rather than the in-memory default.
   theme.init()
 
-  // Hard lock gate: while the secure store is locked, no automatic
-  // network traffic should fire. The user hasn't yet authenticated this
-  // session, so probing the configured URL would leak its existence and
-  // shape to anyone watching the network panel.
+  // Boot gate: hold all automatic network traffic until (a) the vault gate
+  // is satisfied for this Surface and (b) a target has actually been resolved
+  // — from the URL, the persisted last-used connection, or a user action.
+  // Probing a default preset nobody chose would both leak its shape to the
+  // network panel and violate "no traffic before a target is resolved".
   $effect(() => {
-    if (secureStore.locked) return
+    if (bootGated) return
+    if (!connection.targetResolved) return
     connection.refresh()
     const id = setInterval(() => connection.refresh(), REFRESH_MS)
     return () => clearInterval(id)
