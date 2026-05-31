@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "identifier": "io.reddb.ui",
   "build": {
-    "beforeDevCommand": "pnpm --filter @red-ui/ui dev",
-    "beforeBuildCommand": "pnpm --filter @red-ui/ui build",
+    "beforeDevCommand": "pnpm --filter @reddb-io/ui dev",
+    "beforeBuildCommand": "pnpm --filter @reddb-io/ui build",
     "devUrl": "http://localhost:1420",
     "frontendDist": "../../../packages/ui/build"
   },

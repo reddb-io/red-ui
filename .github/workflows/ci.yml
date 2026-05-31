@@ -22,7 +22,7 @@ jobs:
       # Smoke build: catches TypeScript / Svelte compile errors that
       # `svelte-check` doesn't flag (e.g. a $effect feedback loop only
       # caught when the runtime is wired up).
-      - run: pnpm --filter @red-ui/ui build
+      - run: pnpm --filter @reddb-io/ui build
 
   tauri:
     # Verify the Rust shell still compiles on every PR; doesn't bundle

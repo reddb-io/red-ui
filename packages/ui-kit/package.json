@@ -1,7 +1,8 @@
 {
-  "name": "@red-ui/ui-kit",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@reddb-io/ui-kit",
+  "version": "0.1.1",
+  "private": false,
+  "description": "Low-level RedDB UI design-system primitives.",
   "type": "module",
   "exports": {
     ".": {
@@ -10,6 +11,13 @@
     },
     "./tokens": "./src/tokens/index.ts",
     "./tokens.css": "./src/tokens/tokens.css"
+  },
+  "files": [
+    "src/lib",
+    "src/tokens"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "check": "svelte-check --tsconfig ./tsconfig.json"
@@ -24,5 +32,18 @@
   },
   "dependencies": {
     "tailwind-variants": "^2.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/reddb-io/red-ui",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reddb-io/red-ui.git",
+    "directory": "packages/ui-kit"
+  },
+  "bugs": {
+    "url": "https://github.com/reddb-io/red-ui/issues"
   }
 }

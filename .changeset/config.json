@@ -1,0 +1,17 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.1.4/schema.json",
+  "changelog": ["@changesets/changelog-github", { "repo": "reddb-io/red-ui" }],
+  "commit": false,
+  "fixed": [
+    [
+      "@reddb-io/ui",
+      "@reddb-io/ui-kit",
+      "@reddb-io/ui-mcp"
+    ]
+  ],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": []
+}

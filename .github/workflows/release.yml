@@ -22,6 +22,31 @@ on:
 #   WINDOWS_CERTIFICATE_PASSWORD
 
 jobs:
+  npm:
+    name: npm · publish packages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - name: check
+        run: pnpm check
+      - name: test
+        run: pnpm test
+      - name: publish npm packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+        run: pnpm release:publish
+
   tauri:
     name: tauri · ${{ matrix.platform }}
     permissions:
@@ -78,7 +103,7 @@ jobs:
       # ahead of time guarantees `packages/ui/build` exists when
       # tauri-action validates `frontendDist`.
       - name: build frontend (pwa bundle for embedding)
-        run: pnpm --filter @red-ui/ui build
+        run: pnpm --filter @reddb-io/ui build
 
       - name: verify frontend bundle
         run: ls -la packages/ui/build/ && test -f packages/ui/build/index.html
@@ -130,7 +155,7 @@ jobs:
       - name: build pwa (root, for embedding)
         env:
           BASE_PATH: ''
-        run: pnpm --filter @red-ui/ui build
+        run: pnpm --filter @reddb-io/ui build
 
       - name: pack zip
         id: pack
@@ -155,33 +180,5 @@ jobs:
           name: pwa-bundle
           path: packages/ui/build
 
-  # pwa-pages is disabled until GitHub Pages is manually enabled in
-  # the repo settings (Settings → Pages → Source: GitHub Actions). The
-  # v0.0.1 attempt failed with HTTP 404 on the Pages API for that reason.
-  # Uncomment after enabling.
-  #
-  # pwa-pages:
-  #   name: pwa · github pages
-  #   runs-on: blacksmith-4vcpu-ubuntu-2404
-  #   permissions:
-  #     contents: read
-  #     pages: write
-  #     id-token: write
-  #   environment:
-  #     name: github-pages
-  #     url: ${{ steps.deploy.outputs.page_url }}
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: pnpm/action-setup@v4
-  #     - uses: actions/setup-node@v4
-  #       with: { node-version: 22, cache: pnpm }
-  #     - run: pnpm install --frozen-lockfile
-  #     - name: build pwa (Pages, BASE_PATH=/red-ui)
-  #       env:
-  #         BASE_PATH: /red-ui
-  #       run: pnpm --filter @red-ui/ui build
-  #     - uses: actions/upload-pages-artifact@v3
-  #       with:
-  #         path: packages/ui/build
-  #     - id: deploy
-  #       uses: actions/deploy-pages@v4
+  # GitHub Pages deployment for https://ui.reddb.io is handled by
+  # .github/workflows/pages.yml on pushes to main.

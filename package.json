@@ -5,18 +5,37 @@
   "type": "module",
   "packageManager": "pnpm@10.33.3",
   "scripts": {
-    "dev": "pnpm --filter @red-ui/ui dev",
+    "dev": "pnpm --filter @reddb-io/ui dev",
+    "mcp": "pnpm --filter @reddb-io/ui-mcp start",
     "build": "pnpm -r build",
-    "desktop:dev": "pnpm --filter @red-ui/desktop tauri dev",
-    "desktop:build": "pnpm --filter @red-ui/desktop run build:tauri",
+    "desktop:dev": "pnpm --filter @reddb-io/ui-desktop tauri dev",
+    "desktop:build": "pnpm --filter @reddb-io/ui-desktop run build:tauri",
     "check": "pnpm -r check",
-    "test": "pnpm -r test"
+    "test": "pnpm -r test",
+    "changeset": "changeset",
+    "release:version": "changeset version",
+    "release:publish": "changeset publish"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.7.0",
+    "@changesets/cli": "^2.31.0",
     "@huggingface/transformers": "^4.2.0",
     "@types/js-yaml": "^4.0.9",
     "js-yaml": "^4.1.1",
     "tsx": "^4.22.3",
     "typescript": "^5.7.2"
-  }
+  },
+  "description": "Universal client for [reddb](https://github.com/reddb-io/reddb) — connect to embedded, server (TCP/TLS), Docker, or replicated clusters from one app.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reddb-io/red-ui.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/reddb-io/red-ui/issues"
+  },
+  "homepage": "https://github.com/reddb-io/red-ui#readme"
 }
