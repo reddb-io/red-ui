@@ -9,9 +9,9 @@ Universal client for [reddb](https://github.com/reddb-io/reddb) — connects to 
 - **Tailwind v4** + `@tailwindcss/vite` + `tailwind-variants` + `bits-ui` — shadcn-svelte foundation
 - **@xyflow/svelte** — topology canvas
 - **lucide-svelte** — iconography
-- **pnpm workspace** — `apps/desktop` (Tauri) + `packages/{ui,ui-kit,protocol}`
+- **pnpm workspace** — `apps/desktop` (Tauri) + `packages/{ui,ui-kit,mcp}` under the `@reddb-io/*` scope
 
-The HTTP client lives in `packages/protocol`. In browser it goes through a Vite middleware proxy at `/_red` (carries `X-Red-Target`) because reddb sends no CORS headers.
+The UI HTTP adapter lives in `packages/ui/src/lib/reddb`. In browser it goes through a Vite middleware proxy at `/_red` (carries `X-Red-Target`) because reddb sends no CORS headers.
 
 ## Agent skills
 
@@ -89,11 +89,12 @@ These hold across every page, component, and decision:
 
 ```sh
 pnpm install
-pnpm --filter @red-ui/ui dev                     # http://localhost:1420
-pnpm --filter @red-ui/ui build                   # static PWA → packages/ui/build
-pnpm --filter @red-ui/ui exec svelte-check       # type-check
-pnpm --filter @red-ui/protocol test              # vitest
-pnpm --filter @red-ui/desktop tauri dev          # desktop app
+pnpm --filter @reddb-io/ui dev                     # http://localhost:1420
+pnpm --filter @reddb-io/ui build                   # static PWA → packages/ui/build
+pnpm --filter @reddb-io/ui exec svelte-check       # type-check
+pnpm --filter @reddb-io/ui test                 # vitest, including src/lib/reddb
+pnpm --filter @reddb-io/ui-desktop tauri dev          # desktop app
+pnpm --filter @reddb-io/ui-mcp start              # MCP App server over stdio
 
 docker compose -f docker/compose.yml up -d       # primary :15055, replica :25055
 ./scripts/seed.sh http://localhost:15055         # seed primary
