@@ -21,7 +21,7 @@
   import CollectionHistory from '$lib/CollectionHistory.svelte'
   import LiveChanges from '$lib/LiveChanges.svelte'
   import QueryEditor from '$lib/QueryEditor.svelte'
-  import type { CollectionMetadata, QueryResult, RedClient } from '@red-ui/protocol'
+  import type { CollectionMetadata, QueryResult, RedClient } from '#reddb'
   import { X, Activity, Database, Plus, FileCode2, EyeOff, Eye, Info, HardDrive, Rows3, Layers3, ScanLine, GitBranch } from 'lucide-svelte'
 
   const OVERRIDE_CHOICES: { value: '' | Capability; label: string }[] = [

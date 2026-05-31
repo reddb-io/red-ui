@@ -1,4 +1,4 @@
-import type { QueryResult } from '@red-ui/protocol'
+import type { QueryResult } from '#reddb'
 
 export interface VectorRow {
   index: number

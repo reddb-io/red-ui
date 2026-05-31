@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { QueryResult } from '@red-ui/protocol'
+import type { QueryResult } from '#reddb'
 import { buildTree, extractKv, hasKvShape, materializeKvJson, renderKvHtml } from './kv-render'
 
 const FIXTURE: QueryResult = {

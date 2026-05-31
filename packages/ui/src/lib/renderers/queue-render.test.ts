@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { QueryResult } from '@red-ui/protocol'
+import type { QueryResult } from '#reddb'
 import { extractQueueEvents, extractQueueMessages, hasQueueShape, queueCommandPlan, queuePushQuery, queueSummary } from './queue-render'
 
 function result(records: QueryResult['result']['records'], capability?: string): QueryResult {

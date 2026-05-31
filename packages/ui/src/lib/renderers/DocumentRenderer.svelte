@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { QueryResult } from '@red-ui/protocol'
+  import type { QueryResult } from '#reddb'
   import { Braces, FileText, Search, X } from 'lucide-svelte'
   import { extractDocuments, type DocumentItem } from './document-render'
 

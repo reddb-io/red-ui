@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { QueryResult } from '@red-ui/protocol'
+  import type { QueryResult } from '#reddb'
   import { connection } from '$lib/connections.svelte'
   import { activity } from '$lib/activity.svelte'
   import { pendingChanges } from '$lib/pending-changes.svelte'

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { QueryResult } from '@red-ui/protocol'
+  import type { QueryResult } from '#reddb'
   import { Gauge, List, Table2 } from 'lucide-svelte'
   import { extractStats, formatMetric } from './stats-render'
 

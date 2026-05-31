@@ -2,7 +2,7 @@
 // Svelte GraphRenderer (xyflow canvas) and the golden-snapshot test
 // (which checks the adjacency-list / DOM-free shape).
 
-import type { QueryResult, QueryRow } from '@red-ui/protocol'
+import type { QueryResult, QueryRow } from '#reddb'
 import Graph from 'graphology'
 import louvain from 'graphology-communities-louvain'
 import forceAtlas2 from 'graphology-layout-forceatlas2'

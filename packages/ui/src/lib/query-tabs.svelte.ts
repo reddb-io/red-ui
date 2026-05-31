@@ -4,7 +4,7 @@
 // running flag. Stored separately from the tabs store so the Tab type
 // stays a thin identity record and switching tabs preserves state.
 
-import type { QueryResult } from '@red-ui/protocol'
+import type { QueryResult } from '#reddb'
 
 export interface QueryTabState {
   sql: string

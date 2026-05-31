@@ -1,5 +1,5 @@
 // Live connections store. Delegates list/connect/whoami to a LocalUrlProvider
-// from @red-ui/protocol (the deep-module seam) and layers reactive Svelte
+// from #reddb (the deep-module seam) and layers reactive Svelte
 // state on top: which connection is active, its live probe (stats +
 // replication), and a connected flag that gates the Connect screen.
 //
@@ -19,7 +19,7 @@ import {
   type HistoryStore,
   type ReplicationStatus,
   type Stats,
-} from '@red-ui/protocol'
+} from '#reddb'
 import { secureStore } from './secureStore.svelte'
 import { activity } from './activity.svelte'
 
@@ -256,6 +256,18 @@ export function makeCustomConnection(input: string): ConnectionPreset {
   }
 }
 
+const CONNECTION_QUERY_KEYS = ['connection', 'red_url', 'red']
+
+function loadLocationConnection(): ConnectionPreset | null {
+  if (typeof location === 'undefined') return null
+  const params = new URLSearchParams(location.search)
+  for (const key of CONNECTION_QUERY_KEYS) {
+    const input = params.get(key)
+    if (input) return makeCustomConnection(input)
+  }
+  return null
+}
+
 // Shared provider — one per browser tab. History is split: labels in plain
 // localStorage so the dropdown renders pre-unlock; URLs encrypted at rest.
 export const provider: ConnectionProvider & {
@@ -268,7 +280,7 @@ export const provider: ConnectionProvider & {
 class ConnectionStore {
   /** Set after a probe succeeds for the first time — used to gate the Connect screen. */
   connected = $state<boolean>(false)
-  active = $state<ConnectionPreset>(loadStored() ?? PRESETS[1])
+  active = $state<ConnectionPreset>(loadLocationConnection() ?? loadStored() ?? PRESETS[1])
   probe = $state<ProbeResult>({ reachable: false })
   history = $state<HistoryEntry[]>([])
 

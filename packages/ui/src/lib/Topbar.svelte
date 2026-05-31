@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Kbd } from '@red-ui/ui-kit'
+  import { Kbd } from '@reddb-io/ui-kit'
   import ConnectDropdown from './ConnectDropdown.svelte'
   import ActivityIndicator from './ActivityIndicator.svelte'
   import { Search, Sun, Moon, Network, Database, FileCode2, Shield } from 'lucide-svelte'

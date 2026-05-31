@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
-  import { CDCStreamClient, type ChangeEvent, type Subscription } from '@red-ui/protocol'
+  import { CDCStreamClient, type ChangeEvent, type Subscription } from '#reddb'
   import { connection } from '$lib/connections.svelte'
   import { Pause, Play, Activity, Filter, X } from 'lucide-svelte'
 

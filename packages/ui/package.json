@@ -1,9 +1,45 @@
 {
-  "name": "@red-ui/ui",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@reddb-io/ui",
+  "version": "0.1.1",
+  "private": false,
+  "description": "RedDB UI components and standalone web application.",
   "type": "module",
+  "bin": {
+    "red-ui": "./bin/red-ui.js"
+  },
+  "svelte": "./src/lib/index.ts",
+  "imports": {
+    "#reddb": {
+      "types": "./src/lib/reddb/index.ts",
+      "default": "./src/lib/reddb/index.ts"
+    }
+  },
+  "exports": {
+    ".": {
+      "svelte": "./src/lib/index.ts",
+      "types": "./src/lib/index.ts"
+    },
+    "./app.css": "./src/app.css",
+    "./renderers": {
+      "svelte": "./src/lib/renderers/index.ts",
+      "types": "./src/lib/renderers/index.ts"
+    },
+    "./build/*": "./build/*"
+  },
+  "files": [
+    "bin",
+    "build",
+    "src/app.css",
+    "src/lib/**/*.svelte",
+    "src/lib/**/*.ts",
+    "!src/lib/**/*.test.ts",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
+    "prepack": "pnpm build",
     "dev": "vite dev --host 127.0.0.1 --port 1420 --strictPort",
     "build": "vite build",
     "preview": "vite preview",
@@ -13,8 +49,8 @@
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
-    "@red-ui/protocol": "workspace:*",
-    "@red-ui/ui-kit": "workspace:*",
+    "@reddb-io/ui-mcp": "workspace:*",
+    "@reddb-io/ui-kit": "workspace:*",
     "@tauri-apps/api": "^2.5.0",
     "@xyflow/svelte": "^1.2.0",
     "bits-ui": "^2.18.1",
@@ -39,5 +75,21 @@
     "typescript": "^5.7.2",
     "vite": "^6.0.7",
     "vitest": "^2.1.8"
+  },
+  "peerDependencies": {
+    "svelte": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/reddb-io/red-ui",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reddb-io/red-ui.git",
+    "directory": "packages/ui"
+  },
+  "bugs": {
+    "url": "https://github.com/reddb-io/red-ui/issues"
   }
 }

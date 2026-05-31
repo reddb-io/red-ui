@@ -2,7 +2,7 @@
 // Svelte TableRenderer component (for live UI) and the golden snapshot
 // test (which needs a DOM-free representation).
 
-import type { QueryResult } from '@red-ui/protocol'
+import type { QueryResult } from '#reddb'
 
 export const TABLE_ROW_LIMIT = 80
 export const ELLIPSIS_AT = 64

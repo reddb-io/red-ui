@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { QueryResult } from '@red-ui/protocol'
+  import type { QueryResult } from '#reddb'
   import { highlightJson, prettyJson, projectJson } from './json-render'
 
   interface Props {

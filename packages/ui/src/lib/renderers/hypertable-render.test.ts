@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { QueryResult } from '@red-ui/protocol'
+import type { QueryResult } from '#reddb'
 import {
   ALL_METRICS,
   chartGeometry,

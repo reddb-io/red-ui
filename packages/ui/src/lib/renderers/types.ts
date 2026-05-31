@@ -1,5 +1,5 @@
 import type { Component } from 'svelte'
-import type { QueryResult, RedClient } from '@red-ui/protocol'
+import type { QueryResult, RedClient } from '#reddb'
 
 export type Capability =
   | 'table'

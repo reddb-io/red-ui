@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { CollectionVcsState, QueryResult, RedClient, VcsCommit, VcsDiff } from '@red-ui/protocol'
+  import type { CollectionVcsState, QueryResult, RedClient, VcsCommit, VcsDiff } from '#reddb'
   import { GitCommitHorizontal, GitCompareArrows, LoaderCircle, RadioTower, RefreshCw, ShieldCheck } from 'lucide-svelte'
   import DiffRenderer from '$lib/renderers/DiffRenderer.svelte'
   import LiveChanges from '$lib/LiveChanges.svelte'

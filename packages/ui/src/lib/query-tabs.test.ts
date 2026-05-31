@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach } from 'vitest'
 import { queryTabs, deriveQueryLabel } from './query-tabs.svelte'
-import type { QueryResult } from '@red-ui/protocol'
+import type { QueryResult } from '#reddb'
 
 beforeEach(() => queryTabs.clear())
 

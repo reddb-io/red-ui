@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { QueryResult } from '@red-ui/protocol'
+  import type { QueryResult } from '#reddb'
   import { Activity, BarChart3, LineChart, X } from 'lucide-svelte'
   import {
     ALL_METRICS,

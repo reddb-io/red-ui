@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { QueryResult } from '@red-ui/protocol'
+  import type { QueryResult } from '#reddb'
   import { onDestroy, onMount } from 'svelte'
   import { colorForCommunity, compareGraphNodesByCentrality, extractGraph, graphNodeCentrality, graphNodeIncomingSizeScales, runGraphLayout, type GraphNode, type GraphEdge } from './graph-render'
   import { collectionPageHref } from '$lib/collection-pages'

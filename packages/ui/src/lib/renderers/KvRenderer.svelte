@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { QueryResult } from '@red-ui/protocol'
+  import type { QueryResult } from '#reddb'
   import { Braces, ListTree, Search, X } from 'lucide-svelte'
   import { buildTree, extractKv, formatValue, materializeKvJson, type KvNode } from './kv-render'
 

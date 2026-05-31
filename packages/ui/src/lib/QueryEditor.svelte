@@ -5,7 +5,7 @@
   import { tabs } from '$lib/tabs.svelte'
   import { registry } from '$lib/renderers'
   import type { Capability } from '$lib/renderers'
-  import { Kbd } from '@red-ui/ui-kit'
+  import { Kbd } from '@reddb-io/ui-kit'
 
   interface Props {
     tabId: string

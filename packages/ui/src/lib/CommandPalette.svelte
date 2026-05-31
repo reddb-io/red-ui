@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { Kbd } from '@red-ui/ui-kit'
+  import { Kbd } from '@reddb-io/ui-kit'
   import { goto as kitGoto } from '$app/navigation'
   import { theme } from './theme.svelte'
 

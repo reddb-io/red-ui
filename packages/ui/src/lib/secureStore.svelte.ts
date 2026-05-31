@@ -12,7 +12,7 @@ import {
   WebEncryptedStore,
   SecureStoreError,
   type EncryptedStore,
-} from '@red-ui/protocol'
+} from '#reddb'
 
 const NAMESPACE = 'red-ui:secure'
 const PROBE_KEY = '__probe__'

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { capabilityFromCatalogModel, detectCapability, pickCapability, tagsFromCollectionMetadata } from './capability'
-import type { CollectionMetadata, QueryResult, RedClient } from '@red-ui/protocol'
+import type { CollectionMetadata, QueryResult, RedClient } from '#reddb'
 
 function result(capability: string | undefined, records: QueryResult['result']['records'] = []): QueryResult {
   return {

@@ -1,4 +1,4 @@
-import type { QueryResult } from '@red-ui/protocol'
+import type { QueryResult } from '#reddb'
 
 const SYSTEM_FIELDS = new Set(['rid', 'collection', 'kind', 'tenant', 'created_at', 'updated_at', 'body'])
 

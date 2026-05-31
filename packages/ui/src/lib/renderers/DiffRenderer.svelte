@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { QueryResult } from '@red-ui/protocol'
+  import type { QueryResult } from '#reddb'
   import { Braces, GitCompareArrows, Search, X } from 'lucide-svelte'
   import { diffEntryFields, extractDiffEntries, formatDiffValue, summarizeDiff, type DiffEntry } from './diff-render'
 

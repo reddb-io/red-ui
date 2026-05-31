@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { QueryResult, RedClient } from '@red-ui/protocol'
+  import type { QueryResult, RedClient } from '#reddb'
   import { Braces, Gauge, ListFilter, LoaderCircle, Play, Rows3, Search, X } from 'lucide-svelte'
   import {
     buildVectorSearchQuery,

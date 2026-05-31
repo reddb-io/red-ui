@@ -6,7 +6,7 @@
 // back to the renderer that `renders(result)` accepts, and finally to the
 // 'table' renderer which is the universal default.
 
-import type { QueryResult } from '@red-ui/protocol'
+import type { QueryResult } from '#reddb'
 import type { Capability, CapabilityRenderer } from './types'
 
 export class RendererRegistry {

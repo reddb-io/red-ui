@@ -6,8 +6,8 @@
 // Default to `table` when the collection is empty or detection fails — this
 // is the honest baseline, since every collection is at least table-shaped.
 
-import type { CollectionMetadata, RedClient } from '@red-ui/protocol'
-import type { QueryResult } from '@red-ui/protocol'
+import type { CollectionMetadata, RedClient } from '#reddb'
+import type { QueryResult } from '#reddb'
 
 export type Capability =
   | 'table'

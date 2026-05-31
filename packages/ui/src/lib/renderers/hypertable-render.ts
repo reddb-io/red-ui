@@ -7,7 +7,7 @@
 // several; this module exposes the data shape so the test can assert
 // the chart geometry without a browser.
 
-import type { QueryResult } from '@red-ui/protocol'
+import type { QueryResult } from '#reddb'
 
 export const ALL_METRICS = '__all__'
 

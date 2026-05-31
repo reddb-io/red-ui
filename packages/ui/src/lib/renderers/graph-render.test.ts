@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { QueryResult } from '@red-ui/protocol'
+import type { QueryResult } from '#reddb'
 import { compareGraphNodesByCentrality, extractGraph, graphNodeCentrality, graphNodeIncomingSizeScales, hasGraphShape, renderGraphHtml, runGraphLayout, type GraphEdge, type GraphNode } from './graph-render'
 
 const FIXTURE: QueryResult = {

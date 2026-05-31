@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { Card, Badge } from '@red-ui/ui-kit'
+  import { Card, Badge } from '@reddb-io/ui-kit'
   import PageHeader from '$lib/PageHeader.svelte'
   import EmptyState from '$lib/EmptyState.svelte'
   import { activity } from '$lib/activity.svelte'
   import { connection } from '$lib/connections.svelte'
   import { secureStore } from '$lib/secureStore.svelte'
-  import type { AuthPolicy, AuthTenant, AuthUser, Whoami } from '@red-ui/protocol'
+  import type { AuthPolicy, AuthTenant, AuthUser, Whoami } from '#reddb'
   import { Building2, Lock, RefreshCw, ScrollText, Shield, ShieldAlert, Users } from 'lucide-svelte'
 
   let whoami = $state<Whoami | null>(null)

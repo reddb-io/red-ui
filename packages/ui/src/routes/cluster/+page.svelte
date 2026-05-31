@@ -1,14 +1,14 @@
 <script lang="ts">
   import { SvelteFlow, Background, BackgroundVariant, Controls, type Node, type Edge } from '@xyflow/svelte'
   import '@xyflow/svelte/dist/style.css'
-  import { Badge, Card, NodeBadge } from '@red-ui/ui-kit'
+  import { Badge, Card, NodeBadge } from '@reddb-io/ui-kit'
   import EmptyState from '$lib/EmptyState.svelte'
   import ClusterNode from '$lib/ClusterNode.svelte'
   import { PRESETS } from '$lib/connections.svelte'
   import { secureStore } from '$lib/secureStore.svelte'
   import { activity } from '$lib/activity.svelte'
   import { theme } from '$lib/theme.svelte'
-  import { RedClient, type ClusterStatus, type Stats, type ReplicationStatus } from '@red-ui/protocol'
+  import { RedClient, type ClusterStatus, type Stats, type ReplicationStatus } from '#reddb'
   import { Lock, ServerCrash } from 'lucide-svelte'
 
   interface KnownNode {

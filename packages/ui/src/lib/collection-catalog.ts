@@ -1,4 +1,4 @@
-import type { QueryRow } from '@red-ui/protocol'
+import type { QueryRow } from '#reddb'
 
 export interface CollectionCatalogMetadata {
   name: string

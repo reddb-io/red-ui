@@ -3,7 +3,7 @@
 // browsing `config/auth/jwt` sees the `config → auth → jwt` hierarchy
 // rather than 800 flat rows.
 
-import type { QueryResult } from '@red-ui/protocol'
+import type { QueryResult } from '#reddb'
 
 export interface KvEntry {
   key: string

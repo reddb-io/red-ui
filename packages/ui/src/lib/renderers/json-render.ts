@@ -5,7 +5,7 @@
 // renderer (renders() returns false) so it does not steal results from
 // the more specific capabilities; it only fires when explicitly chosen.
 
-import type { QueryResult } from '@red-ui/protocol'
+import type { QueryResult } from '#reddb'
 
 export function projectJson(result: QueryResult): unknown {
   // Strip the verbose envelope to what a developer would actually want
