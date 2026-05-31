@@ -20,6 +20,7 @@ apps/desktop/src-tauri/WixTools/
 .data/
 .red/tmp/
 .red/state/
+.red/memory/
 
 # Per-machine Claude Code overrides — e.g. the absolute statusline path
 # needed because ${CLAUDE_PLUGIN_ROOT} doesn't resolve at project scope.
