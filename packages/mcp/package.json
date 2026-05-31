@@ -1,0 +1,46 @@
+{
+  "name": "@reddb-io/ui-mcp",
+  "version": "0.1.1",
+  "private": false,
+  "description": "MCP Apps server for embedding RedDB UI in MCP clients.",
+  "type": "module",
+  "bin": {
+    "ui-mcp": "./dist/index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepack": "pnpm build",
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "test": "pnpm build && node test/mcp-app-smoke.mjs",
+    "start": "tsx src/index.ts --stdio"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/ext-apps": "^1.7.2",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "tsx": "^4.22.3",
+    "typescript": "^5.7.2"
+  },
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/reddb-io/red-ui",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reddb-io/red-ui.git",
+    "directory": "packages/mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/reddb-io/red-ui/issues"
+  }
+}
