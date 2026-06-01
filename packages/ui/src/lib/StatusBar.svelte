@@ -2,10 +2,14 @@
   import { useRouter } from './router.svelte'
   import { connection } from './connections.svelte'
   import { pendingChanges } from './pending-changes.svelte'
-  import { ArrowRight, FilePenLine } from 'lucide-svelte'
+  import { ArrowRight, FilePenLine, Lock } from 'lucide-svelte'
 
   const router = useRouter()
   const pendingCount = $derived(pendingChanges.count)
+
+  // Read-only badge (#23) — driven solely by the server's reported status.
+  const readOnly = $derived(connection.readOnly)
+  const readOnlyReason = $derived(connection.readOnlyReason)
 
   function openPending() {
     window.dispatchEvent(new CustomEvent('red:open-pending-changes'))
@@ -101,6 +105,17 @@
         <span class="text-fg-2">
           <span class="text-fg-3">lsn</span>
           <span class="text-fg-1 tabular-nums">{wal}</span>
+        </span>
+      {/if}
+
+      {#if readOnly}
+        <span class="text-fg-3">·</span>
+        <span
+          class="inline-flex items-center gap-1 shrink-0 text-warn"
+          title={readOnlyReason ?? 'The server is open read-only — mutations are disabled.'}
+        >
+          <Lock class="size-3" />
+          <span class="uppercase tracking-wider text-[10px]">read-only — file in use</span>
         </span>
       {/if}
     {:else}

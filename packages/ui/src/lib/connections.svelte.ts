@@ -324,6 +324,21 @@ class ConnectionStore {
     return this.#client
   }
 
+  /**
+   * Read-only state derived from the server's reported `/stats` (#23). True
+   * only when the connected server reports `read_only` — never hardcoded. When
+   * the server reports no signal (the common case) this stays false and the UI
+   * behaves normally.
+   */
+  get readOnly(): boolean {
+    return this.connected && this.probe.stats?.read_only === true
+  }
+
+  /** Optional human-facing reason for the read-only badge tooltip. */
+  get readOnlyReason(): string | undefined {
+    return this.probe.stats?.read_only_reason
+  }
+
   async forget(url: string) {
     await historyStore.forgetByUrl(url)
   }

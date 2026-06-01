@@ -134,7 +134,9 @@
   let editValue = $state('')
 
   function startEdit(row: number, col: string, value: unknown) {
-    if (editing || !collection) return
+    // Read-only server (#23): cells aren't editable — the mutation entry point
+    // is absent rather than letting a doomed edit stage and fail at commit.
+    if (editing || !collection || connection.readOnly) return
     editing = { row, col }
     const staged = pendingChanges.find(collection, row, col)
     editValue = staged ? staged.newValue : String(value ?? '')
