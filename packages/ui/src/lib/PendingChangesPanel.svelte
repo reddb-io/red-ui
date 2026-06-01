@@ -1,6 +1,12 @@
 <script lang="ts">
   import { pendingChanges, buildUpdateSql } from './pending-changes.svelte'
-  import { X, AlertTriangle } from 'lucide-svelte'
+  import { connection } from './connections.svelte'
+  import { X, AlertTriangle, Lock } from 'lucide-svelte'
+
+  // Mutations are committed against the server; block them while it reports
+  // read-only (#23). The reason explains *why* the control is disabled.
+  const readOnly = $derived(connection.readOnly)
+  const readOnlyReason = $derived(connection.readOnlyReason)
 
   interface Props {
     open: boolean
@@ -109,6 +115,13 @@
         {/if}
       </div>
 
+      {#if readOnly}
+        <div class="flex items-center gap-1.5 px-4 py-2 text-warn text-[11px] font-mono border-t border-line-1 bg-warn/5">
+          <Lock class="size-3 shrink-0" />
+          <span>{readOnlyReason ?? 'Server is read-only (file in use) — changes can’t be applied.'}</span>
+        </div>
+      {/if}
+
       <div class="flex items-center justify-end gap-2 px-4 py-3 border-t border-line-1 bg-bg-1/60">
         <button
           type="button"
@@ -129,7 +142,8 @@
           type="button"
           class="text-[12px] font-mono px-3 py-1 bg-accent text-white rounded disabled:opacity-50"
           onclick={apply}
-          disabled={pendingChanges.count === 0 || committing}
+          disabled={pendingChanges.count === 0 || committing || readOnly}
+          title={readOnly ? (readOnlyReason ?? 'Server is read-only — mutations are disabled.') : undefined}
         >
           {committing ? 'Applying…' : 'Apply all'}
         </button>

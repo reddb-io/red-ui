@@ -48,6 +48,15 @@ export interface Stats {
   store: { collection_count: number; cross_ref_count: number; total_entities: number; total_memory_bytes: number }
   system: { arch: string; cpu_cores: number; hostname: string; os: string; pid: number; total_memory_bytes: number; available_memory_bytes: number }
   kv?: { gets: number; puts: number; deletes: number; cas_success: number; cas_conflict: number }
+  /**
+   * Set by the server when the store is open read-only — e.g. an embedded file
+   * already held by an active writer (lock detection is owned by reddb). Absent
+   * when the server reports no read-only signal, in which case the UI shows no
+   * badge and behaves normally (#23). `read_only_reason` is an optional
+   * human-facing explanation for the badge tooltip.
+   */
+  read_only?: boolean
+  read_only_reason?: string
 }
 
 export interface ClusterStatus {

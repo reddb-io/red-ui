@@ -9,11 +9,12 @@ import { InjectedClientProvider, LocalUrlProvider } from '#reddb'
 import type { RedClient } from '#reddb'
 
 // Fake client covering every method tryConnect touches (ping/stats/replication
-// on connect, whoami on demand). The host would inject a real one.
-function fakeClient(): RedClient {
+// on connect, whoami on demand). The host would inject a real one. `stats`
+// overrides let a test simulate the server's reported read-only flag (#23).
+function fakeClient(stats: Record<string, unknown> = {}): RedClient {
   return {
     ping: vi.fn(async () => ({ ok: true, rtt_ms: 3 })),
-    stats: vi.fn(async () => ({ collections: 0, records: 0 })),
+    stats: vi.fn(async () => ({ collections: 0, records: 0, ...stats })),
     replication: vi.fn(async () => undefined),
     whoami: vi.fn(async () => ({ authenticated: true, username: 'host', role: 'admin' })),
   } as unknown as RedClient
@@ -53,5 +54,33 @@ describe('connection seam (ADR-0001)', () => {
 
     connection.disconnect()
     expect(connection.client).toBeNull() // no URL-built fallback
+  })
+})
+
+describe('read-only state (#23)', () => {
+  it('is false when the server reports no read-only signal', async () => {
+    setConnectionProvider(new InjectedClientProvider({ client: fakeClient() }))
+    await connection.adoptInjected()
+    expect(connection.connected).toBe(true)
+    expect(connection.readOnly).toBe(false)
+  })
+
+  it('is true, with the reason, when the server reports read_only', async () => {
+    setConnectionProvider(
+      new InjectedClientProvider({
+        client: fakeClient({ read_only: true, read_only_reason: 'file in use by another writer' }),
+      }),
+    )
+    await connection.adoptInjected()
+    expect(connection.readOnly).toBe(true)
+    expect(connection.readOnlyReason).toBe('file in use by another writer')
+  })
+
+  it('is false once disconnected even if the last probe was read-only', async () => {
+    setConnectionProvider(new InjectedClientProvider({ client: fakeClient({ read_only: true }) }))
+    await connection.adoptInjected()
+    expect(connection.readOnly).toBe(true)
+    connection.disconnect()
+    expect(connection.readOnly).toBe(false) // gated on `connected`, never hardcoded
   })
 })
