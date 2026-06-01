@@ -15,6 +15,7 @@ import {
 } from './connection-provider'
 import { BROWSER_TRANSPORTS } from './transports'
 import type { Transport } from './types'
+import { hasBootEndpoint, type BootParams } from './boot-params'
 
 export interface HistoryEntry {
   url: string
@@ -43,6 +44,12 @@ export interface LocalUrlProviderOptions {
    * the desktop set so native unix/embedded connections are offered.
    */
   transports?: Transport[]
+  /**
+   * Non-secret boot config seeded by the Surface (#36, ADR-0005) — endpoint +
+   * initial view from the app URL. Surfaced via `bootParams()` so the Core can
+   * auto-connect without the Connect flow. Tokens must never be placed here.
+   */
+  bootParams?: BootParams
 }
 
 const HISTORY_MAX_DEFAULT = 8
@@ -87,6 +94,7 @@ export class LocalUrlProvider implements ConnectionProvider {
   private readonly clientFactory: (url: string) => RedClient
   private readonly historyMax: number
   private readonly supportedTransports: Transport[]
+  private readonly boot: BootParams | null
   private active: ActiveConnection | null = null
 
   constructor(opts: LocalUrlProviderOptions = {}) {
@@ -96,10 +104,15 @@ export class LocalUrlProvider implements ConnectionProvider {
     this.clientFactory =
       opts.clientFactory ?? ((url) => new RedClient(url))
     this.supportedTransports = opts.transports?.slice() ?? [...BROWSER_TRANSPORTS]
+    this.boot = opts.bootParams && hasBootEndpoint(opts.bootParams) ? { ...opts.bootParams } : null
   }
 
   transports(): Transport[] {
     return this.supportedTransports.slice()
+  }
+
+  bootParams(): BootParams | null {
+    return this.boot ? { ...this.boot } : null
   }
 
   async list(): Promise<Connection[]> {

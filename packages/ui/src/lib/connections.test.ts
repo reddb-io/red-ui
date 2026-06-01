@@ -151,3 +151,37 @@ describe('transport reachability (#34)', () => {
     expect(connection.supportedTransports).toContain('unix')
   })
 })
+
+describe('boot-params pre-configuration (#36)', () => {
+  it('connects to a seeded endpoint without the Connect flow and returns the view', async () => {
+    setConnectionProvider(
+      new LocalUrlProvider({
+        bootParams: { endpoint: 'http://seeded:5055', view: 'cluster' },
+        clientFactory: () => fakeClient(),
+      }),
+    )
+    expect(connection.connected).toBe(false)
+
+    const view = await connection.connectFromBootParams()
+
+    expect(view).toBe('cluster')
+    expect(connection.connected).toBe(true)
+    expect(connection.active.url).toBe('http://seeded:5055')
+  })
+
+  it('is a no-op (returns null) when no endpoint was seeded', async () => {
+    setConnectionProvider(new LocalUrlProvider({ clientFactory: () => fakeClient() }))
+    expect(await connection.connectFromBootParams()).toBeNull()
+    expect(connection.connected).toBe(false)
+  })
+
+  it('never carries a token — the provider bootParams expose only endpoint/view', async () => {
+    const p = new LocalUrlProvider({
+      bootParams: { endpoint: 'http://seeded' },
+      clientFactory: () => fakeClient(),
+    })
+    setConnectionProvider(p)
+    await connection.connectFromBootParams()
+    expect(Object.keys(p.bootParams() ?? {})).toEqual(['endpoint'])
+  })
+})

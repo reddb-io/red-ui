@@ -17,6 +17,7 @@ import {
   LocalUrlProvider,
   RedClient,
   isUrlReachable,
+  parseBootParams,
   type Connection,
   type ConnectionProvider,
   type HistoryEntry as ProtocolHistoryEntry,
@@ -293,6 +294,10 @@ export const provider: ConnectionProvider & {
   presets: PRESETS,
   history: historyStore,
   transports: surfaceTransports(),
+  // Boot-params pre-configuration (#36, ADR-0005): a Surface (the MCP App)
+  // seeds the endpoint + view in the app URL; the Core reads it through the
+  // provider. Tokens are stripped by parseBootParams.
+  bootParams: parseBootParams(typeof location !== 'undefined' ? location.search : ''),
 })
 
 // The Core acquires its client EXCLUSIVELY through this provider (ADR-0001 —
@@ -454,6 +459,21 @@ class ConnectionStore {
       description: first.description ?? 'Injected by the embedding host.',
     }
     return this.tryConnect(preset)
+  }
+
+  /**
+   * Connect from Surface-seeded boot params (#36, ADR-0005). Reads the endpoint
+   * + view the provider was seeded with (e.g. the MCP App's app URL) and, when
+   * an endpoint is present, connects to it without the Connect flow. Returns
+   * the seeded initial view (for the caller to navigate to), or null when no
+   * endpoint was seeded or the connect failed. Tokens are never read here — the
+   * provider's bootParams() already excludes them.
+   */
+  async connectFromBootParams(): Promise<string | null> {
+    const boot = getConnectionProvider().bootParams?.()
+    if (!boot?.endpoint) return null
+    const ok = await this.tryConnect(makeCustomConnection(boot.endpoint))
+    return ok ? (boot.view ?? null) : null
   }
 
   async refresh() {

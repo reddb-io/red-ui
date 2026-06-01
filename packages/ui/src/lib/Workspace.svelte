@@ -48,7 +48,19 @@
     setConnectionProvider(connectionProvider)
   }
   onMount(() => {
-    if (connectionProvider) void connection.adoptInjected()
+    if (connectionProvider) {
+      // Host-injected provider (#33): adopt its authenticated connection.
+      void connection.adoptInjected()
+    } else {
+      // Surface-seeded boot params (#36, ADR-0005): the MCP App seeds the
+      // endpoint + view in the app URL; connect without the Connect flow and
+      // navigate to the seeded view.
+      void connection.connectFromBootParams().then((view) => {
+        if (view === 'query' || view === 'collections' || view === 'cluster' || view === 'security') {
+          router.go({ view })
+        }
+      })
+    }
   })
 
   let booted = $state(false)

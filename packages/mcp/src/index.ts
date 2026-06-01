@@ -250,7 +250,12 @@ function renderRedUiAppHtml(config: ServerConfig): string {
       function buildFrameUrl() {
         const url = new URL(state.appUrl || DEFAULT_APP_URL);
         url.searchParams.set('mcp', '1');
+        // Boot-params pre-configuration (#36, ADR-0005): seed non-secret
+        // endpoint + initial view; the Core reads these via its
+        // ConnectionProvider and connects without the Connect flow. Never seed
+        // a token here — secrets are reserved for a later postMessage channel.
         if (state.connectionUrl) url.searchParams.set('connection', state.connectionUrl);
+        if (state.view) url.searchParams.set('view', state.view);
         return url.toString();
       }
 
