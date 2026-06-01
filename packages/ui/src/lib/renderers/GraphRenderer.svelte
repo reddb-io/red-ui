@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { QueryResult } from '#reddb'
   import { onDestroy, onMount } from 'svelte'
-  import { colorForCommunity, compareGraphNodesByCentrality, extractGraph, graphNodeCentrality, graphNodeIncomingSizeScales, runGraphLayout, type GraphNode, type GraphEdge } from './graph-render'
+  import { colorForCommunity, compareGraphNodesByCentrality, extractGraph, graphNodeCentrality, graphNodeDetail, graphNodeIncomingSizeScales, graphNodeIsOrphan, runGraphLayout, type GraphNode, type GraphEdge, type GraphNodeRelation } from './graph-render'
   import { collectionPageHref } from '$lib/collection-pages'
   import { connection } from '$lib/connections.svelte'
   import { activity } from '$lib/activity.svelte'
@@ -36,6 +36,13 @@
   const graph = $derived(extractGraph(activeResult))
   const nodeCentrality = $derived(graphNodeCentrality(graph.nodes, graph.edges))
   const nodeSizeScales = $derived(graphNodeIncomingSizeScales(graph.nodes, nodeCentrality))
+  const orphanNodeIds = $derived.by(() => {
+    return new Set(
+      graph.nodes
+        .filter((node) => graphNodeIsOrphan(node, nodeCentrality))
+        .map((node) => node.id),
+    )
+  })
 
   // ─── view state ─────────────────────────────────────────────────────────
   let viewMode = $state<'canvas' | 'svg' | 'table'>('canvas')
@@ -52,6 +59,12 @@
   let canvasPanLastX = 0
   let canvasPanLastY = 0
   let canvasDragMoved = false
+
+  const selectedNodeDetail = $derived(
+    selectedNode
+      ? graphNodeDetail(selectedNode, graph.nodes, graph.edges, nodeCentrality)
+      : null,
+  )
 
   $effect(() => {
     if (subpage === 'svg' && viewMode !== 'svg') viewMode = 'svg'
@@ -249,6 +262,13 @@
     return graph.nodes.find((n) => n.id === id) ?? null
   }
 
+  function selectRelationNode(relation: GraphNodeRelation) {
+    const node = nodeById(relation.nodeId)
+    if (!node) return
+    pinFocusNode(node)
+    selectNode(node)
+  }
+
   function selectNode(node: GraphNode) {
     selectedEdge = null
     selectedNode = node
@@ -272,6 +292,25 @@
   function selectEdge(edge: GraphEdge) {
     selectedNode = null
     selectedEdge = edge
+  }
+
+  function isPromotedNodeProperty(key: string): boolean {
+    return [
+      'id',
+      'rid',
+      'label',
+      'name',
+      'title',
+      'description',
+      'summary',
+      'content',
+      'exports',
+      'orphan',
+      'is_orphan',
+      'isOrphan',
+      'dead_code',
+      'deadCode',
+    ].includes(key)
   }
 
   function onSelectableKey(e: KeyboardEvent, fn: () => void) {
@@ -516,6 +555,7 @@
       labelFg: cssColor('--color-fg-1', dark ? '#e2e8f0' : '#27272a'),
       labelStrong: cssColor('--color-fg-0', dark ? '#ffffff' : '#18181b'),
       edgeLabel: dark ? '#f6d36b' : '#8a6514',
+      warn: cssColor('--color-warn', dark ? '#fbbf24' : '#b45309'),
       nodeStroke: dark ? '#ffffff' : '#27272a',
       selectedNodeStroke: dark ? '#0a0a0b' : '#18181b',
     }
@@ -644,6 +684,7 @@
     for (const node of fallbackSvgNodes) {
       const p = canvasPoint(node.x, node.y, width, height)
       const selected = selectedNode?.id === node.id
+      const orphan = orphanNodeIds.has(node.id)
       const isPrimaryFocus = activeFocusNodeId === node.id
       const isFocusedNeighbor = focusNodeIds.has(node.id)
       const focusScale = !hasFocus
@@ -654,13 +695,21 @@
             ? 1.58
             : 0.9
       const alpha = !hasFocus || isFocusedNeighbor ? 1 : 0.12
+      if (orphan) {
+        ctx.beginPath()
+        ctx.globalAlpha = !hasFocus || isFocusedNeighbor ? 0.72 : 0.18
+        ctx.strokeStyle = colors.warn
+        ctx.lineWidth = isPrimaryFocus ? 2.6 : 1.5
+        ctx.arc(p.x, p.y, Math.max(4.8, node.r * 5.1 * svgZoom * focusScale + 4), 0, Math.PI * 2)
+        ctx.stroke()
+      }
       ctx.beginPath()
       ctx.globalAlpha = alpha
       ctx.fillStyle = node.color
       ctx.arc(p.x, p.y, Math.max(2.6, node.r * 5.1 * svgZoom * focusScale), 0, Math.PI * 2)
       ctx.fill()
       ctx.globalAlpha = !hasFocus || isFocusedNeighbor ? 1 : 0.16
-      ctx.strokeStyle = isPrimaryFocus ? focusNodeStrokeColor : selected ? colors.selectedNodeStroke : colors.nodeStroke
+      ctx.strokeStyle = isPrimaryFocus ? focusNodeStrokeColor : selected ? colors.selectedNodeStroke : orphan ? colors.warn : colors.nodeStroke
       ctx.lineWidth = isPrimaryFocus ? 3.1 : isFocusedNeighbor ? 1.65 : selected ? 2 : 0.9
       ctx.stroke()
       ctx.globalAlpha = 1
@@ -699,6 +748,7 @@
     void activeFocusNodeId
     void focusNodeIds
     void focusEdgeIds
+    void orphanNodeIds
     if (viewMode === 'canvas') scheduleCanvasDraw()
   })
 
@@ -1070,14 +1120,28 @@
               </g>
               <g>
                 {#each fallbackSvgNodes as n (n.id)}
+                  {@const orphan = orphanNodeIds.has(n.id)}
+                  {#if orphan}
+                    <circle
+                      cx={n.x}
+                      cy={n.y}
+                      r={svgNodeRadius(n) + 0.65}
+                      fill="none"
+                      stroke="var(--color-warn)"
+                      stroke-width={activeFocusNodeId === n.id ? '0.38' : '0.24'}
+                      opacity={activeFocusNodeId && !focusNodeIds.has(n.id) ? '0.16' : '0.72'}
+                      vector-effect="non-scaling-stroke"
+                      class="pointer-events-none"
+                    />
+                  {/if}
                   <circle
                     cx={n.x}
                     cy={n.y}
                     r={svgNodeRadius(n)}
                     fill={n.color}
                     opacity={svgNodeOpacity(n)}
-                    stroke={activeFocusNodeId === n.id ? focusNodeStrokeColor : selectedNode?.id === n.id ? '#0a0a0b' : '#ffffff'}
-                    stroke-width={activeFocusNodeId === n.id ? '0.55' : focusNodeIds.has(n.id) ? '0.22' : selectedNode?.id === n.id ? '0.4' : '0.14'}
+                    stroke={activeFocusNodeId === n.id ? focusNodeStrokeColor : selectedNode?.id === n.id ? '#0a0a0b' : orphan ? 'var(--color-warn)' : '#ffffff'}
+                    stroke-width={activeFocusNodeId === n.id ? '0.55' : focusNodeIds.has(n.id) ? '0.22' : selectedNode?.id === n.id || orphan ? '0.4' : '0.14'}
                     class="cursor-pointer graph-node"
                     class:focus-primary={activeFocusNodeId === n.id}
                     vector-effect="non-scaling-stroke"
@@ -1126,11 +1190,15 @@
             </thead>
             <tbody>
               {#each graph.nodes as n (n.id)}
-                <tr class="border-b border-line-1/60 hover:bg-bg-1/40 cursor-pointer" onclick={() => { selectedEdge = null; selectedNode = n }}>
+                {@const orphan = orphanNodeIds.has(n.id)}
+                <tr class={['border-b border-line-1/60 hover:bg-bg-1/40 cursor-pointer', orphan ? 'bg-warn/10' : ''].join(' ')} onclick={() => { selectedEdge = null; selectedNode = n }}>
                   <td class="px-2 py-1 text-fg-3">node</td>
                   <td class="px-2 py-1 text-accent font-semibold">{n.id}</td>
                   <td class="px-2 py-1 text-fg-0">{n.label}</td>
-                  <td class="px-2 py-1 text-fg-2">{String(n.data.node_type ?? '')}</td>
+                  <td class="px-2 py-1 text-fg-2">
+                    {String(n.data.node_type ?? '')}
+                    {#if orphan}<span class="ml-2 text-warn">orphan</span>{/if}
+                  </td>
                 </tr>
               {/each}
               {#each graph.edges as e (e.id)}
@@ -1160,14 +1228,118 @@
             </button>
           </header>
           <div class="flex-1 overflow-auto p-3 text-[12px] font-mono">
-            {#if selectedNode}
-              <div class="mb-2">
-                <div class="text-fg-3 text-[10px] uppercase tracking-wider">label</div>
-                <div class="text-fg-0 font-semibold">{selectedNode.label}</div>
+            {#if selectedNode && selectedNodeDetail}
+              <div class="mb-3">
+                <div class="flex items-start gap-2">
+                  <div class="min-w-0 flex-1">
+                    <div class="text-fg-3 text-[10px] uppercase tracking-wider">label</div>
+                    <div class="break-words text-[13px] font-semibold text-fg-0">{selectedNode.label}</div>
+                  </div>
+                  {#if selectedNodeDetail.orphan}
+                    <span class="inline-flex shrink-0 items-center gap-1 rounded border border-warn/40 bg-warn/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-warn">
+                      <AlertTriangle class="size-3" /> orphan
+                    </span>
+                  {/if}
+                </div>
+                <div class="mt-1 break-all text-accent">{String(selectedNode.data.rid ?? selectedNode.id)}</div>
               </div>
-              <div class="mb-2">
-                <div class="text-fg-3 text-[10px] uppercase tracking-wider">rid</div>
-                <div class="text-accent">{String(selectedNode.data.rid ?? selectedNode.id)}</div>
+
+              <div class="mb-3 border-t border-line-1 pt-3">
+                <div class="mb-1 text-fg-3 text-[10px] uppercase tracking-wider">description</div>
+                <div class="whitespace-pre-wrap break-words text-fg-1">
+                  {selectedNodeDetail.description ?? 'No description in graph contract.'}
+                </div>
+              </div>
+
+              <div class="mb-3 border-t border-line-1 pt-3">
+                <div class="mb-1.5 flex items-center justify-between gap-2">
+                  <div class="text-fg-3 text-[10px] uppercase tracking-wider">exports</div>
+                  <span class="text-[10px] text-fg-3">{selectedNodeDetail.exports.length.toLocaleString()}</span>
+                </div>
+                {#if selectedNodeDetail.exports.length > 0}
+                  <div class="flex flex-wrap gap-1">
+                    {#each selectedNodeDetail.exports as name}
+                      <span class="max-w-full truncate rounded border border-line-1 bg-bg-0 px-1.5 py-0.5 text-[11px] text-fg-1">
+                        {name}
+                      </span>
+                    {/each}
+                  </div>
+                {:else}
+                  <div class="text-fg-3">No exports recorded.</div>
+                {/if}
+              </div>
+
+              <div class="mb-3 border-t border-line-1 pt-3">
+                <div class="mb-1.5 flex items-center justify-between gap-2">
+                  <div class="text-fg-3 text-[10px] uppercase tracking-wider">where used</div>
+                  <span class="text-[10px] text-fg-3">{selectedNodeDetail.whereUsed.length.toLocaleString()} inbound</span>
+                </div>
+                {#if selectedNodeDetail.whereUsed.length > 0}
+                  <div class="space-y-1">
+                    {#each selectedNodeDetail.whereUsed as relation (relation.id)}
+                      <button
+                        type="button"
+                        class="grid w-full grid-cols-[82px_1fr] gap-2 rounded border border-line-1 bg-bg-0 px-2 py-1.5 text-left hover:border-line-2 hover:bg-bg-2"
+                        onclick={() => selectRelationNode(relation)}
+                      >
+                        <span class="text-[10px] uppercase tracking-wider text-fg-3">{relation.label}</span>
+                        <span class="min-w-0">
+                          <span class="block truncate text-fg-0">{relation.nodeLabel}</span>
+                          <span class="block truncate text-[10px] text-fg-3">{relation.edgeLabel ?? relation.kind}</span>
+                        </span>
+                      </button>
+                    {/each}
+                  </div>
+                {:else}
+                  <div class="text-fg-3">No inbound uses.</div>
+                {/if}
+              </div>
+
+              <div class="mb-3 border-t border-line-1 pt-3">
+                <div class="mb-1.5 grid grid-cols-2 gap-2">
+                  <div>
+                    <div class="text-fg-3 text-[10px] uppercase tracking-wider">parents</div>
+                    <div class="text-[10px] text-fg-3">incoming direction</div>
+                  </div>
+                  <div>
+                    <div class="text-fg-3 text-[10px] uppercase tracking-wider">children</div>
+                    <div class="text-[10px] text-fg-3">outgoing direction</div>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="space-y-1">
+                    {#if selectedNodeDetail.incoming.length > 0}
+                      {#each selectedNodeDetail.incoming as relation (relation.id)}
+                        <button
+                          type="button"
+                          class="w-full rounded border border-line-1 bg-bg-0 px-2 py-1 text-left hover:border-line-2 hover:bg-bg-2"
+                          onclick={() => selectRelationNode(relation)}
+                        >
+                          <span class="block truncate text-[10px] text-fg-3">{relation.label}</span>
+                          <span class="block truncate text-fg-1">{relation.nodeLabel}</span>
+                        </button>
+                      {/each}
+                    {:else}
+                      <div class="rounded border border-line-1 px-2 py-1 text-fg-3">none</div>
+                    {/if}
+                  </div>
+                  <div class="space-y-1">
+                    {#if selectedNodeDetail.outgoing.length > 0}
+                      {#each selectedNodeDetail.outgoing as relation (relation.id)}
+                        <button
+                          type="button"
+                          class="w-full rounded border border-line-1 bg-bg-0 px-2 py-1 text-left hover:border-line-2 hover:bg-bg-2"
+                          onclick={() => selectRelationNode(relation)}
+                        >
+                          <span class="block truncate text-[10px] text-fg-3">{relation.label}</span>
+                          <span class="block truncate text-fg-1">{relation.nodeLabel}</span>
+                        </button>
+                      {/each}
+                    {:else}
+                      <div class="rounded border border-line-1 px-2 py-1 text-fg-3">none</div>
+                    {/if}
+                  </div>
+                </div>
               </div>
             {:else if selectedEdge}
               <div class="mb-2">
@@ -1189,7 +1361,7 @@
             <div class="mt-3 mb-1 text-fg-3 text-[10px] uppercase tracking-wider">properties</div>
             <dl class="grid grid-cols-[110px_1fr] gap-x-2 gap-y-1">
               {#each Object.entries((selectedNode ? selectedNode.data : selectedEdge?.data) ?? {}) as [k, v]}
-                {#if v !== null && v !== undefined && k !== 'rid' && k !== 'label'}
+                {#if v !== null && v !== undefined && !(selectedNode && isPromotedNodeProperty(k)) && !(selectedEdge && k === 'label')}
                   <dt class="text-fg-3 truncate">{k}</dt>
                   <dd class="text-fg-1 break-words">
                     {#if typeof v === 'object'}
