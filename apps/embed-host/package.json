@@ -1,0 +1,19 @@
+{
+  "name": "@reddb-io/embed-host",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev --host 127.0.0.1 --port 1421 --strictPort",
+    "build": "vite build",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@reddb-io/ui": "workspace:*",
+    "vite": "^6.0.7",
+    "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1"
+  }
+}

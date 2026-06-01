@@ -20,6 +20,11 @@
       "types": "./src/lib/index.ts"
     },
     "./app.css": "./src/app.css",
+    "./embed": {
+      "types": "./src/lib/embed/index.ts",
+      "import": "./dist/embed/index.js",
+      "default": "./dist/embed/index.js"
+    },
     "./renderers": {
       "svelte": "./src/lib/renderers/index.ts",
       "types": "./src/lib/renderers/index.ts"
@@ -29,6 +34,7 @@
   "files": [
     "bin",
     "build",
+    "dist",
     "src/app.css",
     "src/lib/**/*.svelte",
     "src/lib/**/*.ts",
@@ -41,7 +47,7 @@
   "scripts": {
     "prepack": "pnpm build",
     "dev": "vite dev --host 127.0.0.1 --port 1420 --strictPort",
-    "build": "vite build",
+    "build": "vite build && vite build --config vite.embed.config.ts",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test": "svelte-kit sync && vitest run"

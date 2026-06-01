@@ -51,6 +51,39 @@ npx @reddb-io/ui open red://localhost
 npx @reddb-io/ui mcp --stdio
 ```
 
+## Embeddable Lib
+
+The Embeddable Lib ships from the existing `@reddb-io/ui` package as
+`@reddb-io/ui/embed`. It registers or imperatively mounts a Shadow-DOM web
+component around the same `Workspace` Mountable Root used by the PWA and
+desktop app. The host owns auth by constructing a `ConnectionProvider` with an
+already-authenticated client; in this mode red-ui hides its Connect flow and
+does not persist credentials.
+
+```ts
+import {
+  InjectedClientProvider,
+  RedClient,
+  mountRedUi,
+} from "@reddb-io/ui/embed";
+
+const client = new RedClient("https://reddb.example.com", {
+  headers: { Authorization: `Bearer ${hostToken}` },
+});
+
+await mountRedUi(document.querySelector("#red-ui")!, {
+  connectionProvider: new InjectedClientProvider({ client }),
+  initialRoute: "/collections",
+});
+```
+
+For a plain Vite/TypeScript host example, run:
+
+```sh
+pnpm --filter @reddb-io/ui build
+pnpm --filter @reddb-io/embed-host dev
+```
+
 `@reddb-io/ui-mcp` exposes an `open_red_ui` MCP tool. The tool advertises the UI resource
 `ui://red-ui/app.html` using the official MCP Apps MIME type
 `text/html;profile=mcp-app`, then embeds the running red-ui web app in an iframe.

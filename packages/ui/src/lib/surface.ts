@@ -20,12 +20,19 @@ export interface SurfaceSignals {
   inFrame: boolean;
   /** The MCP App boot flag (`?mcp=1`) is present. */
   mcp: boolean;
+  /** The importable Embeddable Lib marked this page before loading Core. */
+  embedLib: boolean;
 }
 
 /** Pure Surface decision from runtime signals. */
-export function surfaceFrom({ tauri, inFrame, mcp }: SurfaceSignals): Surface {
+export function surfaceFrom({
+  tauri,
+  inFrame,
+  mcp,
+  embedLib,
+}: SurfaceSignals): Surface {
   if (tauri) return "standalone";
-  if (inFrame || mcp) return "embedded";
+  if (inFrame || mcp || embedLib) return "embedded";
   return "web";
 }
 
@@ -43,7 +50,8 @@ export function detectSurface(): Surface {
   const mcp =
     typeof location !== "undefined" &&
     new URLSearchParams(location.search).has("mcp");
-  return surfaceFrom({ tauri, inFrame, mcp });
+  const embedLib = window.__RED_UI_EMBED_SURFACE__ === true;
+  return surfaceFrom({ tauri, inFrame, mcp, embedLib });
 }
 
 /**
@@ -62,5 +70,11 @@ export function bootGateLocked(surface: Surface, hasSecret: boolean): boolean {
       return true;
     case "web":
       return false;
+  }
+}
+
+declare global {
+  interface Window {
+    __RED_UI_EMBED_SURFACE__?: boolean;
   }
 }

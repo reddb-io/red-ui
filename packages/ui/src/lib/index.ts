@@ -98,6 +98,7 @@ export type {
   QueryResult,
   QueryRow,
   RawCapabilities,
+  RedClientOptions,
   ReplicationStatus,
   ServerCapabilities,
   SseFactory,

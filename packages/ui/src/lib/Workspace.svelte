@@ -17,7 +17,7 @@
   import SecurityView from './SecurityView.svelte'
   import { connection, setConnectionProvider } from './connections.svelte'
   import type { ConnectionProvider } from '#reddb'
-  import { theme } from './theme.svelte'
+  import { theme, type Theme } from './theme.svelte'
   import { secureStore } from './secureStore.svelte'
   import { pendingChanges, buildUpdateSql, type CommitOutcome } from './pending-changes.svelte'
   import { queryTabs } from './query-tabs.svelte'
@@ -29,7 +29,20 @@
   let {
     router: injectedRouter,
     connectionProvider,
-  }: { router?: Router; connectionProvider?: ConnectionProvider } = $props()
+    showConnect = true,
+    initialRoute,
+    themeTarget,
+    persistTheme = true,
+    initialTheme,
+  }: {
+    router?: Router
+    connectionProvider?: ConnectionProvider
+    showConnect?: boolean
+    initialRoute?: string
+    themeTarget?: HTMLElement | null
+    persistTheme?: boolean
+    initialTheme?: Theme
+  } = $props()
 
   // Provide the router to every descendant view. Standalone (no host router)
   // we mint a state router that keeps navigation entirely in memory. The
@@ -66,7 +79,9 @@
   onMount(() => {
     if (connectionProvider) {
       // Host-injected provider (#33): adopt its authenticated connection.
-      void connection.adoptInjected()
+      void connection.adoptInjected().then(() => {
+        if (initialRoute) navigateToBootRoute(initialRoute)
+      })
     } else {
       // Connection Bootstrap: one boot resolver handles Tauri IPC, host globals,
       // the Open Contract URL/hash, and finally persisted standalone state.
@@ -115,7 +130,8 @@
   // The inline script in app.html has already set data-theme on <html>;
   // init() syncs the store's reactive state with localStorage so toggles
   // start from the persisted value rather than the in-memory default.
-  theme.init()
+  // svelte-ignore state_referenced_locally
+  theme.init({ target: themeTarget ?? null, persist: persistTheme, initial: initialTheme })
 
   // Hard lock gate: while the secure store is locked, no automatic network
   // traffic should fire — probing the configured URL would leak its existence
@@ -212,7 +228,7 @@
   <Splash onDone={() => (booted = true)} />
 {:else}
   <div class="app grid grid-rows-[44px_32px_1fr] h-screen">
-    <Topbar />
+    <Topbar showConnect={showConnect} />
     <StatusBar />
     <main class="relative overflow-hidden z-[1]">
       {#if router.view === 'cluster'}
