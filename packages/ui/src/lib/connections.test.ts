@@ -185,3 +185,14 @@ describe('boot-params pre-configuration (#36)', () => {
     expect(Object.keys(p.bootParams() ?? {})).toEqual(['endpoint'])
   })
 })
+
+describe('target resolution gate (#21)', () => {
+  it('an explicit connect marks the target resolved (gates auto-network)', async () => {
+    // In the node test env there is no URL/stored pin, so nothing is resolved
+    // until a connect happens — exactly the credential-less boot case.
+    expect(connection.targetResolved).toBe(false)
+    setConnectionProvider(new InjectedClientProvider({ client: fakeClient() }))
+    await connection.adoptInjected()
+    expect(connection.targetResolved).toBe(true)
+  })
+})
