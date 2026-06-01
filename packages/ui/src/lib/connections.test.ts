@@ -1,23 +1,23 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   connection,
   getConnectionProvider,
   provider,
   setConnectionProvider,
-} from './connections.svelte'
+} from "./connections.svelte";
 import {
   DESKTOP_TRANSPORTS,
   EMPTY_SERVER_CAPABILITIES,
   InjectedClientProvider,
   LocalUrlProvider,
-} from '#reddb'
-import type { RedClient, ServerCapabilities } from '#reddb'
+} from "#reddb";
+import type { RedClient, ServerCapabilities } from "#reddb";
 
 interface FakeOpts {
   /** Extra fields merged into the /stats response (e.g. read_only for #23). */
-  stats?: Record<string, unknown>
+  stats?: Record<string, unknown>;
   /** Capability map the client reports (#22). Defaults to all-unsupported. */
-  capabilities?: Partial<ServerCapabilities>
+  capabilities?: Partial<ServerCapabilities>;
 }
 
 // Fake client covering every method tryConnect touches (ping/stats/replication/
@@ -27,172 +27,222 @@ function fakeClient({ stats = {}, capabilities }: FakeOpts = {}): RedClient {
     ping: vi.fn(async () => ({ ok: true, rtt_ms: 3 })),
     stats: vi.fn(async () => ({ collections: 0, records: 0, ...stats })),
     replication: vi.fn(async () => undefined),
-    capabilities: vi.fn(async (): Promise<ServerCapabilities> => ({
-      ...EMPTY_SERVER_CAPABILITIES,
-      ...capabilities,
+    capabilities: vi.fn(
+      async (): Promise<ServerCapabilities> => ({
+        ...EMPTY_SERVER_CAPABILITIES,
+        ...capabilities,
+      })
+    ),
+    whoami: vi.fn(async () => ({
+      authenticated: true,
+      username: "host",
+      role: "admin",
     })),
-    whoami: vi.fn(async () => ({ authenticated: true, username: 'host', role: 'admin' })),
-  } as unknown as RedClient
+  } as unknown as RedClient;
 }
 
 afterEach(() => {
   // Restore the default seam so tests don't leak the injected provider.
-  setConnectionProvider(provider)
-  connection.disconnect()
-})
+  setConnectionProvider(provider);
+  connection.disconnect();
+});
 
-describe('connection seam (ADR-0001)', () => {
-  it('defaults to the LocalUrlProvider so the PWA/Desktop Connect flow is unchanged', () => {
-    expect(getConnectionProvider()).toBe(provider)
-    expect(provider).toBeInstanceOf(LocalUrlProvider)
-  })
+describe("connection seam (ADR-0001)", () => {
+  it("defaults to the LocalUrlProvider so the PWA/Desktop Connect flow is unchanged", () => {
+    expect(getConnectionProvider()).toBe(provider);
+    expect(provider).toBeInstanceOf(LocalUrlProvider);
+  });
 
-  it('adopting a host-injected provider connects without the Connect flow', async () => {
-    const client = fakeClient()
-    setConnectionProvider(new InjectedClientProvider({ client }))
+  it("adopting a host-injected provider connects without the Connect flow", async () => {
+    const client = fakeClient();
+    setConnectionProvider(new InjectedClientProvider({ client }));
 
-    expect(connection.connected).toBe(false) // Connect flow would still gate here
-    const ok = await connection.adoptInjected()
+    expect(connection.connected).toBe(false); // Connect flow would still gate here
+    const ok = await connection.adoptInjected();
 
-    expect(ok).toBe(true)
-    expect(connection.connected).toBe(true)
+    expect(ok).toBe(true);
+    expect(connection.connected).toBe(true);
     // The Core's client is the exact instance the host injected — never built here.
-    expect(connection.client).toBe(client)
-    expect(connection.probe.reachable).toBe(true)
-  })
+    expect(connection.client).toBe(client);
+    expect(connection.probe.reachable).toBe(true);
+  });
 
-  it('the Core only ever exposes the provider-supplied client', async () => {
-    const client = fakeClient()
-    setConnectionProvider(new InjectedClientProvider({ client }))
-    await connection.adoptInjected()
-    expect(connection.client).toBe(client)
+  it("the Core only ever exposes the provider-supplied client", async () => {
+    const client = fakeClient();
+    setConnectionProvider(new InjectedClientProvider({ client }));
+    await connection.adoptInjected();
+    expect(connection.client).toBe(client);
 
-    connection.disconnect()
-    expect(connection.client).toBeNull() // no URL-built fallback
-  })
-})
+    connection.disconnect();
+    expect(connection.client).toBeNull(); // no URL-built fallback
+  });
+});
 
-describe('read-only state (#23)', () => {
-  it('is false when the server reports no read-only signal', async () => {
-    setConnectionProvider(new InjectedClientProvider({ client: fakeClient() }))
-    await connection.adoptInjected()
-    expect(connection.connected).toBe(true)
-    expect(connection.readOnly).toBe(false)
-  })
+describe("read-only state (#23)", () => {
+  it("is false when the server reports no read-only signal", async () => {
+    setConnectionProvider(new InjectedClientProvider({ client: fakeClient() }));
+    await connection.adoptInjected();
+    expect(connection.connected).toBe(true);
+    expect(connection.readOnly).toBe(false);
+  });
 
-  it('is true, with the reason, when the server reports read_only', async () => {
+  it("is true, with the reason, when the server reports read_only", async () => {
     setConnectionProvider(
       new InjectedClientProvider({
-        client: fakeClient({ stats: { read_only: true, read_only_reason: 'file in use by another writer' } }),
-      }),
-    )
-    await connection.adoptInjected()
-    expect(connection.readOnly).toBe(true)
-    expect(connection.readOnlyReason).toBe('file in use by another writer')
-  })
+        client: fakeClient({
+          stats: {
+            read_only: true,
+            read_only_reason: "file in use by another writer",
+          },
+        }),
+      })
+    );
+    await connection.adoptInjected();
+    expect(connection.readOnly).toBe(true);
+    expect(connection.readOnlyReason).toBe("file in use by another writer");
+  });
 
-  it('is false once disconnected even if the last probe was read-only', async () => {
-    setConnectionProvider(new InjectedClientProvider({ client: fakeClient({ stats: { read_only: true } }) }))
-    await connection.adoptInjected()
-    expect(connection.readOnly).toBe(true)
-    connection.disconnect()
-    expect(connection.readOnly).toBe(false) // gated on `connected`, never hardcoded
-  })
-})
-
-describe('capability negotiation (#22)', () => {
-  it('exposes the capabilities the server reports at connect', async () => {
-    setConnectionProvider(new InjectedClientProvider({ client: fakeClient({ capabilities: { vcs: true } }) }))
-    await connection.adoptInjected()
-    expect(connection.capabilities.vcs).toBe(true)
-    expect(connection.capabilities.clusterStatus).toBe(false) // not reported ⇒ stays hidden
-  })
-
-  it('defaults to all-unsupported before connect and resets on disconnect', async () => {
-    expect(connection.capabilities).toEqual(EMPTY_SERVER_CAPABILITIES)
-    setConnectionProvider(new InjectedClientProvider({ client: fakeClient({ capabilities: { vcs: true } }) }))
-    await connection.adoptInjected()
-    expect(connection.capabilities.vcs).toBe(true)
-    connection.disconnect()
-    expect(connection.capabilities).toEqual(EMPTY_SERVER_CAPABILITIES)
-  })
-
-  it('fails safe to all-unsupported when capability resolution throws', async () => {
-    const client = fakeClient()
-    ;(client.capabilities as unknown as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('probe blew up'))
-    setConnectionProvider(new InjectedClientProvider({ client }))
-    await connection.adoptInjected()
-    expect(connection.connected).toBe(true) // connect still succeeds
-    expect(connection.capabilities).toEqual(EMPTY_SERVER_CAPABILITIES) // hide on failure
-  })
-})
-
-describe('transport reachability (#34)', () => {
-  it('the default browser provider reaches http(s)/red but not file/unix', () => {
-    // afterEach restored the default LocalUrlProvider (browser transports).
-    expect(connection.canReach('http://h:5055')).toBe(true)
-    expect(connection.canReach('red://localhost')).toBe(true)
-    expect(connection.canReach('file:///data/app.redb')).toBe(false)
-    expect(connection.supportedTransports).not.toContain('unix')
-  })
-
-  it('falls back to browser transports when a provider declares none', async () => {
-    // InjectedClientProvider doesn't implement transports() → browser fallback.
-    setConnectionProvider(new InjectedClientProvider({ client: fakeClient() }))
-    expect(connection.canReach('file:///x')).toBe(false)
-    expect(connection.canReach('https://h')).toBe(true)
-  })
-
-  it('honours a Surface that declares the desktop transport set', () => {
+  it("is false once disconnected even if the last probe was read-only", async () => {
     setConnectionProvider(
-      new LocalUrlProvider({ transports: [...DESKTOP_TRANSPORTS] }),
-    )
-    expect(connection.canReach('file:///data/app.redb')).toBe(true)
-    expect(connection.supportedTransports).toContain('unix')
-  })
-})
+      new InjectedClientProvider({
+        client: fakeClient({ stats: { read_only: true } }),
+      })
+    );
+    await connection.adoptInjected();
+    expect(connection.readOnly).toBe(true);
+    connection.disconnect();
+    expect(connection.readOnly).toBe(false); // gated on `connected`, never hardcoded
+  });
+});
 
-describe('boot-params pre-configuration (#36)', () => {
-  it('connects to a seeded endpoint without the Connect flow and returns the view', async () => {
+describe("capability negotiation (#22)", () => {
+  it("exposes the capabilities the server reports at connect", async () => {
+    setConnectionProvider(
+      new InjectedClientProvider({
+        client: fakeClient({ capabilities: { vcs: true } }),
+      })
+    );
+    await connection.adoptInjected();
+    expect(connection.capabilities.vcs).toBe(true);
+    expect(connection.capabilities.clusterStatus).toBe(false); // not reported ⇒ stays hidden
+  });
+
+  it("defaults to all-unsupported before connect and resets on disconnect", async () => {
+    expect(connection.capabilities).toEqual(EMPTY_SERVER_CAPABILITIES);
+    setConnectionProvider(
+      new InjectedClientProvider({
+        client: fakeClient({ capabilities: { vcs: true } }),
+      })
+    );
+    await connection.adoptInjected();
+    expect(connection.capabilities.vcs).toBe(true);
+    connection.disconnect();
+    expect(connection.capabilities).toEqual(EMPTY_SERVER_CAPABILITIES);
+  });
+
+  it("fails safe to all-unsupported when capability resolution throws", async () => {
+    const client = fakeClient();
+    (
+      client.capabilities as unknown as ReturnType<typeof vi.fn>
+    ).mockRejectedValueOnce(new Error("probe blew up"));
+    setConnectionProvider(new InjectedClientProvider({ client }));
+    await connection.adoptInjected();
+    expect(connection.connected).toBe(true); // connect still succeeds
+    expect(connection.capabilities).toEqual(EMPTY_SERVER_CAPABILITIES); // hide on failure
+  });
+});
+
+describe("transport reachability (#34)", () => {
+  it("the default browser provider reaches http(s)/red but not file/unix", () => {
+    // afterEach restored the default LocalUrlProvider (browser transports).
+    expect(connection.canReach("http://h:5055")).toBe(true);
+    expect(connection.canReach("red://localhost")).toBe(true);
+    expect(connection.canReach("file:///data/app.redb")).toBe(false);
+    expect(connection.supportedTransports).not.toContain("unix");
+  });
+
+  it("falls back to browser transports when a provider declares none", async () => {
+    // InjectedClientProvider doesn't implement transports() → browser fallback.
+    setConnectionProvider(new InjectedClientProvider({ client: fakeClient() }));
+    expect(connection.canReach("file:///x")).toBe(false);
+    expect(connection.canReach("https://h")).toBe(true);
+  });
+
+  it("honours a Surface that declares the desktop transport set", () => {
+    setConnectionProvider(
+      new LocalUrlProvider({ transports: [...DESKTOP_TRANSPORTS] })
+    );
+    expect(connection.canReach("file:///data/app.redb")).toBe(true);
+    expect(connection.supportedTransports).toContain("unix");
+  });
+});
+
+describe("boot-params pre-configuration (#36)", () => {
+  it("connects to a seeded Open Contract cs without the Connect flow and returns the route", async () => {
     setConnectionProvider(
       new LocalUrlProvider({
-        bootParams: { endpoint: 'http://seeded:5055', view: 'cluster' },
+        bootParams: { endpoint: "http://seeded:5055", to: "/cluster" },
         clientFactory: () => fakeClient(),
-      }),
-    )
-    expect(connection.connected).toBe(false)
+      })
+    );
+    expect(connection.connected).toBe(false);
 
-    const view = await connection.connectFromBootParams()
+    const view = await connection.connectFromBootParams();
 
-    expect(view).toBe('cluster')
-    expect(connection.connected).toBe(true)
-    expect(connection.active.url).toBe('http://seeded:5055')
-  })
+    expect(view).toBe("/cluster");
+    expect(connection.connected).toBe(true);
+    expect(connection.active.url).toBe("http://seeded:5055");
+  });
 
-  it('is a no-op (returns null) when no endpoint was seeded', async () => {
-    setConnectionProvider(new LocalUrlProvider({ clientFactory: () => fakeClient() }))
-    expect(await connection.connectFromBootParams()).toBeNull()
-    expect(connection.connected).toBe(false)
-  })
+  it("returns a seeded route without connecting when no cs was seeded", async () => {
+    setConnectionProvider(
+      new LocalUrlProvider({ bootParams: { to: "/c/users/p/table" } })
+    );
+    expect(await connection.connectFromBootParams()).toBe("/c/users/p/table");
+    expect(connection.connected).toBe(false);
+  });
 
-  it('never carries a token — the provider bootParams expose only endpoint/view', async () => {
+  it("still returns the seeded route when the seeded cs is unreachable", async () => {
+    setConnectionProvider(
+      new LocalUrlProvider({
+        bootParams: { endpoint: "http://down:5055", to: "/security" },
+        clientFactory: () =>
+          ({
+            ping: vi.fn(async () => ({ ok: false, error: "down" })),
+          }) as unknown as RedClient,
+      })
+    );
+
+    expect(await connection.connectFromBootParams()).toBe("/security");
+    expect(connection.connected).toBe(false);
+  });
+
+  it("is a no-op (returns null) when no endpoint was seeded", async () => {
+    setConnectionProvider(
+      new LocalUrlProvider({ clientFactory: () => fakeClient() })
+    );
+    expect(await connection.connectFromBootParams()).toBeNull();
+    expect(connection.connected).toBe(false);
+  });
+
+  it("never carries a token — the provider bootParams expose only endpoint/view", async () => {
     const p = new LocalUrlProvider({
-      bootParams: { endpoint: 'http://seeded' },
+      bootParams: { endpoint: "http://seeded" },
       clientFactory: () => fakeClient(),
-    })
-    setConnectionProvider(p)
-    await connection.connectFromBootParams()
-    expect(Object.keys(p.bootParams() ?? {})).toEqual(['endpoint'])
-  })
-})
+    });
+    setConnectionProvider(p);
+    await connection.connectFromBootParams();
+    expect(Object.keys(p.bootParams() ?? {})).toEqual(["endpoint"]);
+  });
+});
 
-describe('target resolution gate (#21)', () => {
-  it('an explicit connect marks the target resolved (gates auto-network)', async () => {
+describe("target resolution gate (#21)", () => {
+  it("an explicit connect marks the target resolved (gates auto-network)", async () => {
     // In the node test env there is no URL/stored pin, so nothing is resolved
     // until a connect happens — exactly the credential-less boot case.
-    expect(connection.targetResolved).toBe(false)
-    setConnectionProvider(new InjectedClientProvider({ client: fakeClient() }))
-    await connection.adoptInjected()
-    expect(connection.targetResolved).toBe(true)
-  })
-})
+    expect(connection.targetResolved).toBe(false);
+    setConnectionProvider(new InjectedClientProvider({ client: fakeClient() }));
+    await connection.adoptInjected();
+    expect(connection.targetResolved).toBe(true);
+  });
+});
