@@ -268,14 +268,38 @@ function loadLocationConnection(): ConnectionPreset | null {
   return null
 }
 
-// Shared provider — one per browser tab. History is split: labels in plain
-// localStorage so the dropdown renders pre-unlock; URLs encrypted at rest.
+// Default provider — the PWA/Desktop Surfaces' LocalUrlProvider. History is
+// split: labels in plain localStorage so the dropdown renders pre-unlock;
+// URLs encrypted at rest.
 export const provider: ConnectionProvider & {
   forget(url: string): void
 } = new LocalUrlProvider({
   presets: PRESETS,
   history: historyStore,
 })
+
+// The Core acquires its client EXCLUSIVELY through this provider (ADR-0001 —
+// ConnectionProvider is the sole connection seam). It defaults to the
+// LocalUrlProvider above, so the PWA/Desktop Connect flow is unchanged. An
+// embedding host swaps in its own provider (e.g. InjectedClientProvider)
+// before mount via setConnectionProvider(), so the host can own auth without
+// the Core ever constructing a client itself.
+let injectedProvider: ConnectionProvider = provider
+
+/** The provider the Core currently connects through. */
+export function getConnectionProvider(): ConnectionProvider {
+  return injectedProvider
+}
+
+/**
+ * Replace the connection provider. Call before mounting the Core (the embed
+ * Surface does this with an InjectedClientProvider). Followed by
+ * `connection.adoptInjected()` when the provider is already authenticated and
+ * the Connect flow should be skipped entirely.
+ */
+export function setConnectionProvider(p: ConnectionProvider): void {
+  injectedProvider = p
+}
 
 class ConnectionStore {
   /** Set after a probe succeeds for the first time — used to gate the Connect screen. */
@@ -284,13 +308,20 @@ class ConnectionStore {
   probe = $state<ProbeResult>({ reachable: false })
   history = $state<HistoryEntry[]>([])
 
+  /**
+   * The live client, supplied by the injected ConnectionProvider's connect().
+   * The Core never constructs a RedClient itself (ADR-0001) — this is null
+   * until the first successful connect and is replaced on every switch.
+   */
+  #client = $state<RedClient | null>(null)
+
   constructor() {
     this.history = historyStore.uiEntries()
     historyStore.setOnChange(() => { this.history = historyStore.uiEntries() })
   }
 
   get client(): RedClient | null {
-    return this.active.url ? new RedClient(this.active.url) : null
+    return this.#client
   }
 
   async forget(url: string) {
@@ -309,15 +340,19 @@ class ConnectionStore {
   async switch(preset: ConnectionPreset) {
     this.active = preset
     persist(preset)
-    await this.refresh()
+    // Switching connects through the provider — that's where the new client
+    // comes from. (Previously refresh() rebuilt a client from the URL; the
+    // Core no longer constructs clients itself.)
+    await this.tryConnect(preset)
   }
 
   async tryConnect(preset: ConnectionPreset): Promise<boolean> {
     try {
       const active = await activity.track(
         `connect · ${preset.label}`,
-        () => provider.connect(preset.id),
+        () => getConnectionProvider().connect(preset.id),
       )
+      this.#client = active.client
       this.active = { ...preset, ...active.connection, description: preset.description }
       persist(this.active)
       const [stats, replication] = await Promise.all([
@@ -333,10 +368,30 @@ class ConnectionStore {
     }
   }
 
+  /**
+   * Adopt a host-injected provider (ADR-0001 embed Surface). Call after
+   * setConnectionProvider(hostProvider): connects to the provider's sole
+   * connection so the Core renders connected without ever showing the Connect
+   * flow. Returns false (leaving the Core in its disconnected state) when the
+   * provider exposes no connection.
+   */
+  async adoptInjected(): Promise<boolean> {
+    const [first] = await getConnectionProvider().list()
+    if (!first) return false
+    const preset: ConnectionPreset = {
+      ...first,
+      description: first.description ?? 'Injected by the embedding host.',
+    }
+    return this.tryConnect(preset)
+  }
+
   async refresh() {
     const client = this.client
     if (!client) {
-      this.probe = { reachable: false }
+      // No client yet — acquire one through the provider rather than building
+      // it from a URL. A failed connect leaves `connected` false (the Connect
+      // flow stays available on the PWA/Desktop Surfaces).
+      await this.tryConnect(this.active)
       return
     }
     try {
@@ -359,6 +414,7 @@ class ConnectionStore {
   disconnect() {
     this.connected = false
     this.probe = { reachable: false }
+    this.#client = null
   }
 }
 
