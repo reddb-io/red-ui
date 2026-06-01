@@ -24,7 +24,7 @@
   import { tabs } from './tabs.svelte'
   import { detectCapability } from './capability'
   import { defaultSubpage } from './collection-pages'
-  import { createStateRouter, setRouter, type Router, type View } from './router.svelte'
+  import { createStateRouter, pathToLocation, setRouter, type Router, type View } from './router.svelte'
 
   let {
     router: injectedRouter,
@@ -47,18 +47,31 @@
   if (connectionProvider) {
     setConnectionProvider(connectionProvider)
   }
+
+  function navigateToBootRoute(route: string) {
+    const legacyView = route as View
+    if (legacyView === 'query' || legacyView === 'collections' || legacyView === 'cluster' || legacyView === 'security') {
+      router.go({ view: legacyView }, undefined, true)
+      return
+    }
+
+    const loc = pathToLocation(route.startsWith('/') ? route : `/${route}`)
+    if (loc.collection) {
+      router.go({ view: 'collection', collection: loc.collection, subpage: loc.subpage ?? 'table' }, undefined, true)
+    } else {
+      router.go({ view: loc.view }, undefined, true)
+    }
+  }
+
   onMount(() => {
     if (connectionProvider) {
       // Host-injected provider (#33): adopt its authenticated connection.
       void connection.adoptInjected()
     } else {
-      // Surface-seeded boot params (#36, ADR-0005): the MCP App seeds the
-      // endpoint + view in the app URL; connect without the Connect flow and
-      // navigate to the seeded view.
-      void connection.connectFromBootParams().then((view) => {
-        if (view === 'query' || view === 'collections' || view === 'cluster' || view === 'security') {
-          router.go({ view })
-        }
+      // Surface-seeded Open Contract: connect to `cs` without the Connect flow
+      // and navigate to `to` when present.
+      void connection.connectFromBootParams().then((route) => {
+        if (route) navigateToBootRoute(route)
       })
     }
   })
