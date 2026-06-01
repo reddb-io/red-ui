@@ -3,7 +3,7 @@
 // browser usage backs history with localStorage; tests inject an
 // in-memory store via the options bag.
 
-import { RedClient, type RedClientOptions } from './client'
+import { RedClient } from './client'
 import {
   NotConnectedError,
   UnknownConnectionError,
@@ -33,8 +33,6 @@ export interface LocalUrlProviderOptions {
   history?: HistoryStore
   /** Hook for tests / Tauri to swap the HTTP client implementation. */
   clientFactory?: (url: string) => RedClient
-  /** Forwarded to the default client factory. Ignored if clientFactory is set. */
-  clientOptions?: RedClientOptions
   /** Max history entries retained. */
   historyMax?: number
 }
@@ -87,7 +85,7 @@ export class LocalUrlProvider implements ConnectionProvider {
     this.history = opts.history ?? inMemoryStore()
     this.historyMax = opts.historyMax ?? HISTORY_MAX_DEFAULT
     this.clientFactory =
-      opts.clientFactory ?? ((url) => new RedClient(url, opts.clientOptions))
+      opts.clientFactory ?? ((url) => new RedClient(url))
   }
 
   async list(): Promise<Connection[]> {

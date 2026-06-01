@@ -67,7 +67,6 @@ export type {
   NodeStats,
   QueryResult,
   QueryRow,
-  RedClientOptions,
   ReplicationStatus,
   SseFactory,
   Stats,

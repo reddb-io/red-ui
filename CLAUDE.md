@@ -11,7 +11,7 @@ Universal client for [reddb](https://github.com/reddb-io/reddb) — connects to 
 - **lucide-svelte** — iconography
 - **pnpm workspace** — `apps/desktop` (Tauri) + `packages/{ui,ui-kit,mcp}` under the `@reddb-io/*` scope
 
-The UI HTTP adapter lives in `packages/ui/src/lib/reddb`. In browser it goes through a Vite middleware proxy at `/_red` (carries `X-Red-Target`) because reddb sends no CORS headers.
+The UI HTTP adapter lives in `packages/ui/src/lib/reddb`. The browser client fetches the connected `baseUrl` directly — reddb (>=1.9.1) emits CORS headers, so no dev proxy is needed.
 
 ## Agent skills
 
@@ -104,7 +104,7 @@ docker compose -f docker/compose.yml up -d       # primary :15055, replica :2505
 ## Known constraints
 
 - Docker compose host ports are offset (15055/25055) because `flyctl proxy 5055:5055` may be running locally to tunnel into prod reddb. `red://localhost` in the Connect screen intentionally hits :5055 — that's the production tunnel.
-- The reddb HTTP API does not send CORS headers. All browser fetches go through the Vite `/_red` proxy via `X-Red-Target`. Tauri opts out via `new RedClient(url, { proxyPath: '' })` and uses Rust-side fetch.
+- reddb (>=1.9.1) emits `Access-Control-Allow-Origin: *` and answers preflight `OPTIONS` with 204, so browser fetches go straight to the connected `baseUrl` (no proxy). Tauri uses Rust-side fetch.
 - The `tenant` field name is reserved by reddb's collection schema. Use `tenant_id` or `tenant_slug`.
 - `/health` returns 503 with rich diagnostics under normal operation. Use `/stats` as the canonical proof-of-life.
-- The 1.3.0 image requires `RED_HTTP_TLS_DEV=1` to skip TLS auto-cert refusal in plain-HTTP mode.
+- The reddb image requires `RED_HTTP_TLS_DEV=1` to skip TLS auto-cert refusal in plain-HTTP mode.
