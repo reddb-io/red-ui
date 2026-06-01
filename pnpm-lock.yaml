@@ -44,6 +44,22 @@ importers:
         specifier: ^2.5.0
         version: 2.11.2
 
+  apps/embed-host:
+    dependencies:
+      "@reddb-io/ui":
+        specifier: workspace:*
+        version: link:../../packages/ui
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vite:
+        specifier: ^6.0.7
+        version: 6.4.2(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.3)(yaml@2.9.0)
+    devDependencies:
+      "@types/node":
+        specifier: ^25.9.1
+        version: 25.9.1
+
   packages/mcp:
     dependencies:
       "@modelcontextprotocol/ext-apps":

@@ -3,28 +3,31 @@ import { bootGateLocked, surfaceFrom } from "./surface";
 
 describe("surfaceFrom", () => {
   it("Tauri is the standalone Surface", () => {
-    expect(surfaceFrom({ tauri: true, inFrame: false, mcp: false })).toBe(
-      "standalone"
-    );
+    expect(
+      surfaceFrom({ tauri: true, inFrame: false, mcp: false, embedLib: false })
+    ).toBe("standalone");
     // Tauri wins even when also framed/mcp.
-    expect(surfaceFrom({ tauri: true, inFrame: true, mcp: true })).toBe(
-      "standalone"
-    );
+    expect(
+      surfaceFrom({ tauri: true, inFrame: true, mcp: true, embedLib: true })
+    ).toBe("standalone");
   });
 
   it("a framed or MCP context is the embedded Surface", () => {
-    expect(surfaceFrom({ tauri: false, inFrame: true, mcp: false })).toBe(
-      "embedded"
-    );
-    expect(surfaceFrom({ tauri: false, inFrame: false, mcp: true })).toBe(
-      "embedded"
-    );
+    expect(
+      surfaceFrom({ tauri: false, inFrame: true, mcp: false, embedLib: false })
+    ).toBe("embedded");
+    expect(
+      surfaceFrom({ tauri: false, inFrame: false, mcp: true, embedLib: false })
+    ).toBe("embedded");
+    expect(
+      surfaceFrom({ tauri: false, inFrame: false, mcp: false, embedLib: true })
+    ).toBe("embedded");
   });
 
   it("a top-level browser page is the web Surface", () => {
-    expect(surfaceFrom({ tauri: false, inFrame: false, mcp: false })).toBe(
-      "web"
-    );
+    expect(
+      surfaceFrom({ tauri: false, inFrame: false, mcp: false, embedLib: false })
+    ).toBe("web");
   });
 });
 

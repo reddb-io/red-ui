@@ -7,6 +7,7 @@ red-ui is a single **Core** (`@reddb-io/ui`) delivered through three **Surfaces*
 - **Core = router-agnostic mountable root only** — clean for embed/MCP, but forces the PWA/Tauri to rebuild app-level routing.
 - **Core = full SvelteKit app, surfaces wrap it (iframe/element)** — simplest to ship, but the Embeddable Lib can't sit naturally behind a host's auth/extension without iframe friction.
 - **Hybrid two-entrypoint (chosen)** — one package exposes a **Mountable Root** (`lib/` entrypoint, `Workspace`) for Embeddable Lib + MCP App, and the full SvelteKit app (`routes/`) for Desktop App and the hosted PWA, both built from the same `lib/` components.
+- **Embeddable export packaging (settled for issue #37)** — ship the Shadow-DOM Embeddable Lib from the existing `@reddb-io/ui` package as `@reddb-io/ui/embed`. Do not introduce a separate `@reddb-io/ui-embed` package until there is independent release cadence, dependency, or ownership pressure.
 
 ## Consequences
 

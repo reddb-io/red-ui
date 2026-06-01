@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>red-ui embed host</title>
+  </head>
+  <body>
+    <main class="host-shell">
+      <section class="host-panel">
+        <h1>Host app</h1>
+        <p>
+          This host owns auth, builds the ConnectionProvider, and mounts red-ui
+          inside a Shadow DOM.
+        </p>
+        <label>
+          Endpoint
+          <input id="endpoint" value="http://localhost:5055" />
+        </label>
+        <label>
+          Token
+          <input id="token" value="dev-host-token" />
+        </label>
+        <button id="mount">Mount red-ui</button>
+      </section>
+      <red-ui-app id="red-ui"></red-ui-app>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

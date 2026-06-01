@@ -6,6 +6,8 @@
   import { theme } from './theme.svelte'
   import { useRouter } from './router.svelte'
 
+  let { showConnect = true }: { showConnect?: boolean } = $props()
+
   const router = useRouter()
 
   function openPalette() {
@@ -27,9 +29,13 @@
     >
       red<span class="text-accent mx-px">·</span>ui
     </a>
-    <div class="w-px h-[18px] bg-line-2"></div>
-    <ConnectDropdown />
-    <div class="w-px h-[18px] bg-line-2 ml-1"></div>
+    {#if showConnect}
+      <div class="w-px h-[18px] bg-line-2"></div>
+      <ConnectDropdown />
+      <div class="w-px h-[18px] bg-line-2 ml-1"></div>
+    {:else}
+      <div class="w-px h-[18px] bg-line-2"></div>
+    {/if}
     <nav class="flex items-center gap-0.5">
       <a
         href={router.href({ view: 'query' })}
