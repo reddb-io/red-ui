@@ -1,72 +1,82 @@
 #!/usr/bin/env node
 
-import { registerAppResource, registerAppTool, RESOURCE_MIME_TYPE } from '@modelcontextprotocol/ext-apps/server'
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
-import { z } from 'zod/v4'
+import {
+  registerAppResource,
+  registerAppTool,
+  RESOURCE_MIME_TYPE,
+} from "@modelcontextprotocol/ext-apps/server";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { z } from "zod/v4";
 
-const APP_RESOURCE_URI = 'ui://red-ui/app.html'
-const MCP_APPS_CDN = 'https://esm.sh/@modelcontextprotocol/ext-apps@1.7.2/app-with-deps'
-const DEFAULT_APP_URL = 'https://ui.reddb.io'
+const APP_RESOURCE_URI = "ui://red-ui/app.html";
+const MCP_APPS_CDN =
+  "https://esm.sh/@modelcontextprotocol/ext-apps@1.7.2/app-with-deps";
+const DEFAULT_APP_URL = "https://ui.reddb.io";
 
-type RedUiView = 'home' | 'query' | 'collections' | 'cluster' | 'security'
+type RedUiView = "home" | "query" | "collections" | "cluster" | "security";
 
 interface ServerConfig {
-  appUrl: string
-  connectDomains: string[]
+  appUrl: string;
+  connectDomains: string[];
 }
 
 function parseList(value: string | undefined): string[] {
-  if (!value) return []
+  if (!value) return [];
   return value
-    .split(',')
+    .split(",")
     .map((item) => item.trim())
-    .filter(Boolean)
+    .filter(Boolean);
 }
 
 function normalizeHttpUrl(value: string | undefined, fallback: string): string {
-  const raw = value?.trim() || fallback
-  const url = new URL(raw)
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-    throw new Error(`RED_UI_APP_URL must be an http(s) URL, got ${raw}`)
+  const raw = value?.trim() || fallback;
+  const url = new URL(raw);
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    throw new Error(`RED_UI_APP_URL must be an http(s) URL, got ${raw}`);
   }
-  url.hash = ''
-  return url.toString().replace(/\/$/, '')
+  url.hash = "";
+  return url.toString().replace(/\/$/, "");
 }
 
 function getOrigin(url: string): string {
-  return new URL(url).origin
+  return new URL(url).origin;
 }
 
 function loadConfig(): ServerConfig {
-  const appUrl = normalizeHttpUrl(process.env.RED_UI_APP_URL, DEFAULT_APP_URL)
+  const appUrl = normalizeHttpUrl(process.env.RED_UI_APP_URL, DEFAULT_APP_URL);
   const defaultConnectDomains = [
     getOrigin(appUrl),
-    'http://localhost:5055',
-    'http://127.0.0.1:5055',
-    'http://localhost:15055',
-    'http://127.0.0.1:15055',
-    'http://localhost:25055',
-    'http://127.0.0.1:25055',
-  ]
+    "http://localhost:5055",
+    "http://127.0.0.1:5055",
+    "http://localhost:15055",
+    "http://127.0.0.1:15055",
+    "http://localhost:25055",
+    "http://127.0.0.1:25055",
+  ];
 
   return {
     appUrl,
-    connectDomains: [...new Set([...defaultConnectDomains, ...parseList(process.env.RED_UI_CONNECT_DOMAINS)])],
-  }
+    connectDomains: [
+      ...new Set([
+        ...defaultConnectDomains,
+        ...parseList(process.env.RED_UI_CONNECT_DOMAINS),
+      ]),
+    ],
+  };
 }
 
 function escapeHtml(value: string): string {
   return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;')
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 function jsonForInlineScript(value: unknown): string {
-  return JSON.stringify(value).replaceAll('<', '\\u003c')
+  return JSON.stringify(value).replaceAll("<", "\\u003c");
 }
 
 function renderRedUiAppHtml(config: ServerConfig): string {
@@ -250,12 +260,11 @@ function renderRedUiAppHtml(config: ServerConfig): string {
       function buildFrameUrl() {
         const url = new URL(state.appUrl || DEFAULT_APP_URL);
         url.searchParams.set('mcp', '1');
-        // Boot-params pre-configuration (#36, ADR-0005): seed non-secret
-        // endpoint + initial view; the Core reads these via its
-        // ConnectionProvider and connects without the Connect flow. Never seed
-        // a token here — secrets are reserved for a later postMessage channel.
-        if (state.connectionUrl) url.searchParams.set('connection', state.connectionUrl);
-        if (state.view) url.searchParams.set('view', state.view);
+        // Open Contract pre-configuration: seed non-secret endpoint + route.
+        // Never seed a token here — secrets are reserved for a later
+        // postMessage channel.
+        if (state.connectionUrl) url.searchParams.set('cs', state.connectionUrl);
+        if (state.view) url.searchParams.set('to', '/' + state.view.replace(/^\\//, ''));
         return url.toString();
       }
 
@@ -302,27 +311,28 @@ function renderRedUiAppHtml(config: ServerConfig): string {
       }
     </script>
   </body>
-</html>`
+</html>`;
 }
 
 function createServer(config: ServerConfig): McpServer {
   const server = new McpServer({
-    name: 'red-ui',
-    version: '0.1.0',
-  })
+    name: "red-ui",
+    version: "0.1.0",
+  });
 
   registerAppResource(
     server,
-    'red-ui app',
+    "red-ui app",
     APP_RESOURCE_URI,
     {
-      description: 'Interactive red-ui database workspace embedded as an MCP App.',
+      description:
+        "Interactive red-ui database workspace embedded as an MCP App.",
       _meta: {
         ui: {
           csp: {
             connectDomains: config.connectDomains,
             frameDomains: [getOrigin(config.appUrl)],
-            resourceDomains: [getOrigin(config.appUrl), 'https://esm.sh'],
+            resourceDomains: [getOrigin(config.appUrl), "https://esm.sh"],
           },
           prefersBorder: false,
         },
@@ -339,58 +349,61 @@ function createServer(config: ServerConfig): McpServer {
               csp: {
                 connectDomains: config.connectDomains,
                 frameDomains: [getOrigin(config.appUrl)],
-                resourceDomains: [getOrigin(config.appUrl), 'https://esm.sh'],
+                resourceDomains: [getOrigin(config.appUrl), "https://esm.sh"],
               },
               prefersBorder: false,
             },
           },
         },
       ],
-    }),
-  )
+    })
+  );
 
   registerAppTool(
     server,
-    'open_red_ui',
+    "open_red_ui",
     {
-      title: 'Open red-ui',
-      description: 'Display the red-ui database workspace as an embedded MCP App.',
+      title: "Open red-ui",
+      description:
+        "Display the red-ui database workspace as an embedded MCP App.",
       inputSchema: {
         connectionUrl: z
           .string()
           .optional()
-          .describe('Optional red/http connection URL to preselect in red-ui, for example http://localhost:5055.'),
+          .describe(
+            "Optional red/http connection URL to preselect in red-ui, for example http://localhost:5055."
+          ),
         view: z
-          .enum(['home', 'query', 'collections', 'cluster', 'security'])
+          .enum(["home", "query", "collections", "cluster", "security"])
           .optional()
-          .describe('Initial red-ui view to display. Defaults to query.'),
+          .describe("Initial red-ui view to display. Defaults to query."),
       },
       _meta: {
         ui: {
           resourceUri: APP_RESOURCE_URI,
-          visibility: ['model', 'app'],
+          visibility: ["model", "app"],
         },
       },
     },
     async ({ connectionUrl, view }) => {
-      const selectedView: RedUiView = view ?? 'query'
+      const selectedView: RedUiView = view ?? "query";
       return {
         content: [
           {
-            type: 'text',
+            type: "text",
             text: `Opening red-ui ${selectedView} view from ${config.appUrl}.`,
           },
         ],
         structuredContent: {
           appUrl: config.appUrl,
-          connectionUrl: connectionUrl ?? '',
+          connectionUrl: connectionUrl ?? "",
           view: selectedView,
         },
-      }
-    },
-  )
+      };
+    }
+  );
 
-  return server
+  return server;
 }
 
 function printHelp() {
@@ -413,26 +426,28 @@ Example client config:
       }
     }
   }
-`)
+`);
 }
 
 async function main() {
-  const args = new Set(process.argv.slice(2))
-  if (args.has('--help') || args.has('-h')) {
-    printHelp()
-    return
+  const args = new Set(process.argv.slice(2));
+  if (args.has("--help") || args.has("-h")) {
+    printHelp();
+    return;
   }
 
-  if (!args.has('--stdio')) {
-    throw new Error('Only --stdio transport is supported for now.')
+  if (!args.has("--stdio")) {
+    throw new Error("Only --stdio transport is supported for now.");
   }
 
-  const server = createServer(loadConfig())
-  const transport = new StdioServerTransport()
-  await server.connect(transport)
+  const server = createServer(loadConfig());
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
 }
 
 main().catch((error) => {
-  process.stderr.write(`${error instanceof Error ? error.stack : String(error)}\n`)
-  process.exit(1)
-})
+  process.stderr.write(
+    `${error instanceof Error ? error.stack : String(error)}\n`
+  );
+  process.exit(1);
+});

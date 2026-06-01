@@ -68,9 +68,9 @@
       // Host-injected provider (#33): adopt its authenticated connection.
       void connection.adoptInjected()
     } else {
-      // Surface-seeded Open Contract: connect to `cs` without the Connect flow
-      // and navigate to `to` when present.
-      void connection.connectFromBootParams().then((route) => {
+      // Connection Bootstrap: one boot resolver handles Tauri IPC, host globals,
+      // the Open Contract URL/hash, and finally persisted standalone state.
+      void connection.bootstrap().then((route) => {
         if (route) navigateToBootRoute(route)
       })
     }

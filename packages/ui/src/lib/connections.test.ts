@@ -236,6 +236,33 @@ describe("boot-params pre-configuration (#36)", () => {
   });
 });
 
+describe("Connection Bootstrap", () => {
+  it("connects to the resolved boot target and returns the resolved route", async () => {
+    setConnectionProvider(
+      new LocalUrlProvider({
+        clientFactory: () => fakeClient(),
+      })
+    );
+
+    const route = await connection.bootstrap(async () => ({
+      target: "http://bootstrap:5055",
+      route: "/cluster",
+    }));
+
+    expect(route).toBe("/cluster");
+    expect(connection.connected).toBe(true);
+    expect(connection.active.url).toBe("http://bootstrap:5055");
+  });
+
+  it("keeps the Connect flow cold when the resolver returns no target", async () => {
+    expect(
+      await connection.bootstrap(async () => ({ target: null }))
+    ).toBeNull();
+    expect(connection.connected).toBe(false);
+    expect(connection.targetResolved).toBe(false);
+  });
+});
+
 describe("target resolution gate (#21)", () => {
   it("an explicit connect marks the target resolved (gates auto-network)", async () => {
     // In the node test env there is no URL/stored pin, so nothing is resolved
