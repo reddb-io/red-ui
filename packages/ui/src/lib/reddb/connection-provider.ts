@@ -5,6 +5,7 @@
 
 import type { RedClient } from './client'
 import type { Transport } from './types'
+import type { BootParams } from './boot-params'
 
 export type ConnectionRole = 'primary' | 'replica' | 'embedded'
 
@@ -39,6 +40,14 @@ export interface ConnectionProvider {
    * browser-reachable (http/https + coerced red://) by the consumer.
    */
   transports?(): Transport[]
+
+  /**
+   * Non-secret connection config seeded by the Surface (#36, ADR-0005) — the
+   * endpoint and initial view from the app URL. The Core reads it through this
+   * seam (not a special MCP branch) to connect without the Connect flow.
+   * Tokens never appear here. Returns null when nothing was seeded.
+   */
+  bootParams?(): BootParams | null
 }
 
 export class UnknownConnectionError extends Error {
