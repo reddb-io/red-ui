@@ -1,14 +1,5 @@
-<script lang="ts">
-  import { onMount } from 'svelte'
-  import Workspace from '$lib/Workspace.svelte'
-  import { queryTabs } from '$lib/query-tabs.svelte'
-  import { tabs } from '$lib/tabs.svelte'
-
-  onMount(() => {
-    const label = queryTabs.nextLabel()
-    const tab = tabs.open({ kind: 'query', label, key: label }, true)
-    queryTabs.ensure(tab.id)
-  })
-</script>
-
-<Workspace />
+<!--
+  URL marker only. The Mountable Root (mounted in +layout.svelte) reads the
+  location from the Kit router and renders the matching view, so this page
+  intentionally renders nothing of its own.
+-->

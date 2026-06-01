@@ -4,21 +4,27 @@
   import ActivityIndicator from './ActivityIndicator.svelte'
   import { Search, Sun, Moon, Network, Database, FileCode2, Shield } from 'lucide-svelte'
   import { theme } from './theme.svelte'
-  import { page } from '$app/state'
+  import { useRouter } from './router.svelte'
+
+  const router = useRouter()
 
   function openPalette() {
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, ctrlKey: true, bubbles: true }))
   }
 
-  const onQuery = $derived(page.url.pathname.startsWith('/query'))
-  const onCollections = $derived(page.url.pathname === '/' || page.url.pathname.startsWith('/collections') || page.url.pathname.startsWith('/c/'))
-  const onCluster = $derived(page.url.pathname.startsWith('/cluster'))
-  const onSecurity = $derived(page.url.pathname.startsWith('/security'))
+  const onQuery = $derived(router.view === 'query')
+  const onCollections = $derived(router.view === 'collections')
+  const onCluster = $derived(router.view === 'cluster')
+  const onSecurity = $derived(router.view === 'security')
 </script>
 
 <header class="h-11 flex items-center justify-between px-3.5 bg-bg-1/80 backdrop-blur-md border-b border-line-1 relative z-10">
   <div class="flex items-center gap-2.5">
-    <a href="/" class="font-mono font-semibold text-[13px] tracking-tight text-fg-0 no-underline hover:text-accent transition-colors">
+    <a
+      href={router.href({ view: 'collections' })}
+      onclick={(e) => router.go({ view: 'collections' }, e)}
+      class="font-mono font-semibold text-[13px] tracking-tight text-fg-0 no-underline hover:text-accent transition-colors"
+    >
       red<span class="text-accent mx-px">·</span>ui
     </a>
     <div class="w-px h-[18px] bg-line-2"></div>
@@ -26,7 +32,8 @@
     <div class="w-px h-[18px] bg-line-2 ml-1"></div>
     <nav class="flex items-center gap-0.5">
       <a
-        href="/query"
+        href={router.href({ view: 'query' })}
+        onclick={(e) => router.go({ view: 'query' }, e)}
         title="Query"
         aria-current={onQuery ? 'page' : undefined}
         class={[
@@ -38,7 +45,8 @@
         <span>Query</span>
       </a>
       <a
-        href="/collections"
+        href={router.href({ view: 'collections' })}
+        onclick={(e) => router.go({ view: 'collections' }, e)}
         title="Collections"
         aria-current={onCollections ? 'page' : undefined}
         class={[
@@ -50,7 +58,8 @@
         <span>Collections</span>
       </a>
       <a
-        href="/cluster"
+        href={router.href({ view: 'cluster' })}
+        onclick={(e) => router.go({ view: 'cluster' }, e)}
         title="Cluster topology"
         aria-current={onCluster ? 'page' : undefined}
         class={[
@@ -62,7 +71,8 @@
         <span>Cluster</span>
       </a>
       <a
-        href="/security"
+        href={router.href({ view: 'security' })}
+        onclick={(e) => router.go({ view: 'security' }, e)}
         title="Security"
         aria-current={onSecurity ? 'page' : undefined}
         class={[
