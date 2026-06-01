@@ -7,6 +7,7 @@
 
   function pickDefaultUrl(): string {
     if (connection.history[0]?.url) return connection.history[0].url
+    if (connection.history[0]?.label) return connection.history[0].label
     if (connection.active.url) return connection.active.url
     return DEFAULT_URL
   }
@@ -185,9 +186,15 @@
               <div class="group flex items-center gap-1 rounded hover:bg-bg-2 transition-colors">
                 <button
                   type="button"
-                  onclick={() => h.url && attempt(h.url)}
-                  disabled={status === 'probing' || !h.url}
-                  title={h.url ? undefined : 'Unlock credentials to reconnect'}
+                  onclick={() => {
+                    if (h.url) attempt(h.url)
+                    else {
+                      url = h.label
+                      setTimeout(() => inputEl?.focus(), 0)
+                    }
+                  }}
+                  disabled={status === 'probing'}
+                  title={h.url ? undefined : 'Enter credentials to reconnect'}
                   class="flex-1 flex items-center justify-between gap-3 px-2 py-1.5 text-left cursor-pointer bg-transparent border-0 disabled:cursor-not-allowed disabled:opacity-50 min-w-0"
                 >
                   <code class="font-mono text-[11px] text-fg-1 truncate">{h.url ?? h.label}</code>
