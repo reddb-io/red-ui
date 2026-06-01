@@ -28,6 +28,23 @@ export interface BootstrapStorage {
   getItem(key: string): string | null;
 }
 
+export interface UrlBootstrapLocation {
+  pathname: string;
+  search: string;
+  hash: string;
+}
+
+export interface UrlBootstrapHistory {
+  readonly state: unknown;
+  replaceState(data: unknown, unused: string, url?: string | URL | null): void;
+}
+
+export interface UrlBootstrapReadOptions {
+  consume?: boolean;
+  location?: UrlBootstrapLocation;
+  history?: UrlBootstrapHistory;
+}
+
 export interface ConnectionBootstrapResolverOptions {
   readTauri?: BootstrapSource;
   readInjectedGlobal?: BootstrapSource;
@@ -36,6 +53,7 @@ export interface ConnectionBootstrapResolverOptions {
 }
 
 const GLOBAL_BOOTSTRAP_KEYS = [
+  "__RED_BOOTSTRAP__",
   "__RED_UI_CONNECTION_BOOTSTRAP__",
   "__RED_UI_BOOTSTRAP__",
 ];
@@ -111,23 +129,77 @@ export async function readInjectedGlobalBootstrap(
   for (const key of GLOBAL_BOOTSTRAP_KEYS) {
     const candidate = bag[key];
     if (!candidate) continue;
-    if (typeof candidate === "function") {
-      return await (
-        candidate as () => MaybePromise<ConnectionBootstrapPayload>
-      )();
+    try {
+      if (typeof candidate === "function") {
+        return await (
+          candidate as () => MaybePromise<ConnectionBootstrapPayload>
+        )();
+      }
+      return candidate as ConnectionBootstrapPayload;
+    } finally {
+      try {
+        delete bag[key];
+      } catch {
+        bag[key] = undefined;
+      }
     }
-    return candidate as ConnectionBootstrapPayload;
   }
 
   return null;
 }
 
+function liveUrlBootstrapOptions(): UrlBootstrapReadOptions {
+  return {
+    consume: true,
+    location:
+      typeof location === "undefined"
+        ? undefined
+        : {
+            pathname: location.pathname,
+            search: location.search,
+            hash: location.hash,
+          },
+    history:
+      typeof history === "undefined"
+        ? undefined
+        : {
+            state: history.state,
+            replaceState: (data, unused, url) =>
+              history.replaceState(data, unused, url),
+          },
+  };
+}
+
+function stripTokenFromHistory(options: UrlBootstrapReadOptions): void {
+  if (!options.consume || !options.location || !options.history) return;
+  const hash = options.location.hash;
+  if (!hash) return;
+
+  const params = new URLSearchParams(
+    hash.startsWith("#") ? hash.slice(1) : hash
+  );
+  if (!params.has("token")) return;
+  params.delete("token");
+
+  const nextHash = params.toString();
+  const nextUrl = `${options.location.pathname}${options.location.search}${
+    nextHash ? `#${nextHash}` : ""
+  }`;
+  try {
+    options.history.replaceState(options.history.state, "", nextUrl);
+  } catch {
+    /* best-effort URL cleanup */
+  }
+}
+
 export function readUrlOpenContractBootstrap(
   search = typeof location === "undefined" ? "" : location.search,
-  hash = typeof location === "undefined" ? "" : location.hash
+  hash = typeof location === "undefined" ? "" : location.hash,
+  options: UrlBootstrapReadOptions = liveUrlBootstrapOptions()
 ): ConnectionBootstrapPayload {
   try {
     const contract = parseOpenContract(search, hash);
+    if (contract.token) stripTokenFromHistory(options);
     if (!contract.cs && !contract.to && !contract.token) return null;
     return {
       target: contract.cs,
@@ -168,12 +240,21 @@ export function readPersistedLocalBootstrap(
 export async function resolveConnectionBootstrap(
   options: ConnectionBootstrapResolverOptions = {}
 ): Promise<ConnectionBootstrap> {
+  const readUrl = options.readUrl ?? (() => readUrlOpenContractBootstrap());
   const resolved = await firstPresent([
     options.readTauri ?? readTauriIpcBootstrap,
     options.readInjectedGlobal ?? readInjectedGlobalBootstrap,
-    options.readUrl ?? (() => readUrlOpenContractBootstrap()),
+    readUrl,
     options.readPersisted ?? (() => readPersistedLocalBootstrap()),
   ]);
+
+  if (resolved && !options.readUrl) {
+    try {
+      readUrlOpenContractBootstrap();
+    } catch {
+      /* best-effort live URL cleanup after a higher-priority boot source */
+    }
+  }
 
   return resolved ?? { target: null };
 }
