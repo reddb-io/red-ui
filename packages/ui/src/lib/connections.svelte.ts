@@ -11,6 +11,7 @@
 //     `secureStore.store` becomes non-null.
 
 import {
+  EMPTY_SERVER_CAPABILITIES,
   LocalUrlProvider,
   RedClient,
   type Connection,
@@ -18,6 +19,7 @@ import {
   type HistoryEntry as ProtocolHistoryEntry,
   type HistoryStore,
   type ReplicationStatus,
+  type ServerCapabilities,
   type Stats,
 } from '#reddb'
 import { secureStore } from './secureStore.svelte'
@@ -315,6 +317,14 @@ class ConnectionStore {
    */
   #client = $state<RedClient | null>(null)
 
+  /**
+   * Server capability map for the active connection (#22), resolved at connect.
+   * Defaults to the empty (all-unsupported) map so controls stay hidden until
+   * a connection proves a feature is present — a newer UI never assumes a
+   * capability an older server lacks.
+   */
+  #capabilities = $state<ServerCapabilities>({ ...EMPTY_SERVER_CAPABILITIES })
+
   constructor() {
     this.history = historyStore.uiEntries()
     historyStore.setOnChange(() => { this.history = historyStore.uiEntries() })
@@ -337,6 +347,15 @@ class ConnectionStore {
   /** Optional human-facing reason for the read-only badge tooltip. */
   get readOnlyReason(): string | undefined {
     return this.probe.stats?.read_only_reason
+  }
+
+  /**
+   * Negotiated server capabilities (#22). Controls gate on these — e.g.
+   * `connection.capabilities.vcs` hides version-history affordances on servers
+   * that don't support VCS. All-false until a successful connect resolves it.
+   */
+  get capabilities(): ServerCapabilities {
+    return this.#capabilities
   }
 
   async forget(url: string) {
@@ -370,11 +389,15 @@ class ConnectionStore {
       this.#client = active.client
       this.active = { ...preset, ...active.connection, description: preset.description }
       persist(this.active)
-      const [stats, replication] = await Promise.all([
+      const [stats, replication, capabilities] = await Promise.all([
         activity.track(`connect · ${preset.label} stats`, () => active.client.stats()).catch(() => undefined),
         activity.track(`connect · ${preset.label} replication`, () => active.client.replication()).catch(() => undefined),
+        // Capability negotiation fails safe to the empty map (hide controls).
+        activity.track(`connect · ${preset.label} capabilities`, () => active.client.capabilities())
+          .catch(() => ({ ...EMPTY_SERVER_CAPABILITIES })),
       ])
       this.probe = { reachable: true, rtt_ms: active.rtt_ms, stats, replication }
+      this.#capabilities = capabilities
       this.connected = true
       return true
     } catch (e) {
@@ -430,6 +453,7 @@ class ConnectionStore {
     this.connected = false
     this.probe = { reachable: false }
     this.#client = null
+    this.#capabilities = { ...EMPTY_SERVER_CAPABILITIES }
   }
 }
 

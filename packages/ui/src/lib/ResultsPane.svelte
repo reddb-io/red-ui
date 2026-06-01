@@ -460,21 +460,25 @@
             <Info class="size-3" />
             <span>meta</span>
           </button>
-          <button
-            type="button"
-            onclick={() => (historyOpen = { ...historyOpen, [activeTab.id]: !(historyOpen[activeTab.id] ?? false) })}
-            title={historyOpen[activeTab.id] ? 'Hide version history' : 'Show version history and diffs'}
-            aria-pressed={historyOpen[activeTab.id] ?? false}
-            class={[
-              'inline-flex items-center gap-1 h-6 px-1.5 rounded border transition-colors cursor-pointer',
-              historyOpen[activeTab.id]
-                ? 'border-accent/40 bg-accent/10 text-accent'
-                : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
-            ].join(' ')}
-          >
-            <GitBranch class="size-3" />
-            <span>history</span>
-          </button>
+          {#if connection.capabilities.vcs}
+            <!-- VCS history is server-gated (#22): absent when the connected
+                 server doesn't support version control, not shown-but-broken. -->
+            <button
+              type="button"
+              onclick={() => (historyOpen = { ...historyOpen, [activeTab.id]: !(historyOpen[activeTab.id] ?? false) })}
+              title={historyOpen[activeTab.id] ? 'Hide version history' : 'Show version history and diffs'}
+              aria-pressed={historyOpen[activeTab.id] ?? false}
+              class={[
+                'inline-flex items-center gap-1 h-6 px-1.5 rounded border transition-colors cursor-pointer',
+                historyOpen[activeTab.id]
+                  ? 'border-accent/40 bg-accent/10 text-accent'
+                  : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+              ].join(' ')}
+            >
+              <GitBranch class="size-3" />
+              <span>history</span>
+            </button>
+          {/if}
         {/if}
         <button
           type="button"

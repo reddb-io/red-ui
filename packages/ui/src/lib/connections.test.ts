@@ -5,17 +5,27 @@ import {
   provider,
   setConnectionProvider,
 } from './connections.svelte'
-import { InjectedClientProvider, LocalUrlProvider } from '#reddb'
-import type { RedClient } from '#reddb'
+import { EMPTY_SERVER_CAPABILITIES, InjectedClientProvider, LocalUrlProvider } from '#reddb'
+import type { RedClient, ServerCapabilities } from '#reddb'
 
-// Fake client covering every method tryConnect touches (ping/stats/replication
-// on connect, whoami on demand). The host would inject a real one. `stats`
-// overrides let a test simulate the server's reported read-only flag (#23).
-function fakeClient(stats: Record<string, unknown> = {}): RedClient {
+interface FakeOpts {
+  /** Extra fields merged into the /stats response (e.g. read_only for #23). */
+  stats?: Record<string, unknown>
+  /** Capability map the client reports (#22). Defaults to all-unsupported. */
+  capabilities?: Partial<ServerCapabilities>
+}
+
+// Fake client covering every method tryConnect touches (ping/stats/replication/
+// capabilities on connect, whoami on demand). The host would inject a real one.
+function fakeClient({ stats = {}, capabilities }: FakeOpts = {}): RedClient {
   return {
     ping: vi.fn(async () => ({ ok: true, rtt_ms: 3 })),
     stats: vi.fn(async () => ({ collections: 0, records: 0, ...stats })),
     replication: vi.fn(async () => undefined),
+    capabilities: vi.fn(async (): Promise<ServerCapabilities> => ({
+      ...EMPTY_SERVER_CAPABILITIES,
+      ...capabilities,
+    })),
     whoami: vi.fn(async () => ({ authenticated: true, username: 'host', role: 'admin' })),
   } as unknown as RedClient
 }
@@ -68,7 +78,7 @@ describe('read-only state (#23)', () => {
   it('is true, with the reason, when the server reports read_only', async () => {
     setConnectionProvider(
       new InjectedClientProvider({
-        client: fakeClient({ read_only: true, read_only_reason: 'file in use by another writer' }),
+        client: fakeClient({ stats: { read_only: true, read_only_reason: 'file in use by another writer' } }),
       }),
     )
     await connection.adoptInjected()
@@ -77,10 +87,37 @@ describe('read-only state (#23)', () => {
   })
 
   it('is false once disconnected even if the last probe was read-only', async () => {
-    setConnectionProvider(new InjectedClientProvider({ client: fakeClient({ read_only: true }) }))
+    setConnectionProvider(new InjectedClientProvider({ client: fakeClient({ stats: { read_only: true } }) }))
     await connection.adoptInjected()
     expect(connection.readOnly).toBe(true)
     connection.disconnect()
     expect(connection.readOnly).toBe(false) // gated on `connected`, never hardcoded
+  })
+})
+
+describe('capability negotiation (#22)', () => {
+  it('exposes the capabilities the server reports at connect', async () => {
+    setConnectionProvider(new InjectedClientProvider({ client: fakeClient({ capabilities: { vcs: true } }) }))
+    await connection.adoptInjected()
+    expect(connection.capabilities.vcs).toBe(true)
+    expect(connection.capabilities.clusterStatus).toBe(false) // not reported ⇒ stays hidden
+  })
+
+  it('defaults to all-unsupported before connect and resets on disconnect', async () => {
+    expect(connection.capabilities).toEqual(EMPTY_SERVER_CAPABILITIES)
+    setConnectionProvider(new InjectedClientProvider({ client: fakeClient({ capabilities: { vcs: true } }) }))
+    await connection.adoptInjected()
+    expect(connection.capabilities.vcs).toBe(true)
+    connection.disconnect()
+    expect(connection.capabilities).toEqual(EMPTY_SERVER_CAPABILITIES)
+  })
+
+  it('fails safe to all-unsupported when capability resolution throws', async () => {
+    const client = fakeClient()
+    ;(client.capabilities as unknown as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('probe blew up'))
+    setConnectionProvider(new InjectedClientProvider({ client }))
+    await connection.adoptInjected()
+    expect(connection.connected).toBe(true) // connect still succeeds
+    expect(connection.capabilities).toEqual(EMPTY_SERVER_CAPABILITIES) // hide on failure
   })
 })
