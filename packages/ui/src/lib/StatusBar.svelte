@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { goto } from '$app/navigation'
+  import { useRouter } from './router.svelte'
   import { connection } from './connections.svelte'
   import { pendingChanges } from './pending-changes.svelte'
   import { ArrowRight, FilePenLine } from 'lucide-svelte'
 
+  const router = useRouter()
   const pendingCount = $derived(pendingChanges.count)
 
   function openPending() {
@@ -43,13 +44,13 @@
   function openCluster(e: MouseEvent) {
     const target = e.target as HTMLElement | null
     if (target?.closest('button, a, [data-no-nav]')) return
-    goto('/cluster')
+    router.go({ view: 'cluster' })
   }
 
   function onKey(e: KeyboardEvent) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      goto('/cluster')
+      router.go({ view: 'cluster' })
     }
   }
 </script>

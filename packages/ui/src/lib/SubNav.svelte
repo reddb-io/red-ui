@@ -1,15 +1,17 @@
 <script lang="ts">
-  import { page } from '$app/state'
+  import { useRouter } from './router.svelte'
 
   interface Item { href: string; label: string; hint?: string }
   interface Props { items: Item[]; title?: string }
   let { items, title }: Props = $props()
+
+  const router = useRouter()
 </script>
 
 <nav class="subnav">
   {#if title}<span class="title">{title}</span>{/if}
   {#each items as it}
-    <a href={it.href} class:active={page.url.pathname === it.href || page.url.pathname.startsWith(it.href + '/')}>
+    <a href={it.href} class:active={router.path === it.href || router.path.startsWith(it.href + '/')}>
       {it.label}
       {#if it.hint}<span class="hint">{it.hint}</span>{/if}
     </a>

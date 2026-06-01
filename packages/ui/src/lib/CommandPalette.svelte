@@ -1,8 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { Kbd } from '@reddb-io/ui-kit'
-  import { goto as kitGoto } from '$app/navigation'
+  import { useRouter, type RouteTarget } from './router.svelte'
   import { theme } from './theme.svelte'
+
+  const router = useRouter()
 
   type Group = 'navigate' | 'data' | 'actions' | 'view'
 
@@ -25,10 +27,10 @@
   }
 
   const commands: Command[] = [
-    { id: 'query', group: 'navigate', label: 'Open query', hint: '/query', run: () => goto('/query') },
-    { id: 'collections', group: 'navigate', label: 'Open collections', hint: '/collections', run: () => goto('/collections') },
-    { id: 'topology', group: 'navigate', label: 'Open cluster', hint: '/cluster', run: () => goto('/cluster') },
-    { id: 'security', group: 'navigate', label: 'Open security', hint: '/security', run: () => goto('/security') },
+    { id: 'query', group: 'navigate', label: 'Open query', hint: '/query', run: () => navigate({ view: 'query' }) },
+    { id: 'collections', group: 'navigate', label: 'Open collections', hint: '/collections', run: () => navigate({ view: 'collections' }) },
+    { id: 'topology', group: 'navigate', label: 'Open cluster', hint: '/cluster', run: () => navigate({ view: 'cluster' }) },
+    { id: 'security', group: 'navigate', label: 'Open security', hint: '/security', run: () => navigate({ view: 'security' }) },
 
     { id: 'new-query', group: 'data', label: 'New query', shortcut: '⌘T', run: () => { fire('red:new-query'); close() } },
 
@@ -46,8 +48,8 @@
       : commands.filter((c) => c.label.toLowerCase().includes(query.toLowerCase()))
   )
 
-  function goto(path: string) {
-    kitGoto(path)
+  function navigate(target: RouteTarget) {
+    router.go(target)
     close()
   }
 

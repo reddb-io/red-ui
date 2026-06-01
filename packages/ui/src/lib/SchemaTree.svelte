@@ -8,17 +8,19 @@
     isInternalCollection,
     type Capability,
   } from './capability'
-  import { collectionPageHref, defaultSubpage } from './collection-pages'
-  import { page } from '$app/state'
+  import { defaultSubpage } from './collection-pages'
+  import { useRouter } from './router.svelte'
   import { Plug, Database, Lock, Search, X } from 'lucide-svelte'
+
+  const router = useRouter()
 
   interface Item {
     name: string
     capability: Capability
   }
 
-  // URL is the source of truth for which collection is selected.
-  const activeCollection = $derived(page.params.collection ?? null)
+  // The router is the source of truth for which collection is selected.
+  const activeCollection = $derived(router.collection)
 
   let items = $state<Item[]>([])
   let loading = $state(false)
@@ -169,9 +171,11 @@
     {#each filteredItems as item (item.name)}
       {@const g = CAPABILITY_GLYPHS[item.capability]}
       {@const active = item.name === activeCollection}
+      {@const target = { view: 'collection' as const, collection: item.name, subpage: defaultSubpage(item.capability) }}
       <li>
         <a
-          href={collectionPageHref(item.name, defaultSubpage(item.capability))}
+          href={router.href(target)}
+          onclick={(e) => router.go(target, e)}
           aria-current={active ? 'page' : undefined}
           title={`${g.label} · ${item.name}`}
           class={[

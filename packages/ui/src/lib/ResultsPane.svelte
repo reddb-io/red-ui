@@ -1,13 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { goto } from '$app/navigation'
-  import { page } from '$app/state'
+  import { useRouter } from '$lib/router.svelte'
   import { connection } from '$lib/connections.svelte'
   import { secureStore } from '$lib/secureStore.svelte'
   import { activity } from '$lib/activity.svelte'
   import { tabs, type Tab } from '$lib/tabs.svelte'
   import { queryTabs } from '$lib/query-tabs.svelte'
-  import { collectionPageHref, defaultSubpage, subpageCapability } from '$lib/collection-pages'
+  import { defaultSubpage, subpageCapability } from '$lib/collection-pages'
   import {
     collectionCatalogBadges,
     collectionCatalogFromRow,
@@ -23,6 +22,8 @@
   import QueryEditor from '$lib/QueryEditor.svelte'
   import type { CollectionMetadata, QueryResult, RedClient } from '#reddb'
   import { X, Activity, Database, Plus, FileCode2, EyeOff, Eye, Info, HardDrive, Rows3, Layers3, ScanLine, GitBranch } from 'lucide-svelte'
+
+  const router = useRouter()
 
   const OVERRIDE_CHOICES: { value: '' | Capability; label: string }[] = [
     { value: '', label: 'Auto' },
@@ -317,7 +318,7 @@
     // If we're closing the collection that owns the current URL, the
     // /c/[collection] route would just re-open the tab on every render.
     // Navigate away so the URL stays in sync with what's open.
-    const closingUrlOwner = tab?.kind === 'collection' && tab.key === page.params.collection
+    const closingUrlOwner = tab?.kind === 'collection' && tab.key === router.collection
     tabs.close(id, previousActiveId)
     queryTabs.remove(id)
     delete results[id]
@@ -330,7 +331,13 @@
     delete historyOpen[id]
     if (closingUrlOwner) {
       const next = tabs.tabs.find((t) => t.kind === 'collection')
-      goto(next ? collectionPageHref(next.key, next.subpage ?? defaultSubpage(next.capability)) : '/', { replaceState: true })
+      router.go(
+        next
+          ? { view: 'collection', collection: next.key, subpage: next.subpage ?? defaultSubpage(next.capability) }
+          : { view: 'collections' },
+        undefined,
+        true,
+      )
     }
   }
 
@@ -400,7 +407,8 @@
               : 'text-fg-3 hover:text-fg-1 hover:bg-bg-1/40',
           ].join(' ')}
           {#if tab.kind === 'collection'}
-            <a href={collectionPageHref(tab.key, tab.subpage ?? defaultSubpage(tab.capability))} class={cls} title={tab.label}>
+            {@const tabTarget = { view: 'collection' as const, collection: tab.key, subpage: tab.subpage ?? defaultSubpage(tab.capability) }}
+            <a href={router.href(tabTarget)} onclick={(e) => router.go(tabTarget, e)} class={cls} title={tab.label}>
               <span class="truncate max-w-[180px]">{tab.label}</span>
               <span
                 class="opacity-60 group-hover:opacity-100 hover:bg-bg-2 rounded p-0.5"
