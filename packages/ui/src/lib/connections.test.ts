@@ -5,7 +5,12 @@ import {
   provider,
   setConnectionProvider,
 } from './connections.svelte'
-import { EMPTY_SERVER_CAPABILITIES, InjectedClientProvider, LocalUrlProvider } from '#reddb'
+import {
+  DESKTOP_TRANSPORTS,
+  EMPTY_SERVER_CAPABILITIES,
+  InjectedClientProvider,
+  LocalUrlProvider,
+} from '#reddb'
 import type { RedClient, ServerCapabilities } from '#reddb'
 
 interface FakeOpts {
@@ -119,5 +124,30 @@ describe('capability negotiation (#22)', () => {
     await connection.adoptInjected()
     expect(connection.connected).toBe(true) // connect still succeeds
     expect(connection.capabilities).toEqual(EMPTY_SERVER_CAPABILITIES) // hide on failure
+  })
+})
+
+describe('transport reachability (#34)', () => {
+  it('the default browser provider reaches http(s)/red but not file/unix', () => {
+    // afterEach restored the default LocalUrlProvider (browser transports).
+    expect(connection.canReach('http://h:5055')).toBe(true)
+    expect(connection.canReach('red://localhost')).toBe(true)
+    expect(connection.canReach('file:///data/app.redb')).toBe(false)
+    expect(connection.supportedTransports).not.toContain('unix')
+  })
+
+  it('falls back to browser transports when a provider declares none', async () => {
+    // InjectedClientProvider doesn't implement transports() → browser fallback.
+    setConnectionProvider(new InjectedClientProvider({ client: fakeClient() }))
+    expect(connection.canReach('file:///x')).toBe(false)
+    expect(connection.canReach('https://h')).toBe(true)
+  })
+
+  it('honours a Surface that declares the desktop transport set', () => {
+    setConnectionProvider(
+      new LocalUrlProvider({ transports: [...DESKTOP_TRANSPORTS] }),
+    )
+    expect(connection.canReach('file:///data/app.redb')).toBe(true)
+    expect(connection.supportedTransports).toContain('unix')
   })
 })

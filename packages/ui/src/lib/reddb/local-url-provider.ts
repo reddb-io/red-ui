@@ -13,6 +13,8 @@ import {
   type ConnectionProvider,
   type Identity,
 } from './connection-provider'
+import { BROWSER_TRANSPORTS } from './transports'
+import type { Transport } from './types'
 
 export interface HistoryEntry {
   url: string
@@ -35,6 +37,12 @@ export interface LocalUrlProviderOptions {
   clientFactory?: (url: string) => RedClient
   /** Max history entries retained. */
   historyMax?: number
+  /**
+   * Wire transports this Surface can reach (#34, ADR-0003). Defaults to the
+   * browser-reachable set (http/https + coerced red://); a Tauri Surface passes
+   * the desktop set so native unix/embedded connections are offered.
+   */
+  transports?: Transport[]
 }
 
 const HISTORY_MAX_DEFAULT = 8
@@ -78,6 +86,7 @@ export class LocalUrlProvider implements ConnectionProvider {
   private readonly history: HistoryStore
   private readonly clientFactory: (url: string) => RedClient
   private readonly historyMax: number
+  private readonly supportedTransports: Transport[]
   private active: ActiveConnection | null = null
 
   constructor(opts: LocalUrlProviderOptions = {}) {
@@ -86,6 +95,11 @@ export class LocalUrlProvider implements ConnectionProvider {
     this.historyMax = opts.historyMax ?? HISTORY_MAX_DEFAULT
     this.clientFactory =
       opts.clientFactory ?? ((url) => new RedClient(url))
+    this.supportedTransports = opts.transports?.slice() ?? [...BROWSER_TRANSPORTS]
+  }
+
+  transports(): Transport[] {
+    return this.supportedTransports.slice()
   }
 
   async list(): Promise<Connection[]> {

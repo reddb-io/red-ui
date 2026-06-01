@@ -39,12 +39,16 @@ export * from './tabs.svelte'
 export * from './query-tabs.svelte'
 export * from '@reddb-io/ui-kit'
 export {
+  BROWSER_TRANSPORTS,
   CDCStreamClient,
+  DESKTOP_TRANSPORTS,
   EMPTY_SERVER_CAPABILITIES,
   InjectedClientProvider,
   LocalUrlProvider,
   NotConnectedError,
   capabilitiesFromSignal,
+  isUrlReachable,
+  transportForUrl,
   RedClient,
   SecureStoreError,
   TauriEncryptedStore,
