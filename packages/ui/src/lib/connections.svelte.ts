@@ -14,9 +14,12 @@ import {
   EMPTY_SERVER_CAPABILITIES,
   LocalUrlProvider,
   RedClient,
+  DEFAULT_PERSISTED_CONNECTION_KEY,
   isUrlReachable,
   parseBootParams,
+  resolveConnectionBootstrap,
   type Connection,
+  type ConnectionBootstrap,
   type ConnectionProvider,
   type ReplicationStatus,
   type ServerCapabilities,
@@ -67,21 +70,7 @@ interface ProbeResult {
   error?: string;
 }
 
-const STORAGE_KEY = "red-ui:connection";
-
-function loadStored(): ConnectionPreset | null {
-  if (currentCredentialPersistence() !== "vault") return null;
-  if (typeof localStorage === "undefined") return null;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as ConnectionPreset;
-    if (parsed?.url && parsed?.label) return parsed;
-    return null;
-  } catch {
-    return null;
-  }
-}
+const STORAGE_KEY = DEFAULT_PERSISTED_CONNECTION_KEY;
 
 function persist(c: ConnectionPreset) {
   if (typeof localStorage === "undefined") return;
@@ -103,9 +92,13 @@ const MANAGED_WEB_TOKEN_KEY =
 function hasManagedWebHandoff(): boolean {
   if (secureStore.surface !== "web" || typeof location === "undefined")
     return false;
-  const params = new URLSearchParams(location.search);
-  for (const key of params.keys()) {
-    if (MANAGED_WEB_TOKEN_KEY.test(key)) return true;
+  for (const raw of [location.search, location.hash]) {
+    const params = new URLSearchParams(
+      raw.startsWith("#") ? raw.slice(1) : raw
+    );
+    for (const key of params.keys()) {
+      if (MANAGED_WEB_TOKEN_KEY.test(key)) return true;
+    }
   }
   return false;
 }
@@ -169,18 +162,6 @@ export function makeCustomConnection(input: string): ConnectionPreset {
   };
 }
 
-const CONNECTION_QUERY_KEYS = ["connection", "red_url", "red"];
-
-function loadLocationConnection(): ConnectionPreset | null {
-  if (typeof location === "undefined") return null;
-  const params = new URLSearchParams(location.search);
-  for (const key of CONNECTION_QUERY_KEYS) {
-    const input = params.get(key);
-    if (input) return makeCustomConnection(input);
-  }
-  return null;
-}
-
 // Transport reachability is a Surface property (#34, ADR-0003): a Tauri shell
 // can open native unix/embedded connections the browser can't. Detect the
 // Surface here so the default provider declares the right reachable set.
@@ -236,9 +217,7 @@ export function setConnectionProvider(p: ConnectionProvider): void {
 class ConnectionStore {
   /** Set after a probe succeeds for the first time — used to gate the Connect screen. */
   connected = $state<boolean>(false);
-  active = $state<ConnectionPreset>(
-    loadLocationConnection() ?? loadStored() ?? PRESETS[1]
-  );
+  active = $state<ConnectionPreset>(PRESETS[1]);
   probe = $state<ProbeResult>({ reachable: false });
   history = $state<HistoryEntry[]>([]);
 
@@ -259,14 +238,12 @@ class ConnectionStore {
 
   /**
    * Whether a real connection target has been resolved (#21, acceptance #4):
-   * true when one came from the URL/boot params, a stored pin, or an explicit
-   * connect — false when `active` is only the default-preset fallback. Gates
+   * true when one came from Connection Bootstrap or an explicit connect; false
+   * when `active` is only the default-preset fallback. Gates
    * automatic network so nothing probes before the user (or a Surface) has
    * actually chosen a target.
    */
-  #targetResolved = $state<boolean>(
-    !!(loadLocationConnection() ?? loadStored())
-  );
+  #targetResolved = $state<boolean>(false);
 
   constructor() {
     this.history = historyStore.uiEntries();
@@ -337,6 +314,22 @@ class ConnectionStore {
   /** Called from +layout once secureStore.store binds. */
   async hydrateUrls() {
     await historyStore.hydrate();
+  }
+
+  /**
+   * Resolve the boot connection once, in source priority order:
+   * Tauri IPC → host global → Open Contract URL/hash → persisted local store.
+   * `target: null` is the well-formed empty case, so cold opens stay on the
+   * Connect flow without probing a default preset.
+   */
+  async bootstrap(
+    resolve: () => Promise<ConnectionBootstrap> = resolveConnectionBootstrap
+  ): Promise<string | null> {
+    const boot = await resolve();
+    const route = boot.route ?? null;
+    if (!boot.target) return route;
+    await this.tryConnect(makeCustomConnection(boot.target));
+    return route;
   }
 
   async switch(preset: ConnectionPreset) {
