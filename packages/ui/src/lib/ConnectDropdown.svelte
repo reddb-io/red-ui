@@ -23,6 +23,14 @@
     const cleaned = targetUrl.trim().replace(/\/$/, '')
     if (!cleaned) return
     url = cleaned
+    // Transport reachability guard (#34): never attempt a transport this
+    // Surface can't materialize — fail with a clear message instead of an
+    // opaque transport-unsupported error from the client.
+    if (!connection.canReach(cleaned)) {
+      status = 'error'
+      error = `This app can't reach that transport here — supported: ${supportedHint}`
+      return
+    }
     status = 'probing'
     error = null
     rtt = null
@@ -84,6 +92,22 @@
         ? 'live'
         : 'no connection'
   )
+
+  // Transport reachability (#34): a human hint of the schemes this Surface can
+  // reach, and a history list filtered to reachable entries so unreachable
+  // transports are absent rather than shown-but-broken.
+  const supportedHint = $derived.by(() => {
+    const t = connection.supportedTransports
+    const schemes: string[] = []
+    if (t.includes('http') || t.includes('https')) schemes.push('http(s)://')
+    if (t.includes('tcp') || t.includes('tls')) schemes.push('red(s)://')
+    if (t.includes('unix')) schemes.push('file://')
+    return schemes.join(' · ')
+  })
+
+  const reachableHistory = $derived(
+    connection.history.filter((h) => !h.url || connection.canReach(h.url)),
+  )
 </script>
 
 <div class="relative">
@@ -120,8 +144,10 @@
           bind:value={url}
           spellcheck="false"
           placeholder="red://localhost"
-          class="w-full h-9 px-3 mb-2 bg-bg-0 border border-line-2 rounded-md font-mono text-[13px] text-fg-0 outline-none transition-colors focus:border-accent placeholder:text-fg-3"
+          class="w-full h-9 px-3 mb-1 bg-bg-0 border border-line-2 rounded-md font-mono text-[13px] text-fg-0 outline-none transition-colors focus:border-accent placeholder:text-fg-3"
         />
+
+        <div class="mb-2 text-[10px] font-mono text-fg-3">reachable here: {supportedHint}</div>
 
         <button
           type="submit"
@@ -148,14 +174,14 @@
         </div>
       </form>
 
-      {#if connection.history.length > 0}
+      {#if reachableHistory.length > 0}
         <div class="mt-3 pt-3 border-t border-line-1">
           <div class="flex items-center gap-1.5 mb-2">
             <Clock class="size-3 text-fg-3" />
             <span class="type-label">Recent</span>
           </div>
           <div class="grid gap-0.5 max-h-[180px] overflow-y-auto">
-            {#each connection.history as h}
+            {#each reachableHistory as h}
               <div class="group flex items-center gap-1 rounded hover:bg-bg-2 transition-colors">
                 <button
                   type="button"

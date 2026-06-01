@@ -11,9 +11,12 @@
 //     `secureStore.store` becomes non-null.
 
 import {
+  BROWSER_TRANSPORTS,
+  DESKTOP_TRANSPORTS,
   EMPTY_SERVER_CAPABILITIES,
   LocalUrlProvider,
   RedClient,
+  isUrlReachable,
   type Connection,
   type ConnectionProvider,
   type HistoryEntry as ProtocolHistoryEntry,
@@ -21,6 +24,7 @@ import {
   type ReplicationStatus,
   type ServerCapabilities,
   type Stats,
+  type Transport,
 } from '#reddb'
 import { secureStore } from './secureStore.svelte'
 import { activity } from './activity.svelte'
@@ -270,6 +274,16 @@ function loadLocationConnection(): ConnectionPreset | null {
   return null
 }
 
+// Transport reachability is a Surface property (#34, ADR-0003): a Tauri shell
+// can open native unix/embedded connections the browser can't. Detect the
+// Surface here so the default provider declares the right reachable set.
+function surfaceTransports(): Transport[] {
+  const tauri =
+    typeof window !== 'undefined' &&
+    ('__TAURI_INTERNALS__' in window || '__TAURI__' in window)
+  return [...(tauri ? DESKTOP_TRANSPORTS : BROWSER_TRANSPORTS)]
+}
+
 // Default provider — the PWA/Desktop Surfaces' LocalUrlProvider. History is
 // split: labels in plain localStorage so the dropdown renders pre-unlock;
 // URLs encrypted at rest.
@@ -278,6 +292,7 @@ export const provider: ConnectionProvider & {
 } = new LocalUrlProvider({
   presets: PRESETS,
   history: historyStore,
+  transports: surfaceTransports(),
 })
 
 // The Core acquires its client EXCLUSIVELY through this provider (ADR-0001 —
@@ -356,6 +371,24 @@ class ConnectionStore {
    */
   get capabilities(): ServerCapabilities {
     return this.#capabilities
+  }
+
+  /**
+   * Wire transports the active provider can reach on this Surface (#34). The
+   * Connect UI offers only these. Falls back to the browser-reachable set when
+   * a provider doesn't declare its transports.
+   */
+  get supportedTransports(): Transport[] {
+    return getConnectionProvider().transports?.() ?? [...BROWSER_TRANSPORTS]
+  }
+
+  /**
+   * Whether a user-typed connection string is reachable from this Surface.
+   * The Connect UI uses this to hide/guard unreachable options so a choice
+   * never ends in a transport-unsupported error.
+   */
+  canReach(url: string): boolean {
+    return isUrlReachable(url, this.supportedTransports)
   }
 
   async forget(url: string) {

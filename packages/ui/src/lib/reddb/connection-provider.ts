@@ -4,6 +4,7 @@
 // touching the consumers.
 
 import type { RedClient } from './client'
+import type { Transport } from './types'
 
 export type ConnectionRole = 'primary' | 'replica' | 'embedded'
 
@@ -31,6 +32,13 @@ export interface ConnectionProvider {
   list(): Promise<Connection[]>
   connect(id: string): Promise<ActiveConnection>
   whoami(): Promise<Identity>
+  /**
+   * The wire transports this provider can actually materialize on its Surface
+   * (#34, ADR-0003). The Connect UI offers only these, so the user never picks
+   * a transport that fails. Optional: a provider that omits it is treated as
+   * browser-reachable (http/https + coerced red://) by the consumer.
+   */
+  transports?(): Transport[]
 }
 
 export class UnknownConnectionError extends Error {
