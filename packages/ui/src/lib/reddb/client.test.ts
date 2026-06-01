@@ -18,7 +18,7 @@ describe('RedClient collection metadata probing', () => {
     )
     vi.stubGlobal('fetch', fetchMock)
 
-    const client = new RedClient('http://reddb.test', { proxyPath: '' })
+    const client = new RedClient('http://reddb.test')
     const results = await Promise.allSettled([
       client.collection('characters'),
       client.collection('grimm_graph'),
@@ -45,7 +45,7 @@ describe('RedClient collection metadata probing', () => {
     })
     vi.stubGlobal('fetch', fetchMock)
 
-    const client = new RedClient('http://reddb.test', { proxyPath: '' })
+    const client = new RedClient('http://reddb.test')
 
     await expect(client.collectionVcs('products')).resolves.toEqual({ collection: 'products', versioned: true })
     await expect(client.commitDiff('a', 'b', { collection: 'products' })).resolves.toMatchObject({ added: 1 })
@@ -60,7 +60,7 @@ describe('RedClient collection metadata probing', () => {
     }))
     vi.stubGlobal('fetch', fetchMock)
 
-    const client = new RedClient('http://reddb.test', { proxyPath: '' })
+    const client = new RedClient('http://reddb.test')
     await expect(client.changes(7, { collection: 'b', limit: 10 })).resolves.toEqual([
       { lsn: 2, timestamp: 1, operation: 'update', collection: 'b', kind: 'table' },
     ])
