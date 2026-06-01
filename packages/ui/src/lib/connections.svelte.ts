@@ -21,6 +21,7 @@ import {
   type Connection,
   type ConnectionBootstrap,
   type ConnectionProvider,
+  type HandoffTokenConsumer,
   type ReplicationStatus,
   type ServerCapabilities,
   type Stats,
@@ -89,7 +90,14 @@ function persist(c: ConnectionPreset) {
 const MANAGED_WEB_TOKEN_KEY =
   /(handoff|token|secret|password|passwd|auth|credential|api[-_]?key|bearer)/i;
 
+let managedWebHandoffActive = false;
+
+function markManagedWebHandoff() {
+  if (secureStore.surface === "web") managedWebHandoffActive = true;
+}
+
 function hasManagedWebHandoff(): boolean {
+  if (managedWebHandoffActive) return true;
   if (secureStore.surface !== "web" || typeof location === "undefined")
     return false;
   for (const raw of [location.search, location.hash]) {
@@ -170,6 +178,15 @@ function surfaceTransports(): Transport[] {
     typeof window !== "undefined" &&
     ("__TAURI_INTERNALS__" in window || "__TAURI__" in window);
   return [...(tauri ? DESKTOP_TRANSPORTS : BROWSER_TRANSPORTS)];
+}
+
+function isHandoffTokenConsumer(
+  candidate: ConnectionProvider
+): candidate is ConnectionProvider & HandoffTokenConsumer {
+  return (
+    typeof (candidate as Partial<HandoffTokenConsumer>).useHandoffToken ===
+    "function"
+  );
 }
 
 // Default provider — the PWA/Desktop Surfaces' LocalUrlProvider. History is
@@ -328,7 +345,15 @@ class ConnectionStore {
     const boot = await resolve();
     const route = boot.route ?? null;
     if (!boot.target) return route;
-    await this.tryConnect(makeCustomConnection(boot.target));
+    const preset = makeCustomConnection(boot.target);
+    if (boot.token) {
+      markManagedWebHandoff();
+      const provider = getConnectionProvider();
+      if (isHandoffTokenConsumer(provider)) {
+        provider.useHandoffToken(preset.url, boot.token);
+      }
+    }
+    await this.tryConnect(preset);
     return route;
   }
 
@@ -461,6 +486,7 @@ class ConnectionStore {
     // Back to "no active target" — auto-network stays off until the user (or a
     // Surface) resolves a target again (#21).
     this.#targetResolved = false;
+    managedWebHandoffActive = false;
   }
 }
 

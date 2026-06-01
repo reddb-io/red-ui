@@ -10,8 +10,11 @@ import {
   EMPTY_SERVER_CAPABILITIES,
   InjectedClientProvider,
   LocalUrlProvider,
+  readInjectedGlobalBootstrap,
+  readUrlOpenContractBootstrap,
+  resolveConnectionBootstrap,
 } from "#reddb";
-import type { RedClient, ServerCapabilities } from "#reddb";
+import type { RedClient, RedClientOptions, ServerCapabilities } from "#reddb";
 
 interface FakeOpts {
   /** Extra fields merged into the /stats response (e.g. read_only for #23). */
@@ -252,6 +255,108 @@ describe("Connection Bootstrap", () => {
     expect(route).toBe("/cluster");
     expect(connection.connected).toBe(true);
     expect(connection.active.url).toBe("http://bootstrap:5055");
+  });
+
+  it("consumes an injected-global bootstrap token to authenticate the connection", async () => {
+    const clientFactory = vi.fn((_url: string, _opts?: RedClientOptions) =>
+      fakeClient()
+    );
+    const root: Record<string, unknown> = {
+      __RED_BOOTSTRAP__: {
+        target: "http://managed:5055",
+        token: "mock-handoff-token",
+        route: "/cluster",
+      },
+    };
+    setConnectionProvider(
+      new LocalUrlProvider({
+        clientFactory,
+      })
+    );
+
+    const route = await connection.bootstrap(() =>
+      resolveConnectionBootstrap({
+        readTauri: () => null,
+        readInjectedGlobal: () => readInjectedGlobalBootstrap(root),
+        readUrl: () => null,
+        readPersisted: () => null,
+      })
+    );
+
+    expect(route).toBe("/cluster");
+    expect(connection.connected).toBe(true);
+    expect(clientFactory).toHaveBeenCalledWith("http://managed:5055", {
+      headers: { Authorization: "Bearer mock-handoff-token" },
+    });
+    expect(root).not.toHaveProperty("__RED_BOOTSTRAP__");
+  });
+
+  it("consumes a hash handoff token, strips it from history, and authenticates", async () => {
+    const clientFactory = vi.fn((_url: string, _opts?: RedClientOptions) =>
+      fakeClient()
+    );
+    const replacements: string[] = [];
+    const location = {
+      pathname: "/app",
+      search: "?cs=http://managed-hash:5055&to=/security",
+      hash: "#token=mock-hash-token",
+    };
+    const history = {
+      state: null,
+      replaceState: (
+        _data: unknown,
+        _unused: string,
+        url?: string | URL | null
+      ) => {
+        replacements.push(String(url));
+      },
+    };
+    setConnectionProvider(
+      new LocalUrlProvider({
+        clientFactory,
+      })
+    );
+
+    const route = await connection.bootstrap(() =>
+      resolveConnectionBootstrap({
+        readTauri: () => null,
+        readInjectedGlobal: () => null,
+        readUrl: () =>
+          readUrlOpenContractBootstrap(location.search, location.hash, {
+            consume: true,
+            location,
+            history,
+          }),
+        readPersisted: () => null,
+      })
+    );
+
+    expect(route).toBe("/security");
+    expect(connection.connected).toBe(true);
+    expect(clientFactory).toHaveBeenCalledWith("http://managed-hash:5055", {
+      headers: { Authorization: "Bearer mock-hash-token" },
+    });
+    expect(replacements).toEqual([
+      "/app?cs=http://managed-hash:5055&to=/security",
+    ]);
+  });
+
+  it("falls back to direct server auth when bootstrap has no trusted token", async () => {
+    const clientFactory = vi.fn((_url: string, _opts?: RedClientOptions) =>
+      fakeClient()
+    );
+    setConnectionProvider(
+      new LocalUrlProvider({
+        clientFactory,
+      })
+    );
+
+    await connection.bootstrap(async () => ({
+      target: "http://direct:5055",
+    }));
+
+    expect(connection.connected).toBe(true);
+    expect(clientFactory).toHaveBeenCalledWith("http://direct:5055", undefined);
   });
 
   it("keeps the Connect flow cold when the resolver returns no target", async () => {

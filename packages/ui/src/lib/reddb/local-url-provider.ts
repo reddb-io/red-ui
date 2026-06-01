@@ -3,7 +3,7 @@
 // browser usage backs history with localStorage; tests inject an
 // in-memory store via the options bag.
 
-import { RedClient } from "./client";
+import { RedClient, type RedClientOptions } from "./client";
 import {
   NotConnectedError,
   UnknownConnectionError,
@@ -35,7 +35,7 @@ export interface LocalUrlProviderOptions {
   /** Backing store for the recent-URL history. Defaults to in-memory. */
   history?: HistoryStore;
   /** Hook for tests / Tauri to swap the HTTP client implementation. */
-  clientFactory?: (url: string) => RedClient;
+  clientFactory?: (url: string, opts?: RedClientOptions) => RedClient;
   /** Max history entries retained. */
   historyMax?: number;
   /**
@@ -50,6 +50,10 @@ export interface LocalUrlProviderOptions {
    * auto-connect without the Connect flow. Tokens must never be placed here.
    */
   bootParams?: BootParams;
+}
+
+export interface HandoffTokenConsumer {
+  useHandoffToken(url: string, token: string): void;
 }
 
 const HISTORY_MAX_DEFAULT = 8;
@@ -91,17 +95,23 @@ export function localStorageHistory(key: string): HistoryStore {
 export class LocalUrlProvider implements ConnectionProvider {
   private readonly presets: Connection[];
   private readonly history: HistoryStore;
-  private readonly clientFactory: (url: string) => RedClient;
+  private readonly clientFactory: (
+    url: string,
+    opts?: RedClientOptions
+  ) => RedClient;
   private readonly historyMax: number;
   private readonly supportedTransports: Transport[];
   private readonly boot: BootParams | null;
+  private readonly handoffTokens = new Map<string, string>();
   private active: ActiveConnection | null = null;
 
   constructor(opts: LocalUrlProviderOptions = {}) {
     this.presets = opts.presets?.slice() ?? [];
     this.history = opts.history ?? inMemoryStore();
     this.historyMax = opts.historyMax ?? HISTORY_MAX_DEFAULT;
-    this.clientFactory = opts.clientFactory ?? ((url) => new RedClient(url));
+    this.clientFactory =
+      opts.clientFactory ??
+      ((url, clientOpts) => new RedClient(url, clientOpts));
     this.supportedTransports = opts.transports?.slice() ?? [
       ...BROWSER_TRANSPORTS,
     ];
@@ -118,6 +128,12 @@ export class LocalUrlProvider implements ConnectionProvider {
 
   bootParams(): BootParams | null {
     return this.boot ? { ...this.boot } : null;
+  }
+
+  useHandoffToken(url: string, token: string): void {
+    const clean = token.trim();
+    if (!clean) return;
+    this.handoffTokens.set(this.handoffKey(url), clean);
   }
 
   async list(): Promise<Connection[]> {
@@ -146,7 +162,11 @@ export class LocalUrlProvider implements ConnectionProvider {
     const target = this.resolve(id);
     if (!target) throw new UnknownConnectionError(id);
 
-    const client = this.clientFactory(target.url);
+    const token = this.consumeHandoffToken(target.url);
+    const client = this.clientFactory(
+      target.url,
+      token ? { headers: { Authorization: `Bearer ${token}` } } : undefined
+    );
     const ping = await client.ping();
     if (!ping.ok) throw new UnreachableConnectionError(target.id, ping.error);
 
@@ -201,6 +221,17 @@ export class LocalUrlProvider implements ConnectionProvider {
     }
 
     return null;
+  }
+
+  private handoffKey(url: string): string {
+    return url.replace(/\/$/, "");
+  }
+
+  private consumeHandoffToken(url: string): string | null {
+    const key = this.handoffKey(url);
+    const token = this.handoffTokens.get(key) ?? null;
+    this.handoffTokens.delete(key);
+    return token;
   }
 
   private record(c: Connection, rtt_ms: number): void {
