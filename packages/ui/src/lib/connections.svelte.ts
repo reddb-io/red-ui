@@ -345,9 +345,23 @@ class ConnectionStore {
    */
   #capabilities = $state<ServerCapabilities>({ ...EMPTY_SERVER_CAPABILITIES })
 
+  /**
+   * Whether a real connection target has been resolved (#21, acceptance #4):
+   * true when one came from the URL/boot params, a stored pin, or an explicit
+   * connect — false when `active` is only the default-preset fallback. Gates
+   * automatic network so nothing probes before the user (or a Surface) has
+   * actually chosen a target.
+   */
+  #targetResolved = $state<boolean>(!!(loadLocationConnection() ?? loadStored()))
+
   constructor() {
     this.history = historyStore.uiEntries()
     historyStore.setOnChange(() => { this.history = historyStore.uiEntries() })
+  }
+
+  /** See {@link ConnectionStore.#targetResolved}. */
+  get targetResolved(): boolean {
+    return this.#targetResolved
   }
 
   get client(): RedClient | null {
@@ -419,6 +433,9 @@ class ConnectionStore {
   }
 
   async tryConnect(preset: ConnectionPreset): Promise<boolean> {
+    // An explicit connect attempt means a target has been chosen — unblocks
+    // automatic refresh from here on (#21).
+    this.#targetResolved = true
     try {
       const active = await activity.track(
         `connect · ${preset.label}`,
@@ -507,6 +524,9 @@ class ConnectionStore {
     this.probe = { reachable: false }
     this.#client = null
     this.#capabilities = { ...EMPTY_SERVER_CAPABILITIES }
+    // Back to "no active target" — auto-network stays off until the user (or a
+    // Surface) resolves a target again (#21).
+    this.#targetResolved = false
   }
 }
 

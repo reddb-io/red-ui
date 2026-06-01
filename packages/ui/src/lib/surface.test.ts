@@ -1,0 +1,36 @@
+import { describe, expect, it } from 'vitest'
+import { bootGateLocked, surfaceFrom } from './surface'
+
+describe('surfaceFrom', () => {
+  it('Tauri is the standalone Surface', () => {
+    expect(surfaceFrom({ tauri: true, inFrame: false, mcp: false })).toBe('standalone')
+    // Tauri wins even when also framed/mcp.
+    expect(surfaceFrom({ tauri: true, inFrame: true, mcp: true })).toBe('standalone')
+  })
+
+  it('a framed or MCP context is the embedded Surface', () => {
+    expect(surfaceFrom({ tauri: false, inFrame: true, mcp: false })).toBe('embedded')
+    expect(surfaceFrom({ tauri: false, inFrame: false, mcp: true })).toBe('embedded')
+  })
+
+  it('a top-level browser page is the web Surface', () => {
+    expect(surfaceFrom({ tauri: false, inFrame: false, mcp: false })).toBe('web')
+  })
+})
+
+describe('bootGateLocked', () => {
+  it('a credential-less embedded Surface is never locked', () => {
+    expect(bootGateLocked('embedded', false)).toBe(false)
+    expect(bootGateLocked('embedded', true)).toBe(false)
+  })
+
+  it('the standalone Surface keeps its vault gate (keychain unlocks it)', () => {
+    expect(bootGateLocked('standalone', false)).toBe(true)
+    expect(bootGateLocked('standalone', true)).toBe(true)
+  })
+
+  it('web gates only when there is a secret to decrypt', () => {
+    expect(bootGateLocked('web', false)).toBe(false) // nothing to protect → boot to data
+    expect(bootGateLocked('web', true)).toBe(true) // saved credentials → unlock first
+  })
+})

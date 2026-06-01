@@ -104,12 +104,14 @@
   // start from the persisted value rather than the in-memory default.
   theme.init()
 
-  // Hard lock gate: while the secure store is locked, no automatic
-  // network traffic should fire. The user hasn't yet authenticated this
-  // session, so probing the configured URL would leak its existence and
-  // shape to anyone watching the network panel.
+  // Hard lock gate: while the secure store is locked, no automatic network
+  // traffic should fire — probing the configured URL would leak its existence
+  // and shape. Additionally (#21, acceptance #4) no traffic fires until a real
+  // target is resolved (URL/boot params, a stored pin, or an explicit connect),
+  // so a credential-less Surface that boots straight to data never probes a
+  // default it was never pointed at.
   $effect(() => {
-    if (secureStore.locked) return
+    if (secureStore.locked || !connection.targetResolved) return
     connection.refresh()
     const id = setInterval(() => connection.refresh(), REFRESH_MS)
     return () => clearInterval(id)

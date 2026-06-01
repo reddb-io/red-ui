@@ -13,6 +13,7 @@ import {
   SecureStoreError,
   type EncryptedStore,
 } from '#reddb'
+import { bootGateLocked, detectSurface, type Surface } from './surface'
 
 const NAMESPACE = 'red-ui:secure'
 const PROBE_KEY = '__probe__'
@@ -27,11 +28,6 @@ function envelopesExist(): boolean {
   return false
 }
 
-function isTauri(): boolean {
-  if (typeof window === 'undefined') return false
-  return '__TAURI_INTERNALS__' in window || '__TAURI__' in window
-}
-
 class SecureStoreSvc {
   /** The active backend, or null when locked. */
   store = $state<EncryptedStore | null>(null)
@@ -41,6 +37,8 @@ class SecureStoreSvc {
   needsSetup = $state<boolean>(false)
   /** Backend kind, for the UI to skip the password prompt entirely on desktop. */
   backend = $state<'tauri' | 'web' | 'unknown'>('unknown')
+  /** The detected Surface (#21) — drives the Surface-aware boot gate. */
+  surface = $state<Surface>('web')
   /** Last unlock attempt error, surface-able to the dialog. */
   error = $state<string | null>(null)
 
@@ -49,14 +47,20 @@ class SecureStoreSvc {
       this.backend = 'unknown'
       return
     }
-    if (isTauri()) {
+    this.surface = detectSurface()
+    if (this.surface === 'standalone') {
+      // Tauri desktop — defer to the OS keychain, which unlocks the vault.
       this.backend = 'tauri'
       this.bindTauri()
-    } else {
-      this.backend = 'web'
-      this.needsSetup = !envelopesExist()
-      this.locked = true
+      return
     }
+    // embedded or web. A credential-less embedded Surface boots straight to
+    // data; web gates on the master password ONLY when there is a secret to
+    // decrypt (#21) — a fresh web user with nothing saved is not blocked.
+    this.backend = 'web'
+    const hasSecret = envelopesExist()
+    this.needsSetup = !hasSecret
+    this.locked = bootGateLocked(this.surface, hasSecret)
   }
 
   private async bindTauri() {
