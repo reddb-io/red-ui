@@ -40,9 +40,11 @@ export * from './query-tabs.svelte'
 export * from '@reddb-io/ui-kit'
 export {
   CDCStreamClient,
+  EMPTY_SERVER_CAPABILITIES,
   InjectedClientProvider,
   LocalUrlProvider,
   NotConnectedError,
+  capabilitiesFromSignal,
   RedClient,
   SecureStoreError,
   TauriEncryptedStore,
@@ -73,7 +75,9 @@ export type {
   NodeStats,
   QueryResult,
   QueryRow,
+  RawCapabilities,
   ReplicationStatus,
+  ServerCapabilities,
   SseFactory,
   Stats,
   SubscribeOpts,

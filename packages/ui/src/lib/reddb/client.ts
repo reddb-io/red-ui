@@ -1,6 +1,13 @@
 // Real HTTP client for a running reddb instance.
 // Endpoints discovered from reddb/crates/reddb-server/src/server/routing.rs.
 
+import {
+  capabilitiesFromSignal,
+  EMPTY_SERVER_CAPABILITIES,
+  type RawCapabilities,
+  type ServerCapabilities,
+} from './server-capabilities'
+
 export interface QueryRow {
   values: Record<string, unknown>
   edges?: Record<string, unknown>
@@ -211,6 +218,19 @@ function isUnsupportedCollectionMetadataRoute(e: unknown): boolean {
   return message.includes('route not found: GET /collections/')
 }
 
+/**
+ * Generalised "the server doesn't have this route" check (#22). `json()`
+ * throws `<METHOD> <path> → <status> <body>`, so a 404 or a "route not found"
+ * body both signal an unsupported route. Distinct from auth/5xx/network errors
+ * — but capability negotiation treats *any* probe failure as unsupported
+ * (fail safe), so this is only used to tell "route absent" from "signal
+ * present" when reading the stable `/capabilities` endpoint.
+ */
+function isUnsupportedRoute(e: unknown): boolean {
+  const message = e instanceof Error ? e.message : String(e)
+  return / → 404\b/.test(message) || message.includes('route not found')
+}
+
 function unsupportedCollectionMetadataError(baseUrl: string): Error {
   return new Error(`GET /collections/:name unsupported by this reddb server (${baseUrl})`)
 }
@@ -250,6 +270,40 @@ export class RedClient {
       return { ok: true, rtt_ms: Math.round(performance.now() - start) }
     } catch (e) {
       return { ok: false, error: (e as Error).message }
+    }
+  }
+
+  /**
+   * Resolve the server's capability map (#22). Prefers the stable
+   * `/capabilities` signal; when that route is absent (older server), infers
+   * from lightweight, side-effect-free GET probes. Any non-404 failure
+   * (network, auth, 5xx) fails safe to the empty map, so the UI hides controls
+   * rather than showing ones the server can't honour.
+   */
+  async capabilities(): Promise<ServerCapabilities> {
+    try {
+      const raw = await this.json<RawCapabilities>('/capabilities')
+      return capabilitiesFromSignal(raw)
+    } catch (e) {
+      // Only an absent route falls through to inference; anything else (a
+      // flaky network, an auth wall, a 5xx) hides everything.
+      if (!isUnsupportedRoute(e)) return { ...EMPTY_SERVER_CAPABILITIES }
+    }
+    const [vcs, clusterStatus] = await Promise.all([
+      this.probeGet('/repo/commits?limit=1'),
+      this.probeGet('/cluster/status'),
+    ])
+    return { ...EMPTY_SERVER_CAPABILITIES, vcs, clusterStatus }
+  }
+
+  /** True iff a GET to `path` succeeds; any failure (404/auth/5xx/network) is
+   *  treated as unsupported — the fail-safe-to-hide rule of #22. */
+  private async probeGet(path: string): Promise<boolean> {
+    try {
+      await this.json(path)
+      return true
+    } catch {
+      return false
     }
   }
 
