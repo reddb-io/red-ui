@@ -15,7 +15,8 @@
   import CollectionsView from './CollectionsView.svelte'
   import ClusterView from './ClusterView.svelte'
   import SecurityView from './SecurityView.svelte'
-  import { connection } from './connections.svelte'
+  import { connection, setConnectionProvider } from './connections.svelte'
+  import type { ConnectionProvider } from '#reddb'
   import { theme } from './theme.svelte'
   import { secureStore } from './secureStore.svelte'
   import { pendingChanges, buildUpdateSql, type CommitOutcome } from './pending-changes.svelte'
@@ -25,7 +26,10 @@
   import { defaultSubpage } from './collection-pages'
   import { createStateRouter, setRouter, type Router, type View } from './router.svelte'
 
-  let { router: injectedRouter }: { router?: Router } = $props()
+  let {
+    router: injectedRouter,
+    connectionProvider,
+  }: { router?: Router; connectionProvider?: ConnectionProvider } = $props()
 
   // Provide the router to every descendant view. Standalone (no host router)
   // we mint a state router that keeps navigation entirely in memory. The
@@ -33,6 +37,19 @@
   // here is intentional.
   // svelte-ignore state_referenced_locally
   const router = setRouter(injectedRouter ?? createStateRouter())
+
+  // Host-injected connection (ADR-0001 embed Surface): when the embedder
+  // hands in a provider (e.g. an InjectedClientProvider wrapping its own
+  // authenticated client), wire it as the Core's connection seam and connect
+  // immediately, so the Core renders connected without the Connect flow. The
+  // provider is fixed for the lifetime of the mount.
+  // svelte-ignore state_referenced_locally
+  if (connectionProvider) {
+    setConnectionProvider(connectionProvider)
+  }
+  onMount(() => {
+    if (connectionProvider) void connection.adoptInjected()
+  })
 
   let booted = $state(false)
   let pendingOpen = $state(false)
