@@ -161,7 +161,7 @@
   <title>Load graph · red-ui</title>
 </svelte:head>
 
-<div class="flex flex-col h-full w-full">
+<div class="flex h-screen w-full flex-col">
   {#if loaded}
     <div
       class="flex items-center justify-between gap-4 px-3 py-2 border-b border-line-1 bg-bg-1 shrink-0"
