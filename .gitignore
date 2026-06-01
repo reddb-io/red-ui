@@ -22,6 +22,12 @@ apps/desktop/src-tauri/WixTools/
 .red/state/
 .red/memory/
 
+# Stray .red/ runtime dirs that AFK workers create inside package/source trees.
+# The tracked root .red/ (CONTEXT.md, adr/, agents/, config.yaml) is re-included
+# below so future ADRs etc. stay visible.
+**/.red/
+!/.red/
+
 # Per-machine Claude Code overrides — e.g. the absolute statusline path
 # needed because ${CLAUDE_PLUGIN_ROOT} doesn't resolve at project scope.
 .claude/settings.local.json
