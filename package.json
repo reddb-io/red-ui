@@ -14,14 +14,18 @@
     "test": "pnpm -r test",
     "changeset": "changeset",
     "release:version": "changeset version",
-    "release:publish": "changeset publish"
+    "release:publish": "changeset publish",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.0",
     "@huggingface/transformers": "^4.2.0",
     "@types/js-yaml": "^4.0.9",
+    "husky": "^9.1.7",
     "js-yaml": "^4.1.1",
+    "lint-staged": "^17.0.7",
+    "prettier": "^3.8.3",
     "tsx": "^4.22.3",
     "typescript": "^5.7.2"
   },
