@@ -4,7 +4,7 @@ The Embeddable Lib mounts the Core inside a Shadow DOM (Web Component wrapper) w
 
 ## Status
 
-accepted — pending a validation spike (see Consequences).
+accepted — validation spike passed on 2026-06-01.
 
 ## Considered Options
 
@@ -14,5 +14,9 @@ accepted — pending a validation spike (see Consequences).
 
 ## Consequences
 
-- **Spike required before committing the build:** Svelte 5 + Tailwind v4 + `bits-ui` inside a shadow root has known caveats — portalled popovers/dialogs, focus management, and element measurement. Validate these work (or are configurable to render within the shadow root) before locking the approach.
+- **Spike result:** go with Shadow DOM for the Embeddable Lib. The harness at `/shadow-dom-spike` mounts the `Workspace` Mountable Root plus a `bits-ui` popover/dialog into an open shadow root and runs browser-side checks for portals, focus, and measurement.
+- **Portals:** working with configuration. `bits-ui` portals default to `document.body`; the Embeddable Lib must create an `HTMLElement` portal target inside the shadow root and provide it through `BitsConfig.defaultPortalTo` or per-portal `to`. `bits-ui` accepts `Element` targets, not `ShadowRoot` directly.
+- **Focus:** working. Dialog focus remains inside the shadow root when dialog content is portalled to the internal portal target. Code and tests should inspect `shadowRoot.activeElement` for inner focus; browsers expose the shadow host as `document.activeElement`.
+- **Measurement:** working. Floating UI/bits-ui popover measurement produced non-zero trigger/content rects inside the shadow root. Keep popover/dialog triggers and the internal portal target rendered as real layout elements; pass explicit collision boundaries later if the Embeddable Lib uses a clipped/scrolling container.
+- **Styles:** working with a shadow-specific style injection step. The Embeddable Lib must inject the compiled Tailwind/app stylesheet into the shadow root and mirror theme tokens onto `:host`, because document-level selectors such as `html`, `body`, and `:root[data-theme='dark']` do not model an embedded shadow host.
 - The Desktop App and PWA Surfaces own the whole document and do **not** need Shadow DOM; this isolation is specific to the Embeddable Lib Surface.
