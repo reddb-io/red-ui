@@ -1,7 +1,7 @@
 {
   "statusLine": {
     "type": "command",
-    "command": "bash ${CLAUDE_PLUGIN_ROOT}/skills/engineering/afk/scripts/statusline.sh",
+    "command": "sh -c 'b=$(ls -t \"$HOME\"/.claude/plugins/cache/red-skills/dev/*/skills/engineering/afk/bin/afk.mjs 2>/dev/null | head -1); [ -n \"$b\" ] && exec node \"$b\" statusline'",
     "refreshInterval": 5
   }
 }
