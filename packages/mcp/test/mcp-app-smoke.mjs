@@ -1,4 +1,5 @@
-import { chmodSync } from "node:fs";
+import { chmodSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -12,6 +13,14 @@ const packageDir = dirname(here);
 const fakeRed = join(here, "fake-red.mjs");
 chmodSync(fakeRed, 0o755);
 
+// Stand-in embeddable bundle so local mode can serve the UI over http://localhost
+// (#51) without building the full @reddb-io/ui bundle in this test.
+const embedDir = mkdtempSync(join(tmpdir(), "red-ui-embed-smoke-"));
+writeFileSync(
+  join(embedDir, "index.js"),
+  "export const mountRedUi = () => {};\nexport class RedClient {}\nexport class InjectedClientProvider {}\n"
+);
+
 const client = new Client({ name: "red-ui-mcp-app-smoke", version: "0.0.0" });
 const transport = new StdioClientTransport({
   command: process.execPath,
@@ -20,6 +29,7 @@ const transport = new StdioClientTransport({
     ...process.env,
     RED_UI_APP_URL: "https://ui.reddb.io",
     RED_BINARY: fakeRed,
+    RED_UI_EMBED_DIR: embedDir,
   },
 });
 
@@ -41,6 +51,7 @@ async function statsUp(baseUrl) {
 await client.connect(transport);
 
 let localBaseUrl = null;
+let uiBaseUrl = null;
 
 try {
   const tools = await client.listTools();
@@ -137,8 +148,33 @@ try {
     "spawned local server must be healthy before the UI is pointed at it"
   );
   localBaseUrl = localCs;
+
+  // #51, ADR-0006: in local mode the UI must load from http://localhost — not
+  // the hosted HTTPS origin — so the iframe and the local API share an http
+  // scheme (no Firefox/Safari mixed-content block) and work offline.
+  const uiUrl = local.structuredContent?.appUrl;
+  assert(
+    typeof uiUrl === "string" && /^http:\/\/127\.0\.0\.1:\d+$/.test(uiUrl),
+    `local mode must serve the UI from http://localhost, got ${uiUrl}`
+  );
+  assert(
+    uiUrl !== "https://ui.reddb.io",
+    "local mode must not load the UI from the hosted HTTPS origin"
+  );
+  uiBaseUrl = uiUrl;
+
+  const hostPage = await fetch(`${uiUrl}/`);
+  assert(hostPage.ok, "local UI host page must be reachable");
+  const hostHtml = await hostPage.text();
+  assert(
+    hostHtml.includes("./embed/index.js"),
+    "host page must import the embeddable bundle same-origin"
+  );
+  const bundle = await fetch(`${uiUrl}/embed/index.js`);
+  assert(bundle.ok, "embeddable bundle must be served under /embed/");
 } finally {
   await client.close();
+  rmSync(embedDir, { recursive: true, force: true });
 }
 
 // On disconnect the spawned child must be gone — no orphan servers.
@@ -152,6 +188,21 @@ if (localBaseUrl) {
     await new Promise((r) => setTimeout(r, 100));
   }
   assert(down, "spawned local server must be torn down after MCP disconnect");
+}
+
+// The local UI server must also be torn down — no orphan static servers.
+if (uiBaseUrl) {
+  let down = false;
+  for (let i = 0; i < 40; i++) {
+    try {
+      await fetch(`${uiBaseUrl}/`, { signal: AbortSignal.timeout(500) });
+    } catch {
+      down = true;
+      break;
+    }
+    await new Promise((r) => setTimeout(r, 100));
+  }
+  assert(down, "local UI server must be torn down after MCP disconnect");
 }
 
 console.log("red-ui MCP App smoke test passed");

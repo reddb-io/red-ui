@@ -10,10 +10,14 @@ so the MCP process **spawns `red server --http-bind 127.0.0.1:<ephemeral> --path
 ## Status
 
 accepted — local-file path implemented by #48 (`packages/mcp/src/local-server.ts`,
-`target-mode.ts`), merged via PR #54 on 2026-06-02. Remaining PRD #19 slices:
-#49 (server-side data tools), #50 (lock-aware `--read-only`), #51 (same-origin
-embeddable bundle). The "Today `packages/mcp` is a pure display proxy" framing in
-Context below is the historical state at authoring time, kept as the decision's _why_.
+`target-mode.ts`), merged via PR #54 on 2026-06-02; #49 (server-side data tools);
+and #51 (same-origin embeddable bundle, `packages/mcp/src/embed-server.ts`): in
+local mode the MCP serves the Embeddable Lib bundle over `http://127.0.0.1:<port>`
+and points the iframe there, so the UI and the spawned red server share an http
+scheme (no mixed-content block, works offline). Remaining PRD #19 slice: #50
+(lock-aware `--read-only`). The "Today `packages/mcp` is a pure display proxy"
+framing in Context below is the historical state at authoring time, kept as the
+decision's _why_.
 
 ## Context
 
