@@ -107,6 +107,11 @@
         Run a query to see results here.
       </div>
     {:else}
+      {#if qs.result.truncated}
+        <div class="px-3 py-1.5 border-b border-line-1 bg-bg-1 text-[11px] font-mono text-fg-3">
+          Streamed first {qs.result.record_count.toLocaleString()} rows — more remain on the server. Add a <span class="text-fg-2">LIMIT</span> to narrow.
+        </div>
+      {/if}
       {@const renderer = pickRenderer()}
       {#if renderer}
         {@const Renderer = renderer.component}

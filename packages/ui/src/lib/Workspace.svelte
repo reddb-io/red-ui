@@ -16,7 +16,7 @@
   import ClusterView from './ClusterView.svelte'
   import SecurityView from './SecurityView.svelte'
   import { connection, setConnectionProvider } from './connections.svelte'
-  import type { ConnectionProvider } from '#reddb'
+  import { runQueryPreferStream, type ConnectionProvider } from '#reddb'
   import { theme, type Theme } from './theme.svelte'
   import { secureStore } from './secureStore.svelte'
   import { pendingChanges, buildUpdateSql, type CommitOutcome } from './pending-changes.svelte'
@@ -109,7 +109,7 @@
       queryTabs.setExecutor(null)
       return
     }
-    queryTabs.setExecutor((sql) => client.query(sql))
+    queryTabs.setExecutor((sql) => runQueryPreferStream(client, sql))
     pendingChanges.setExecutor(async (changes) =>
       Promise.all(
         changes.map(async (c): Promise<CommitOutcome> => {
