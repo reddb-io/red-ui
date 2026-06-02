@@ -175,7 +175,13 @@ export interface SigmaEdgeAttributes {
    * straight edge is hidden while that mode is on.
    */
   crossCommunity: boolean;
-  type: "line";
+  /**
+   * Bundling curvature consumed by @sigma/edge-curve when bundling is on. 0 for
+   * a straight chord; the reducer flips the edge to the "curved" program only
+   * when bundling is active.
+   */
+  curvature: number;
+  type: "line" | "curved";
 }
 
 export interface BuildSigmaGraphParams {
@@ -186,6 +192,12 @@ export interface BuildSigmaGraphParams {
   orphanIds: Set<string>;
   dark?: boolean;
   edgeColor?: string;
+  /**
+   * Per-edge bundling curvature (sigma scene space), keyed by edge id. When
+   * present and non-zero, the edge carries the value so the curve program can
+   * bow it onto its bundle. Absent / 0 → straight edge.
+   */
+  bundledCurvatures?: Map<string, number>;
 }
 
 /**
@@ -205,6 +217,7 @@ export function buildSigmaGraph(
     orphanIds,
     dark = true,
     edgeColor = "#3a424d",
+    bundledCurvatures,
   } = params;
 
   const graph = new Graph<SigmaNodeAttributes, SigmaEdgeAttributes>({
@@ -250,6 +263,7 @@ export function buildSigmaGraph(
       edgeLabel: edge.label ?? "",
       label: "",
       crossCommunity: sc !== tc,
+      curvature: bundledCurvatures?.get(edge.id) ?? 0,
       type: "line",
     });
   }
@@ -467,6 +481,8 @@ export interface SigmaReducerState {
    * box borders, so the native straight edge is hidden to avoid double lines.
    */
   groupInBox?: boolean;
+  /** Edge bundling on → edges render through the curve program. */
+  bundle: boolean;
 }
 
 export interface SigmaNodeDisplay {
@@ -486,6 +502,10 @@ export interface SigmaEdgeDisplay {
   forceLabel: boolean;
   zIndex: number;
   hidden: boolean;
+  /** Which edge program draws this edge: straight "line" or bundled "curved". */
+  type: "line" | "curved";
+  /** Bow magnitude/sign for the curve program (ignored by the line program). */
+  curvature: number;
 }
 
 const NODE_LABEL_MAX = 36;
@@ -541,9 +561,16 @@ export function reduceSigmaEdge(
   attrs: SigmaEdgeAttributes,
   state: SigmaReducerState
 ): SigmaEdgeDisplay {
-  const { focus, focusId, colors, groupInBox } = state;
+  const { focus, focusId, colors, groupInBox, bundle } = state;
   const hasFocus = focusId !== null;
   const focused = focus.edges.has(id);
+
+  // The sigma edge reducer's return *replaces* the edge data, so type and
+  // curvature must be carried through on every branch or the curve program
+  // can't see them. Bundle off → always the straight line program.
+  const curvature = attrs.curvature;
+  const type: "line" | "curved" =
+    bundle && Math.abs(curvature) > 1e-4 ? "curved" : "line";
 
   // In group-in-a-box mode the overlay owns cross-community edges; hide the
   // native straight line so it doesn't cut through unrelated clusters.
@@ -555,6 +582,8 @@ export function reduceSigmaEdge(
       forceLabel: false,
       zIndex: 0,
       hidden: true,
+      type,
+      curvature,
     };
   }
 
@@ -566,6 +595,8 @@ export function reduceSigmaEdge(
       forceLabel: false,
       zIndex: 0,
       hidden: false,
+      type,
+      curvature,
     };
   }
 
@@ -577,6 +608,8 @@ export function reduceSigmaEdge(
       forceLabel: Boolean(attrs.edgeLabel),
       zIndex: 2,
       hidden: false,
+      type,
+      curvature,
     };
   }
 
@@ -587,5 +620,7 @@ export function reduceSigmaEdge(
     forceLabel: false,
     zIndex: 0,
     hidden: false,
+    type,
+    curvature,
   };
 }
