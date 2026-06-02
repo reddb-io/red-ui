@@ -12,6 +12,12 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod/v4";
 import { classifyTarget } from "./target-mode.js";
+import {
+  type LocalServerHandle,
+  resolveLocalFilePath,
+  spawnLocalServer,
+  stopAllLocalServers,
+} from "./local-server.js";
 
 // Single source of truth for "what version am I": the package.json version
 // (changeset-managed, version-locked with @reddb-io/ui + ui-kit), overridable by
@@ -347,6 +353,36 @@ function createServer(config: ServerConfig): McpServer {
     version: RED_UI_MCP_VERSION,
   });
 
+  // One `red server` per local file (its flock is single-writer — ADR-0006).
+  // Keyed by the resolved absolute path so a repeated open reuses the child.
+  const localServers = new Map<string, Promise<LocalServerHandle>>();
+
+  async function openLocalServer(target: string): Promise<LocalServerHandle> {
+    const key = resolveLocalFilePath(target);
+    const existing = localServers.get(key);
+    if (existing) {
+      try {
+        const handle = await existing;
+        if (
+          handle.child.exitCode === null &&
+          handle.child.signalCode === null
+        ) {
+          return handle;
+        }
+      } catch {
+        // Previous attempt failed; fall through and respawn.
+      }
+    }
+    const pending = spawnLocalServer({ target });
+    localServers.set(key, pending);
+    try {
+      return await pending;
+    } catch (error) {
+      localServers.delete(key);
+      throw error;
+    }
+  }
+
   registerAppResource(
     server,
     "red-ui app",
@@ -416,26 +452,53 @@ function createServer(config: ServerConfig): McpServer {
       const selectedView: RedUiView = view ?? "query";
       const mode = classifyTarget(connectionUrl);
 
-      // Local-file targets (#47, ADR-0006): the browser Surface cannot reach a
-      // filesystem path, so it is routed to the local handler seam rather than
-      // seeded as `?cs=`. Serving a local `.rdb` requires spawning a local
-      // `red server` (issue #48), which is not implemented yet — return a clear
-      // message and seed no connection.
+      // Local-file targets (#48, ADR-0006): the browser Surface cannot reach a
+      // filesystem path, so the MCP process spawns one `red server` that owns
+      // the file, health-checks it via `/stats`, and points the UI at the
+      // ephemeral `http://127.0.0.1:<port>` it exposes. The child is torn down
+      // on MCP exit/disconnect.
       if (mode === "local") {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `red-ui cannot open the local file "${connectionUrl}" yet: local-file mode (a local red server in front of the file, ADR-0006 / #48) is not implemented. Point at an http(s):// or red:// server, or wait for #48.`,
+        const target = connectionUrl ?? "";
+        try {
+          const local = await openLocalServer(target);
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Serving local file ${local.filePath} via a red server at ${local.baseUrl}; opening red-ui ${selectedView} view.`,
+              },
+            ],
+            structuredContent: {
+              appUrl: config.appUrl,
+              connectionUrl: local.baseUrl,
+              view: selectedView,
+              mode,
+              localServer: {
+                filePath: local.filePath,
+                port: local.port,
+                readOnly: local.readOnly,
+              },
             },
-          ],
-          structuredContent: {
-            appUrl: config.appUrl,
-            connectionUrl: "",
-            view: selectedView,
-            mode,
-          },
-        };
+          };
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : String(error);
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Could not open the local file "${target}": ${message}`,
+              },
+            ],
+            isError: true,
+            structuredContent: {
+              appUrl: config.appUrl,
+              connectionUrl: "",
+              view: selectedView,
+              mode,
+            },
+          };
+        }
       }
 
       // Remote target: hand the URL to the browser via the Open Contract; no
@@ -469,6 +532,8 @@ Usage:
 Environment:
   RED_UI_APP_URL             URL of the hosted or running red-ui web app. Default: ${DEFAULT_APP_URL}
   RED_UI_CONNECT_DOMAINS     Comma-separated extra connect-src domains for the embedded app.
+  RED_BINARY                 Path to the reddb \`red\` binary used to serve local .rdb files.
+                             Defaults to the @reddb-io/sdk binary, else \`red\` on PATH.
 
 Example client config:
   {
@@ -496,6 +561,16 @@ async function main() {
 
   const server = createServer(loadConfig());
   const transport = new StdioServerTransport();
+
+  // Tear down any spawned local `red server` children when the MCP client
+  // disconnects (stdin closes) — no orphan servers (ADR-0006). The process
+  // exit hooks in local-server.ts are the synchronous backstop.
+  const previousOnClose = transport.onclose?.bind(transport);
+  transport.onclose = () => {
+    previousOnClose?.();
+    void stopAllLocalServers();
+  };
+
   await server.connect(transport);
 }
 
