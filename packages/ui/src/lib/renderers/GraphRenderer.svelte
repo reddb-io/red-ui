@@ -5,18 +5,22 @@
   import {
     buildSigmaGraph,
     colorForType,
+    computeCommunityBoxes,
     nodeVisualRadius,
     reduceSigmaEdge,
     reduceSigmaNode,
+    routeInterCommunityEdges,
     FOCUS_EDGE_COLOR,
     FOCUS_NODE_STROKE_COLOR,
+    type CommunityBox,
+    type RoutedEdge,
     type SigmaReducerState,
     type SigmaThemeColors,
   } from './graph-sigma'
   import { collectionPageHref } from '$lib/collection-pages'
   import { connection } from '$lib/connections.svelte'
   import { activity } from '$lib/activity.svelte'
-  import { Network, Table2, Search, X, Info, Maximize2, Play, Code2, RotateCw, Loader2, Route, AlertTriangle, ZoomIn, ZoomOut } from 'lucide-svelte'
+  import { Network, Table2, Search, X, Info, Maximize2, Play, Code2, RotateCw, Loader2, Route, AlertTriangle, ZoomIn, ZoomOut, Group } from 'lucide-svelte'
 
   interface Props {
     result: QueryResult
@@ -64,6 +68,9 @@
   let canvasError = $state<string | null>(null)
   let renderBudget = $state(350)
   let svgZoom = $state(1)
+  // Group-in-a-box: one tinted box per community, inter-community edges routed
+  // at the box borders. Off-state is the plain #59 sigma/SVG render.
+  let groupInBox = $state(false)
 
   const selectedNodeDetail = $derived(
     selectedNode
@@ -235,6 +242,63 @@
   let pulseRaf = 0
   let graphThemeVersion = $state(0)
 
+  // Canvas group-in-a-box overlay: boxes/edges projected into viewport pixels.
+  // sigma draws node/edge geometry in WebGL; the overlay is a plain SVG synced
+  // to the camera (graphToViewport) so the boxes pan/zoom with the graph.
+  interface ViewportBox extends CommunityBox {
+    vx: number
+    vy: number
+    vw: number
+    vh: number
+  }
+  interface ViewportEdge {
+    id: string
+    vx1: number
+    vy1: number
+    vx2: number
+    vy2: number
+  }
+  let overlayBoxes = $state<ViewportBox[]>([])
+  let overlayEdges = $state<ViewportEdge[]>([])
+
+  // Map a layout-space point into viewport pixels. Sigma stores nodes at y=-y
+  // (see buildSigmaGraph), so the flip is reapplied before projecting.
+  function projectPoint(x: number, y: number): { x: number; y: number } | null {
+    const instance = sigmaInstance
+    if (!instance) return null
+    return instance.graphToViewport({ x, y: -y })
+  }
+
+  function syncOverlay() {
+    if (!groupInBox || !sigmaInstance || viewMode !== 'canvas') {
+      if (overlayBoxes.length) overlayBoxes = []
+      if (overlayEdges.length) overlayEdges = []
+      return
+    }
+    const boxes: ViewportBox[] = []
+    for (const box of communityBoxes) {
+      const p1 = projectPoint(box.minX, box.minY)
+      const p2 = projectPoint(box.maxX, box.maxY)
+      if (!p1 || !p2) continue
+      boxes.push({
+        ...box,
+        vx: Math.min(p1.x, p2.x),
+        vy: Math.min(p1.y, p2.y),
+        vw: Math.abs(p2.x - p1.x),
+        vh: Math.abs(p2.y - p1.y),
+      })
+    }
+    const edges: ViewportEdge[] = []
+    for (const edge of routedEdges) {
+      const a = projectPoint(edge.x1, edge.y1)
+      const b = projectPoint(edge.x2, edge.y2)
+      if (!a || !b) continue
+      edges.push({ id: edge.id, vx1: a.x, vy1: a.y, vx2: b.x, vy2: b.y })
+    }
+    overlayBoxes = boxes
+    overlayEdges = edges
+  }
+
   function prefersReducedMotion(): boolean {
     return (
       typeof window !== 'undefined' &&
@@ -384,6 +448,26 @@
   // See packages/ui/src/lib/renderers/graph-render.ts → runGraphLayout.
   const layout = $derived(runGraphLayout(drawNodes, drawEdges))
 
+  // Dark/light is theme-aware; re-read on the data-theme mutation observer tick.
+  const isDark = $derived.by(() => {
+    void graphThemeVersion
+    return typeof document === 'undefined'
+      ? true
+      : document.documentElement.dataset.theme !== 'light'
+  })
+
+  // Group-in-a-box geometry in layout ([0,100]) space. Shared by the SVG
+  // fallback (drawn directly) and the canvas overlay (mapped through sigma's
+  // graph→viewport transform). Empty unless the toggle is on.
+  const communityBoxes = $derived<CommunityBox[]>(
+    groupInBox ? computeCommunityBoxes(drawNodes, layout, { dark: isDark }) : [],
+  )
+  const routedEdges = $derived<RoutedEdge[]>(
+    groupInBox ? routeInterCommunityEdges(drawEdges, layout, communityBoxes) : [],
+  )
+  // Edge ids the box overlay re-routes — skipped by the straight SVG renderer.
+  const routedEdgeIds = $derived(new Set(routedEdges.map((e) => e.id)))
+
   const fallbackSvgNodes = $derived.by<FallbackSvgNode[]>(() => {
     return drawNodes.map((node) => {
       const type = String(node.data.node_type ?? 'node')
@@ -502,6 +586,7 @@
       selectedNodeId: selectedNode?.id ?? null,
       pulse: pulseProgress,
       colors: sigmaThemeColors(),
+      groupInBox,
     }
   }
 
@@ -550,6 +635,9 @@
     camera.on('updated', () => {
       cameraRatio = camera.ratio
     })
+    // Every repaint (pan, zoom, resize, refresh) reprojects the group-in-a-box
+    // overlay so its boxes/edges track the camera. No-op when the mode is off.
+    instance.on('afterRender', () => syncOverlay())
   }
 
   // Create / tear down the sigma (WebGL) instance with the canvas view.
@@ -635,6 +723,19 @@
     const instance = sigmaInstance
     if (!instance || viewMode !== 'canvas') return
     instance.refresh({ skipIndexation: true })
+  })
+
+  // Group-in-a-box: toggling re-runs the edge reducer (cross-community edges
+  // hide), and any geometry/theme change re-projects the overlay onto the
+  // current camera. `afterRender` keeps it tracking subsequent repaints.
+  $effect(() => {
+    void groupInBox
+    void communityBoxes
+    void routedEdges
+    const instance = sigmaInstance
+    if (!instance || viewMode !== 'canvas') return
+    instance.refresh({ skipIndexation: true })
+    syncOverlay()
   })
 
   function onSvgNodePointerEnter(node: GraphNode) {
@@ -782,6 +883,22 @@
             <ZoomIn class="size-3.5" />
           </button>
         </div>
+      {/if}
+
+      {#if viewMode !== 'table'}
+        <button
+          type="button"
+          class={[
+            'inline-flex items-center gap-1 h-6 px-2 rounded border cursor-pointer transition-colors',
+            groupInBox ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+          ].join(' ')}
+          onclick={() => (groupInBox = !groupInBox)}
+          aria-pressed={groupInBox}
+          title="Group in a box — draw one tinted box per community and route inter-community edges at the borders"
+        >
+          <Group class="size-3" />
+          groups
+        </button>
       {/if}
 
       <button
@@ -944,6 +1061,36 @@
           aria-label={`${drawNodes.length} graph nodes and ${drawEdges.length} graph edges`}
           onkeydown={(event) => { if (event.key === 'Escape') { clearGraphFocus(); clearSelection() } }}
         ></div>
+        {#if groupInBox && (overlayBoxes.length > 0 || overlayEdges.length > 0)}
+          <!-- Group-in-a-box overlay, projected into viewport pixels and synced
+               to the camera. pointer-events stay off so sigma keeps the input. -->
+          <svg class="pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true">
+            {#each overlayBoxes as box (box.community)}
+              <rect
+                x={box.vx}
+                y={box.vy}
+                width={box.vw}
+                height={box.vh}
+                rx="6"
+                fill={box.fill}
+                stroke={box.stroke}
+                stroke-width="1.5"
+              />
+            {/each}
+            {#each overlayEdges as e (e.id)}
+              <line
+                x1={e.vx1}
+                y1={e.vy1}
+                x2={e.vx2}
+                y2={e.vy2}
+                stroke="var(--color-line-3)"
+                stroke-width="1"
+                stroke-dasharray="4 3"
+                opacity="0.7"
+              />
+            {/each}
+          </svg>
+        {/if}
       {:else if viewMode === 'svg'}
         <div class="absolute inset-0 overflow-hidden bg-bg-0">
           <svg
@@ -959,8 +1106,42 @@
           >
             <rect x="0" y="0" width="100" height="100" fill="transparent" />
             <g transform={graphTransform}>
+              {#if groupInBox}
+                <!-- Community boxes behind everything; routed inter-community
+                     edges connect box borders rather than node centres. -->
+                <g class="pointer-events-none">
+                  {#each communityBoxes as box (box.community)}
+                    <rect
+                      x={box.minX}
+                      y={box.minY}
+                      width={box.maxX - box.minX}
+                      height={box.maxY - box.minY}
+                      rx="1.5"
+                      fill={box.fill}
+                      stroke={box.stroke}
+                      stroke-width="0.18"
+                      vector-effect="non-scaling-stroke"
+                    />
+                  {/each}
+                  {#each routedEdges as e (e.id)}
+                    <line
+                      x1={e.x1}
+                      y1={e.y1}
+                      x2={e.x2}
+                      y2={e.y2}
+                      stroke="currentColor"
+                      stroke-width="0.12"
+                      stroke-dasharray="0.8 0.6"
+                      opacity="0.6"
+                      class="text-line-3"
+                      vector-effect="non-scaling-stroke"
+                    />
+                  {/each}
+                </g>
+              {/if}
               <g>
                 {#each fallbackSvgEdges as e (e.id)}
+                  {#if !(groupInBox && routedEdgeIds.has(e.id))}
                   {@const focusedEdge = focusEdgeIds.has(e.id)}
                   <line
                     x1={e.x1}
@@ -996,6 +1177,7 @@
                     >
                       {e.label?.slice(0, 28)}
                     </text>
+                  {/if}
                   {/if}
                 {/each}
               </g>
