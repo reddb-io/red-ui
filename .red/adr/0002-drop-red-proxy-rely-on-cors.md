@@ -2,9 +2,14 @@
 
 The Core talks to reddb directly from the browser, relying on the server's CORS headers (shipped in reddb **1.9.1**: `Access-Control-Allow-Origin: *`, `OPTIONS → 204` before auth, no `Allow-Credentials` since auth is `Authorization`/API-key, never cookie). We remove the `/_red` proxy entirely — both `shouldProxy()`'s browser default in `packages/ui/src/lib/reddb/client.ts` and the `redProxy()` middleware in `packages/ui/vite.config.ts`.
 
+## Status
+
+accepted — implemented by #30 (`shouldProxy`/`redProxy` removed; `docker/compose.yml`
+bumped to reddb ≥1.9.1).
+
 ## Context
 
-The `/_red` proxy existed only because pre-1.9.1 reddb sent no CORS, so cross-origin browser fetches were blocked. It was a **Vite dev-server middleware** — it never existed in the `adapter-static` production build, so prod browser connections to non-CORS servers were always broken. Keeping it bought nothing in prod and created a dev-vs-prod divergence that *masked* the real dependency (server ≥1.9.1).
+The `/_red` proxy existed only because pre-1.9.1 reddb sent no CORS, so cross-origin browser fetches were blocked. It was a **Vite dev-server middleware** — it never existed in the `adapter-static` production build, so prod browser connections to non-CORS servers were always broken. Keeping it bought nothing in prod and created a dev-vs-prod divergence that _masked_ the real dependency (server ≥1.9.1).
 
 ## Consequences
 

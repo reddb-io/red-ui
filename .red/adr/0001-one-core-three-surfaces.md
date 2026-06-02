@@ -2,6 +2,11 @@
 
 red-ui is a single **Core** (`@reddb-io/ui`) delivered through three **Surfaces** — Embeddable Lib, MCP App, Desktop App — that are the same product at different moments, not separate apps. We chose this over three independent frontends so behaviour and renderers stay identical everywhere; the only per-Surface differences live in an injectable **Shell**.
 
+## Status
+
+accepted — foundational architecture decision; the ConnectionProvider/Shell seam it
+defines is referenced by ADR-0003, ADR-0005, and ADR-0006.
+
 ## Considered Options
 
 - **Core = router-agnostic mountable root only** — clean for embed/MCP, but forces the PWA/Tauri to rebuild app-level routing.

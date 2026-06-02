@@ -2,6 +2,12 @@
 
 The Core stays transport-agnostic (it asks a `ConnectionProvider` for a client), but the **set of transports actually reachable** is bounded by each Surface's runtime, because the browser sandbox exposes no filesystem or raw socket. So "connect to anything, including an embedded file" is true per-Surface, not universally.
 
+## Status
+
+accepted — transport reference matrix verified against `../reddb` docs + source on
+2026-06-01; `BROWSER_TRANSPORTS`/`DESKTOP_TRANSPORTS` reflect this in
+`packages/ui/src/lib/reddb/transports.ts`.
+
 ## Decision
 
 - **Desktop App** (Tauri): full transport set including **Embedded connection** (`file://`/`memory://`) and `red://`, served by the Rust side / embedded engine.
