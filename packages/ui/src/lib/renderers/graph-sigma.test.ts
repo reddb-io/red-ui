@@ -12,6 +12,8 @@ import {
   routeInterCommunityEdges,
   sigmaColorForCommunity,
   sigmaNodeSize,
+  supernodeSigmaSize,
+  SUPERNODE_STROKE_COLOR,
   withAlpha,
   type SigmaReducerState,
   type SigmaThemeColors,
@@ -162,6 +164,44 @@ describe("buildSigmaGraph", () => {
     const g = buildSigmaGraph({ ...params, layout: new Map() });
     expect(g.getNodeAttributes("a").color).toBe("#ff2056");
   });
+
+  it("sizes a supernode from its member count and flags it", () => {
+    const superNode: GraphNode = {
+      id: "__cluster__:0",
+      label: "cluster 0 · 9",
+      data: { node_type: "cluster", __supernode: true, __memberCount: 9 },
+    };
+    const g = buildSigmaGraph({
+      ...params,
+      nodes: [...nodes, superNode],
+      layout: layoutFor(["a", "b", "c", "__cluster__:0"]),
+    });
+    const attrs = g.getNodeAttributes("__cluster__:0");
+    expect(attrs.isSupernode).toBe(true);
+    expect(attrs.memberCount).toBe(9);
+    expect(attrs.borderColor).toBe(SUPERNODE_STROKE_COLOR);
+    // A 9-member supernode is larger than an ordinary unit-scaled node.
+    expect(attrs.baseSize).toBeGreaterThan(g.getNodeAttributes("b").baseSize);
+    expect(attrs.baseSize).toBe(supernodeSigmaSize(9));
+  });
+
+  it("thickens an aggregated edge with its weight", () => {
+    const g = buildSigmaGraph({
+      ...params,
+      edges: [
+        ...edges,
+        {
+          id: "__agg__:x y",
+          source: "a",
+          target: "c",
+          data: { __aggregated: true, weight: 8 },
+        },
+      ],
+    });
+    expect(g.getEdgeAttributes("__agg__:x y").size).toBeGreaterThan(
+      g.getEdgeAttributes("a->b:KNOWS").size
+    );
+  });
 });
 
 describe("computeGraphFocus", () => {
@@ -218,6 +258,8 @@ describe("reduceSigmaNode", () => {
     nodeType: "character",
     community: 1,
     orphan: false,
+    isSupernode: false,
+    memberCount: 0,
     type: "border" as const,
   };
 
@@ -268,6 +310,16 @@ describe("reduceSigmaNode", () => {
       baseState()
     );
     expect(orphan.borderColor).toBe(THEME.warn);
+  });
+
+  it("always labels a supernode, even with nothing focused", () => {
+    const out = reduceSigmaNode(
+      "__cluster__:0",
+      { ...attrs, isSupernode: true, memberCount: 9, label: "cluster 0 · 9" },
+      baseState()
+    );
+    expect(out.forceLabel).toBe(true);
+    expect(out.label).toBe("cluster 0 · 9");
   });
 
   it("hides neighbour labels once the neighbourhood grows past the limit", () => {
