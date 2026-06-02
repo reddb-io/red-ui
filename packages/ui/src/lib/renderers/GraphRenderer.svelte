@@ -13,10 +13,17 @@
     type SigmaReducerState,
     type SigmaThemeColors,
   } from './graph-sigma'
+  import {
+    bundleEdges,
+    edgeCurvature,
+    BUNDLE_EDGE_LIMIT,
+    type BundleOptions,
+    type BundlePoint,
+  } from './graph-bundle'
   import { collectionPageHref } from '$lib/collection-pages'
   import { connection } from '$lib/connections.svelte'
   import { activity } from '$lib/activity.svelte'
-  import { Network, Table2, Search, X, Info, Maximize2, Play, Code2, RotateCw, Loader2, Route, AlertTriangle, ZoomIn, ZoomOut } from 'lucide-svelte'
+  import { Network, Table2, Search, X, Info, Maximize2, Play, Code2, RotateCw, Loader2, Route, AlertTriangle, ZoomIn, ZoomOut, Spline } from 'lucide-svelte'
 
   interface Props {
     result: QueryResult
@@ -37,6 +44,11 @@
     y1: number
     x2: number
     y2: number
+    /** Bundled polyline points (`"x,y x,y …"`) when edge bundling is on. */
+    points?: string
+    /** Label anchor — midpoint of the chord, or of the bundled polyline. */
+    mx: number
+    my: number
   }
 
   let { result, collection, subpage }: Props = $props()
@@ -64,6 +76,8 @@
   let canvasError = $state<string | null>(null)
   let renderBudget = $state(350)
   let svgZoom = $state(1)
+  // Force-directed edge bundling — off by default (precomputed, not per-frame).
+  let bundleEnabled = $state(false)
 
   const selectedNodeDetail = $derived(
     selectedNode
@@ -229,7 +243,7 @@
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let sigmaInstance: any = null
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let sigmaModules: { Sigma: any; NodeBorderProgram: any } | null = null
+  let sigmaModules: { Sigma: any; NodeBorderProgram: any; EdgeCurveProgram: any } | null = null
   let cameraRatio = $state(1)
   let pulseProgress = $state(0)
   let pulseRaf = 0
@@ -384,6 +398,44 @@
   // See packages/ui/src/lib/renderers/graph-render.ts → runGraphLayout.
   const layout = $derived(runGraphLayout(drawNodes, drawEdges))
 
+  // ─── force-directed edge bundling (precomputed) ──────────────────────────
+  // FDEB is O(E²) in the compatibility pass, so it runs only when toggled on,
+  // off the per-frame path (memoised by $derived — recomputed when the draw
+  // set or layout changes, never on a camera move or focus change), and only
+  // up to the #59 node ceiling's matching edge cap.
+  const bundleTooLarge = $derived(bundleEnabled && drawEdges.length > BUNDLE_EDGE_LIMIT)
+
+  // Scale the iteration budget down as the edge count grows so the one-time
+  // precompute stays responsive even near the cap.
+  function bundleOptionsForSize(edgeCount: number): Partial<BundleOptions> {
+    if (edgeCount > 800) return { cycles: 4, iterations: 45 }
+    if (edgeCount > 300) return { cycles: 5, iterations: 55 }
+    return {}
+  }
+
+  const bundledPaths = $derived.by<Map<string, BundlePoint[]> | null>(() => {
+    if (!bundleEnabled || viewMode === 'table') return null
+    if (drawEdges.length === 0 || drawEdges.length > BUNDLE_EDGE_LIMIT) return null
+    const positions = drawNodes.map((n) => {
+      const pos = layout.get(n.id)
+      return { id: n.id, x: pos?.x ?? 50, y: pos?.y ?? 50 }
+    })
+    return bundleEdges(
+      positions,
+      drawEdges.map((e) => ({ id: e.id, source: e.source, target: e.target })),
+      bundleOptionsForSize(drawEdges.length),
+    )
+  })
+
+  // Per-edge sigma curvature. The bundle is computed in layout space; sigma's
+  // scene flips y, so the curvature sign is negated for the WebGL curve program.
+  const bundleCurvatures = $derived.by<Map<string, number> | null>(() => {
+    if (!bundledPaths) return null
+    const out = new Map<string, number>()
+    for (const [id, pts] of bundledPaths) out.set(id, -edgeCurvature(pts))
+    return out
+  })
+
   const fallbackSvgNodes = $derived.by<FallbackSvgNode[]>(() => {
     return drawNodes.map((node) => {
       const type = String(node.data.node_type ?? 'node')
@@ -409,12 +461,25 @@
       const source = fallbackSvgNodeById.get(edge.source)
       const target = fallbackSvgNodeById.get(edge.target)
       if (!source || !target) continue
+      const bundled = bundledPaths?.get(edge.id)
+      let points: string | undefined
+      let mx = (source.x + target.x) / 2
+      let my = (source.y + target.y) / 2
+      if (bundled && bundled.length > 2) {
+        points = bundled.map((p) => `${p.x},${p.y}`).join(' ')
+        const midPoint = bundled[Math.floor(bundled.length / 2)]
+        mx = midPoint.x
+        my = midPoint.y
+      }
       out.push({
         ...edge,
         x1: source.x,
         y1: source.y,
         x2: target.x,
         y2: target.y,
+        points,
+        mx,
+        my,
       })
     }
     return out
@@ -502,6 +567,7 @@
       selectedNodeId: selectedNode?.id ?? null,
       pulse: pulseProgress,
       colors: sigmaThemeColors(),
+      bundle: bundleEnabled && bundleCurvatures !== null,
     }
   }
 
@@ -514,6 +580,7 @@
       orphanIds: orphanNodeIds,
       dark: document.documentElement.dataset.theme !== 'light',
       edgeColor: sigmaThemeColors().edge,
+      bundledCurvatures: bundleCurvatures ?? undefined,
     })
   }
 
@@ -563,18 +630,26 @@
     void (async () => {
       try {
         if (!sigmaModules) {
-          const [sig, nb] = await Promise.all([
+          const [sig, nb, ec] = await Promise.all([
             import('sigma'),
             import('@sigma/node-border'),
+            import('@sigma/edge-curve'),
           ])
-          sigmaModules = { Sigma: sig.default, NodeBorderProgram: nb.NodeBorderProgram }
+          sigmaModules = {
+            Sigma: sig.default,
+            NodeBorderProgram: nb.NodeBorderProgram,
+            EdgeCurveProgram: ec.default,
+          }
         }
         if (killed || !sigmaContainer) return
-        const { Sigma, NodeBorderProgram } = sigmaModules
+        const { Sigma, NodeBorderProgram, EdgeCurveProgram } = sigmaModules
         instance = new Sigma(buildCurrentSigmaGraph(), container, {
           allowInvalidContainer: true,
           defaultNodeType: 'border',
           nodeProgramClasses: { border: NodeBorderProgram },
+          // 'line' is the built-in straight program; 'curved' bows bundled
+          // edges. The edge reducer picks per-edge based on the bundle toggle.
+          edgeProgramClasses: { curved: EdgeCurveProgram },
           defaultEdgeType: 'line',
           renderEdgeLabels: true,
           labelFont: '"JetBrains Mono Variable", monospace',
@@ -616,6 +691,8 @@
     void nodeSizeScales
     void orphanNodeIds
     void graphThemeVersion
+    void bundleCurvatures
+    void bundleEnabled
     const instance = sigmaInstance
     if (!instance || viewMode !== 'canvas') return
     // Label colours are static settings (reducers can't set them), so refresh
@@ -782,6 +859,27 @@
             <ZoomIn class="size-3.5" />
           </button>
         </div>
+      {/if}
+
+      {#if viewMode !== 'table'}
+        <button
+          type="button"
+          class={[
+            'inline-flex items-center gap-1 h-6 px-2 rounded border cursor-pointer transition-colors',
+            bundleEnabled ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+          ].join(' ')}
+          onclick={() => (bundleEnabled = !bundleEnabled)}
+          aria-pressed={bundleEnabled}
+          title="Force-directed edge bundling — collapse parallel edges onto shared trunks to untangle dense subgraphs"
+        >
+          <Spline class="size-3" />
+          bundle
+        </button>
+        {#if bundleTooLarge}
+          <span class="text-warn" title={`Bundling is skipped above ${BUNDLE_EDGE_LIMIT.toLocaleString()} drawn edges — narrow the filter or lower the limit`}>
+            bundling skipped ({drawEdges.length.toLocaleString()} edges)
+          </span>
+        {/if}
       {/if}
 
       <button
@@ -962,28 +1060,48 @@
               <g>
                 {#each fallbackSvgEdges as e (e.id)}
                   {@const focusedEdge = focusEdgeIds.has(e.id)}
-                  <line
-                    x1={e.x1}
-                    y1={e.y1}
-                    x2={e.x2}
-                    y2={e.y2}
-                    stroke={activeFocusNodeId ? (focusedEdge ? focusEdgeColor : 'currentColor') : 'currentColor'}
-                    stroke-width={activeFocusNodeId ? (focusedEdge ? '0.27' : '0.055') : '0.105'}
-                    opacity={activeFocusNodeId ? (focusedEdge ? '0.98' : '0.055') : '0.36'}
-                    class="text-line-3 cursor-pointer hover:text-accent"
-                    vector-effect="non-scaling-stroke"
-                    role="button"
-                    tabindex="0"
-                    aria-label={`${e.label ?? 'edge'} from ${e.source} to ${e.target}`}
-                    onclick={(event) => { event.stopPropagation(); clearGraphFocus(); selectEdge(e) }}
-                    onkeydown={(event) => onSelectableKey(event, () => { clearGraphFocus(); selectEdge(e) })}
-                  >
-                    <title>{e.label ?? 'edge'}: {e.source} -> {e.target}</title>
-                  </line>
+                  {#if e.points}
+                    <polyline
+                      points={e.points}
+                      fill="none"
+                      stroke={activeFocusNodeId ? (focusedEdge ? focusEdgeColor : 'currentColor') : 'currentColor'}
+                      stroke-width={activeFocusNodeId ? (focusedEdge ? '0.27' : '0.055') : '0.105'}
+                      opacity={activeFocusNodeId ? (focusedEdge ? '0.98' : '0.07') : '0.4'}
+                      stroke-linejoin="round"
+                      class="text-line-3 cursor-pointer hover:text-accent"
+                      vector-effect="non-scaling-stroke"
+                      role="button"
+                      tabindex="0"
+                      aria-label={`${e.label ?? 'edge'} from ${e.source} to ${e.target}`}
+                      onclick={(event) => { event.stopPropagation(); clearGraphFocus(); selectEdge(e) }}
+                      onkeydown={(event) => onSelectableKey(event, () => { clearGraphFocus(); selectEdge(e) })}
+                    >
+                      <title>{e.label ?? 'edge'}: {e.source} -> {e.target}</title>
+                    </polyline>
+                  {:else}
+                    <line
+                      x1={e.x1}
+                      y1={e.y1}
+                      x2={e.x2}
+                      y2={e.y2}
+                      stroke={activeFocusNodeId ? (focusedEdge ? focusEdgeColor : 'currentColor') : 'currentColor'}
+                      stroke-width={activeFocusNodeId ? (focusedEdge ? '0.27' : '0.055') : '0.105'}
+                      opacity={activeFocusNodeId ? (focusedEdge ? '0.98' : '0.055') : '0.36'}
+                      class="text-line-3 cursor-pointer hover:text-accent"
+                      vector-effect="non-scaling-stroke"
+                      role="button"
+                      tabindex="0"
+                      aria-label={`${e.label ?? 'edge'} from ${e.source} to ${e.target}`}
+                      onclick={(event) => { event.stopPropagation(); clearGraphFocus(); selectEdge(e) }}
+                      onkeydown={(event) => onSelectableKey(event, () => { clearGraphFocus(); selectEdge(e) })}
+                    >
+                      <title>{e.label ?? 'edge'}: {e.source} -> {e.target}</title>
+                    </line>
+                  {/if}
                   {#if showSvgEdgeLabel(e)}
                     <text
-                      x={(e.x1 + e.x2) / 2 + 0.45}
-                      y={(e.y1 + e.y2) / 2 - 0.45}
+                      x={e.mx + 0.45}
+                      y={e.my - 0.45}
                       fill="#f6d36b"
                       opacity="0.96"
                       font-size="1"

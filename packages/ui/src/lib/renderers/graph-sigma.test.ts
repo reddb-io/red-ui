@@ -54,6 +54,7 @@ const baseState = (
   selectedNodeId: null,
   pulse: 0,
   colors: THEME,
+  bundle: false,
   ...over,
 });
 
@@ -135,6 +136,16 @@ describe("buildSigmaGraph", () => {
     expect(e.edgeLabel).toBe("KNOWS");
     expect(e.label).toBe(""); // not shown until the edge is focused
     expect(e.type).toBe("line");
+    expect(e.curvature).toBe(0); // straight until bundling supplies a curvature
+  });
+
+  it("stamps bundling curvature onto edges when supplied", () => {
+    const g = buildSigmaGraph({
+      ...params,
+      bundledCurvatures: new Map([["a->b:KNOWS", 0.42]]),
+    });
+    expect(g.getEdgeAttributes("a->b:KNOWS").curvature).toBe(0.42);
+    expect(g.getEdgeAttributes("b->c:AT").curvature).toBe(0); // default
   });
 
   it("drops edges whose endpoints were filtered out", () => {
@@ -275,6 +286,7 @@ describe("reduceSigmaEdge", () => {
     color: "rgba(58, 66, 77, 0.34)",
     edgeLabel: "DEPENDS_ON",
     label: "",
+    curvature: 0.3,
     type: "line" as const,
   };
 
@@ -282,6 +294,26 @@ describe("reduceSigmaEdge", () => {
     const out = reduceSigmaEdge("e", attrs, baseState());
     expect(out.label).toBe("");
     expect(out.color).toBe(withAlpha(THEME.edge, 0.34));
+  });
+
+  it("keeps edges straight while bundling is off", () => {
+    const out = reduceSigmaEdge("e", attrs, baseState());
+    expect(out.type).toBe("line");
+  });
+
+  it("switches curved edges to the curve program when bundling is on", () => {
+    const out = reduceSigmaEdge("e", attrs, baseState({ bundle: true }));
+    expect(out.type).toBe("curved");
+    expect(out.curvature).toBe(0.3);
+  });
+
+  it("keeps near-straight edges on the line program even when bundling", () => {
+    const out = reduceSigmaEdge(
+      "e",
+      { ...attrs, curvature: 0 },
+      baseState({ bundle: true })
+    );
+    expect(out.type).toBe("line");
   });
 
   it("lights the focused fan and surfaces its label", () => {

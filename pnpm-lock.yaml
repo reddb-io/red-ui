@@ -96,6 +96,9 @@ importers:
       "@reddb-io/ui-mcp":
         specifier: workspace:*
         version: link:../mcp
+      "@sigma/edge-curve":
+        specifier: ^3.1.0
+        version: 3.1.0(sigma@3.0.3(graphology-types@0.24.8))
       "@sigma/node-border":
         specifier: ^3.0.0
         version: 3.0.0(sigma@3.0.3(graphology-types@0.24.8))
@@ -1669,6 +1672,14 @@ packages:
       }
     cpu: [x64]
     os: [win32]
+
+  "@sigma/edge-curve@3.1.0":
+    resolution:
+      {
+        integrity: sha512-OFWkfAXEsm+X8l1K4K49cC0psB0gQ+gqxKA08HG5piNPdzrDZ5gG9Gza6htZ5AirOVwd/4/uq/gPpD5En+H+3Q==,
+      }
+    peerDependencies:
+      sigma: ">=3.0.0-beta.10"
 
   "@sigma/node-border@3.0.0":
     resolution:
@@ -5270,6 +5281,10 @@ snapshots:
 
   "@rollup/rollup-win32-x64-msvc@4.60.4":
     optional: true
+
+  "@sigma/edge-curve@3.1.0(sigma@3.0.3(graphology-types@0.24.8))":
+    dependencies:
+      sigma: 3.0.3(graphology-types@0.24.8)
 
   "@sigma/node-border@3.0.0(sigma@3.0.3(graphology-types@0.24.8))":
     dependencies:
