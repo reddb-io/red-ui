@@ -96,6 +96,9 @@ importers:
       "@reddb-io/ui-mcp":
         specifier: workspace:*
         version: link:../mcp
+      "@sigma/node-border":
+        specifier: ^3.0.0
+        version: 3.0.0(sigma@3.0.3(graphology-types@0.24.8))
       "@tauri-apps/api":
         specifier: ^2.5.0
         version: 2.11.0
@@ -1666,6 +1669,14 @@ packages:
       }
     cpu: [x64]
     os: [win32]
+
+  "@sigma/node-border@3.0.0":
+    resolution:
+      {
+        integrity: sha512-mE3zUfjvJVuAMhSjiP/zdlkqe0OVTETxd04XHUwof01YqdzTk0OB4ACJIhWrwgsBXl7tTd9lPuKoroafLh8MtQ==,
+      }
+    peerDependencies:
+      sigma: ">=3.0.0-beta.17"
 
   "@standard-schema/spec@1.1.0":
     resolution:
@@ -5259,6 +5270,10 @@ snapshots:
 
   "@rollup/rollup-win32-x64-msvc@4.60.4":
     optional: true
+
+  "@sigma/node-border@3.0.0(sigma@3.0.3(graphology-types@0.24.8))":
+    dependencies:
+      sigma: 3.0.3(graphology-types@0.24.8)
 
   "@standard-schema/spec@1.1.0": {}
 
