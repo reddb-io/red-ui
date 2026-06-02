@@ -3,6 +3,9 @@
   import { connection } from './connections.svelte'
   import { pendingChanges } from './pending-changes.svelte'
   import { ArrowRight, FilePenLine, Lock } from 'lucide-svelte'
+  import { readBuildInfo } from './build-info'
+
+  const build = readBuildInfo()
 
   const router = useRouter()
   const pendingCount = $derived(pendingChanges.count)
@@ -150,4 +153,11 @@
       <ArrowRight class="size-3" />
     </button>
   {/if}
+
+  <span
+    class="inline-flex items-center px-3 shrink-0 font-mono text-fg-3 border-l border-line-1 select-none"
+    title={`red-ui ${build.version} · ${build.gitSha} · built ${build.buildTime}`}
+  >
+    v{build.version}
+  </span>
 </div>

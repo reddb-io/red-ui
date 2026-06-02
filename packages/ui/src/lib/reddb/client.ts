@@ -33,6 +33,25 @@ export interface QueryResult {
   record_count: number;
   result: { columns: string[]; records: QueryRow[] };
   error?: string;
+  /** True when this result was assembled from the NDJSON streaming endpoint
+   *  (`POST /query/stream`) rather than the buffered `POST /query`. */
+  streamed?: boolean;
+  /** True when streaming stopped at `maxRows` and more rows remained on the
+   *  server (the cursor was cancelled). Surfaced so the UI never silently
+   *  drops rows. */
+  truncated?: boolean;
+}
+
+/** Result of collecting a read-only SELECT over the NDJSON streaming endpoint. */
+export interface StreamedQueryResult {
+  columns: string[];
+  schemaFingerprint?: string;
+  rows: Array<Record<string, unknown>>;
+  rowCount: number;
+  /** Hit the `maxRows` cap with more rows still on the server. */
+  truncated: boolean;
+  /** Opaque resume token from the `cursor` frame, if one was emitted. */
+  cursor?: string;
 }
 
 export interface CollectionMetadata {
@@ -261,6 +280,79 @@ function unsupportedCollectionMetadataError(baseUrl: string): Error {
   );
 }
 
+/** One NDJSON frame from `POST /query/stream`. Discriminated by its single key. */
+type NdjsonFrame =
+  | { descriptor: { columns: string[]; schema_fingerprint?: string } }
+  | { cursor: { token: string; snapshot_lsn?: number; resumable?: boolean } }
+  | { row: Record<string, unknown> }
+  | { end: { row_count?: number } }
+  | { cancelled: Record<string, unknown> };
+
+/**
+ * Parse a chunked `application/x-ndjson` body into one frame per line. Buffers
+ * across chunk boundaries (a JSON object split over two TCP reads is emitted
+ * exactly once, in order) and flushes a trailing newline-less line at EOF.
+ */
+async function* parseNdjsonFrames(
+  body: ReadableStream<Uint8Array>
+): AsyncGenerator<NdjsonFrame> {
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buf = "";
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      let nl: number;
+      while ((nl = buf.indexOf("\n")) !== -1) {
+        const line = buf.slice(0, nl).trim();
+        buf = buf.slice(nl + 1);
+        if (line) yield JSON.parse(line) as NdjsonFrame;
+      }
+    }
+    const tail = buf.trim();
+    if (tail) yield JSON.parse(tail) as NdjsonFrame;
+  } finally {
+    reader.releaseLock();
+  }
+}
+
+const SELECT_RE = /^\s*select\b/i;
+
+/**
+ * Run a query, preferring the bounded-memory NDJSON stream for a plain SELECT
+ * and falling back to the buffered `POST /query` for everything else — and for
+ * any streaming failure (network, a non-SELECT 400, or an older server with no
+ * `/query/stream` route returning 404). The fallback makes this strictly safe:
+ * behaviour is identical to {@link RedClient.query} unless the server supports
+ * streaming AND the statement is a SELECT, in which case the server streams
+ * rows instead of buffering the whole result set.
+ */
+export async function runQueryPreferStream(
+  client: Pick<RedClient, "query" | "queryStreamCollect">,
+  sql: string,
+  opts: { maxRows?: number; signal?: AbortSignal } = {}
+): Promise<QueryResult> {
+  if (!SELECT_RE.test(sql)) return client.query(sql);
+  try {
+    const s = await client.queryStreamCollect(sql, opts);
+    return {
+      ok: true,
+      query: sql,
+      record_count: s.rowCount,
+      result: {
+        columns: s.columns,
+        records: s.rows.map((values) => ({ values })),
+      },
+      streamed: true,
+      truncated: s.truncated,
+    };
+  } catch {
+    return client.query(sql);
+  }
+}
+
 export class RedClient {
   readonly baseUrl: string;
   private readonly headers: HeadersInit | undefined;
@@ -410,6 +502,85 @@ export class RedClient {
       method: "POST",
       body: JSON.stringify({ query }),
     });
+  }
+
+  /**
+   * Stream a read-only SELECT through `POST /query/stream` (NDJSON, chunked).
+   * The server emits rows through a bounded-memory channel — it never buffers
+   * the whole result — and we collect up to `maxRows` (default 10 000) before
+   * cancelling the server cursor. The NDJSON frame order is fixed
+   * (`descriptor` → `cursor` → `row`* → `end`|`cancelled`), verified against
+   * ../reddb/docs/api/query-streaming.md.
+   *
+   * Throws for a non-SELECT (server `400 stream_unsupported_statement`) and for
+   * an absent route on an older server (`404`) — callers fall back to
+   * {@link query}. Browser-reachable: this is `fetch` + `ReadableStream`, not
+   * `EventSource` (the endpoint is POST-based).
+   */
+  async queryStreamCollect(
+    query: string,
+    opts: { maxRows?: number; signal?: AbortSignal } = {}
+  ): Promise<StreamedQueryResult> {
+    const maxRows = opts.maxRows ?? 10_000;
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      Accept: "application/x-ndjson",
+    };
+    Object.assign(headers, this.headers as Record<string, string> | undefined);
+
+    const res = await this.fetcher(`${this.baseUrl}/query/stream`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ query }),
+      signal: opts.signal,
+    });
+    if (!res.ok || !res.body) {
+      const body = res.body ? await res.text().catch(() => "") : "";
+      throw new Error(
+        `POST /query/stream → ${res.status} ${body.slice(0, 200)}`
+      );
+    }
+
+    const out: StreamedQueryResult = {
+      columns: [],
+      rows: [],
+      rowCount: 0,
+      truncated: false,
+    };
+
+    for await (const frame of parseNdjsonFrames(res.body)) {
+      if ("descriptor" in frame) {
+        out.columns = frame.descriptor.columns ?? [];
+        out.schemaFingerprint = frame.descriptor.schema_fingerprint;
+      } else if ("cursor" in frame) {
+        out.cursor = frame.cursor.token;
+      } else if ("row" in frame) {
+        if (out.rows.length >= maxRows) {
+          out.truncated = true;
+          break;
+        }
+        out.rows.push(frame.row);
+        out.rowCount = out.rows.length;
+      } else if ("end" in frame || "cancelled" in frame) {
+        break;
+      }
+    }
+
+    // We stopped early with more rows on the server — release the pinned cursor.
+    if (out.truncated && out.cursor) {
+      await this.cancelQueryStream(out.cursor).catch(() => {
+        // best-effort: the cursor TTL reclaims it anyway.
+      });
+    }
+    return out;
+  }
+
+  /** Cancel a streaming-query cursor server-side (`POST /query/stream/cancel`). */
+  async cancelQueryStream(cursor: string): Promise<void> {
+    await this.json("/query/stream/cancel", {
+      method: "POST",
+      body: JSON.stringify({ cursor }),
+    }).catch(() => undefined);
   }
 
   async collectionVcs(name: string): Promise<CollectionVcsState> {

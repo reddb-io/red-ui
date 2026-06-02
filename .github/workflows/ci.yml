@@ -3,10 +3,27 @@ name: ci
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - ".changeset/**"
+      - "LICENSE**"
   pull_request:
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - ".changeset/**"
+      - "LICENSE**"
 
 # Blacksmith-hosted runners (matching reddb-io/reddb's pattern) — same
 # GitHub Actions semantics, dramatically faster boots and SSDs.
+
+# Cost guard: a new push cancels older in-flight CI on the same ref. Release
+# validation lives in release.yml; CI runs should stay quick (harvested from
+# reddb-io/reddb).
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   check:
@@ -28,15 +45,29 @@ jobs:
     # Verify the Rust shell still compiles on every PR; doesn't bundle
     # installers (that's the release workflow's job) — just runs
     # `cargo check` against the same workspace tauri-action will later use.
+    # Skipped on draft PRs (the slowest job; don't burn it on WIP).
+    if: github.event.pull_request.draft != true
     runs-on: blacksmith-4vcpu-ubuntu-2404
+    env:
+      # sccache object-cache; CARGO_INCREMENTAL must be 0 (incremental and
+      # sccache are mutually exclusive). Harvested from reddb-io/reddb.
+      CARGO_INCREMENTAL: "0"
+      SCCACHE_GHA_ENABLED: "true"
+      RUSTC_WRAPPER: sccache
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: swatinem/rust-cache@v2
+      - uses: dtolnay/rust-toolchain@1.95.0
+      - uses: rui314/setup-mold@v1
+      - uses: mozilla-actions/sccache-action@v0.0.10
+      - uses: Swatinem/rust-cache@v2
         with:
           workspaces: apps/desktop/src-tauri
-      - name: linux deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libssl-dev
+          # Shared with release.yml's tauri job so the release build
+          # warm-starts from CI's cache.
+          shared-key: tauri-${{ runner.os }}-rust-1.95.0
+          cache-on-failure: "true"
+      - uses: ./.github/actions/tauri-linux-deps
       - run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
+      - name: sccache stats
+        if: always()
+        run: sccache --show-stats

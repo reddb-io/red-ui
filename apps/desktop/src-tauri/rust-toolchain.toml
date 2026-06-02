@@ -1,0 +1,5 @@
+[toolchain]
+# Pinned (matching reddb-io/reddb) so a `stable` bump never silently changes the
+# compiler under CI/dev and so the swatinem cache key stays stable.
+channel = "1.95.0"
+components = ["rustfmt", "clippy"]
