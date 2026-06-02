@@ -52,6 +52,25 @@ try {
     `open_red_ui must point at the MCP App resource, got ${JSON.stringify(openTool._meta)}`
   );
 
+  // Server-side data tools (#49) are registered as model-facing tools.
+  for (const name of ["query", "list", "get"]) {
+    const dataTool = tools.tools.find((tool) => tool.name === name);
+    assert(dataTool, `${name} data tool was not registered`);
+    assert(
+      dataTool.outputSchema,
+      `${name} must declare an outputSchema for structuredContent`
+    );
+  }
+
+  // With no configured connection, a data tool reports the missing-connection
+  // error rather than crashing — and leaks no token.
+  const noConn = await client.callTool({ name: "list", arguments: {} });
+  assert(noConn.isError === true, "list with no connection must be an error");
+  assert(
+    noConn.structuredContent?.ok === false,
+    "list error must carry structuredContent { ok: false }"
+  );
+
   const result = await client.callTool({
     name: "open_red_ui",
     arguments: { connectionUrl: "red://localhost", view: "query" },

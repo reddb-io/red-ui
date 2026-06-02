@@ -18,6 +18,7 @@ import {
   spawnLocalServer,
   stopAllLocalServers,
 } from "./local-server.js";
+import { registerDataTools } from "./data-tools.js";
 
 // Single source of truth for "what version am I": the package.json version
 // (changeset-managed, version-locked with @reddb-io/ui + ui-kit), overridable by
@@ -52,6 +53,11 @@ type RedUiView = "home" | "query" | "collections" | "cluster" | "security";
 interface ServerConfig {
   appUrl: string;
   connectDomains: string[];
+  /** Default reddb endpoint the server-side data tools read from when a tool
+   *  call omits `connectionUrl`. Non-secret (ADR-0005). */
+  connectionUrl?: string;
+  /** Auth header value for the data tools' RedClient. Never logged/returned. */
+  connectionAuthHeader?: string;
 }
 
 function parseList(value: string | undefined): string[] {
@@ -88,6 +94,14 @@ function loadConfig(): ServerConfig {
     "http://127.0.0.1:25055",
   ];
 
+  // Auth for the server-side data tools: a bearer token (RED_UI_CONNECTION_TOKEN)
+  // or a raw Authorization header (RED_UI_CONNECTION_AUTH). Read from env only —
+  // never echoed into tool output or logs.
+  const token = process.env.RED_UI_CONNECTION_TOKEN?.trim();
+  const rawAuth = process.env.RED_UI_CONNECTION_AUTH?.trim();
+  const connectionAuthHeader =
+    rawAuth || (token ? `Bearer ${token}` : undefined);
+
   return {
     appUrl,
     connectDomains: [
@@ -96,6 +110,8 @@ function loadConfig(): ServerConfig {
         ...parseList(process.env.RED_UI_CONNECT_DOMAINS),
       ]),
     ],
+    connectionUrl: process.env.RED_UI_CONNECTION_URL?.trim() || undefined,
+    connectionAuthHeader,
   };
 }
 
@@ -520,6 +536,14 @@ function createServer(config: ServerConfig): McpServer {
     }
   );
 
+  // Server-side data tools (#49, ADR-0006): run a RedClient in this process and
+  // return reddb reads to the model as structuredContent, without driving the
+  // visual iframe. Honour the configured default connection + auth (env-only).
+  registerDataTools(server, {
+    defaultUrl: config.connectionUrl,
+    authHeader: config.connectionAuthHeader,
+  });
+
   return server;
 }
 
@@ -534,6 +558,9 @@ Environment:
   RED_UI_CONNECT_DOMAINS     Comma-separated extra connect-src domains for the embedded app.
   RED_BINARY                 Path to the reddb \`red\` binary used to serve local .rdb files.
                              Defaults to the @reddb-io/sdk binary, else \`red\` on PATH.
+  RED_UI_CONNECTION_URL      Default reddb endpoint for the data tools (query/list/get), e.g. http://localhost:5055.
+  RED_UI_CONNECTION_TOKEN    Bearer token for the data tools' RedClient (sent as Authorization: Bearer …; never logged).
+  RED_UI_CONNECTION_AUTH     Raw Authorization header for the data tools (overrides RED_UI_CONNECTION_TOKEN).
 
 Example client config:
   {
