@@ -13,7 +13,8 @@
     "check": "pnpm -r check",
     "test": "pnpm -r test",
     "changeset": "changeset",
-    "release:version": "changeset version",
+    "release:version": "changeset version && node scripts/sync-desktop-version.mjs",
+    "sync:desktop-version": "node scripts/sync-desktop-version.mjs",
     "release:publish": "changeset publish",
     "prepare": "husky"
   },

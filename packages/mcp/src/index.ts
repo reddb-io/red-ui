@@ -7,7 +7,33 @@ import {
 } from "@modelcontextprotocol/ext-apps/server";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { z } from "zod/v4";
+
+// Single source of truth for "what version am I": the package.json version
+// (changeset-managed, version-locked with @reddb-io/ui + ui-kit), overridable by
+// the RED_BUILD_VERSION env the release CI sets from the git tag. From the
+// compiled dist/index.js, ../package.json is the package root manifest (shipped
+// because `files` always includes it). Mirrors the ../red-skills build-info
+// pattern; replaces the previously hardcoded "0.1.0".
+function resolveVersion(): string {
+  const fromEnv = process.env.RED_BUILD_VERSION;
+  if (fromEnv) return fromEnv.replace(/^v/, "");
+  try {
+    const here = dirname(fileURLToPath(import.meta.url));
+    const pkg = JSON.parse(
+      readFileSync(join(here, "..", "package.json"), "utf8")
+    ) as { version?: string };
+    if (pkg.version) return pkg.version;
+  } catch {
+    // fall through
+  }
+  return "0.0.0-dev";
+}
+
+const RED_UI_MCP_VERSION = resolveVersion();
 
 const APP_RESOURCE_URI = "ui://red-ui/app.html";
 const MCP_APPS_CDN =
@@ -299,7 +325,7 @@ function renderRedUiAppHtml(config: ServerConfig): string {
       try {
         const { App } = await import(MCP_APPS_CDN);
         app = new App(
-          { name: 'red-ui', version: '0.1.0' },
+          { name: 'red-ui', version: ${JSON.stringify(RED_UI_MCP_VERSION)} },
           {},
           { autoResize: true }
         );
@@ -317,7 +343,7 @@ function renderRedUiAppHtml(config: ServerConfig): string {
 function createServer(config: ServerConfig): McpServer {
   const server = new McpServer({
     name: "red-ui",
-    version: "0.1.0",
+    version: RED_UI_MCP_VERSION,
   });
 
   registerAppResource(

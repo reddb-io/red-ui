@@ -1,3 +1,4 @@
+export { RED_UI_VERSION, readBuildInfo, type BuildInfo } from "./build-info";
 export { default as ActivityIndicator } from "./ActivityIndicator.svelte";
 export { default as ClusterNode } from "./ClusterNode.svelte";
 export { default as ClusterView } from "./ClusterView.svelte";

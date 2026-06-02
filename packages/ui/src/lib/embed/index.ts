@@ -2,6 +2,10 @@ import appCss from "../../app.css?inline";
 import type { Component } from "svelte";
 import type { ConnectionProvider } from "../reddb";
 import type { Theme } from "../theme.svelte";
+import { RED_UI_VERSION, readBuildInfo } from "../build-info";
+
+/** Build version of the embeddable bundle, stamped at build time. */
+export { RED_UI_VERSION, readBuildInfo };
 
 declare global {
   interface Window {
@@ -181,6 +185,13 @@ export class RedUiElement extends HTMLElement {
   #handle: RedUiEmbedHandle | null = null;
   #mounting: Promise<void> | null = null;
 
+  /** Build version of the embedded bundle (also reflected as a `version`
+   *  attribute on connect, so a host can read `el.getAttribute('version')`). */
+  static readonly version = RED_UI_VERSION;
+  get version(): string {
+    return RED_UI_VERSION;
+  }
+
   get connectionProvider(): ConnectionProvider | null {
     return this.#connectionProvider;
   }
@@ -191,6 +202,8 @@ export class RedUiElement extends HTMLElement {
   }
 
   connectedCallback() {
+    if (!this.hasAttribute("version"))
+      this.setAttribute("version", RED_UI_VERSION);
     this.#mounting ??= this.#mount();
   }
 
