@@ -20,7 +20,7 @@
     "prepack": "pnpm build",
     "build": "tsc -p tsconfig.json",
     "check": "tsc -p tsconfig.json --noEmit",
-    "test": "pnpm build && node test/mcp-app-smoke.mjs && node test/target-mode.test.mjs",
+    "test": "pnpm build && node test/mcp-app-smoke.mjs && node test/target-mode.test.mjs && node test/data-tools.test.mjs",
     "start": "tsx src/index.ts --stdio"
   },
   "dependencies": {
