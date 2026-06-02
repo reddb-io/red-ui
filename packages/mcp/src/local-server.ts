@@ -1,4 +1,4 @@
-// Local-file mode for the MCP App (#48, ADR-0006).
+// Local-file mode for the MCP App (#48, #50, ADR-0006).
 //
 // A browser Surface cannot reach a filesystem `.rdb`, and the MCP process (Node)
 // cannot open it either — reddb's embedded mode is Rust-only. So for a local
@@ -7,6 +7,13 @@
 // and hand the UI `?cs=http://127.0.0.1:<port>`. The child is torn down on MCP
 // exit/disconnect — no orphan servers. We never reimplement the reddb HTTP API;
 // we shell out to the `red` binary.
+//
+// Lock-aware open (#50): reddb takes a single-writer `flock` on the file. The
+// trigger case is inspecting an agent's live memory `.rdb` while the agent is
+// writing it — a read-write open would fail on the lock. So when the caller does
+// not pin `readOnly`, we open read-write first and, if reddb dies on the lock,
+// transparently retry with `--read-only`. reddb then reports `read_only` in
+// `/stats` and the UI renders the existing read-only badge (#23).
 
 import { spawn, type ChildProcess } from "node:child_process";
 import { accessSync, constants as fsConstants } from "node:fs";
@@ -199,22 +206,60 @@ async function waitForHealthy(
 }
 
 /**
- * Spawn one `red server` that owns `target`, wait for `/stats` to report
- * healthy, and return a handle whose `stop()` tears the child down.
+ * Raised when `red server` dies trying to acquire the single-writer `flock` on
+ * the target — the signal to retry the open with `--read-only` (#50).
  */
-export async function spawnLocalServer(
-  options: SpawnLocalServerOptions
-): Promise<LocalServerHandle> {
-  const {
-    target,
-    readOnly = false,
-    healthTimeoutMs = 10_000,
-    signal,
-  } = options;
-  const filePath = resolveLocalFilePath(target);
-  const binaryPath =
-    options.binaryPath ?? (await resolveRedBinary()).binaryPath;
-  const port = options.port ?? (await pickEphemeralPort());
+export class LockContentionError extends Error {
+  constructor(public readonly detail: string) {
+    super(
+      "The .rdb is already held by another writer (reddb single-writer flock)." +
+        (detail ? `\n${detail}` : "")
+    );
+    this.name = "LockContentionError";
+  }
+}
+
+// Signatures of reddb failing to take the single-writer `flock` on the file,
+// across platforms and wordings. Deliberately broad: a false positive only costs
+// one extra `--read-only` retry, while a miss leaves the trigger case (a live
+// agent memory `.rdb`) unopenable. We cannot import reddb's exact message —
+// it is a separate Rust binary — so we match the family of lock-contention text.
+const LOCK_CONTENTION_PATTERNS = [
+  /flock/i,
+  /\block(ed|ing)?\b/i,
+  /would.?block/i,
+  /resource temporarily unavailable/i,
+  /\bE?WOULDBLOCK\b|\bEAGAIN\b/i,
+  /another (process|writer|instance)/i,
+  /already (open|held|locked|running)/i,
+  /single.?writer/i,
+  /in use by/i,
+  /read[-_ ]?only/i,
+];
+
+/** True when `text` (a `red server` stderr) looks like single-writer lock
+ *  contention — used to decide whether to retry the open as `--read-only`. */
+export function looksLikeLockContention(text: string): boolean {
+  return Boolean(text) && LOCK_CONTENTION_PATTERNS.some((re) => re.test(text));
+}
+
+interface AttemptOptions {
+  binaryPath: string;
+  filePath: string;
+  readOnly: boolean;
+  port?: number;
+  healthTimeoutMs: number;
+  signal?: AbortSignal;
+}
+
+/**
+ * Spawn one `red server` for a single open mode and wait for `/stats` healthy.
+ * Resolves to a tracked-elsewhere handle, or rejects: with `LockContentionError`
+ * when the child died on the flock (caller may retry `--read-only`), otherwise
+ * with the raw startup error.
+ */
+async function attemptSpawn(opts: AttemptOptions): Promise<LocalServerHandle> {
+  const port = opts.port ?? (await pickEphemeralPort());
   const baseUrl = `http://127.0.0.1:${port}`;
 
   const args = [
@@ -223,11 +268,11 @@ export async function spawnLocalServer(
     "--http-bind",
     `127.0.0.1:${port}`,
     "--path",
-    filePath,
+    opts.filePath,
   ];
-  if (readOnly) args.push("--read-only");
+  if (opts.readOnly) args.push("--read-only");
 
-  const child = spawn(binaryPath, args, {
+  const child = spawn(opts.binaryPath, args, {
     stdio: ["ignore", "ignore", "pipe"],
   });
 
@@ -240,8 +285,8 @@ export async function spawnLocalServer(
   const handle: LocalServerHandle = {
     baseUrl,
     port,
-    filePath,
-    readOnly,
+    filePath: opts.filePath,
+    readOnly: opts.readOnly,
     child,
     stop: makeStop(child),
   };
@@ -250,13 +295,62 @@ export async function spawnLocalServer(
     await waitForHealthy(
       baseUrl,
       child,
-      healthTimeoutMs,
+      opts.healthTimeoutMs,
       () => stderr.trim(),
-      signal
+      opts.signal
     );
   } catch (error) {
     await handle.stop();
+    // Did the child die on the single-writer flock? If so, let the caller decide
+    // to retry --read-only rather than surfacing a raw "exited" error.
+    const exited = child.exitCode !== null || child.signalCode !== null;
+    if (!opts.readOnly && exited && looksLikeLockContention(stderr)) {
+      throw new LockContentionError(stderr.trim());
+    }
     throw error;
+  }
+
+  return handle;
+}
+
+/**
+ * Spawn one `red server` that owns `target`, wait for `/stats` to report
+ * healthy, and return a handle whose `stop()` tears the child down.
+ *
+ * Open mode (#50): an explicit `readOnly` is honoured verbatim. When it is
+ * unspecified, the file opens read-write but transparently falls back to
+ * `--read-only` if reddb dies acquiring the single-writer `flock` — the trigger
+ * case being a second viewer of a live agent memory `.rdb` (ADR-0006).
+ */
+export async function spawnLocalServer(
+  options: SpawnLocalServerOptions
+): Promise<LocalServerHandle> {
+  const { target, healthTimeoutMs = 10_000, signal } = options;
+  const filePath = resolveLocalFilePath(target);
+  const binaryPath =
+    options.binaryPath ?? (await resolveRedBinary()).binaryPath;
+
+  const attempt = (readOnly: boolean): Promise<LocalServerHandle> =>
+    attemptSpawn({
+      binaryPath,
+      filePath,
+      readOnly,
+      port: options.port,
+      healthTimeoutMs,
+      signal,
+    });
+
+  let handle: LocalServerHandle;
+  if (options.readOnly !== undefined) {
+    handle = await attempt(options.readOnly);
+  } else {
+    try {
+      handle = await attempt(false);
+    } catch (error) {
+      if (!(error instanceof LockContentionError)) throw error;
+      // The file is flock-held by another writer — reopen read-only (#50).
+      handle = await attempt(true);
+    }
   }
 
   trackServer(handle);
