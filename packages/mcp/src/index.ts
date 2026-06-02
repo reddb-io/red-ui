@@ -11,6 +11,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod/v4";
+import { classifyTarget } from "./target-mode.js";
 
 // Single source of truth for "what version am I": the package.json version
 // (changeset-managed, version-locked with @reddb-io/ui + ui-kit), overridable by
@@ -413,6 +414,32 @@ function createServer(config: ServerConfig): McpServer {
     },
     async ({ connectionUrl, view }) => {
       const selectedView: RedUiView = view ?? "query";
+      const mode = classifyTarget(connectionUrl);
+
+      // Local-file targets (#47, ADR-0006): the browser Surface cannot reach a
+      // filesystem path, so it is routed to the local handler seam rather than
+      // seeded as `?cs=`. Serving a local `.rdb` requires spawning a local
+      // `red server` (issue #48), which is not implemented yet — return a clear
+      // message and seed no connection.
+      if (mode === "local") {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `red-ui cannot open the local file "${connectionUrl}" yet: local-file mode (a local red server in front of the file, ADR-0006 / #48) is not implemented. Point at an http(s):// or red:// server, or wait for #48.`,
+            },
+          ],
+          structuredContent: {
+            appUrl: config.appUrl,
+            connectionUrl: "",
+            view: selectedView,
+            mode,
+          },
+        };
+      }
+
+      // Remote target: hand the URL to the browser via the Open Contract; no
+      // process is spawned.
       return {
         content: [
           {
@@ -424,6 +451,7 @@ function createServer(config: ServerConfig): McpServer {
           appUrl: config.appUrl,
           connectionUrl: connectionUrl ?? "",
           view: selectedView,
+          mode,
         },
       };
     }
