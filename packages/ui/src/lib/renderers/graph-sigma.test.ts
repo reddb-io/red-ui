@@ -2,12 +2,14 @@ import { describe, expect, it } from "vitest";
 import {
   buildSigmaGraph,
   colorForType,
+  computeCommunityBoxes,
   computeGraphFocus,
   FOCUS_EDGE_COLOR,
   FOCUS_NODE_STROKE_COLOR,
   nodeVisualRadius,
   reduceSigmaEdge,
   reduceSigmaNode,
+  routeInterCommunityEdges,
   sigmaColorForCommunity,
   sigmaNodeSize,
   withAlpha,
@@ -275,6 +277,7 @@ describe("reduceSigmaEdge", () => {
     color: "rgba(58, 66, 77, 0.34)",
     edgeLabel: "DEPENDS_ON",
     label: "",
+    crossCommunity: false,
     type: "line" as const,
   };
 
@@ -304,5 +307,133 @@ describe("reduceSigmaEdge", () => {
     const out = reduceSigmaEdge("e", attrs, state);
     expect(out.color).toBe(withAlpha(THEME.edge, 0.055));
     expect(out.label).toBe("");
+  });
+
+  it("hides cross-community edges in group-in-a-box mode (overlay owns them)", () => {
+    const cross = { ...attrs, crossCommunity: true };
+    const out = reduceSigmaEdge("e", cross, baseState({ groupInBox: true }));
+    expect(out.hidden).toBe(true);
+
+    // intra-community edges keep rendering natively
+    const intra = reduceSigmaEdge("e", attrs, baseState({ groupInBox: true }));
+    expect(intra.hidden).toBe(false);
+  });
+
+  it("keeps a focused cross-community edge visible even in group mode", () => {
+    const cross = { ...attrs, crossCommunity: true };
+    const out = reduceSigmaEdge(
+      "e",
+      cross,
+      baseState({
+        groupInBox: true,
+        focusId: "a",
+        focus: { nodes: new Set(["a"]), edges: new Set(["e"]) },
+      })
+    );
+    expect(out.hidden).toBe(false);
+    expect(out.color).toBe(FOCUS_EDGE_COLOR);
+  });
+});
+
+describe("buildSigmaGraph cross-community tagging", () => {
+  it("flags edges whose endpoints sit in different communities", () => {
+    // layoutFor assigns community = index % 3 → a:0, b:1, c:2, d:0
+    const g = buildSigmaGraph({
+      nodes: [node("a"), node("b"), node("c"), node("d")],
+      edges: [edge("a", "b", "X"), edge("a", "d", "Y")],
+      layout: layoutFor(["a", "b", "c", "d"]),
+      sizeScales: new Map(),
+      orphanIds: new Set(),
+    });
+    expect(g.getEdgeAttributes("a->b:X").crossCommunity).toBe(true);
+    expect(g.getEdgeAttributes("a->d:Y").crossCommunity).toBe(false);
+  });
+});
+
+describe("computeCommunityBoxes", () => {
+  const nodes = [node("a"), node("b"), node("c"), node("d")];
+
+  function layout(): GraphLayout {
+    const out: GraphLayout = new Map();
+    out.set("a", { x: 10, y: 10, community: 0 });
+    out.set("b", { x: 30, y: 20, community: 0 });
+    out.set("c", { x: 60, y: 70, community: 1 });
+    out.set("d", { x: 80, y: 90, community: 1 });
+    return out;
+  }
+
+  it("draws one padded box per community sized to its members", () => {
+    const boxes = computeCommunityBoxes(nodes, layout(), { padding: 2 });
+    expect(boxes).toHaveLength(2);
+    const [c0, c1] = boxes;
+    expect(c0.community).toBe(0);
+    expect(c0.count).toBe(2);
+    // bounds = [10,30] x [10,20] padded by 2
+    expect(c0.minX).toBe(8);
+    expect(c0.maxX).toBe(32);
+    expect(c0.minY).toBe(8);
+    expect(c0.maxY).toBe(22);
+    expect(c1.community).toBe(1);
+    expect(c1.cx).toBe(70);
+    expect(c1.cy).toBe(80);
+  });
+
+  it("tints boxes with the community colour (theme-aware, translucent)", () => {
+    const boxes = computeCommunityBoxes(nodes, layout(), { dark: true });
+    expect(boxes[0].tint).toMatch(/^hsl\(/);
+    expect(boxes[0].fill).toMatch(/^rgba\(/);
+    expect(boxes[0].stroke).toMatch(/^rgba\(/);
+  });
+
+  it("ignores nodes without a layout position", () => {
+    const partial: GraphLayout = new Map([["a", { x: 5, y: 5, community: 0 }]]);
+    const boxes = computeCommunityBoxes(nodes, partial);
+    expect(boxes).toHaveLength(1);
+    expect(boxes[0].count).toBe(1);
+  });
+
+  it("returns nothing for an empty layout", () => {
+    expect(computeCommunityBoxes(nodes, new Map())).toEqual([]);
+  });
+});
+
+describe("routeInterCommunityEdges", () => {
+  function layout(): GraphLayout {
+    const out: GraphLayout = new Map();
+    out.set("a", { x: 10, y: 50, community: 0 });
+    out.set("b", { x: 20, y: 50, community: 0 });
+    out.set("c", { x: 80, y: 50, community: 1 });
+    return out;
+  }
+
+  it("clips cross-community edges to the box borders, skipping intra edges", () => {
+    const nodes = [node("a"), node("b"), node("c")];
+    const boxes = computeCommunityBoxes(nodes, layout(), { padding: 2 });
+    const routed = routeInterCommunityEdges(
+      [edge("a", "b", "INTRA"), edge("a", "c", "CROSS")],
+      layout(),
+      boxes
+    );
+    expect(routed).toHaveLength(1);
+    const r = routed[0];
+    expect(r.sourceCommunity).toBe(0);
+    expect(r.targetCommunity).toBe(1);
+    // source box (community 0) spans x∈[8,22]; the edge runs left→right so it
+    // exits at the box's right border (x = 22), not from the node centre.
+    expect(r.x1).toBeCloseTo(22);
+    // target box (community 1) spans x∈[78,82]; entry at its left border.
+    expect(r.x2).toBeCloseTo(78);
+    expect(r.y1).toBeCloseTo(50);
+    expect(r.y2).toBeCloseTo(50);
+  });
+
+  it("skips edges whose endpoints lack a layout position", () => {
+    const boxes = computeCommunityBoxes([node("a")], layout(), {});
+    const routed = routeInterCommunityEdges(
+      [edge("a", "ghost", "X")],
+      layout(),
+      boxes
+    );
+    expect(routed).toEqual([]);
   });
 });

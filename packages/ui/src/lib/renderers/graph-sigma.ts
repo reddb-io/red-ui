@@ -169,6 +169,12 @@ export interface SigmaEdgeAttributes {
   /** Original edge label, kept so the reducer can surface it on focus only. */
   edgeLabel: string;
   label: string;
+  /**
+   * True when the edge's endpoints sit in different communities — the
+   * group-in-a-box overlay routes these at the box borders, so the native
+   * straight edge is hidden while that mode is on.
+   */
+  crossCommunity: boolean;
   type: "line";
 }
 
@@ -236,16 +242,188 @@ export function buildSigmaGraph(
   for (const edge of edges) {
     if (!graph.hasNode(edge.source) || !graph.hasNode(edge.target)) continue;
     if (graph.hasEdge(edge.id)) continue;
+    const sc = layout.get(edge.source)?.community ?? -1;
+    const tc = layout.get(edge.target)?.community ?? -1;
     graph.addEdgeWithKey(edge.id, edge.source, edge.target, {
       size: 1,
       color: withAlpha(edgeColor, 0.34),
       edgeLabel: edge.label ?? "",
       label: "",
+      crossCommunity: sc !== tc,
       type: "line",
     });
   }
 
   return graph;
+}
+
+// ─── group-in-a-box geometry (pure; consumed by the SVG fallback directly and
+//     by the canvas overlay after a graph→viewport transform) ────────────────
+
+export interface CommunityBox {
+  community: number;
+  /** Member count — drives nothing visual, surfaced for labels/tooltips. */
+  count: number;
+  /** Tint hue for this community (hsl string). */
+  tint: string;
+  /** Faint translucent fill so clusters read without drowning the nodes. */
+  fill: string;
+  /** Stronger translucent stroke for the box border. */
+  stroke: string;
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+  /** Box centre, handy for community labels. */
+  cx: number;
+  cy: number;
+}
+
+export interface CommunityBoxOptions {
+  /** Padding (in layout units) added around the member bounding box. */
+  padding?: number;
+  dark?: boolean;
+}
+
+/**
+ * One bounding box per community, sized to its members with a small padding.
+ * Positions are in the same [0, 100] layout space the SVG fallback draws in;
+ * the canvas overlay maps them through sigma's graph→viewport transform.
+ * Communities are returned in ascending id order so the output is stable.
+ */
+export function computeCommunityBoxes(
+  nodes: GraphNode[],
+  layout: GraphLayout,
+  options: CommunityBoxOptions = {}
+): CommunityBox[] {
+  const { padding = 2.5, dark = true } = options;
+  const bounds = new Map<
+    number,
+    { minX: number; minY: number; maxX: number; maxY: number; count: number }
+  >();
+
+  for (const node of nodes) {
+    const pos = layout.get(node.id);
+    if (!pos) continue;
+    const b = bounds.get(pos.community);
+    if (!b) {
+      bounds.set(pos.community, {
+        minX: pos.x,
+        minY: pos.y,
+        maxX: pos.x,
+        maxY: pos.y,
+        count: 1,
+      });
+    } else {
+      b.minX = Math.min(b.minX, pos.x);
+      b.minY = Math.min(b.minY, pos.y);
+      b.maxX = Math.max(b.maxX, pos.x);
+      b.maxY = Math.max(b.maxY, pos.y);
+      b.count += 1;
+    }
+  }
+
+  return [...bounds.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([community, b]) => {
+      const tint = colorForCommunity(community, dark);
+      return {
+        community,
+        count: b.count,
+        tint,
+        fill: withAlpha(tint, 0.08),
+        stroke: withAlpha(tint, 0.5),
+        minX: b.minX - padding,
+        minY: b.minY - padding,
+        maxX: b.maxX + padding,
+        maxY: b.maxY + padding,
+        cx: (b.minX + b.maxX) / 2,
+        cy: (b.minY + b.maxY) / 2,
+      };
+    });
+}
+
+export interface RoutedEdge {
+  id: string;
+  source: string;
+  target: string;
+  label?: string;
+  sourceCommunity: number;
+  targetCommunity: number;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+
+interface Box {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+}
+
+/**
+ * Walk the ray from `p` toward `q` and return the point where it leaves the
+ * box that contains `p`. Used to clip an inter-community edge to its source /
+ * target box borders so the segment connects the boxes rather than cutting
+ * through their interiors.
+ */
+function exitPoint(
+  px: number,
+  py: number,
+  qx: number,
+  qy: number,
+  box: Box
+): { x: number; y: number } {
+  const dx = qx - px;
+  const dy = qy - py;
+  let t = 1;
+  if (dx > 0) t = Math.min(t, (box.maxX - px) / dx);
+  else if (dx < 0) t = Math.min(t, (box.minX - px) / dx);
+  if (dy > 0) t = Math.min(t, (box.maxY - py) / dy);
+  else if (dy < 0) t = Math.min(t, (box.minY - py) / dy);
+  t = Math.max(0, Math.min(1, t));
+  return { x: px + dx * t, y: py + dy * t };
+}
+
+/**
+ * Route every inter-community edge so it runs between the two community box
+ * borders instead of node-centre to node-centre — the group-in-a-box
+ * convention that keeps cross-cluster edges out of unrelated clusters.
+ * Intra-community edges are left to the native renderer and skipped here.
+ */
+export function routeInterCommunityEdges(
+  edges: GraphEdge[],
+  layout: GraphLayout,
+  boxes: CommunityBox[]
+): RoutedEdge[] {
+  const boxByCommunity = new Map(boxes.map((b) => [b.community, b]));
+  const out: RoutedEdge[] = [];
+  for (const edge of edges) {
+    const s = layout.get(edge.source);
+    const t = layout.get(edge.target);
+    if (!s || !t) continue;
+    if (s.community === t.community) continue;
+    const sourceBox = boxByCommunity.get(s.community);
+    const targetBox = boxByCommunity.get(t.community);
+    if (!sourceBox || !targetBox) continue;
+    const start = exitPoint(s.x, s.y, t.x, t.y, sourceBox);
+    const end = exitPoint(t.x, t.y, s.x, s.y, targetBox);
+    out.push({
+      id: edge.id,
+      source: edge.source,
+      target: edge.target,
+      label: edge.label,
+      sourceCommunity: s.community,
+      targetCommunity: t.community,
+      x1: start.x,
+      y1: start.y,
+      x2: end.x,
+      y2: end.y,
+    });
+  }
+  return out;
 }
 
 // ─── focus neighbourhood (parity with the canvas focus highlight) ───────────
@@ -284,6 +462,11 @@ export interface SigmaReducerState {
   /** Focus-pulse progress, 0 (rest) → 1 (peak). Held at 0 for reduced motion. */
   pulse: number;
   colors: SigmaThemeColors;
+  /**
+   * Group-in-a-box mode: cross-community edges are drawn by the overlay at the
+   * box borders, so the native straight edge is hidden to avoid double lines.
+   */
+  groupInBox?: boolean;
 }
 
 export interface SigmaNodeDisplay {
@@ -358,9 +541,22 @@ export function reduceSigmaEdge(
   attrs: SigmaEdgeAttributes,
   state: SigmaReducerState
 ): SigmaEdgeDisplay {
-  const { focus, focusId, colors } = state;
+  const { focus, focusId, colors, groupInBox } = state;
   const hasFocus = focusId !== null;
   const focused = focus.edges.has(id);
+
+  // In group-in-a-box mode the overlay owns cross-community edges; hide the
+  // native straight line so it doesn't cut through unrelated clusters.
+  if (groupInBox && attrs.crossCommunity && !focused) {
+    return {
+      size: attrs.size,
+      color: attrs.color,
+      label: "",
+      forceLabel: false,
+      zIndex: 0,
+      hidden: true,
+    };
+  }
 
   if (!hasFocus) {
     return {
