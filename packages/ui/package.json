@@ -55,8 +55,9 @@
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
-    "@reddb-io/ui-mcp": "workspace:*",
     "@reddb-io/ui-kit": "workspace:*",
+    "@reddb-io/ui-mcp": "workspace:*",
+    "@sigma/node-border": "^3.0.0",
     "@tauri-apps/api": "^2.5.0",
     "@xyflow/svelte": "^1.2.0",
     "bits-ui": "^2.18.1",

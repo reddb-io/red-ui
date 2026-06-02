@@ -2,6 +2,17 @@
   import type { QueryResult } from '#reddb'
   import { onDestroy, onMount } from 'svelte'
   import { colorForCommunity, compareGraphNodesByCentrality, extractGraph, graphNodeCentrality, graphNodeDetail, graphNodeIncomingSizeScales, graphNodeIsOrphan, runGraphLayout, type GraphNode, type GraphEdge, type GraphNodeRelation } from './graph-render'
+  import {
+    buildSigmaGraph,
+    colorForType,
+    nodeVisualRadius,
+    reduceSigmaEdge,
+    reduceSigmaNode,
+    FOCUS_EDGE_COLOR,
+    FOCUS_NODE_STROKE_COLOR,
+    type SigmaReducerState,
+    type SigmaThemeColors,
+  } from './graph-sigma'
   import { collectionPageHref } from '$lib/collection-pages'
   import { connection } from '$lib/connections.svelte'
   import { activity } from '$lib/activity.svelte'
@@ -53,12 +64,6 @@
   let canvasError = $state<string | null>(null)
   let renderBudget = $state(350)
   let svgZoom = $state(1)
-  let canvasPanX = $state(0)
-  let canvasPanY = $state(0)
-  let canvasPanningPointerId = $state<number | null>(null)
-  let canvasPanLastX = 0
-  let canvasPanLastY = 0
-  let canvasDragMoved = false
 
   const selectedNodeDetail = $derived(
     selectedNode
@@ -72,8 +77,6 @@
   })
   let hoveredFocusNodeId = $state<string | null>(null)
   let pinnedFocusNodeId = $state<string | null>(null)
-  let focusPulseNodeId = $state<string | null>(null)
-  let focusPulseStartedAt = $state(0)
 
   // ─── query toolbar state ────────────────────────────────────────────────
   let queryOpen = $state(false)
@@ -206,43 +209,51 @@
     hiddenTypes = next
   }
 
-  // Literal colors so Canvas and SVG do not depend on resolving CSS vars.
-  function colorForType(type: string): string {
-    switch (type) {
-      case 'tale':      return '#ff2056' // accent
-      case 'character': return '#7dd3fc' // sky-300
-      case 'location':  return '#a3e635' // lime-400
-      case 'object':    return '#fbbf24' // amber-400
-      case 'archetype': return '#a78bfa' // violet-400
-      default:          return '#94a3b8' // slate-400
-    }
-  }
+  // Color/size contract (community fill + type stroke) lives in graph-sigma.ts
+  // so the WebGL adapter and the SVG fallback share one source of truth.
+  const focusEdgeColor = FOCUS_EDGE_COLOR
+  const focusNodeStrokeColor = FOCUS_NODE_STROKE_COLOR
 
-  function sizeForType(type: string): number {
-    if (type === 'tale') return 8
-    if (type === 'character') return 5
-    if (type === 'location' || type === 'object') return 4
-    return 3
-  }
-
-  function nodeVisualRadius(type: string, incomingScale: number): number {
-    const base = Math.max(0.35, Math.min(1.25, sizeForType(type) * 0.14))
-    return Math.max(0.35, Math.min(2.5, base * incomingScale))
-  }
-
-  const focusEdgeColor = '#d6a72c'
-  const focusNodeStrokeColor = '#f4c84a'
-
-  let canvasEl: HTMLCanvasElement | undefined = $state()
-  let canvasRaf = 0
+  // ─── sigma (WebGL) renderer for the canvas view ─────────────────────────
+  // sigma touches WebGL globals at import time, so it is loaded lazily in the
+  // browser only. Everything DOM-free lives in ./graph-sigma (and is tested).
+  //
+  // Ceiling: WebGL renders the node/edge geometry without blocking the main
+  // thread well past the previous 2D-canvas limit — the `limit` select goes to
+  // 50k and 25k draws smoothly. The remaining cost is the community-aware
+  // layout (Louvain → ForceAtlas2 in graph-render.ts), which is CPU-bound and
+  // unchanged by this migration; the progressive `renderBudget` reveal keeps it
+  // off the critical path. Above ~50k, raise the limit but expect the *layout*
+  // (not the render) to dominate frame time.
+  let sigmaContainer: HTMLDivElement | undefined = $state()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let sigmaInstance: any = null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let sigmaModules: { Sigma: any; NodeBorderProgram: any } | null = null
+  let cameraRatio = $state(1)
+  let pulseProgress = $state(0)
+  let pulseRaf = 0
   let graphThemeVersion = $state(0)
 
-  onDestroy(() => cancelAnimationFrame(canvasRaf))
+  function prefersReducedMotion(): boolean {
+    return (
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    )
+  }
+
+  onDestroy(() => {
+    cancelAnimationFrame(pulseRaf)
+    if (sigmaInstance) {
+      sigmaInstance.kill()
+      sigmaInstance = null
+    }
+  })
 
   onMount(() => {
     const observer = new MutationObserver(() => {
       graphThemeVersion += 1
-      if (viewMode === 'canvas') scheduleCanvasDraw()
     })
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
     return () => observer.disconnect()
@@ -323,136 +334,40 @@
     return Math.max(0.5, Math.min(8, value))
   }
 
-  function zoomCanvasAt(nextZoom: number, screenX?: number, screenY?: number) {
-    if (!canvasEl) {
-      svgZoom = nextZoom
-      return
-    }
-    const rect = canvasEl.getBoundingClientRect()
-    const width = Math.max(1, rect.width)
-    const height = Math.max(1, rect.height)
-    const anchorX = screenX ?? width / 2
-    const anchorY = screenY ?? height / 2
-    const cx = width / 2
-    const cy = height / 2
-    const oldZoom = svgZoom
-    if (oldZoom !== nextZoom) {
-      canvasPanX = anchorX - cx - ((anchorX - cx - canvasPanX) * nextZoom) / oldZoom
-      canvasPanY = anchorY - cy - ((anchorY - cy - canvasPanY) * nextZoom) / oldZoom
-      svgZoom = nextZoom
-      scheduleCanvasDraw()
-    }
-  }
+  // Zoom percentage shown in the toolbar: sigma camera ratio for canvas,
+  // the SVG scale factor otherwise (ratio 1 = 100%, zooming in lowers ratio).
+  const zoomPercent = $derived(
+    viewMode === 'canvas'
+      ? Math.round(100 / (cameraRatio || 1))
+      : Math.round(svgZoom * 100),
+  )
 
   function zoomSvg(direction: 'in' | 'out') {
+    if (viewMode === 'canvas') {
+      const camera = sigmaInstance?.getCamera()
+      if (!camera) return
+      if (direction === 'in') camera.animatedZoom(1.4)
+      else camera.animatedUnzoom(1.4)
+      return
+    }
     const factor = direction === 'in' ? 1.25 : 0.8
-    const nextZoom = clampZoom(svgZoom * factor)
-    if (viewMode === 'canvas') zoomCanvasAt(nextZoom)
-    else svgZoom = nextZoom
+    svgZoom = clampZoom(svgZoom * factor)
   }
 
   function resetSvgZoom() {
+    if (viewMode === 'canvas') {
+      sigmaInstance?.getCamera().animatedReset()
+      return
+    }
     svgZoom = 1
-    canvasPanX = 0
-    canvasPanY = 0
-    if (viewMode === 'canvas') scheduleCanvasDraw()
   }
 
   function onSvgWheel(e: WheelEvent) {
+    // Canvas mode lets sigma's built-in camera handle the wheel; this only
+    // drives the SVG fallback's scale transform.
     e.preventDefault()
     const factor = e.deltaY < 0 ? 1.25 : 0.8
-    const nextZoom = clampZoom(svgZoom * factor)
-    if (viewMode === 'canvas') {
-      const rect = canvasEl?.getBoundingClientRect()
-      zoomCanvasAt(
-        nextZoom,
-        rect ? e.clientX - rect.left : undefined,
-        rect ? e.clientY - rect.top : undefined,
-      )
-    } else {
-      svgZoom = nextZoom
-    }
-  }
-
-  function hitTestCanvasNode(e: MouseEvent | PointerEvent): FallbackSvgNode | null {
-    if (!canvasEl) return null
-    const rect = canvasEl.getBoundingClientRect()
-    const width = Math.max(1, rect.width)
-    const height = Math.max(1, rect.height)
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    let best: { node: FallbackSvgNode; d: number } | null = null
-    for (const node of fallbackSvgNodes) {
-      const p = canvasPoint(node.x, node.y, width, height)
-      const d = Math.hypot(p.x - x, p.y - y)
-      const hitRadius = Math.max(12, node.r * 5.2 * svgZoom + 5)
-      if (d > hitRadius) continue
-      if (!best || d < best.d) best = { node, d }
-    }
-    return best?.node ?? null
-  }
-
-  function onCanvasPointerMove(e: PointerEvent) {
-    if (canvasPanningPointerId === e.pointerId) {
-      const dx = e.clientX - canvasPanLastX
-      const dy = e.clientY - canvasPanLastY
-      canvasPanLastX = e.clientX
-      canvasPanLastY = e.clientY
-      if (Math.abs(dx) + Math.abs(dy) > 0) {
-        canvasDragMoved = true
-        canvasPanX += dx
-        canvasPanY += dy
-        scheduleCanvasDraw()
-      }
-      if (canvasEl) canvasEl.style.cursor = 'grabbing'
-      return
-    }
-    if (pinnedFocusNodeId) return
-    const node = hitTestCanvasNode(e)
-    const nextFocusNodeId = node?.id ?? null
-    if (hoveredFocusNodeId !== nextFocusNodeId) hoveredFocusNodeId = nextFocusNodeId
-    if (canvasEl) canvasEl.style.cursor = node ? 'pointer' : 'grab'
-  }
-
-  function onCanvasPointerDown(e: PointerEvent) {
-    if (e.button !== 0) return
-    if (hitTestCanvasNode(e)) return
-    canvasPanningPointerId = e.pointerId
-    canvasPanLastX = e.clientX
-    canvasPanLastY = e.clientY
-    canvasDragMoved = false
-    clearGraphFocus()
-    clearSelection()
-    canvasEl?.setPointerCapture(e.pointerId)
-    if (canvasEl) canvasEl.style.cursor = 'grabbing'
-    e.preventDefault()
-  }
-
-  function stopCanvasPan(e: PointerEvent) {
-    if (canvasPanningPointerId !== e.pointerId) return
-    canvasPanningPointerId = null
-    if (canvasEl?.hasPointerCapture(e.pointerId)) canvasEl.releasePointerCapture(e.pointerId)
-    if (canvasEl) canvasEl.style.cursor = 'grab'
-  }
-
-  function onCanvasPointerLeave() {
-    if (canvasPanningPointerId !== null) return
-    if (!pinnedFocusNodeId) hoveredFocusNodeId = null
-    if (canvasEl) canvasEl.style.cursor = 'default'
-  }
-
-  function onCanvasClick(e: MouseEvent) {
-    if (canvasDragMoved) {
-      canvasDragMoved = false
-      return
-    }
-    const node = hitTestCanvasNode(e)
-    if (node) {
-      clickGraphNode(node)
-    } else {
-      clearGraphFocus()
-      clearSelection()
-    }
+    svgZoom = clampZoom(svgZoom * factor)
   }
 
   const topEdgeLabels = $derived.by(() => {
@@ -527,17 +442,36 @@
     return ids
   })
 
+  // Focus pulse — drives pulseProgress, read by the sigma node reducer.
   $effect(() => {
     const focusId = activeFocusNodeId
-    if (!focusId) return
+    if (!focusId) {
+      pulseProgress = 0
+      return
+    }
     if (!fallbackSvgNodeById.has(focusId)) {
       clearGraphFocus()
       return
     }
-    focusPulseNodeId = focusId
-    focusPulseStartedAt = performance.now()
-    if (viewMode === 'canvas') scheduleCanvasDraw()
+    startFocusPulse()
   })
+
+  function startFocusPulse() {
+    cancelAnimationFrame(pulseRaf)
+    // prefers-reduced-motion: skip the grow-and-settle pulse entirely.
+    if (prefersReducedMotion()) {
+      pulseProgress = 0
+      return
+    }
+    const start = performance.now()
+    pulseProgress = 1
+    const tick = () => {
+      const p = Math.max(0, 1 - (performance.now() - start) / 170)
+      pulseProgress = p
+      if (p > 0) pulseRaf = requestAnimationFrame(tick)
+    }
+    pulseRaf = requestAnimationFrame(tick)
+  }
 
   const graphTransform = $derived(`translate(50 50) scale(${svgZoom}) translate(-50 -50)`)
 
@@ -546,210 +480,161 @@
     return value || fallback
   }
 
-  function graphCanvasColors() {
-    const dark = document.documentElement.dataset.theme === 'dark'
+  // Theme-aware palette handed to the sigma reducers (dark tokens drive it).
+  function sigmaThemeColors(): SigmaThemeColors {
+    const dark = document.documentElement.dataset.theme !== 'light'
     return {
       background: cssColor('--color-bg-0', dark ? '#050607' : '#ffffff'),
       edge: cssColor('--color-line-3', dark ? '#3a424d' : '#c9cbd1'),
-      labelBg: dark ? 'rgba(8, 13, 23, 0.82)' : 'rgba(250, 250, 250, 0.92)',
-      labelFg: cssColor('--color-fg-1', dark ? '#e2e8f0' : '#27272a'),
-      labelStrong: cssColor('--color-fg-0', dark ? '#ffffff' : '#18181b'),
-      edgeLabel: dark ? '#f6d36b' : '#8a6514',
-      warn: cssColor('--color-warn', dark ? '#fbbf24' : '#b45309'),
-      nodeStroke: dark ? '#ffffff' : '#27272a',
+      focusEdge: focusEdgeColor,
+      focusNodeStroke: focusNodeStrokeColor,
       selectedNodeStroke: dark ? '#0a0a0b' : '#18181b',
+      nodeStroke: dark ? '#ffffff' : '#27272a',
+      warn: cssColor('--color-warn', dark ? '#fbbf24' : '#b45309'),
     }
   }
 
-  function canvasPoint(x: number, y: number, width: number, height: number) {
-    const base = Math.min(width, height) / 100
-    const cx = width / 2
-    const cy = height / 2
+  // Live state the sigma reducers close over; rebuilt cheaply per refresh.
+  function sigmaReducerState(): SigmaReducerState {
     return {
-      x: cx + canvasPanX + (x - 50) * base * svgZoom,
-      y: cy + canvasPanY + (y - 50) * base * svgZoom,
+      focusId: activeFocusNodeId,
+      focus: { nodes: focusNodeIds, edges: focusEdgeIds },
+      selectedNodeId: selectedNode?.id ?? null,
+      pulse: pulseProgress,
+      colors: sigmaThemeColors(),
     }
   }
 
-  function drawCanvasLabel(
-    ctx: CanvasRenderingContext2D,
-    text: string,
-    x: number,
-    y: number,
-    options: { primary?: boolean; edge?: boolean } = {},
-  ) {
-    const label = text.trim()
-    if (!label) return
-    const colors = graphCanvasColors()
-
-    const size = options.primary ? 12.5 : options.edge ? 10.5 : 11.5
-    ctx.font = `${options.primary ? '700' : '600'} ${size}px "JetBrains Mono Variable", monospace`
-    const metrics = ctx.measureText(label)
-    const paddingX = options.edge ? 5 : 6
-    const paddingY = options.edge ? 3 : 4
-    const w = metrics.width + paddingX * 2
-    const h = size + paddingY * 2
-    const rx = Math.max(4, Math.min(7, h / 2))
-    const left = x
-    const top = y - h / 2
-
-    ctx.save()
-    ctx.globalAlpha = options.edge ? 0.9 : 0.94
-    ctx.fillStyle = colors.labelBg
-    ctx.beginPath()
-    ctx.roundRect(left, top, w, h, rx)
-    ctx.fill()
-    ctx.globalAlpha = options.primary ? 1 : 0.92
-    ctx.fillStyle = options.edge ? colors.edgeLabel : options.primary ? colors.labelStrong : colors.labelFg
-    ctx.textBaseline = 'middle'
-    ctx.fillText(label, left + paddingX, y + 0.5)
-    ctx.restore()
+  function buildCurrentSigmaGraph() {
+    return buildSigmaGraph({
+      nodes: drawNodes,
+      edges: drawEdges,
+      layout,
+      sizeScales: nodeSizeScales,
+      orphanIds: orphanNodeIds,
+      dark: document.documentElement.dataset.theme !== 'light',
+      edgeColor: sigmaThemeColors().edge,
+    })
   }
 
-  function drawCanvas() {
-    if (!canvasEl) return
-    const canvas = canvasEl
-    const rect = canvas.getBoundingClientRect()
-    const width = Math.max(1, rect.width)
-    const height = Math.max(1, rect.height)
-    const dpr = Math.max(1, window.devicePixelRatio || 1)
-    canvas.width = Math.round(width * dpr)
-    canvas.height = Math.round(height * dpr)
-    const ctx = canvas.getContext('2d')
-    if (!ctx) {
-      canvasError = '2D canvas context unavailable'
-      return
-    }
-    canvasError = null
-    const colors = graphCanvasColors()
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-    ctx.clearRect(0, 0, width, height)
-    ctx.fillStyle = colors.background
-    ctx.fillRect(0, 0, width, height)
-
-    const hasFocus = Boolean(activeFocusNodeId)
-    const now = performance.now()
-    const pulseProgress =
-      focusPulseNodeId && focusPulseNodeId === activeFocusNodeId
-        ? Math.max(0, 1 - (now - focusPulseStartedAt) / 170)
-        : 0
-
-    ctx.save()
-    ctx.globalAlpha = hasFocus ? 0.055 : 0.34
-    ctx.strokeStyle = colors.edge
-    ctx.lineWidth = hasFocus ? 0.55 : 0.75
-    ctx.beginPath()
-    for (const edge of fallbackSvgEdges) {
-      const a = canvasPoint(edge.x1, edge.y1, width, height)
-      const b = canvasPoint(edge.x2, edge.y2, width, height)
-      ctx.moveTo(a.x, a.y)
-      ctx.lineTo(b.x, b.y)
-    }
-    ctx.stroke()
-    ctx.restore()
-
-    if (hasFocus) {
-      ctx.save()
-      ctx.globalAlpha = 0.96
-      ctx.strokeStyle = focusEdgeColor
-      ctx.lineWidth = 2.2
-      ctx.lineCap = 'round'
-      ctx.beginPath()
-      for (const edge of fallbackSvgEdges) {
-        if (!focusEdgeIds.has(edge.id)) continue
-        const a = canvasPoint(edge.x1, edge.y1, width, height)
-        const b = canvasPoint(edge.x2, edge.y2, width, height)
-        ctx.moveTo(a.x, a.y)
-        ctx.lineTo(b.x, b.y)
-      }
-      ctx.stroke()
-      ctx.restore()
-    }
-
-    if (hasFocus) {
-      ctx.save()
-      for (const edge of fallbackSvgEdges) {
-        if (!focusEdgeIds.has(edge.id)) continue
-        const label = (edge.label ?? '').slice(0, 28)
-        if (!label) continue
-        const a = canvasPoint(edge.x1, edge.y1, width, height)
-        const b = canvasPoint(edge.x2, edge.y2, width, height)
-        const x = (a.x + b.x) / 2 + 4
-        const y = (a.y + b.y) / 2 - 5
-        drawCanvasLabel(ctx, label, x, y, { edge: true })
-      }
-      ctx.restore()
-    }
-
-    for (const node of fallbackSvgNodes) {
-      const p = canvasPoint(node.x, node.y, width, height)
-      const selected = selectedNode?.id === node.id
-      const orphan = orphanNodeIds.has(node.id)
-      const isPrimaryFocus = activeFocusNodeId === node.id
-      const isFocusedNeighbor = focusNodeIds.has(node.id)
-      const focusScale = !hasFocus
-        ? 1
-        : isPrimaryFocus
-          ? 2.2 + pulseProgress * 0.38
-          : isFocusedNeighbor
-            ? 1.58
-            : 0.9
-      const alpha = !hasFocus || isFocusedNeighbor ? 1 : 0.12
-      if (orphan) {
-        ctx.beginPath()
-        ctx.globalAlpha = !hasFocus || isFocusedNeighbor ? 0.72 : 0.18
-        ctx.strokeStyle = colors.warn
-        ctx.lineWidth = isPrimaryFocus ? 2.6 : 1.5
-        ctx.arc(p.x, p.y, Math.max(4.8, node.r * 5.1 * svgZoom * focusScale + 4), 0, Math.PI * 2)
-        ctx.stroke()
-      }
-      ctx.beginPath()
-      ctx.globalAlpha = alpha
-      ctx.fillStyle = node.color
-      ctx.arc(p.x, p.y, Math.max(2.6, node.r * 5.1 * svgZoom * focusScale), 0, Math.PI * 2)
-      ctx.fill()
-      ctx.globalAlpha = !hasFocus || isFocusedNeighbor ? 1 : 0.16
-      ctx.strokeStyle = isPrimaryFocus ? focusNodeStrokeColor : selected ? colors.selectedNodeStroke : orphan ? colors.warn : colors.nodeStroke
-      ctx.lineWidth = isPrimaryFocus ? 3.1 : isFocusedNeighbor ? 1.65 : selected ? 2 : 0.9
-      ctx.stroke()
-      ctx.globalAlpha = 1
-    }
-
-    if (hasFocus) {
-      ctx.save()
-      for (const node of fallbackSvgNodes) {
-        const isPrimaryFocus = activeFocusNodeId === node.id
-        if (!isPrimaryFocus && (!focusNodeIds.has(node.id) || focusNodeIds.size > 36)) continue
-        const p = canvasPoint(node.x, node.y, width, height)
-        const offset = Math.max(9, node.r * 9 * svgZoom * (isPrimaryFocus ? 2 : 1.25))
-        drawCanvasLabel(ctx, node.label.slice(0, 36), p.x + offset, p.y, { primary: isPrimaryFocus })
-      }
-      ctx.restore()
-    }
-
-    if (pulseProgress > 0) {
-      canvasRaf = requestAnimationFrame(drawCanvas)
-    }
+  function edgeById(id: string): GraphEdge | null {
+    return drawEdges.find((e) => e.id === id) ?? null
   }
 
-  function scheduleCanvasDraw() {
-    cancelAnimationFrame(canvasRaf)
-    canvasRaf = requestAnimationFrame(drawCanvas)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function wireSigmaEvents(instance: any) {
+    instance.on('clickNode', ({ node }: { node: string }) => {
+      const gn = nodeById(node)
+      if (gn) clickGraphNode(gn)
+    })
+    instance.on('enterNode', ({ node }: { node: string }) => {
+      if (!pinnedFocusNodeId) hoveredFocusNodeId = node
+      if (sigmaContainer) sigmaContainer.style.cursor = 'pointer'
+    })
+    instance.on('leaveNode', () => {
+      if (!pinnedFocusNodeId) hoveredFocusNodeId = null
+      if (sigmaContainer) sigmaContainer.style.cursor = ''
+    })
+    instance.on('clickEdge', ({ edge }: { edge: string }) => {
+      const ge = edgeById(edge)
+      if (ge) {
+        clearGraphFocus()
+        selectEdge(ge)
+      }
+    })
+    instance.on('clickStage', () => {
+      clearGraphFocus()
+      clearSelection()
+    })
+    const camera = instance.getCamera()
+    camera.on('updated', () => {
+      cameraRatio = camera.ratio
+    })
   }
 
+  // Create / tear down the sigma (WebGL) instance with the canvas view.
   $effect(() => {
-    void fallbackSvgNodes
-    void fallbackSvgEdges
-    void selectedNode
-    void svgZoom
-    void canvasPanX
-    void canvasPanY
+    if (viewMode !== 'canvas') return
+    const container = sigmaContainer
+    if (!container) return
+    let killed = false
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let instance: any = null
+    void (async () => {
+      try {
+        if (!sigmaModules) {
+          const [sig, nb] = await Promise.all([
+            import('sigma'),
+            import('@sigma/node-border'),
+          ])
+          sigmaModules = { Sigma: sig.default, NodeBorderProgram: nb.NodeBorderProgram }
+        }
+        if (killed || !sigmaContainer) return
+        const { Sigma, NodeBorderProgram } = sigmaModules
+        instance = new Sigma(buildCurrentSigmaGraph(), container, {
+          allowInvalidContainer: true,
+          defaultNodeType: 'border',
+          nodeProgramClasses: { border: NodeBorderProgram },
+          defaultEdgeType: 'line',
+          renderEdgeLabels: true,
+          labelFont: '"JetBrains Mono Variable", monospace',
+          edgeLabelFont: '"JetBrains Mono Variable", monospace',
+          labelSize: 12,
+          edgeLabelSize: 10,
+          labelWeight: '700',
+          labelColor: { color: cssColor('--color-fg-0', '#ffffff') },
+          edgeLabelColor: { color: '#f6d36b' },
+          labelRenderedSizeThreshold: Infinity,
+          zIndex: true,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          nodeReducer: (node: string, data: any) =>
+            reduceSigmaNode(node, data, sigmaReducerState()),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          edgeReducer: (edge: string, data: any) =>
+            reduceSigmaEdge(edge, data, sigmaReducerState()),
+        })
+        wireSigmaEvents(instance)
+        sigmaInstance = instance
+        cameraRatio = instance.getCamera().ratio
+        canvasError = null
+      } catch (e) {
+        canvasError = (e as Error).message
+      }
+    })()
+    return () => {
+      killed = true
+      if (instance) instance.kill()
+      if (sigmaInstance === instance) sigmaInstance = null
+    }
+  })
+
+  // Swap the graph in place when the draw set, layout, or theme changes.
+  $effect(() => {
+    void drawNodes
+    void drawEdges
+    void layout
+    void nodeSizeScales
+    void orphanNodeIds
     void graphThemeVersion
+    const instance = sigmaInstance
+    if (!instance || viewMode !== 'canvas') return
+    // Label colours are static settings (reducers can't set them), so refresh
+    // them here to stay theme-aware on a dark/light token swap.
+    instance.setSetting('labelColor', { color: cssColor('--color-fg-0', '#ffffff') })
+    instance.setGraph(buildCurrentSigmaGraph())
+    instance.refresh()
+  })
+
+  // Re-run reducers (no re-index) when focus / selection / pulse changes.
+  $effect(() => {
     void activeFocusNodeId
     void focusNodeIds
     void focusEdgeIds
-    void orphanNodeIds
-    if (viewMode === 'canvas') scheduleCanvasDraw()
+    void selectedNode
+    void pulseProgress
+    const instance = sigmaInstance
+    if (!instance || viewMode !== 'canvas') return
+    instance.refresh({ skipIndexation: true })
   })
 
   function onSvgNodePointerEnter(node: GraphNode) {
@@ -871,7 +756,7 @@
             type="button"
             class="inline-flex h-6 w-7 items-center justify-center text-fg-3 hover:bg-bg-1 hover:text-fg-0 disabled:opacity-40"
             onclick={() => zoomSvg('out')}
-            disabled={svgZoom <= 0.5}
+            disabled={viewMode === 'svg' && svgZoom <= 0.5}
             title="Zoom out"
             aria-label="Zoom out"
           >
@@ -884,13 +769,13 @@
             title="Fit graph"
             aria-label="Fit graph"
           >
-            {Math.round(svgZoom * 100)}%
+            {zoomPercent}%
           </button>
           <button
             type="button"
             class="inline-flex h-6 w-7 items-center justify-center text-fg-3 hover:bg-bg-1 hover:text-fg-0 disabled:opacity-40"
             onclick={() => zoomSvg('in')}
-            disabled={svgZoom >= 8}
+            disabled={viewMode === 'svg' && svgZoom >= 8}
             title="Zoom in"
             aria-label="Zoom in"
           >
@@ -1039,7 +924,7 @@
       <div class="border-b border-line-1 bg-warn/10 px-3 py-2 text-[11px] font-mono text-warn flex items-start gap-2">
         <AlertTriangle class="mt-0.5 size-3.5 shrink-0" />
         <div>
-          <div>Canvas renderer unavailable. Switch to SVG or Table.</div>
+          <div>WebGL renderer unavailable. Switch to SVG or Table.</div>
           <div class="mt-0.5 break-words text-fg-3">{canvasError}</div>
         </div>
       </div>
@@ -1048,21 +933,17 @@
     <!-- Body -->
     <div class="flex-1 min-h-0 relative">
       {#if viewMode === 'canvas'}
-        <canvas
-          bind:this={canvasEl}
-          class="absolute inset-0 h-full w-full bg-bg-0"
-          role="button"
+        <!-- sigma.js mounts its WebGL canvases into this container -->
+        <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+        <div
+          bind:this={sigmaContainer}
+          class="sigma-canvas absolute inset-0 h-full w-full bg-bg-0"
+          role="application"
           tabindex="0"
           aria-label={`${drawNodes.length} graph nodes and ${drawEdges.length} graph edges`}
-          onclick={onCanvasClick}
-          onpointerdown={onCanvasPointerDown}
-          onpointermove={onCanvasPointerMove}
-          onpointerup={stopCanvasPan}
-          onpointercancel={stopCanvasPan}
-          onpointerleave={onCanvasPointerLeave}
           onkeydown={(event) => { if (event.key === 'Escape') { clearGraphFocus(); clearSelection() } }}
-          onwheel={onSvgWheel}
-        ></canvas>
+        ></div>
       {:else if viewMode === 'svg'}
         <div class="absolute inset-0 overflow-hidden bg-bg-0">
           <svg
@@ -1433,5 +1314,15 @@
     0% { transform: scale(0.72); }
     72% { transform: scale(1.12); }
     100% { transform: scale(1); }
+  }
+  /* Respect reduced-motion on the focus pulse (SVG fallback; the sigma
+     renderer is gated separately via prefersReducedMotion()). */
+  @media (prefers-reduced-motion: reduce) {
+    .graph-node {
+      transition: none;
+    }
+    .focus-primary {
+      animation: none;
+    }
   }
 </style>
