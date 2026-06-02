@@ -477,11 +477,14 @@ function createServer(config: ServerConfig): McpServer {
         const target = connectionUrl ?? "";
         try {
           const local = await openLocalServer(target);
+          const readOnlyNote = local.readOnly
+            ? " (read-only: the file is already held by another writer)"
+            : "";
           return {
             content: [
               {
                 type: "text",
-                text: `Serving local file ${local.filePath} via a red server at ${local.baseUrl}; opening red-ui ${selectedView} view.`,
+                text: `Serving local file ${local.filePath} via a red server at ${local.baseUrl}${readOnlyNote}; opening red-ui ${selectedView} view.`,
               },
             ],
             structuredContent: {
