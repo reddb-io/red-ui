@@ -18,6 +18,11 @@ import {
   spawnLocalServer,
   stopAllLocalServers,
 } from "./local-server.js";
+import {
+  type EmbedServerHandle,
+  startEmbedServer,
+  stopAllEmbedServers,
+} from "./embed-server.js";
 import { registerDataTools } from "./data-tools.js";
 
 // Single source of truth for "what version am I": the package.json version
@@ -80,6 +85,22 @@ function normalizeHttpUrl(value: string | undefined, fallback: string): string {
 
 function getOrigin(url: string): string {
   return new URL(url).origin;
+}
+
+// Local mode (#51, ADR-0006) serves the embeddable bundle from an ephemeral
+// `http://127.0.0.1:<port>` the MCP picks at runtime, so the CSP cannot name the
+// exact origin ahead of time. Allow loopback on any port for framing, scripts,
+// and connections; the hosted origin stays explicit. Port-wildcard host-sources
+// are valid CSP (`http://127.0.0.1:*`).
+const LOCALHOST_CSP = ["http://localhost:*", "http://127.0.0.1:*"] as const;
+
+function appCsp(config: ServerConfig) {
+  const appOrigin = getOrigin(config.appUrl);
+  return {
+    connectDomains: [...config.connectDomains, ...LOCALHOST_CSP],
+    frameDomains: [appOrigin, ...LOCALHOST_CSP],
+    resourceDomains: [appOrigin, "https://esm.sh", ...LOCALHOST_CSP],
+  };
 }
 
 function loadConfig(): ServerConfig {
@@ -399,6 +420,30 @@ function createServer(config: ServerConfig): McpServer {
     }
   }
 
+  // One embed server per MCP process serves the Embeddable Lib bundle (#37) over
+  // `http://127.0.0.1:<port>` for local mode (#51, ADR-0006). The bundle is the
+  // same regardless of which file is open, so it is a singleton; it is torn down
+  // with the local servers on disconnect/exit.
+  let embedServer: Promise<EmbedServerHandle> | null = null;
+  async function openEmbedServer(): Promise<EmbedServerHandle> {
+    if (embedServer) {
+      try {
+        const handle = await embedServer;
+        if (handle.server.listening) return handle;
+      } catch {
+        // Previous attempt failed; fall through and respawn.
+      }
+    }
+    const pending = startEmbedServer();
+    embedServer = pending;
+    try {
+      return await pending;
+    } catch (error) {
+      embedServer = null;
+      throw error;
+    }
+  }
+
   registerAppResource(
     server,
     "red-ui app",
@@ -408,11 +453,7 @@ function createServer(config: ServerConfig): McpServer {
         "Interactive red-ui database workspace embedded as an MCP App.",
       _meta: {
         ui: {
-          csp: {
-            connectDomains: config.connectDomains,
-            frameDomains: [getOrigin(config.appUrl)],
-            resourceDomains: [getOrigin(config.appUrl), "https://esm.sh"],
-          },
+          csp: appCsp(config),
           prefersBorder: false,
         },
       },
@@ -425,11 +466,7 @@ function createServer(config: ServerConfig): McpServer {
           text: renderRedUiAppHtml(config),
           _meta: {
             ui: {
-              csp: {
-                connectDomains: config.connectDomains,
-                frameDomains: [getOrigin(config.appUrl)],
-                resourceDomains: [getOrigin(config.appUrl), "https://esm.sh"],
-              },
+              csp: appCsp(config),
               prefersBorder: false,
             },
           },
@@ -480,15 +517,33 @@ function createServer(config: ServerConfig): McpServer {
           const readOnlyNote = local.readOnly
             ? " (read-only: the file is already held by another writer)"
             : "";
+
+          // Serve the UI same-origin over http://localhost so the iframe and
+          // the spawned red server share an http:// scheme — no HTTPS→localhost
+          // mixed-content block (Firefox/Safari), fully offline (#51, ADR-0006).
+          // If the embeddable bundle can't be found we still hand back a working
+          // local API, falling back to the hosted UI with a note.
+          let uiUrl = config.appUrl;
+          let uiNote = "";
+          try {
+            const embed = await openEmbedServer();
+            uiUrl = embed.baseUrl;
+          } catch (embedError) {
+            const detail =
+              embedError instanceof Error
+                ? embedError.message
+                : String(embedError);
+            uiNote = ` (local UI bundle unavailable, falling back to ${config.appUrl}: ${detail})`;
+          }
           return {
             content: [
               {
                 type: "text",
-                text: `Serving local file ${local.filePath} via a red server at ${local.baseUrl}${readOnlyNote}; opening red-ui ${selectedView} view.`,
+                text: `Serving local file ${local.filePath} via a red server at ${local.baseUrl}${readOnlyNote}; opening red-ui ${selectedView} view from ${uiUrl}.${uiNote}`,
               },
             ],
             structuredContent: {
-              appUrl: config.appUrl,
+              appUrl: uiUrl,
               connectionUrl: local.baseUrl,
               view: selectedView,
               mode,
@@ -561,6 +616,8 @@ Environment:
   RED_UI_CONNECT_DOMAINS     Comma-separated extra connect-src domains for the embedded app.
   RED_BINARY                 Path to the reddb \`red\` binary used to serve local .rdb files.
                              Defaults to the @reddb-io/sdk binary, else \`red\` on PATH.
+  RED_UI_EMBED_DIR           Directory holding the embeddable bundle (\`index.js\`) served over
+                             http://localhost in local mode. Defaults to the installed @reddb-io/ui.
   RED_UI_CONNECTION_URL      Default reddb endpoint for the data tools (query/list/get), e.g. http://localhost:5055.
   RED_UI_CONNECTION_TOKEN    Bearer token for the data tools' RedClient (sent as Authorization: Bearer …; never logged).
   RED_UI_CONNECTION_AUTH     Raw Authorization header for the data tools (overrides RED_UI_CONNECTION_TOKEN).
@@ -599,6 +656,7 @@ async function main() {
   transport.onclose = () => {
     previousOnClose?.();
     void stopAllLocalServers();
+    void stopAllEmbedServers();
   };
 
   await server.connect(transport);
