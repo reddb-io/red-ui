@@ -21,10 +21,16 @@ on:
 #   WINDOWS_CERTIFICATE           — base64-encoded .pfx
 #   WINDOWS_CERTIFICATE_PASSWORD
 
+# Never interrupt an in-flight release (a half-published tag is worse than a
+# queued one), but don't run two releases for the same ref at once.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   npm:
     name: npm · publish packages
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     permissions:
       contents: read
       id-token: write
@@ -73,6 +79,11 @@ jobs:
     env:
       RED_BUILD_VERSION: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || '' }}
       RED_BUILD_GIT_SHA: ${{ github.sha }}
+      # sccache object-cache (CARGO_INCREMENTAL must be 0 — incremental and
+      # sccache are mutually exclusive). Harvested from reddb-io/reddb.
+      CARGO_INCREMENTAL: "0"
+      SCCACHE_GHA_ENABLED: "true"
+      RUSTC_WRAPPER: sccache
     steps:
       - uses: actions/checkout@v4
 
@@ -86,20 +97,29 @@ jobs:
           cache: pnpm
 
       - name: install rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@1.95.0
         with:
           targets: ${{ contains(matrix.platform, 'macos') && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
+      - name: install mold (linux link speedup)
+        if: contains(matrix.platform, 'ubuntu')
+        uses: rui314/setup-mold@v1
+
+      - name: sccache
+        uses: mozilla-actions/sccache-action@v0.0.10
+
       - name: rust cache
-        uses: swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@v2
         with:
           workspaces: apps/desktop/src-tauri
+          # Same key as ci.yml's tauri job so the release build warm-starts
+          # from CI's cache.
+          shared-key: tauri-${{ runner.os }}-rust-1.95.0
+          cache-on-failure: "true"
 
       - name: linux deps
         if: contains(matrix.platform, 'ubuntu')
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libssl-dev
+        uses: ./.github/actions/tauri-linux-deps
 
       - run: pnpm install --frozen-lockfile
 

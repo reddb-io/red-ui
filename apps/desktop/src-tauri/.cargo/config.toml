@@ -1,0 +1,13 @@
+# Use clang + the mold linker on Linux for a much faster link of the Tauri
+# binary (harvested from reddb-io/reddb). Target-scoped to linux-gnu only, so
+# macOS / Windows builds (and the commented-out release matrix entries) are
+# untouched. Local Linux dev needs `clang` and `mold` on PATH
+# (`apt install clang mold`); CI installs clang via the tauri-linux-deps
+# composite and mold via rui314/setup-mold.
+[target.x86_64-unknown-linux-gnu]
+linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=mold"]
+
+[target.aarch64-unknown-linux-gnu]
+linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=mold"]

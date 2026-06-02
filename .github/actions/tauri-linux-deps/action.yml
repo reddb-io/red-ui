@@ -1,0 +1,20 @@
+name: Tauri Linux deps
+description: >
+  Install the system libraries the Tauri Linux build needs (webkit2gtk,
+  appindicator, rsvg, patchelf, openssl) plus clang, which the mold linker is
+  driven through (see apps/desktop/src-tauri/.cargo/config.toml). Single source
+  of truth so ci.yml and release.yml can't drift. Mirrors reddb's
+  .github/actions/install-protoc composite pattern.
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libwebkit2gtk-4.1-dev \
+          libappindicator3-dev \
+          librsvg2-dev \
+          patchelf \
+          libssl-dev \
+          clang
