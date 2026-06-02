@@ -11,6 +11,8 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod/v4";
+import { classifyTarget } from "./target.js";
+import { handleLocalTarget } from "./local.js";
 
 // Single source of truth for "what version am I": the package.json version
 // (changeset-managed, version-locked with @reddb-io/ui + ui-kit), overridable by
@@ -393,11 +395,19 @@ function createServer(config: ServerConfig): McpServer {
       description:
         "Display the red-ui database workspace as an embedded MCP App.",
       inputSchema: {
+        target: z
+          .string()
+          .optional()
+          .describe(
+            "Connection target. A remote cluster URL (http(s)://, red://, or host:port) " +
+              "opens red-ui connected to it; a filesystem path / file:// / *.rdb is detected " +
+              "as a local file and routed to the local handler."
+          ),
         connectionUrl: z
           .string()
           .optional()
           .describe(
-            "Optional red/http connection URL to preselect in red-ui, for example http://localhost:5055."
+            "Deprecated alias for `target`. Optional red/http connection URL to preselect in red-ui, for example http://localhost:5055."
           ),
         view: z
           .enum(["home", "query", "collections", "cluster", "security"])
@@ -411,18 +421,76 @@ function createServer(config: ServerConfig): McpServer {
         },
       },
     },
-    async ({ connectionUrl, view }) => {
+    async ({ target, connectionUrl, view }) => {
       const selectedView: RedUiView = view ?? "query";
+      const raw = (target ?? connectionUrl ?? "").trim();
+
+      // No target: open the app with no preselected connection.
+      if (!raw) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Opening red-ui ${selectedView} view from ${config.appUrl}.`,
+            },
+          ],
+          structuredContent: {
+            appUrl: config.appUrl,
+            connectionUrl: "",
+            view: selectedView,
+          },
+        };
+      }
+
+      let classified;
+      try {
+        classified = classifyTarget(raw);
+      } catch (error) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: "text",
+              text:
+                error instanceof Error
+                  ? error.message
+                  : `Invalid target: ${raw}`,
+            },
+          ],
+          structuredContent: {
+            appUrl: config.appUrl,
+            connectionUrl: "",
+            view: selectedView,
+          },
+        };
+      }
+
+      // Local file: route to the local handler seam. No process is spawned and
+      // no connection string is seeded into the Open Contract (ADR-0006).
+      if (classified.mode === "local") {
+        const local = handleLocalTarget(classified);
+        return {
+          content: [{ type: "text", text: local.message }],
+          structuredContent: {
+            appUrl: config.appUrl,
+            connectionUrl: local.connectionString ?? "",
+            view: selectedView,
+          },
+        };
+      }
+
+      // Remote cluster: hand the sanitized connection string to the browser
+      // Surface via the Open Contract (?cs=). Never a secret in the URL (ADR-0005).
       return {
         content: [
           {
             type: "text",
-            text: `Opening red-ui ${selectedView} view from ${config.appUrl}.`,
+            text: `Opening red-ui ${selectedView} view connected to ${classified.connectionString}.`,
           },
         ],
         structuredContent: {
           appUrl: config.appUrl,
-          connectionUrl: connectionUrl ?? "",
+          connectionUrl: classified.connectionString,
           view: selectedView,
         },
       };
