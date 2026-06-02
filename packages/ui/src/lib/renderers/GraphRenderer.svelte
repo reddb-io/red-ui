@@ -6,6 +6,7 @@
     buildSigmaGraph,
     colorForType,
     nodeVisualRadius,
+    supernodeSvgRadius,
     reduceSigmaEdge,
     reduceSigmaNode,
     FOCUS_EDGE_COLOR,
@@ -13,10 +14,16 @@
     type SigmaReducerState,
     type SigmaThemeColors,
   } from './graph-sigma'
+  import {
+    collapseCommunities,
+    communitiesInLayout,
+    isSupernodeId,
+    supernodeCommunityOf,
+  } from './graph-communities'
   import { collectionPageHref } from '$lib/collection-pages'
   import { connection } from '$lib/connections.svelte'
   import { activity } from '$lib/activity.svelte'
-  import { Network, Table2, Search, X, Info, Maximize2, Play, Code2, RotateCw, Loader2, Route, AlertTriangle, ZoomIn, ZoomOut } from 'lucide-svelte'
+  import { Network, Table2, Search, X, Info, Maximize2, Play, Code2, RotateCw, Loader2, Route, AlertTriangle, ZoomIn, ZoomOut, Boxes, Group } from 'lucide-svelte'
 
   interface Props {
     result: QueryResult
@@ -64,6 +71,9 @@
   let canvasError = $state<string | null>(null)
   let renderBudget = $state(350)
   let svgZoom = $state(1)
+  // Communities (from runGraphLayout's Louvain pass) folded into supernodes.
+  // Keyed by community id; reversible — expanding just drops the id.
+  let collapsedCommunities = $state<Set<number>>(new Set())
 
   const selectedNodeDetail = $derived(
     selectedNode
@@ -384,11 +394,67 @@
   // See packages/ui/src/lib/renderers/graph-render.ts → runGraphLayout.
   const layout = $derived(runGraphLayout(drawNodes, drawEdges))
 
+  // ─── community expand / collapse ────────────────────────────────────────
+  // Fold the collapsed communities into supernodes (positions reused from the
+  // base layout, so collapsing never re-runs FA2 and never jitters). The
+  // result feeds the same sigma/SVG pipeline an expanded graph uses.
+  const collapsed = $derived(
+    collapseCommunities(drawNodes, drawEdges, layout, collapsedCommunities),
+  )
+  const renderNodes = $derived(collapsed.nodes)
+  const renderEdges = $derived(collapsed.edges)
+  const renderLayout = $derived(collapsed.layout)
+
+  // Community → member count over the *base* draw set, so the toolbar can offer
+  // "collapse clusters" independently of what is collapsed right now.
+  const communityCounts = $derived.by(() => {
+    const groups = communitiesInLayout(drawNodes, layout)
+    return new Map([...groups].map(([community, ids]) => [community, ids.length]))
+  })
+  // A community is only worth collapsing if it has more than one member.
+  const collapsibleCommunities = $derived(
+    [...communityCounts].filter(([, count]) => count >= 2).map(([community]) => community),
+  )
+  const anyCollapsed = $derived(collapsedCommunities.size > 0)
+
+  function collapseCommunity(community: number) {
+    const next = new Set(collapsedCommunities)
+    next.add(community)
+    collapsedCommunities = next
+    clearGraphFocus()
+  }
+
+  function expandCommunity(community: number) {
+    const next = new Set(collapsedCommunities)
+    next.delete(community)
+    collapsedCommunities = next
+    clearGraphFocus()
+  }
+
+  function toggleCollapseAll() {
+    collapsedCommunities = anyCollapsed ? new Set() : new Set(collapsibleCommunities)
+    clearGraphFocus()
+    clearSelection()
+  }
+
+  // The community a node currently sits in (for the side-panel collapse action).
+  const selectedNodeCommunity = $derived(
+    selectedNode ? layout.get(selectedNode.id)?.community ?? null : null,
+  )
+
+  // Drop a selection that just got folded into a supernode (keeps state honest).
+  $effect(() => {
+    if (!selectedNode) return
+    if (collapsed.collapsedMembers.has(selectedNode.id)) clearSelection()
+  })
+
   const fallbackSvgNodes = $derived.by<FallbackSvgNode[]>(() => {
-    return drawNodes.map((node) => {
+    return renderNodes.map((node) => {
       const type = String(node.data.node_type ?? 'node')
       const incomingScale = nodeSizeScales.get(node.id) ?? 1
-      const pos = layout.get(node.id)
+      const pos = renderLayout.get(node.id)
+      const isSupernode = node.data.__supernode === true
+      const memberCount = typeof node.data.__memberCount === 'number' ? node.data.__memberCount : 0
       // Community tint as primary color so clusters read at a glance;
       // type still drives the radius/stroke contract.
       const color = pos ? colorForCommunity(pos.community) : colorForType(type)
@@ -396,7 +462,7 @@
         ...node,
         x: pos?.x ?? 50,
         y: pos?.y ?? 50,
-        r: nodeVisualRadius(type, incomingScale),
+        r: isSupernode ? supernodeSvgRadius(memberCount) : nodeVisualRadius(type, incomingScale),
         color,
       }
     })
@@ -507,9 +573,9 @@
 
   function buildCurrentSigmaGraph() {
     return buildSigmaGraph({
-      nodes: drawNodes,
-      edges: drawEdges,
-      layout,
+      nodes: renderNodes,
+      edges: renderEdges,
+      layout: renderLayout,
       sizeScales: nodeSizeScales,
       orphanIds: orphanNodeIds,
       dark: document.documentElement.dataset.theme !== 'light',
@@ -518,14 +584,25 @@
   }
 
   function edgeById(id: string): GraphEdge | null {
-    return drawEdges.find((e) => e.id === id) ?? null
+    return renderEdges.find((e) => e.id === id) ?? null
+  }
+
+  // A click on any rendered node: a supernode expands its cluster, an ordinary
+  // node follows the focus/selection path. Routed from both renderers.
+  function onGraphNodeClick(id: string) {
+    if (isSupernodeId(id)) {
+      const community = supernodeCommunityOf(id)
+      if (community !== null) expandCommunity(community)
+      return
+    }
+    const gn = nodeById(id)
+    if (gn) clickGraphNode(gn)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function wireSigmaEvents(instance: any) {
     instance.on('clickNode', ({ node }: { node: string }) => {
-      const gn = nodeById(node)
-      if (gn) clickGraphNode(gn)
+      onGraphNodeClick(node)
     })
     instance.on('enterNode', ({ node }: { node: string }) => {
       if (!pinnedFocusNodeId) hoveredFocusNodeId = node
@@ -610,9 +687,9 @@
 
   // Swap the graph in place when the draw set, layout, or theme changes.
   $effect(() => {
-    void drawNodes
-    void drawEdges
-    void layout
+    void renderNodes
+    void renderEdges
+    void renderLayout
     void nodeSizeScales
     void orphanNodeIds
     void graphThemeVersion
@@ -658,6 +735,7 @@
   }
 
   function showSvgLabel(node: FallbackSvgNode): boolean {
+    if (node.data.__supernode === true) return true
     if (!activeFocusNodeId) return false
     if (activeFocusNodeId === node.id) return true
     return focusNodeIds.size <= 36 && focusNodeIds.has(node.id)
@@ -782,6 +860,22 @@
             <ZoomIn class="size-3.5" />
           </button>
         </div>
+      {/if}
+
+      {#if viewMode !== 'table' && collapsibleCommunities.length > 0}
+        <button
+          type="button"
+          class={[
+            'inline-flex items-center gap-1 h-6 px-2 rounded border cursor-pointer transition-colors',
+            anyCollapsed ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+          ].join(' ')}
+          onclick={toggleCollapseAll}
+          aria-pressed={anyCollapsed}
+          title={anyCollapsed ? 'Expand all collapsed clusters back to their members' : 'Collapse each community into a single supernode'}
+        >
+          {#if anyCollapsed}<Group class="size-3" />{:else}<Boxes class="size-3" />{/if}
+          {anyCollapsed ? `expand (${collapsedCommunities.size})` : `collapse ${collapsibleCommunities.length} clusters`}
+        </button>
       {/if}
 
       <button
@@ -1015,26 +1109,27 @@
                       class="pointer-events-none"
                     />
                   {/if}
+                  {@const supernode = n.data.__supernode === true}
                   <circle
                     cx={n.x}
                     cy={n.y}
                     r={svgNodeRadius(n)}
                     fill={n.color}
                     opacity={svgNodeOpacity(n)}
-                    stroke={activeFocusNodeId === n.id ? focusNodeStrokeColor : selectedNode?.id === n.id ? '#0a0a0b' : orphan ? 'var(--color-warn)' : '#ffffff'}
-                    stroke-width={activeFocusNodeId === n.id ? '0.55' : focusNodeIds.has(n.id) ? '0.22' : selectedNode?.id === n.id || orphan ? '0.4' : '0.14'}
+                    stroke={activeFocusNodeId === n.id ? focusNodeStrokeColor : supernode ? '#e2e8f0' : selectedNode?.id === n.id ? '#0a0a0b' : orphan ? 'var(--color-warn)' : '#ffffff'}
+                    stroke-width={activeFocusNodeId === n.id ? '0.55' : supernode ? '0.5' : focusNodeIds.has(n.id) ? '0.22' : selectedNode?.id === n.id || orphan ? '0.4' : '0.14'}
                     class="cursor-pointer graph-node"
                     class:focus-primary={activeFocusNodeId === n.id}
                     vector-effect="non-scaling-stroke"
                     role="button"
                     tabindex="0"
-                    aria-label={n.label}
+                    aria-label={supernode ? `${n.label} — click to expand` : n.label}
                     onpointerenter={() => onSvgNodePointerEnter(n)}
                     onpointerleave={() => onSvgNodePointerLeave(n)}
-                    onclick={(event) => { event.stopPropagation(); clickGraphNode(n) }}
-                    onkeydown={(event) => onSelectableKey(event, () => clickGraphNode(n))}
+                    onclick={(event) => { event.stopPropagation(); onGraphNodeClick(n.id) }}
+                    onkeydown={(event) => onSelectableKey(event, () => onGraphNodeClick(n.id))}
                   >
-                    <title>{n.label}</title>
+                    <title>{supernode ? `${n.label} — click to expand` : n.label}</title>
                   </circle>
                   {#if showSvgLabel(n)}
                     <text
@@ -1123,6 +1218,17 @@
                   {/if}
                 </div>
                 <div class="mt-1 break-all text-accent">{String(selectedNode.data.rid ?? selectedNode.id)}</div>
+                {#if selectedNodeCommunity !== null && (communityCounts.get(selectedNodeCommunity) ?? 0) >= 2}
+                  <button
+                    type="button"
+                    class="mt-2 inline-flex items-center gap-1.5 rounded border border-line-2 bg-bg-0 px-2 py-1 text-[11px] text-fg-2 hover:border-accent hover:text-fg-0 cursor-pointer"
+                    onclick={() => collapseCommunity(selectedNodeCommunity!)}
+                    title="Fold this node's community into a single supernode"
+                  >
+                    <Boxes class="size-3" />
+                    collapse cluster {selectedNodeCommunity} · {communityCounts.get(selectedNodeCommunity)} nodes
+                  </button>
+                {/if}
               </div>
 
               <div class="mb-3 border-t border-line-1 pt-3">
