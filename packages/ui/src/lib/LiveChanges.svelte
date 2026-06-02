@@ -31,8 +31,14 @@
     }
     const cdc = new CDCStreamClient({
       client,
-      // No EventSource probe wired yet; reddb's SSE endpoint is in flight, so
-      // force REST polling. When the server ships SSE this becomes:
+      // CDC is poll-only on reddb today: the server exposes `GET /changes`
+      // (handlers_backup.rs / routing.rs) and there is NO `/changes/stream` SSE
+      // route (verified against ../reddb 2026-06-01). Polling `GET /changes` is
+      // therefore the optimal — and only — live-changes transport for every
+      // Surface. The CDCStreamClient keeps full SSE plumbing dormant for a
+      // hypothetical future server push endpoint; do NOT enable it until reddb
+      // actually ships `/changes/stream`, or every subscription 404s. When it
+      // lands this becomes:
       //   sseFactory: (url) => new EventSource(url),
       //   sseProbe: async () => (await fetch(url, { method: 'HEAD' })).ok,
       sseFactory: null,

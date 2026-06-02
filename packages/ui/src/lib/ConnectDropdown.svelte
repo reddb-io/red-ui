@@ -100,8 +100,9 @@
   const supportedHint = $derived.by(() => {
     const t = connection.supportedTransports
     const schemes: string[] = []
+    // http(s):// is the only browser transport; red(s):// works everywhere as an
+    // http(s)://host:5055 alias (normalizeUrl) so it's not advertised separately.
     if (t.includes('http') || t.includes('https')) schemes.push('http(s)://')
-    if (t.includes('tcp') || t.includes('tls')) schemes.push('red(s)://')
     if (t.includes('unix')) schemes.push('file://')
     return schemes.join(' · ')
   })
