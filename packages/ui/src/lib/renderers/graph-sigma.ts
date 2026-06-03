@@ -54,6 +54,24 @@ export function sigmaNodeSize(type: string, incomingScale: number): number {
   return nodeVisualRadius(type, incomingScale) * SIGMA_SIZE_FACTOR;
 }
 
+// ─── community supernode sizing (collapsed-cluster rendering) ───────────────
+
+/** Light stroke that marks a supernode as an expandable cluster. */
+export const SUPERNODE_STROKE_COLOR = "#e2e8f0";
+
+/**
+ * Supernode radius in the SVG fallback's [0, 100] space — grows with the
+ * member count (sub-linear so a 500-node cluster doesn't swallow the canvas).
+ */
+export function supernodeSvgRadius(memberCount: number): number {
+  return Math.min(7, 2.2 + Math.sqrt(Math.max(1, memberCount)) * 0.7);
+}
+
+/** Same radius mapped onto sigma's pixel sizing. */
+export function supernodeSigmaSize(memberCount: number): number {
+  return supernodeSvgRadius(memberCount) * SIGMA_SIZE_FACTOR;
+}
+
 // ─── colour utilities (sigma's WebGL colour parser handles hex/rgb(a) but not
 //     hsl(), so community tints are converted up front) ─────────────────────
 
@@ -159,6 +177,10 @@ export interface SigmaNodeAttributes {
   nodeType: string;
   community: number;
   orphan: boolean;
+  /** True for a collapsed-community supernode; always labels, never dims away. */
+  isSupernode: boolean;
+  /** Member count behind a supernode (0 for ordinary nodes). */
+  memberCount: number;
   /** Drives `defaultNodeType` → NodeBorderProgram. */
   type: "border";
 }
@@ -231,7 +253,12 @@ export function buildSigmaGraph(
     const type = String(node.data.node_type ?? "node");
     const incomingScale = sizeScales.get(node.id) ?? 1;
     const pos = layout.get(node.id);
-    const size = sigmaNodeSize(type, incomingScale);
+    const isSupernode = node.data.__supernode === true;
+    const memberCount =
+      typeof node.data.__memberCount === "number" ? node.data.__memberCount : 0;
+    const size = isSupernode
+      ? supernodeSigmaSize(memberCount)
+      : sigmaNodeSize(type, incomingScale);
     const fill = pos
       ? sigmaColorForCommunity(pos.community, dark)
       : colorForType(type);
@@ -243,11 +270,13 @@ export function buildSigmaGraph(
       baseSize: size,
       color: fill,
       mutedColor: withAlpha(fill, 0.14),
-      borderColor: colorForType(type),
+      borderColor: isSupernode ? SUPERNODE_STROKE_COLOR : colorForType(type),
       label: node.label,
       nodeType: type,
       community: pos?.community ?? -1,
       orphan: orphanIds.has(node.id),
+      isSupernode,
+      memberCount,
       type: "border",
     });
   }
@@ -257,8 +286,11 @@ export function buildSigmaGraph(
     if (graph.hasEdge(edge.id)) continue;
     const sc = layout.get(edge.source)?.community ?? -1;
     const tc = layout.get(edge.target)?.community ?? -1;
+    const aggregated = edge.data?.__aggregated === true;
+    const weight = typeof edge.data?.weight === "number" ? edge.data.weight : 1;
     graph.addEdgeWithKey(edge.id, edge.source, edge.target, {
-      size: 1,
+      // Aggregated cross-cluster edges thicken with the number they fold in.
+      size: aggregated ? Math.min(6, 1 + Math.log2(weight + 1)) : 1,
       color: withAlpha(edgeColor, 0.34),
       edgeLabel: edge.label ?? "",
       label: "",
@@ -540,9 +572,12 @@ export function reduceSigmaNode(
         ? colors.selectedNodeStroke
         : attrs.borderColor;
 
+  // Supernodes always carry their cluster/count label so the collapsed state
+  // is self-explanatory and obviously clickable.
   const showLabel =
-    hasFocus &&
-    (isPrimary || (focus.nodes.size <= NEIGHBOUR_LABEL_LIMIT && isNeighbor));
+    attrs.isSupernode ||
+    (hasFocus &&
+      (isPrimary || (focus.nodes.size <= NEIGHBOUR_LABEL_LIMIT && isNeighbor)));
 
   return {
     size: attrs.baseSize * scale,
@@ -550,7 +585,7 @@ export function reduceSigmaNode(
     borderColor,
     label: showLabel ? attrs.label.slice(0, NODE_LABEL_MAX) : "",
     forceLabel: showLabel,
-    zIndex: isPrimary ? 3 : isNeighbor ? 2 : 1,
+    zIndex: isPrimary ? 3 : attrs.isSupernode ? 2 : isNeighbor ? 2 : 1,
     hidden: false,
   };
 }

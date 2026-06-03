@@ -1,0 +1,193 @@
+// Community expand/collapse — pure, DOM-free, and sigma-free so the node test
+// environment can exercise every branch. Given the community ids produced by
+// `runGraphLayout` (Phase 1's Louvain pass), this folds a community's members
+// into a single supernode and aggregates the edges that crossed its boundary.
+// The GraphRenderer feeds the result into the same `buildSigmaGraph` / SVG
+// pipeline a non-collapsed graph uses, so collapsed and expanded states render
+// through one code path and stay reversible.
+
+import type { GraphEdge, GraphLayout, GraphNode } from "./graph-render";
+
+/** Synthetic-id namespace so supernodes never collide with real node ids. */
+export const SUPERNODE_PREFIX = "__cluster__:";
+
+export function communitySupernodeId(community: number): string {
+  return `${SUPERNODE_PREFIX}${community}`;
+}
+
+export function isSupernodeId(id: string): boolean {
+  return id.startsWith(SUPERNODE_PREFIX);
+}
+
+export function supernodeCommunityOf(id: string): number | null {
+  if (!isSupernodeId(id)) return null;
+  const n = Number(id.slice(SUPERNODE_PREFIX.length));
+  return Number.isFinite(n) ? n : null;
+}
+
+export interface CommunitySummary {
+  community: number;
+  memberIds: string[];
+  size: number;
+}
+
+/** Group the visible nodes by the community id their layout position carries. */
+export function communitiesInLayout(
+  nodes: GraphNode[],
+  layout: GraphLayout
+): Map<number, string[]> {
+  const out = new Map<number, string[]>();
+  for (const node of nodes) {
+    const pos = layout.get(node.id);
+    if (!pos) continue;
+    const list = out.get(pos.community);
+    if (list) list.push(node.id);
+    else out.set(pos.community, [node.id]);
+  }
+  return out;
+}
+
+export interface CollapseResult {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  layout: GraphLayout;
+  /** supernode id → the community it stands in for. */
+  supernodes: Map<string, CommunitySummary>;
+  /** member id → supernode id, for collapsed communities only. */
+  collapsedMembers: Map<string, string>;
+}
+
+const passthrough = (
+  nodes: GraphNode[],
+  edges: GraphEdge[],
+  layout: GraphLayout
+): CollapseResult => ({
+  nodes,
+  edges,
+  layout,
+  supernodes: new Map(),
+  collapsedMembers: new Map(),
+});
+
+/**
+ * Fold every community in `collapsed` into one supernode positioned at its
+ * members' centroid. Edges that crossed the community boundary are remapped to
+ * the supernode and aggregated (parallel edges merge, carrying a `weight`);
+ * edges fully inside a collapsed community are dropped (they live "inside" the
+ * supernode). Edges untouched by any collapse pass through unchanged so their
+ * labels and detail survive a click.
+ *
+ * A community is only collapsed if it actually has members in the current
+ * draw set — collapsing then filtering can leave a stale id in the set, and we
+ * silently ignore it rather than emit an empty supernode.
+ */
+export function collapseCommunities(
+  nodes: GraphNode[],
+  edges: GraphEdge[],
+  layout: GraphLayout,
+  collapsed: Set<number>
+): CollapseResult {
+  if (collapsed.size === 0) return passthrough(nodes, edges, layout);
+
+  const groups = communitiesInLayout(nodes, layout);
+  const active = new Set<number>();
+  for (const community of collapsed) {
+    const members = groups.get(community);
+    if (members && members.length > 0) active.add(community);
+  }
+  if (active.size === 0) return passthrough(nodes, edges, layout);
+
+  const memberToSuper = new Map<string, string>();
+  const supernodes = new Map<string, CommunitySummary>();
+  const outNodes: GraphNode[] = [];
+  const outLayout: GraphLayout = new Map();
+
+  for (const node of nodes) {
+    const pos = layout.get(node.id);
+    if (pos && active.has(pos.community)) {
+      memberToSuper.set(node.id, communitySupernodeId(pos.community));
+      continue;
+    }
+    outNodes.push(node);
+    if (pos) outLayout.set(node.id, pos);
+  }
+
+  for (const community of active) {
+    const members = groups.get(community)!;
+    const superId = communitySupernodeId(community);
+    let sx = 0;
+    let sy = 0;
+    let n = 0;
+    for (const id of members) {
+      const pos = layout.get(id);
+      if (!pos) continue;
+      sx += pos.x;
+      sy += pos.y;
+      n += 1;
+    }
+    supernodes.set(superId, {
+      community,
+      memberIds: members,
+      size: members.length,
+    });
+    outNodes.push({
+      id: superId,
+      label: `cluster ${community} · ${members.length}`,
+      data: {
+        node_type: "cluster",
+        __supernode: true,
+        __community: community,
+        __memberCount: members.length,
+      },
+    });
+    outLayout.set(superId, {
+      x: n ? sx / n : 50,
+      y: n ? sy / n : 50,
+      community,
+    });
+  }
+
+  const remap = (id: string) => memberToSuper.get(id) ?? id;
+  const outEdges: GraphEdge[] = [];
+  const aggregated = new Map<
+    string,
+    { source: string; target: string; weight: number; members: string[] }
+  >();
+
+  for (const edge of edges) {
+    const source = remap(edge.source);
+    const target = remap(edge.target);
+    const touchesSuper = source !== edge.source || target !== edge.target;
+    if (!touchesSuper) {
+      outEdges.push(edge);
+      continue;
+    }
+    if (source === target) continue; // intra-cluster — hidden inside the supernode
+    const key = `${source} ${target}`;
+    const agg = aggregated.get(key);
+    if (agg) {
+      agg.weight += 1;
+      agg.members.push(edge.id);
+    } else {
+      aggregated.set(key, { source, target, weight: 1, members: [edge.id] });
+    }
+  }
+
+  for (const [key, agg] of aggregated) {
+    outEdges.push({
+      id: `__agg__:${key}`,
+      source: agg.source,
+      target: agg.target,
+      label: agg.weight > 1 ? `×${agg.weight}` : undefined,
+      data: { __aggregated: true, weight: agg.weight, members: agg.members },
+    });
+  }
+
+  return {
+    nodes: outNodes,
+    edges: outEdges,
+    layout: outLayout,
+    supernodes,
+    collapsedMembers: memberToSuper,
+  };
+}
