@@ -23,7 +23,8 @@ export type View =
   | "collections"
   | "cluster"
   | "security"
-  | "settings";
+  | "settings"
+  | "appearance";
 
 /**
  * A navigation intent. `collection` carries a selected collection + subpage
@@ -35,6 +36,7 @@ export type RouteTarget =
   | { view: "cluster" }
   | { view: "security" }
   | { view: "settings" }
+  | { view: "appearance" }
   | { view: "collection"; collection: string; subpage: string };
 
 /** Resolved current location, the reactive surface views read from. */
@@ -79,6 +81,8 @@ export function targetToHref(target: RouteTarget): string {
       return "/security";
     case "settings":
       return "/settings";
+    case "appearance":
+      return "/appearance";
     case "collection":
       return collectionPageHref(target.collection, target.subpage);
   }
@@ -110,6 +114,8 @@ export function pathToLocation(pathname: string): RouteLocation {
     return { view: "security", collection: null, subpage: null };
   if (pathname.startsWith("/settings"))
     return { view: "settings", collection: null, subpage: null };
+  if (pathname.startsWith("/appearance"))
+    return { view: "appearance", collection: null, subpage: null };
   const m = pathname.match(/^\/c\/([^/]+)(?:\/p\/([^/]+))?/);
   if (m) {
     return {
