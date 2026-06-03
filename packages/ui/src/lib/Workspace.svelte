@@ -16,9 +16,11 @@
   import ClusterView from './ClusterView.svelte'
   import SecurityView from './SecurityView.svelte'
   import SettingsView from './SettingsView.svelte'
+  import Appearance from './Appearance.svelte'
   import { connection, setConnectionProvider } from './connections.svelte'
   import { runQueryPreferStream, type ConnectionProvider } from '#reddb'
   import { theme, type Theme } from './theme.svelte'
+  import { skins } from './skins/skins.svelte'
   import { secureStore } from './secureStore.svelte'
   import { pendingChanges, buildUpdateSql, type CommitOutcome } from './pending-changes.svelte'
   import { queryTabs } from './query-tabs.svelte'
@@ -64,7 +66,7 @@
 
   function navigateToBootRoute(route: string) {
     const legacyView = route as View
-    if (legacyView === 'query' || legacyView === 'collections' || legacyView === 'cluster' || legacyView === 'security' || legacyView === 'settings') {
+    if (legacyView === 'query' || legacyView === 'collections' || legacyView === 'cluster' || legacyView === 'security' || legacyView === 'settings' || legacyView === 'appearance') {
       router.go({ view: legacyView }, undefined, true)
       return
     }
@@ -133,6 +135,12 @@
   // start from the persisted value rather than the in-memory default.
   // svelte-ignore state_referenced_locally
   theme.init({ target: themeTarget ?? null, persist: persistTheme, initial: initialTheme })
+
+  // Skin-as-data (#75): apply the persisted skin's seed-derived custom
+  // properties over the active theme. Scoped to the same target the theme
+  // uses, so an embedded host's shadow root is skinned, not the document.
+  // svelte-ignore state_referenced_locally
+  skins.init(themeTarget ?? null)
 
   // Hard lock gate: while the secure store is locked, no automatic network
   // traffic should fire — probing the configured URL would leak its existence
@@ -238,6 +246,8 @@
         <SecurityView />
       {:else if router.view === 'settings'}
         <SettingsView />
+      {:else if router.view === 'appearance'}
+        <Appearance />
       {:else}
         <CollectionsView />
       {/if}
