@@ -1,0 +1,76 @@
+name: Changesets
+
+# Mirrors reddb's changesets flow (../reddb/.github/workflows/changesets.yml).
+# On every push to main, the changesets bot either:
+#   - opens/updates a "Version Packages" PR (when changeset files are pending)
+#     that runs `pnpm release:version` to bump the fixed group
+#     (@reddb-io/ui + ui-kit + ui-mcp) and sync the desktop/Tauri version, or
+#   - once that PR is merged (all changesets consumed), runs the `publish` step
+#     below which pushes the `v<version>` tag. The tag push then triggers
+#     release.yml, which owns the actual npm publish (github-hosted, provenance)
+#     and the Tauri build.
+#
+# So a release is: land changeset files → merge the Version Packages PR →
+# release.yml publishes from GHA. No manual `changeset version` / `git tag`.
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: changesets-${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  changesets:
+    name: Version Packages
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    # Skip on the version-bump commit itself (authored by github-actions[bot])
+    # to avoid an infinite loop.
+    if: github.actor != 'github-actions[bot]'
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history so changesets/action can detect changes / manage tags.
+          fetch-depth: 0
+          # A PAT lets the bot's tag push re-trigger release.yml (a tag pushed
+          # with the default GITHUB_TOKEN does NOT trigger other workflows).
+          # Falls back to GITHUB_TOKEN — then the v<version> tag must be pushed
+          # by hand (or release.yml re-run) to publish.
+          token: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Configure git identity
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Create release PR or tag the release
+        uses: changesets/action@v1
+        with:
+          # `pnpm release:version` = `changeset version` + sync-desktop-version.mjs
+          # (propagates the fixed-group version into apps/desktop + tauri.conf +
+          # Cargo.toml so the desktop binary matches the npm bundle).
+          version: pnpm release:version
+          # Runs only after all changesets are consumed (Version PR merged):
+          # pushes v<version>, which hands off to release.yml for the publish.
+          publish: bash scripts/changesets-tag-release.sh
+          commit: 'chore(release): version packages'
+          title: 'chore(release): version packages'
+          # release.yml owns the GitHub Release (after the Tauri build), not this.
+          createGithubReleases: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
