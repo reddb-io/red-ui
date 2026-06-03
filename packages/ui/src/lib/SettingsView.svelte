@@ -16,7 +16,6 @@
     SectionHeading,
     Pill,
     ListRow,
-    Kbd,
   } from '@reddb-io/ui-kit'
   import {
     Settings2,
@@ -26,6 +25,7 @@
     Shield,
     Search,
     RefreshCw,
+    Download,
     Lock,
     Unplug,
     type Icon,
@@ -40,6 +40,7 @@
     resolveControl,
     sourceForKey,
     flattenConfig,
+    filterKeys,
     type ControlDescriptor,
     type SettingsSource,
   } from '$lib/settings-sections'
@@ -62,6 +63,24 @@
 
   let activeId = $state(SECTIONS[0].id)
   const active = $derived(resolveSection(activeId))
+
+  // Per-section search query, keyed by section id, so switching tabs preserves
+  // each section's typed query. The input is focusable via the ⌘K idiom.
+  let queries = $state<Record<string, string>>({})
+  let searchEl = $state<HTMLInputElement | null>(null)
+  const query = $derived(queries[activeId] ?? '')
+
+  function setQuery(v: string) {
+    queries = { ...queries, [activeId]: v }
+  }
+
+  function onWindowKey(e: KeyboardEvent) {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault()
+      searchEl?.focus()
+      searchEl?.select()
+    }
+  }
 
   // Flattened live config and, per source, the reason its grant is absent
   // (null ⇒ available). Both are rebuilt atomically on every refresh.
@@ -148,7 +167,7 @@
   // not report is dropped (graceful degradation — no empty placeholder).
   const rows = $derived.by<RenderRow[]>(() => {
     const out: RenderRow[] = []
-    for (const key of active.keys) {
+    for (const key of filterKeys(active.keys, query)) {
       const src = sourceForKey(key)
       const reason = denied[src]
       const label = resolveControl(key).label
@@ -186,14 +205,28 @@
     return String(value)
   }
 
-  // Reuse the global command palette as the search surface — the same ⌘K idiom
-  // the topbar uses, so Esc-to-close comes for free from the palette overlay.
-  function openPalette() {
-    window.dispatchEvent(
-      new KeyboardEvent('keydown', { key: 'k', metaKey: true, ctrlKey: true, bubbles: true }),
-    )
+  // Export the live config snapshot (what's currently inspected) as JSON. This
+  // is the honest, real action: the snapshot is read from connection.client, so
+  // it can be downloaded but NOT written back (the client exposes no config
+  // write/reset). Import/reset would have no real target here, so they are
+  // intentionally not offered rather than faked.
+  function exportConfig() {
+    const payload = {
+      url: activeUrl,
+      exportedAt: new Date().toISOString(),
+      config: values,
+    }
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `reddb-config-${new Date().toISOString().slice(0, 10)}.json`
+    a.click()
+    URL.revokeObjectURL(url)
   }
 </script>
+
+<svelte:window onkeydown={onWindowKey} />
 
 {#if !connected}
   <div class="h-full overflow-auto bg-bg-0 p-6">
@@ -212,15 +245,25 @@
 {:else}
   <SplitView searchShortcut={null}>
     {#snippet search()}
-      <button
-        type="button"
-        onclick={openPalette}
-        class="flex h-7 w-full items-center gap-2 rounded-md border border-line-2 bg-bg-2 px-2.5 text-xs text-fg-2 transition-colors hover:border-line-3 hover:text-fg-1"
-      >
-        <Search class="size-3.5 text-fg-3" />
-        <span class="flex-1 text-left">Search settings</span>
-        <span class="inline-flex gap-0.5"><Kbd>⌘</Kbd><Kbd>K</Kbd></span>
-      </button>
+      <div class="relative">
+        <Search
+          class="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-fg-3"
+        />
+        <input
+          bind:this={searchEl}
+          type="text"
+          placeholder="Search this section  ⌘K"
+          value={query}
+          oninput={(e) => setQuery(e.currentTarget.value)}
+          onkeydown={(e) => {
+            if (e.key === 'Escape') {
+              setQuery('')
+              e.currentTarget.blur()
+            }
+          }}
+          class="h-7 w-full rounded-md border border-line-2 bg-bg-2 pl-8 pr-2.5 text-xs text-fg-1 placeholder:text-fg-3 outline-none transition-colors focus:border-line-3"
+        />
+      </div>
     {/snippet}
 
     {#snippet nav()}
@@ -239,8 +282,19 @@
     {/snippet}
 
     {#snippet footer()}
-      <div class="px-3 py-2.5 text-[11px] text-fg-3">
-        Live from <span class="font-mono text-fg-2">{activeUrl}</span>.
+      <div class="grid gap-2 px-3 py-2.5">
+        <button
+          type="button"
+          onclick={exportConfig}
+          disabled={loading}
+          class="inline-flex h-7 items-center justify-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 transition-colors hover:border-line-3 hover:text-fg-0 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <Download class="size-3.5" />
+          export config
+        </button>
+        <div class="text-[11px] text-fg-3">
+          Live from <span class="font-mono text-fg-2">{activeUrl}</span>.
+        </div>
       </div>
     {/snippet}
 

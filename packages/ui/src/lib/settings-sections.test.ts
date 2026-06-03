@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   SECTIONS,
   ENUM_OPTIONS,
+  filterKeys,
   flattenConfig,
   humanizeKey,
   resolveControl,
@@ -127,5 +128,39 @@ describe("flattenConfig", () => {
       if (key === "store.total_memory_bytes") continue; // omitted by this server
       expect(flat[key]).toBeDefined();
     }
+  });
+});
+
+describe("filterKeys (per-section search)", () => {
+  const keys = [
+    "store.collection_count",
+    "store.total_entities",
+    "store.total_memory_bytes",
+    "read_only",
+  ];
+
+  it("returns all keys (a copy) for an empty or whitespace query", () => {
+    expect(filterKeys(keys, "")).toEqual(keys);
+    expect(filterKeys(keys, "   ")).toEqual(keys);
+    expect(filterKeys(keys, "")).not.toBe(keys); // copy, not the same ref
+  });
+
+  it("matches against the config path, case-insensitively", () => {
+    expect(filterKeys(keys, "MEMORY")).toEqual(["store.total_memory_bytes"]);
+    expect(filterKeys(keys, "store.total")).toEqual([
+      "store.total_entities",
+      "store.total_memory_bytes",
+    ]);
+  });
+
+  it("matches against the resolved human label, not just the key", () => {
+    // "read_only" → label "Read-only"; "only" appears in the label.
+    expect(filterKeys(keys, "read-only")).toEqual(["read_only"]);
+    // "Collections" is the curated label for store.collection_count.
+    expect(filterKeys(keys, "collections")).toEqual(["store.collection_count"]);
+  });
+
+  it("returns an empty array when nothing matches", () => {
+    expect(filterKeys(keys, "zzz-nope")).toEqual([]);
   });
 });
