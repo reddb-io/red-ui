@@ -528,6 +528,7 @@
     const out = new Map<string, number>()
     for (const [id, pts] of bundledPaths) out.set(id, -edgeCurvature(pts))
     return out
+  })
 
   // ─── community expand / collapse ────────────────────────────────────────
   // Fold the collapsed communities into supernodes (positions reused from the
