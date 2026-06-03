@@ -1,10 +1,19 @@
 <script lang="ts">
-  // Minimal settings view — mounts the reusable `SplitView` shell from the
-  // ui-kit end-to-end. The active section is component state (ADR-0001: the
+  // Settings view — mounts the reusable `SplitView` shell from the ui-kit and
+  // composes it from the kit's settings primitives (`NavItem`, `SectionHeading`,
+  // `Pill`, `ListRow`). The active section is component state (ADR-0001: the
   // Mountable Root owns no routing here), the nav is local to this view (no
   // global persistent sidebar), and the search affordance is wired to the
   // existing ⌘K command palette rather than re-binding ⌘K itself.
-  import { SplitView, Kbd } from '@reddb-io/ui-kit'
+  import {
+    SplitView,
+    NavItem,
+    SectionHeading,
+    Pill,
+    ListRow,
+    Button,
+    Kbd,
+  } from '@reddb-io/ui-kit'
   import { Settings2, Plug, Palette, Search, type Icon } from 'lucide-svelte'
   import PageHeader from '$lib/PageHeader.svelte'
   import { SETTINGS_SECTIONS, resolveSection } from '$lib/settings-sections'
@@ -44,19 +53,13 @@
     <nav class="grid gap-0.5 p-2">
       {#each SETTINGS_SECTIONS as section (section.id)}
         {@const Icon = icons[section.id] ?? Settings2}
-        {@const isActive = section.id === active.id}
-        <button
-          type="button"
+        <NavItem
+          label={section.label}
+          active={section.id === active.id}
           onclick={() => (activeId = section.id)}
-          aria-current={isActive ? 'page' : undefined}
-          class={[
-            'inline-flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] transition-colors',
-            isActive ? 'bg-bg-2 text-fg-0' : 'text-fg-2 hover:bg-bg-2 hover:text-fg-0',
-          ].join(' ')}
         >
-          <Icon class="size-3.5 shrink-0" />
-          <span class="truncate">{section.label}</span>
-        </button>
+          {#snippet icon()}<Icon class="size-3.5" />{/snippet}
+        </NavItem>
       {/each}
     </nav>
   {/snippet}
@@ -68,9 +71,39 @@
   {/snippet}
 
   {#snippet content()}
+    {@const Icon = icons[active.id] ?? Settings2}
     <div class="p-6">
       <PageHeader eyebrow="Settings" title={active.label} subtitle={active.blurb} />
-      <p class="max-w-prose text-[13px] leading-relaxed text-fg-1">{active.body}</p>
+
+      <section class="mb-6">
+        <SectionHeading title={active.label} class="mb-2">
+          {#snippet icon()}<Icon class="size-3.5" />{/snippet}
+          {#snippet meta()}<Pill>{active.rows.length}</Pill>{/snippet}
+        </SectionHeading>
+
+        <div class="divide-y divide-line-1 overflow-hidden rounded-lg border border-line-1 bg-bg-1">
+          {#each active.rows as row (row.title)}
+            <ListRow title={row.title} description={row.description} hint={row.hint} wide={row.wide}>
+              {#snippet action()}
+                {#if row.wide}
+                  <input
+                    type="text"
+                    value={row.hint ?? ''}
+                    spellcheck="false"
+                    class="h-7 w-full rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 focus-visible:border-line-3 focus-visible:outline-none"
+                  />
+                {:else if row.status}
+                  <Pill tone={row.status.tone}>{row.status.label}</Pill>
+                {:else}
+                  <Button size="sm">Edit</Button>
+                {/if}
+              {/snippet}
+            </ListRow>
+          {/each}
+        </div>
+      </section>
+
+      <p class="max-w-prose text-[13px] leading-relaxed text-fg-2">{active.body}</p>
     </div>
   {/snippet}
 </SplitView>
