@@ -247,3 +247,21 @@ export function flattenConfig(
 export function resolveSection(id: string | null): SettingsSection {
   return SECTIONS.find((s) => s.id === id) ?? SECTIONS[0];
 }
+
+/**
+ * Filter a section's curated keys by a free-text query, matching against both
+ * the config path AND the resolved human label (case-insensitive). An empty or
+ * whitespace-only query returns the keys unchanged. Pure + framework-free so
+ * the settings search is unit-testable without rendering. The settings view
+ * keeps one query string per section id, so switching sections preserves each
+ * section's typed query.
+ */
+export function filterKeys(keys: readonly string[], query: string): string[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return [...keys];
+  return keys.filter(
+    (key) =>
+      key.toLowerCase().includes(q) ||
+      resolveControl(key).label.toLowerCase().includes(q)
+  );
+}
