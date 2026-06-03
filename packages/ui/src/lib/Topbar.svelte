@@ -2,7 +2,7 @@
   import { Kbd } from '@reddb-io/ui-kit'
   import ConnectDropdown from './ConnectDropdown.svelte'
   import ActivityIndicator from './ActivityIndicator.svelte'
-  import { Search, Sun, Moon, Network, Database, FileCode2, Shield } from 'lucide-svelte'
+  import { Search, Sun, Moon, Network, Database, FileCode2, Shield, Settings2 } from 'lucide-svelte'
   import { theme } from './theme.svelte'
   import { useRouter } from './router.svelte'
 
@@ -18,6 +18,7 @@
   const onCollections = $derived(router.view === 'collections')
   const onCluster = $derived(router.view === 'cluster')
   const onSecurity = $derived(router.view === 'security')
+  const onSettings = $derived(router.view === 'settings')
 </script>
 
 <header class="h-11 flex items-center justify-between px-3.5 bg-bg-1/80 backdrop-blur-md border-b border-line-1 relative z-10">
@@ -88,6 +89,19 @@
       >
         <Shield class="size-3.5" />
         <span>Security</span>
+      </a>
+      <a
+        href={router.href({ view: 'settings' })}
+        onclick={(e) => router.go({ view: 'settings' }, e)}
+        title="Settings"
+        aria-current={onSettings ? 'page' : undefined}
+        class={[
+          'inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs no-underline transition-colors',
+          onSettings ? 'bg-bg-2 text-fg-0' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
+        ].join(' ')}
+      >
+        <Settings2 class="size-3.5" />
+        <span>Settings</span>
       </a>
     </nav>
   </div>

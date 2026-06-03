@@ -15,6 +15,7 @@
   import CollectionsView from './CollectionsView.svelte'
   import ClusterView from './ClusterView.svelte'
   import SecurityView from './SecurityView.svelte'
+  import SettingsView from './SettingsView.svelte'
   import { connection, setConnectionProvider } from './connections.svelte'
   import { runQueryPreferStream, type ConnectionProvider } from '#reddb'
   import { theme, type Theme } from './theme.svelte'
@@ -63,7 +64,7 @@
 
   function navigateToBootRoute(route: string) {
     const legacyView = route as View
-    if (legacyView === 'query' || legacyView === 'collections' || legacyView === 'cluster' || legacyView === 'security') {
+    if (legacyView === 'query' || legacyView === 'collections' || legacyView === 'cluster' || legacyView === 'security' || legacyView === 'settings') {
       router.go({ view: legacyView }, undefined, true)
       return
     }
@@ -235,6 +236,8 @@
         <ClusterView />
       {:else if router.view === 'security'}
         <SecurityView />
+      {:else if router.view === 'settings'}
+        <SettingsView />
       {:else}
         <CollectionsView />
       {/if}
