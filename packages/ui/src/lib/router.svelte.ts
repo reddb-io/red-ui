@@ -14,74 +14,86 @@
 // Both implementations satisfy the same `Router` contract, so every view
 // component navigates the same way regardless of which Surface it runs in.
 
-import { getContext, setContext } from 'svelte'
-import { collectionPageHref } from './collection-pages'
+import { getContext, setContext } from "svelte";
+import { collectionPageHref } from "./collection-pages";
 
-/** The four top-level destinations of the Mountable Root. */
-export type View = 'query' | 'collections' | 'cluster' | 'security'
+/** The top-level destinations of the Mountable Root. */
+export type View =
+  | "query"
+  | "collections"
+  | "cluster"
+  | "security"
+  | "appearance";
 
 /**
  * A navigation intent. `collection` carries a selected collection + subpage
  * within the collections workspace; the other targets are the bare views.
  */
 export type RouteTarget =
-  | { view: 'query' }
-  | { view: 'collections' }
-  | { view: 'cluster' }
-  | { view: 'security' }
-  | { view: 'collection'; collection: string; subpage: string }
+  | { view: "query" }
+  | { view: "collections" }
+  | { view: "cluster" }
+  | { view: "security" }
+  | { view: "appearance" }
+  | { view: "collection"; collection: string; subpage: string };
 
 /** Resolved current location, the reactive surface views read from. */
 export interface RouteLocation {
-  view: View
+  view: View;
   /** Selected collection when inside the collections workspace, else null. */
-  collection: string | null
+  collection: string | null;
   /** Selected collection subpage (`table`, `graph`, …), else null. */
-  subpage: string | null
+  subpage: string | null;
 }
 
 export interface Router {
   /** Current top-level view. */
-  readonly view: View
+  readonly view: View;
   /** Selected collection, or null. */
-  readonly collection: string | null
+  readonly collection: string | null;
   /** Selected collection subpage, or null. */
-  readonly subpage: string | null
+  readonly subpage: string | null;
   /** Canonical path for the current location (mirrors the SvelteKit URL). */
-  readonly path: string
+  readonly path: string;
   /** The canonical href a `RouteTarget` maps to (for `<a href>` display). */
-  href(target: RouteTarget): string
+  href(target: RouteTarget): string;
   /**
    * Navigate to a target. When called from an anchor `onclick`, pass the
    * event so the router can `preventDefault()` (state router) or honour
    * modifier-clicks for open-in-new-tab (Kit router). `replace` swaps the
    * current history entry instead of pushing (Kit only; ignored by state).
    */
-  go(target: RouteTarget, event?: Event, replace?: boolean): void
+  go(target: RouteTarget, event?: Event, replace?: boolean): void;
 }
 
 /** Map a `RouteTarget` to its canonical path. */
 export function targetToHref(target: RouteTarget): string {
   switch (target.view) {
-    case 'query':
-      return '/query'
-    case 'collections':
-      return '/collections'
-    case 'cluster':
-      return '/cluster'
-    case 'security':
-      return '/security'
-    case 'collection':
-      return collectionPageHref(target.collection, target.subpage)
+    case "query":
+      return "/query";
+    case "collections":
+      return "/collections";
+    case "cluster":
+      return "/cluster";
+    case "security":
+      return "/security";
+    case "appearance":
+      return "/appearance";
+    case "collection":
+      return collectionPageHref(target.collection, target.subpage);
   }
 }
 
 /** Map a `RouteTarget` to a resolved location. */
 export function targetToLocation(target: RouteTarget): RouteLocation {
-  if (target.view === 'collection') {
-    return { view: 'collections', collection: target.collection, subpage: target.subpage }
+  if (target.view === "collection") {
+    return {
+      view: "collections",
+      collection: target.collection,
+      subpage: target.subpage,
+    };
   }
-  return { view: target.view, collection: null, subpage: null }
+  return { view: target.view, collection: null, subpage: null };
 }
 
 /**
@@ -90,18 +102,23 @@ export function targetToLocation(target: RouteTarget): RouteLocation {
  * `/collections` for the bare collections workspace.
  */
 export function pathToLocation(pathname: string): RouteLocation {
-  if (pathname.startsWith('/query')) return { view: 'query', collection: null, subpage: null }
-  if (pathname.startsWith('/cluster')) return { view: 'cluster', collection: null, subpage: null }
-  if (pathname.startsWith('/security')) return { view: 'security', collection: null, subpage: null }
-  const m = pathname.match(/^\/c\/([^/]+)(?:\/p\/([^/]+))?/)
+  if (pathname.startsWith("/query"))
+    return { view: "query", collection: null, subpage: null };
+  if (pathname.startsWith("/cluster"))
+    return { view: "cluster", collection: null, subpage: null };
+  if (pathname.startsWith("/security"))
+    return { view: "security", collection: null, subpage: null };
+  if (pathname.startsWith("/appearance"))
+    return { view: "appearance", collection: null, subpage: null };
+  const m = pathname.match(/^\/c\/([^/]+)(?:\/p\/([^/]+))?/);
   if (m) {
     return {
-      view: 'collections',
+      view: "collections",
       collection: decodeURIComponent(m[1]),
       subpage: m[2] ? decodeURIComponent(m[2]) : null,
-    }
+    };
   }
-  return { view: 'collections', collection: null, subpage: null }
+  return { view: "collections", collection: null, subpage: null };
 }
 
 /**
@@ -111,43 +128,47 @@ export function pathToLocation(pathname: string): RouteLocation {
  */
 export function createStateRouter(initial?: RouteLocation): Router {
   let loc = $state<RouteLocation>(
-    initial ?? { view: 'collections', collection: null, subpage: null },
-  )
+    initial ?? { view: "collections", collection: null, subpage: null }
+  );
   return {
     get view() {
-      return loc.view
+      return loc.view;
     },
     get collection() {
-      return loc.collection
+      return loc.collection;
     },
     get subpage() {
-      return loc.subpage
+      return loc.subpage;
     },
     get path() {
       return targetToHref(
         loc.collection
-          ? { view: 'collection', collection: loc.collection, subpage: loc.subpage ?? 'table' }
-          : { view: loc.view },
-      )
+          ? {
+              view: "collection",
+              collection: loc.collection,
+              subpage: loc.subpage ?? "table",
+            }
+          : { view: loc.view }
+      );
     },
     href: (target) => targetToHref(target),
     go: (target, event) => {
       // The href is synthetic in state mode, so always suppress the anchor's
       // default navigation and switch the in-memory location instead.
-      event?.preventDefault()
-      loc = targetToLocation(target)
+      event?.preventDefault();
+      loc = targetToLocation(target);
     },
-  }
+  };
 }
 
-const ROUTER_KEY = Symbol('red-ui-router')
+const ROUTER_KEY = Symbol("red-ui-router");
 
-let fallbackRouter: Router | null = null
+let fallbackRouter: Router | null = null;
 
 /** Provide a router to descendant view components (called by the Mountable Root). */
 export function setRouter(router: Router): Router {
-  setContext(ROUTER_KEY, router)
-  return router
+  setContext(ROUTER_KEY, router);
+  return router;
 }
 
 /**
@@ -156,8 +177,8 @@ export function setRouter(router: Router): Router {
  * lack of a provider.
  */
 export function useRouter(): Router {
-  const router = getContext<Router | undefined>(ROUTER_KEY)
-  if (router) return router
-  if (!fallbackRouter) fallbackRouter = createStateRouter()
-  return fallbackRouter
+  const router = getContext<Router | undefined>(ROUTER_KEY);
+  if (router) return router;
+  if (!fallbackRouter) fallbackRouter = createStateRouter();
+  return fallbackRouter;
 }

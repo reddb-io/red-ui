@@ -31,6 +31,7 @@
     { id: 'collections', group: 'navigate', label: 'Open collections', hint: '/collections', run: () => navigate({ view: 'collections' }) },
     { id: 'topology', group: 'navigate', label: 'Open cluster', hint: '/cluster', run: () => navigate({ view: 'cluster' }) },
     { id: 'security', group: 'navigate', label: 'Open security', hint: '/security', run: () => navigate({ view: 'security' }) },
+    { id: 'appearance', group: 'navigate', label: 'Open appearance', hint: '/appearance', run: () => navigate({ view: 'appearance' }) },
 
     { id: 'new-query', group: 'data', label: 'New query', shortcut: '⌘T', run: () => { fire('red:new-query'); close() } },
 
