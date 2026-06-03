@@ -1,6 +1,8 @@
 name: Changesets
 
-# Mirrors reddb's changesets flow (../reddb/.github/workflows/changesets.yml).
+# Mirrors reddb's changesets flow (../reddb/.github/workflows/changesets.yml),
+# but uses a GitHub App token instead of a personal PAT.
+#
 # On every push to main, the changesets bot either:
 #   - opens/updates a "Version Packages" PR (when changeset files are pending)
 #     that runs `pnpm release:version` to bump the fixed group
@@ -10,8 +12,21 @@ name: Changesets
 #     release.yml, which owns the actual npm publish (github-hosted, provenance)
 #     and the Tauri build.
 #
-# So a release is: land changeset files → merge the Version Packages PR →
-# release.yml publishes from GHA. No manual `changeset version` / `git tag`.
+# WHY a token other than GITHUB_TOKEN: GitHub's anti-recursion rule means a tag
+# pushed with the built-in GITHUB_TOKEN does NOT trigger another workflow — so
+# release.yml (on: push tags) would stay silent. A **GitHub App installation
+# token** is treated as a distinct identity, so the tag it pushes DOES trigger
+# release.yml — without any human-owned PAT. The token is short-lived and
+# scoped to the App's installation.
+#
+# Setup (once): create a GitHub App (org or repo) with repo contents:write +
+# pull-requests:write, install it on this repo, then add:
+#   variable RELEASE_APP_ID          — the App's numeric App ID (not secret;
+#                                       a repo *variable* so it can gate `if:`)
+#   secret   RELEASE_APP_PRIVATE_KEY  — the App's generated .pem private key
+# Until those exist the job falls back to GITHUB_TOKEN (Version PR still works;
+# the v<version> tag just won't auto-trigger release.yml — push it by hand).
+# (secrets.* cannot be referenced in an `if:` — hence the App ID lives in vars.)
 
 on:
   push:
@@ -26,22 +41,28 @@ jobs:
   changesets:
     name: Version Packages
     runs-on: blacksmith-4vcpu-ubuntu-2404
-    # Skip on the version-bump commit itself (authored by github-actions[bot])
-    # to avoid an infinite loop.
-    if: github.actor != 'github-actions[bot]'
+    # Skip the version-bump commit itself to avoid a loop (the App's bot author
+    # ends in '[bot]'; github-actions[bot] covers the GITHUB_TOKEN fallback).
+    if: ${{ !endsWith(github.actor, '[bot]') }}
     permissions:
       contents: write
       pull-requests: write
     steps:
+      - name: Generate GitHub App token
+        id: app-token
+        if: ${{ vars.RELEASE_APP_ID != '' }}
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
         with:
           # Full history so changesets/action can detect changes / manage tags.
           fetch-depth: 0
-          # A PAT lets the bot's tag push re-trigger release.yml (a tag pushed
-          # with the default GITHUB_TOKEN does NOT trigger other workflows).
-          # Falls back to GITHUB_TOKEN — then the v<version> tag must be pushed
-          # by hand (or release.yml re-run) to publish.
-          token: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
+          # App token (re-triggers release.yml) → else GITHUB_TOKEN (no trigger).
+          # Persisted by checkout so the publish step's `git push` reuses it.
+          token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
 
       - uses: pnpm/action-setup@v4
 
@@ -73,4 +94,4 @@ jobs:
           # release.yml owns the GitHub Release (after the Tauri build), not this.
           createGithubReleases: false
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
