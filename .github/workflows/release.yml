@@ -30,7 +30,12 @@ concurrency:
 jobs:
   npm:
     name: npm · publish packages
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    # github-hosted (not Blacksmith): npm provenance only verifies on
+    # github-hosted runners — a self-hosted/Blacksmith runner fails publish with
+    # E422 "Unsupported GitHub Actions runner environment". The publish step is
+    # light (no Rust/webview build), so github-hosted is fine here while tauri
+    # stays on Blacksmith.
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
