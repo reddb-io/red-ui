@@ -27,42 +27,11 @@ concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
 
+# npm publishing lives in changesets.yml (publishes on the Version Packages PR
+# merge, github-hosted for provenance). release.yml is now binaries-only:
+# tauri + pwa, triggered by a manually-pushed v* tag when you want a desktop/PWA
+# release. This keeps npm with exactly one publisher (no double-publish).
 jobs:
-  npm:
-    name: npm · publish packages
-    # github-hosted (not Blacksmith): npm provenance only verifies on
-    # github-hosted runners — a self-hosted/Blacksmith runner fails publish with
-    # E422 "Unsupported GitHub Actions runner environment". The publish step is
-    # light (no Rust/webview build), so github-hosted is fine here while tauri
-    # stays on Blacksmith.
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    env:
-      # Stamp the bundle/embed version from the git tag (v1.2.3 → 1.2.3);
-      # empty on non-tag dispatch so the build falls back to package.json.
-      RED_BUILD_VERSION: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || '' }}
-      RED_BUILD_GIT_SHA: ${{ github.sha }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-          registry-url: https://registry.npmjs.org
-      - run: pnpm install --frozen-lockfile
-      - name: check
-        run: pnpm check
-      - name: test
-        run: pnpm test
-      - name: publish npm packages
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
-        run: pnpm release:publish
-
   tauri:
     name: tauri · ${{ matrix.platform }}
     permissions:

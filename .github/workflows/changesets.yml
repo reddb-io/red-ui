@@ -1,32 +1,24 @@
 name: Changesets
 
-# Mirrors reddb's changesets flow (../reddb/.github/workflows/changesets.yml),
-# but uses a GitHub App token instead of a personal PAT.
+# Single-owner npm release, no PAT and no GitHub App — just the session
+# GITHUB_TOKEN (for git/PR ops) + NPM_TOKEN (for the registry).
 #
-# On every push to main, the changesets bot either:
+# On every push to main, changesets/action either:
 #   - opens/updates a "Version Packages" PR (when changeset files are pending)
-#     that runs `pnpm release:version` to bump the fixed group
-#     (@reddb-io/ui + ui-kit + ui-mcp) and sync the desktop/Tauri version, or
-#   - once that PR is merged (all changesets consumed), runs the `publish` step
-#     below which pushes the `v<version>` tag. The tag push then triggers
-#     release.yml, which owns the actual npm publish (github-hosted, provenance)
-#     and the Tauri build.
+#     that runs `pnpm release:version` — bumps the fixed group
+#     (@reddb-io/ui + ui-kit + ui-mcp) and syncs the desktop/Tauri version; or
+#   - once that PR is merged (all changesets consumed), runs `pnpm release:publish`
+#     (`changeset publish`) **in this same run** to publish to npm.
 #
-# WHY a token other than GITHUB_TOKEN: GitHub's anti-recursion rule means a tag
-# pushed with the built-in GITHUB_TOKEN does NOT trigger another workflow — so
-# release.yml (on: push tags) would stay silent. A **GitHub App installation
-# token** is treated as a distinct identity, so the tag it pushes DOES trigger
-# release.yml — without any human-owned PAT. The token is short-lived and
-# scoped to the App's installation.
+# Because publishing happens inside this workflow (not via a tag that a second
+# workflow listens for), the GITHUB_TOKEN is enough — there is no cross-workflow
+# trigger to defeat GitHub's anti-recursion rule. No PAT, no App.
 #
-# Setup (once): create a GitHub App (org or repo) with repo contents:write +
-# pull-requests:write, install it on this repo, then add:
-#   variable RELEASE_APP_ID          — the App's numeric App ID (not secret;
-#                                       a repo *variable* so it can gate `if:`)
-#   secret   RELEASE_APP_PRIVATE_KEY  — the App's generated .pem private key
-# Until those exist the job falls back to GITHUB_TOKEN (Version PR still works;
-# the v<version> tag just won't auto-trigger release.yml — push it by hand).
-# (secrets.* cannot be referenced in an `if:` — hence the App ID lives in vars.)
+# Runs on a github-hosted runner because npm provenance only verifies there
+# (a Blacksmith/self-hosted runner fails publish with E422). The job is light.
+#
+# Desktop/PWA binaries live in release.yml, triggered by a manually-pushed v*
+# tag when you want a binary release.
 
 on:
   push:
@@ -39,30 +31,18 @@ concurrency:
 
 jobs:
   changesets:
-    name: Version Packages
-    runs-on: blacksmith-4vcpu-ubuntu-2404
-    # Skip the version-bump commit itself to avoid a loop (the App's bot author
-    # ends in '[bot]'; github-actions[bot] covers the GITHUB_TOKEN fallback).
+    name: Version / publish packages
+    runs-on: ubuntu-latest
+    # Skip the bot's own version-bump commit to avoid a loop.
     if: ${{ !endsWith(github.actor, '[bot]') }}
     permissions:
       contents: write
       pull-requests: write
+      id-token: write # npm provenance
     steps:
-      - name: Generate GitHub App token
-        id: app-token
-        if: ${{ vars.RELEASE_APP_ID != '' }}
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ vars.RELEASE_APP_ID }}
-          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-
       - uses: actions/checkout@v4
         with:
-          # Full history so changesets/action can detect changes / manage tags.
           fetch-depth: 0
-          # App token (re-triggers release.yml) → else GITHUB_TOKEN (no trigger).
-          # Persisted by checkout so the publish step's `git push` reuses it.
-          token: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
 
       - uses: pnpm/action-setup@v4
 
@@ -70,6 +50,7 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+          registry-url: https://registry.npmjs.org
 
       - name: Install
         run: pnpm install --frozen-lockfile
@@ -79,19 +60,18 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Create release PR or tag the release
+      - name: Version PR, or publish to npm on merge
         uses: changesets/action@v1
         with:
-          # `pnpm release:version` = `changeset version` + sync-desktop-version.mjs
-          # (propagates the fixed-group version into apps/desktop + tauri.conf +
-          # Cargo.toml so the desktop binary matches the npm bundle).
+          # pending changesets → "Version Packages" PR; none → run publish.
           version: pnpm release:version
-          # Runs only after all changesets are consumed (Version PR merged):
-          # pushes v<version>, which hands off to release.yml for the publish.
-          publish: bash scripts/changesets-tag-release.sh
+          publish: pnpm release:publish
           commit: 'chore(release): version packages'
           title: 'chore(release): version packages'
-          # release.yml owns the GitHub Release (after the Tauri build), not this.
+          # Per-package git tags from `changeset publish` are enough; no GH
+          # release here (release.yml owns binaries on a manual v* tag).
           createGithubReleases: false
         env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
