@@ -1,24 +1,23 @@
 name: Changesets
 
-# Single-owner npm release, no PAT and no GitHub App — just the session
-# GITHUB_TOKEN (for git/PR ops) + NPM_TOKEN (for the registry).
+# Token-only release — no PAT, no GitHub App. The reddb-io org forbids GitHub
+# Actions from creating PRs, so the usual changesets "Version Packages" PR flow
+# can't run on GITHUB_TOKEN. Instead this is PR-LESS: on push to main, if there
+# are pending changeset files, we version + commit the bump straight to main
+# (main is unprotected) and publish to npm — all in one run.
 #
-# On every push to main, changesets/action either:
-#   - opens/updates a "Version Packages" PR (when changeset files are pending)
-#     that runs `pnpm release:version` — bumps the fixed group
-#     (@reddb-io/ui + ui-kit + ui-mcp) and syncs the desktop/Tauri version; or
-#   - once that PR is merged (all changesets consumed), runs `pnpm release:publish`
-#     (`changeset publish`) **in this same run** to publish to npm.
+#   land changeset files on main → this workflow bumps the fixed group
+#   (@reddb-io/ui + ui-kit + ui-mcp), commits "chore(release): version packages",
+#   pushes it to main, and runs `changeset publish`.
 #
-# Because publishing happens inside this workflow (not via a tag that a second
-# workflow listens for), the GITHUB_TOKEN is enough — there is no cross-workflow
-# trigger to defeat GitHub's anti-recursion rule. No PAT, no App.
+# Auth: GITHUB_TOKEN (contents:write to push the bump) + NPM_TOKEN (registry).
+# Runs github-hosted because npm provenance only verifies there. The bot's own
+# bump commit is skipped by the actor guard, so it never loops.
 #
-# Runs on a github-hosted runner because npm provenance only verifies there
-# (a Blacksmith/self-hosted runner fails publish with E422). The job is light.
-#
-# Desktop/PWA binaries live in release.yml, triggered by a manually-pushed v*
-# tag when you want a binary release.
+# Trade-off: no human review gate on the version bump (it auto-ships when a
+# changeset reaches main). To get the PR gate back, an org owner must allow
+# "GitHub Actions to create and approve pull requests" — then switch back to the
+# changesets/action PR flow.
 
 on:
   push:
@@ -30,19 +29,17 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  changesets:
-    name: Version / publish packages
+  release:
+    name: Version + publish (PR-less)
     runs-on: ubuntu-latest
-    # Skip the bot's own version-bump commit to avoid a loop.
     if: ${{ !endsWith(github.actor, '[bot]') }}
     permissions:
       contents: write
-      pull-requests: write
       id-token: write # npm provenance
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # full history so changeset version diffs correctly
 
       - uses: pnpm/action-setup@v4
 
@@ -60,18 +57,22 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Version PR, or publish to npm on merge
-        uses: changesets/action@v1
-        with:
-          # pending changesets → "Version Packages" PR; none → run publish.
-          version: pnpm release:version
-          publish: pnpm release:publish
-          commit: 'chore(release): version packages'
-          title: 'chore(release): version packages'
-          # Per-package git tags from `changeset publish` are enough; no GH
-          # release here (release.yml owns binaries on a manual v* tag).
-          createGithubReleases: false
+      - name: Version + publish if changesets are pending
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
+        run: |
+          set -euo pipefail
+          # `release:version` = changeset version (+ sync-desktop-version.mjs).
+          # No pending changesets ⇒ no file changes ⇒ we skip the publish.
+          pnpm release:version
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No pending changesets — nothing to version or publish."
+            exit 0
+          fi
+          git add -A
+          git commit -m "chore(release): version packages"
+          git push origin HEAD:main
+          # changeset publish is idempotent: it skips versions already on npm.
+          pnpm release:publish
