@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
+import Graph from "graphology";
+import leiden from "@aflsolutions/graphology-communities-leiden";
+import louvain from "graphology-communities-louvain";
 import type { QueryResult } from "#reddb";
 import {
+  assignGraphCommunities,
   compareGraphNodesByCentrality,
   extractGraph,
   graphNodeCentrality,
@@ -348,6 +352,159 @@ describe("runGraphLayout", () => {
     const a = runGraphLayout(nodes, edges);
     const b = runGraphLayout(nodes, edges);
     for (const id of a.keys()) expect(a.get(id)).toEqual(b.get(id));
+  });
+});
+
+describe("assignGraphCommunities (Leiden, Louvain fallback)", () => {
+  // Mulberry32 — deterministic seed so the fixture and the algorithms render
+  // the same partition on every run.
+  function seededRng(seed: number): () => number {
+    let s = seed >>> 0;
+    return () => {
+      s = (s + 0x6d2b79f5) >>> 0;
+      let t = s;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  /**
+   * A planted-partition graph: `groups` dense clusters of `perGroup` nodes,
+   * wired into a ring inside each group (guaranteeing intra-group reach) plus
+   * extra random intra-group edges, joined by a handful of cross-group
+   * bridges. Representative of the clustered topology graphs we render.
+   */
+  function plantedPartition(groups: number, perGroup: number): Graph {
+    const g = new Graph({ type: "undirected", multi: false });
+    const rng = seededRng(1337);
+    for (let gi = 0; gi < groups; gi++) {
+      for (let i = 0; i < perGroup; i++) g.addNode(`g${gi}_n${i}`);
+    }
+    for (let gi = 0; gi < groups; gi++) {
+      const ids = Array.from({ length: perGroup }, (_, i) => `g${gi}_n${i}`);
+      // Ring spine keeps each group connected.
+      for (let i = 0; i < ids.length; i++) {
+        const a = ids[i];
+        const b = ids[(i + 1) % ids.length];
+        if (!g.hasEdge(a, b)) g.addEdge(a, b);
+      }
+      // Extra intra-group density.
+      for (let i = 0; i < ids.length; i++) {
+        for (let j = i + 1; j < ids.length; j++) {
+          if (rng() < 0.45 && !g.hasEdge(ids[i], ids[j]))
+            g.addEdge(ids[i], ids[j]);
+        }
+      }
+    }
+    // Sparse cross-group bridges.
+    for (let gi = 0; gi < groups; gi++) {
+      const next = (gi + 1) % groups;
+      const a = `g${gi}_n0`;
+      const b = `g${next}_n${perGroup - 1}`;
+      if (!g.hasEdge(a, b)) g.addEdge(a, b);
+    }
+    return g;
+  }
+
+  /** Group node ids by their assigned `community` attribute. */
+  function communitiesOf(g: Graph): Map<number, string[]> {
+    const byCommunity = new Map<number, string[]>();
+    g.forEachNode((node, attrs) => {
+      const c = attrs.community as number;
+      const bucket = byCommunity.get(c);
+      if (bucket) bucket.push(node);
+      else byCommunity.set(c, [node]);
+    });
+    return byCommunity;
+  }
+
+  /**
+   * True iff the subgraph induced by `members` is a single connected
+   * component — the property Leiden guarantees and Louvain does not.
+   */
+  function inducedSubgraphConnected(g: Graph, members: string[]): boolean {
+    if (members.length <= 1) return true;
+    const inCommunity = new Set(members);
+    const seen = new Set<string>([members[0]]);
+    const stack = [members[0]];
+    while (stack.length) {
+      const node = stack.pop()!;
+      g.forEachNeighbor(node, (neighbor) => {
+        if (inCommunity.has(neighbor) && !seen.has(neighbor)) {
+          seen.add(neighbor);
+          stack.push(neighbor);
+        }
+      });
+    }
+    return seen.size === members.length;
+  }
+
+  it("uses Leiden when the fork is available", () => {
+    const g = plantedPartition(4, 8);
+    expect(assignGraphCommunities(g, seededRng(7))).toBe("leiden");
+    // Output contract: every node carries a numeric community.
+    g.forEachNode((_, attrs) => {
+      expect(typeof attrs.community).toBe("number");
+    });
+  });
+
+  it("produces internally-connected communities (Leiden's guarantee)", () => {
+    const g = plantedPartition(4, 8);
+    assignGraphCommunities(g, seededRng(7));
+    const byCommunity = communitiesOf(g);
+    expect(byCommunity.size).toBeGreaterThan(1);
+    for (const [community, members] of byCommunity) {
+      expect(
+        inducedSubgraphConnected(g, members),
+        `community ${community} (${members.length} nodes) must be internally connected`
+      ).toBe(true);
+    }
+  });
+
+  it("records modularity vs Louvain on the same fixture", () => {
+    const leidenGraph = plantedPartition(4, 8);
+    const louvainGraph = plantedPartition(4, 8);
+    const leidenOut = leiden.detailed(leidenGraph, { rng: seededRng(7) });
+    const louvainOut = louvain.detailed(louvainGraph, { rng: seededRng(7) });
+
+    // Recorded delta — surfaced in the test log for benchmark tracking.
+    const delta = leidenOut.modularity - louvainOut.modularity;
+    // eslint-disable-next-line no-console
+    console.log(
+      `[graph-layout] modularity — leiden=${leidenOut.modularity.toFixed(4)} ` +
+        `louvain=${louvainOut.modularity.toFixed(4)} delta=${delta.toFixed(4)} ` +
+        `(communities: leiden=${leidenOut.count} louvain=${louvainOut.count})`
+    );
+
+    // Both are real partitions on a clearly-clustered graph; Leiden must not
+    // be materially worse than Louvain on modularity.
+    expect(leidenOut.modularity).toBeGreaterThan(0.3);
+    expect(louvainOut.modularity).toBeGreaterThan(0.3);
+    expect(leidenOut.modularity).toBeGreaterThanOrEqual(
+      louvainOut.modularity - 0.05
+    );
+  });
+
+  it("falls back to Louvain when the Leiden import is missing", () => {
+    const g = plantedPartition(3, 6);
+    expect(assignGraphCommunities(g, seededRng(7), null)).toBe("louvain");
+    g.forEachNode((_, attrs) => {
+      expect(typeof attrs.community).toBe("number");
+    });
+  });
+
+  it("falls back to Louvain when Leiden throws", () => {
+    const g = plantedPartition(3, 6);
+    const throwing = {
+      assign() {
+        throw new Error("simulated yanked fork");
+      },
+    };
+    expect(assignGraphCommunities(g, seededRng(7), throwing)).toBe("louvain");
+    g.forEachNode((_, attrs) => {
+      expect(typeof attrs.community).toBe("number");
+    });
   });
 });
 

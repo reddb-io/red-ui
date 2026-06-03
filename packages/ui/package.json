@@ -53,6 +53,7 @@
     "test": "svelte-kit sync && vitest run"
   },
   "dependencies": {
+    "@aflsolutions/graphology-communities-leiden": "^1.1.1",
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@reddb-io/ui-kit": "workspace:*",

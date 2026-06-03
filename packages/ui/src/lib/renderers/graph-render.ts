@@ -4,6 +4,7 @@
 
 import type { QueryResult, QueryRow } from "#reddb";
 import Graph from "graphology";
+import leiden from "@aflsolutions/graphology-communities-leiden";
 import louvain from "graphology-communities-louvain";
 import forceAtlas2 from "graphology-layout-forceatlas2";
 
@@ -506,11 +507,53 @@ function seededRng(seed: number): () => number {
   };
 }
 
+/** Algorithm that actually labelled communities on the graph. */
+export type CommunityAlgorithm = "leiden" | "louvain";
+
+/** Minimal surface we depend on from a community-detection package. */
+interface CommunityAssigner {
+  assign(graph: Graph, options?: Record<string, unknown>): void;
+}
+
+/**
+ * Assign a `community` number to every node, preferring Leiden.
+ *
+ * Leiden (Traag et al. 2019) is the state-of-the-art successor to Louvain
+ * and — unlike Louvain — guarantees every community is internally
+ * well-connected. We adopt the third-party `@aflsolutions/...-leiden` fork
+ * (the canonical package is unpublished); to contain its supply-chain risk
+ * a yanked/broken fork must never break the graph view, so any failure
+ * (missing/partial module or a throw mid-run) falls back to the canonical
+ * Louvain pass. Both share the seeded `rng` so renders stay deterministic.
+ *
+ * The `leidenImpl` parameter is injectable purely so the fallback path is
+ * testable; production callers always use the bundled fork.
+ */
+export function assignGraphCommunities(
+  g: Graph,
+  rng: () => number,
+  leidenImpl: CommunityAssigner | null | undefined = leiden as CommunityAssigner
+): CommunityAlgorithm {
+  try {
+    if (!leidenImpl || typeof leidenImpl.assign !== "function") {
+      throw new Error("Leiden community detection unavailable");
+    }
+    leidenImpl.assign(g, { attributes: { community: "community" }, rng });
+    return "leiden";
+  } catch {
+    // Fork yanked, broken, or threw — fall back to canonical Louvain so the
+    // graph view always renders with communities.
+    louvain.assign(g, { nodeCommunityAttribute: "community", rng });
+    return "louvain";
+  }
+}
+
 /**
  * Compute a community-aware layout for the graph.
  *
- * Pipeline: Louvain detects communities, ForceAtlas2 positions nodes so
- * communities cluster spatially. Output is normalised to a [0, 100] box
+ * Pipeline: Leiden detects communities (Louvain fallback), ForceAtlas2
+ * positions nodes so communities cluster spatially. Output is normalised
+ * to a [0, 100] box
  * matching the existing renderer's coordinate space, with a 5% padding so
  * nodes don't touch the viewport edge.
  *
@@ -552,8 +595,8 @@ export function runGraphLayout(
     g.addEdge(e.source, e.target);
   }
 
-  // Louvain needs at least one edge; degenerate graphs get every node in
-  // its own community and a grid fallback below.
+  // Community detection needs at least one edge; degenerate graphs get
+  // every node in its own community and a grid fallback below.
   if (g.size === 0) {
     const cols = Math.ceil(Math.sqrt(nodes.length));
     nodes.forEach((n, i) => {
@@ -568,7 +611,7 @@ export function runGraphLayout(
     return out;
   }
 
-  louvain.assign(g, { nodeCommunityAttribute: "community", rng });
+  assignGraphCommunities(g, rng);
 
   const settings = forceAtlas2.inferSettings(g);
   forceAtlas2.assign(g, {
