@@ -84,6 +84,9 @@ importers:
 
   packages/ui:
     dependencies:
+      "@aflsolutions/graphology-communities-leiden":
+        specifier: ^1.1.1
+        version: 1.1.1(graphology-types@0.24.8)
       "@fontsource-variable/inter":
         specifier: ^5.2.8
         version: 5.2.8
@@ -184,6 +187,14 @@ importers:
         version: 5.9.3
 
 packages:
+  "@aflsolutions/graphology-communities-leiden@1.1.1":
+    resolution:
+      {
+        integrity: sha512-kqjUf7oofB2c3RKvUIP3dIqwMzZxtVdDYLtr2Z2DFOmWa9RbNfUeQRns+UeODtWtEfwh6j83UiMRxRMDIdGC5A==,
+      }
+    peerDependencies:
+      graphology-types: ">=0.19.0"
+
   "@babel/runtime@7.29.7":
     resolution:
       {
@@ -4569,6 +4580,14 @@ packages:
       }
 
 snapshots:
+  "@aflsolutions/graphology-communities-leiden@1.1.1(graphology-types@0.24.8)":
+    dependencies:
+      graphology-indices: 0.17.0(graphology-types@0.24.8)
+      graphology-types: 0.24.8
+      graphology-utils: 2.5.2(graphology-types@0.24.8)
+      mnemonist: 0.39.8
+      pandemonium: 2.4.1
+
   "@babel/runtime@7.29.7": {}
 
   "@changesets/apply-release-plan@7.1.1":
