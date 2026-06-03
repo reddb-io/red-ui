@@ -471,7 +471,9 @@
   const fallbackSvgNodeById = $derived(new Map(fallbackSvgNodes.map((n) => [n.id, n])))
   const fallbackSvgEdges = $derived.by<FallbackSvgEdge[]>(() => {
     const out: FallbackSvgEdge[] = []
-    for (const edge of drawEdges) {
+    // renderEdges (not drawEdges) so collapsed clusters draw their aggregated
+    // supernode edges; expanded, renderEdges === drawEdges so nothing changes.
+    for (const edge of renderEdges) {
       const source = fallbackSvgNodeById.get(edge.source)
       const target = fallbackSvgNodeById.get(edge.target)
       if (!source || !target) continue
