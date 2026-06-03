@@ -1,7 +1,7 @@
 {
   "statusLine": {
     "type": "command",
-    "command": "sh -c 'b=$(ls -t \"$HOME\"/.claude/plugins/cache/red-skills/dev/*/skills/engineering/afk/bin/afk.mjs 2>/dev/null | head -1); [ -n \"$b\" ] && exec node \"$b\" statusline'",
+    "command": "sh -c 'b=$(ls -1 \"$HOME\"/.cache/red-skills/bundles/dev-*.bundle.min.mjs 2>/dev/null | sort -V | tail -1); [ -z \"$b\" ] && b=$(ls -1 \"$HOME\"/.claude/plugins/cache/red-skills/dev/*/skills/engineering/afk/bin/afk.mjs 2>/dev/null | sort -V | tail -1); [ -n \"$b\" ] && exec node \"$b\" statusline'",
     "refreshInterval": 5
   }
 }
