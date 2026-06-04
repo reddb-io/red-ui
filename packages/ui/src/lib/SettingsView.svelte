@@ -70,12 +70,19 @@
   let configLoadError = $state<string | null>(null)
   let secretsLoadError = $state<string | null>(null)
   let writing = $state(false)
-  let writeStatus = $state<{ tone: 'ok' | 'error'; message: string } | null>(null)
+  let writeStatus = $state<{
+    tone: 'ok' | 'error'
+    message: string
+    paneId: string
+  } | null>(null)
   let editingConfigKey = $state<string | null>(null)
   let editValue = $state('')
   let newConfigKey = $state('')
   let newConfigKind = $state<'text' | 'number' | 'boolean' | 'list'>('text')
   let newConfigValue = $state('')
+  let editingSecretSelectionKey = $state<string | null>(null)
+  let secretWriteKey = $state('')
+  let secretWriteValue = $state('')
 
   const connected = $derived(connection.connected)
   const activeUrl = $derived(connection.active.url)
@@ -102,10 +109,19 @@
       !!activePane.writeGrant &&
       permissions?.cachedCan(activePane.writeGrant) === true,
   )
+  const canWriteSecrets = $derived(
+    activePane.id === 'secrets' &&
+      !!activePane.writeGrant &&
+      permissions?.cachedCan(activePane.writeGrant) === true,
+  )
 
   function setQuery(value: string) {
     if (!hasVisiblePane) return
     queries = { ...queries, [activePane.id]: value }
+  }
+
+  function setWriteStatus(paneId: string, tone: 'ok' | 'error', message: string) {
+    writeStatus = { paneId, tone, message }
   }
 
   function onWindowKey(e: KeyboardEvent) {
@@ -128,6 +144,9 @@
     selectedSecretKey = null
     writeStatus = null
     editingConfigKey = null
+    editingSecretSelectionKey = null
+    secretWriteKey = ''
+    secretWriteValue = ''
 
     if (!client || !connected) {
       permissionsLoading = false
@@ -238,7 +257,7 @@
 
     const parsed = parseConfigEditValue(selectedControl, editValue)
     if (!parsed.ok) {
-      writeStatus = { tone: 'error', message: parsed.error ?? 'Invalid config value.' }
+      setWriteStatus('config', 'error', parsed.error ?? 'Invalid config value.')
       return
     }
 
@@ -250,10 +269,10 @@
         authoring.setConfig(selectedEntry.key, parsed.value ?? null),
       )
       selectedConfigKey = selectedEntry.key
-      writeStatus = { tone: 'ok', message: `${selectedEntry.key} saved.` }
+      setWriteStatus('config', 'ok', `${selectedEntry.key} saved.`)
       await refresh()
     } catch (e) {
-      writeStatus = { tone: 'error', message: (e as Error).message }
+      setWriteStatus('config', 'error', (e as Error).message)
     } finally {
       writing = false
     }
@@ -271,10 +290,10 @@
       const authoring = new SettingsAuthoringClient(client)
       await activity.track('settings · delete config', () => authoring.unsetConfig(key))
       selectedConfigKey = key
-      writeStatus = { tone: 'ok', message: `${key} unset.` }
+      setWriteStatus('config', 'ok', `${key} unset.`)
       await refresh()
     } catch (e) {
-      writeStatus = { tone: 'error', message: (e as Error).message }
+      setWriteStatus('config', 'error', (e as Error).message)
     } finally {
       writing = false
     }
@@ -286,7 +305,7 @@
 
     const parsed = parseNewConfigValue()
     if (!parsed.ok) {
-      writeStatus = { tone: 'error', message: parsed.error ?? 'Invalid config value.' }
+      setWriteStatus('config', 'error', parsed.error ?? 'Invalid config value.')
       return
     }
 
@@ -301,10 +320,65 @@
       selectedConfigKey = key
       newConfigKey = ''
       newConfigValue = ''
-      writeStatus = { tone: 'ok', message: `${key} set.` }
+      setWriteStatus('config', 'ok', `${key} set.`)
       await refresh()
     } catch (e) {
-      writeStatus = { tone: 'error', message: (e as Error).message }
+      setWriteStatus('config', 'error', (e as Error).message)
+    } finally {
+      writing = false
+    }
+  }
+
+  async function setSecretValue() {
+    const client = connection.client
+    if (!client || !canWriteSecrets || writing) return
+
+    const key = secretWriteKey.trim()
+    const value = secretWriteValue
+    if (!key) {
+      setWriteStatus('secrets', 'error', 'Secret key is required.')
+      return
+    }
+    if (!value) {
+      setWriteStatus('secrets', 'error', 'Secret value is required.')
+      return
+    }
+
+    writing = true
+    writeStatus = null
+    try {
+      const authoring = new SettingsAuthoringClient(client)
+      await activity.track('settings · set secret', () => authoring.setSecret(key, value))
+      selectedSecretKey = key
+      secretWriteValue = ''
+      setWriteStatus('secrets', 'ok', `${key} set.`)
+      await refresh()
+    } catch (e) {
+      secretWriteValue = ''
+      setWriteStatus('secrets', 'error', (e as Error).message)
+    } finally {
+      writing = false
+    }
+  }
+
+  async function deleteSelectedSecret() {
+    const client = connection.client
+    if (!client || !selectedSecret || !canWriteSecrets || writing) return
+    if (!window.confirm(`Delete secret ${selectedSecret.key}?`)) return
+
+    const key = selectedSecret.key
+    writing = true
+    writeStatus = null
+    try {
+      const authoring = new SettingsAuthoringClient(client)
+      await activity.track('settings · delete secret', () => authoring.deleteSecret(key))
+      secretWriteValue = ''
+      selectedSecretKey = key
+      setWriteStatus('secrets', 'ok', `${key} deleted.`)
+      await refresh()
+    } catch (e) {
+      secretWriteValue = ''
+      setWriteStatus('secrets', 'error', (e as Error).message)
     } finally {
       writing = false
     }
@@ -334,6 +408,18 @@
     if (editingConfigKey !== selectedEntry.key) {
       editingConfigKey = selectedEntry.key
       editValue = initialConfigEditValue(selectedEntry)
+      writeStatus = null
+    }
+  })
+
+  $effect(() => {
+    if (activePane.id !== 'secrets' || !selectedSecret) return
+    if (
+      editingSecretSelectionKey !== selectedSecret.key &&
+      (!secretWriteKey.trim() || secretWriteKey === editingSecretSelectionKey)
+    ) {
+      secretWriteKey = selectedSecret.key
+      editingSecretSelectionKey = selectedSecret.key
       writeStatus = null
     }
   })
@@ -668,57 +754,130 @@
             hint={connected ? loadError ?? activeUrl : 'docker compose -f docker/compose.yml up -d'}
           />
           {:else if activePane.id === 'secrets'}
-            {#if !selectedSecret || !selectedSecretControl}
-              <EmptyState
-                icon={KeyRound}
-                title="No secret selected"
-                message="Select a live SHOW SECRETS row to inspect its masked metadata."
-              />
-            {:else}
-              <section>
-                <SectionHeading title={selectedSecretControl.label} class="mb-2">
-                  {#snippet icon()}<KeyRound class="size-3.5" />{/snippet}
-                  {#snippet meta()}<Pill>masked</Pill>{/snippet}
-                </SectionHeading>
+            <section class="grid gap-4">
+              {#if !selectedSecret || !selectedSecretControl}
+                <EmptyState
+                  icon={KeyRound}
+                  title="No secret selected"
+                  message="Select a live SHOW SECRETS row to inspect its masked metadata."
+                />
+              {:else}
+                <section>
+                  <SectionHeading title={selectedSecretControl.label} class="mb-2">
+                    {#snippet icon()}<KeyRound class="size-3.5" />{/snippet}
+                    {#snippet meta()}<Pill>masked</Pill>{/snippet}
+                  </SectionHeading>
 
-                <div class="divide-y divide-line-1 overflow-hidden rounded-lg border border-line-1 bg-bg-1">
-                  <ListRow
-                    title={selectedSecretControl.label}
-                    description="Vault metadata row; plaintext is not available in this pane."
-                    hint={selectedSecret.key}
-                    wide
+                  <div class="divide-y divide-line-1 overflow-hidden rounded-lg border border-line-1 bg-bg-1">
+                    <ListRow
+                      title={selectedSecretControl.label}
+                      description="Vault metadata row; plaintext is not available in this pane."
+                      hint={selectedSecret.key}
+                      wide
+                    >
+                      {#snippet action()}
+                        <input
+                          readonly
+                          value={selectedSecret.value}
+                          aria-label={selectedSecretControl.label}
+                          class="h-8 w-full rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none"
+                        />
+                      {/snippet}
+                    </ListRow>
+
+                    <ListRow title="Key" hint={selectedSecret.key}>
+                      {#snippet action()}
+                        <span class="font-mono text-[12px] text-fg-1">{selectedSecret.key}</span>
+                      {/snippet}
+                    </ListRow>
+
+                    <ListRow title="Metadata">
+                      {#snippet action()}
+                        <div class="flex flex-wrap justify-end gap-1.5">
+                          <Pill>{selectedSecret.status ?? 'status unknown'}</Pill>
+                          <Pill
+                            >version {selectedSecret.version === undefined
+                              ? 'unknown'
+                              : selectedSecret.version}</Pill
+                          >
+                        </div>
+                      {/snippet}
+                    </ListRow>
+
+                    {#if canWriteSecrets}
+                      <ListRow title="Authoring" description="Delete the selected vault secret through DELETE SECRET.">
+                        {#snippet action()}
+                          <button
+                            type="button"
+                            onclick={deleteSelectedSecret}
+                            disabled={writing}
+                            class="inline-flex h-8 items-center gap-1.5 rounded-md border border-danger/30 bg-danger/5 px-2.5 text-[11px] font-mono text-danger hover:border-danger/60 disabled:cursor-not-allowed disabled:opacity-40"
+                          >
+                            <Trash2 class="size-3.5" />
+                            delete
+                          </button>
+                        {/snippet}
+                      </ListRow>
+                    {/if}
+                  </div>
+                </section>
+              {/if}
+
+              {#if canWriteSecrets}
+                {#if writeStatus?.paneId === 'secrets'}
+                  <div
+                    class={[
+                      'inline-flex max-w-full items-center gap-1.5 rounded-md border px-2.5 py-1.5 font-mono text-[11px]',
+                      writeStatus.tone === 'ok'
+                        ? 'border-ok/30 bg-ok/5 text-ok'
+                        : 'border-danger/30 bg-danger/5 text-danger',
+                    ].join(' ')}
+                    role="status"
                   >
-                    {#snippet action()}
-                      <input
-                        readonly
-                        value={selectedSecret.value}
-                        aria-label={selectedSecretControl.label}
-                        class="h-8 w-full rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none"
-                      />
-                    {/snippet}
-                  </ListRow>
+                    <AlertCircle class="size-3 shrink-0" />
+                    <span class="truncate">{writeStatus.message}</span>
+                  </div>
+                {/if}
 
-                  <ListRow title="Key" hint={selectedSecret.key}>
-                    {#snippet action()}
-                      <span class="font-mono text-[12px] text-fg-1">{selectedSecret.key}</span>
-                    {/snippet}
-                  </ListRow>
-
-                  <ListRow title="Metadata">
-                    {#snippet action()}
-                      <div class="flex flex-wrap justify-end gap-1.5">
-                        <Pill>{selectedSecret.status ?? 'status unknown'}</Pill>
-                        <Pill
-                          >version {selectedSecret.version === undefined
-                            ? 'unknown'
-                            : selectedSecret.version}</Pill
-                        >
-                      </div>
-                    {/snippet}
-                  </ListRow>
-                </div>
-              </section>
-            {/if}
+                <section>
+                  <SectionHeading title="Set secret" class="mb-2">
+                    {#snippet icon()}<Plus class="size-3.5" />{/snippet}
+                  </SectionHeading>
+                  <div class="grid gap-2 rounded-lg border border-line-1 bg-bg-1 p-3">
+                    <input
+                      type="text"
+                      value={secretWriteKey}
+                      oninput={(e) => (secretWriteKey = e.currentTarget.value)}
+                      placeholder="mycompany.payments.key"
+                      disabled={writing}
+                      aria-label="Secret key"
+                      class="h-8 rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none placeholder:text-fg-3 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                    <input
+                      type="password"
+                      value={secretWriteValue}
+                      oninput={(e) => (secretWriteValue = e.currentTarget.value)}
+                      placeholder="New secret value"
+                      disabled={writing}
+                      autocomplete="new-password"
+                      aria-label="New secret value"
+                      class="h-8 rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none placeholder:text-fg-3 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                    <div class="flex justify-end">
+                      <button
+                        type="button"
+                        onclick={setSecretValue}
+                        disabled={writing || !secretWriteKey.trim() || !secretWriteValue}
+                        class="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 hover:border-line-3 hover:text-fg-0 disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        <Save class="size-3.5" />
+                        set
+                      </button>
+                    </div>
+                  </div>
+                </section>
+              {/if}
+            </section>
           {:else if !selectedEntry || !selectedControl}
           <EmptyState
             icon={FileJson}
@@ -853,7 +1012,7 @@
             </div>
 
             {#if canWriteConfig}
-              {#if writeStatus}
+              {#if writeStatus?.paneId === 'config'}
                 <div
                   class={[
                     'mt-3 inline-flex max-w-full items-center gap-1.5 rounded-md border px-2.5 py-1.5 font-mono text-[11px]',
