@@ -167,12 +167,36 @@ export function buildDeleteConfigStatement(key: string): string {
   )}`;
 }
 
+export function buildSetSecretStatement(key: string, value: string): string {
+  return `SET SECRET ${normalizeConfigPath(
+    key,
+    "SET SECRET key"
+  )} = ${quoteSqlString(value)}`;
+}
+
+export function buildDeleteSecretStatement(key: string): string {
+  return `DELETE SECRET ${normalizeConfigPath(key, "DELETE SECRET key")}`;
+}
+
 export function parseConfigMutationResult(
   result: QueryResult,
   operation: "SET CONFIG" | "DELETE CONFIG"
 ): QueryResult {
   if (!result.ok) throw new Error(result.error ?? `${operation} failed`);
   return result;
+}
+
+export function parseSecretMutationResult(
+  result: QueryResult,
+  operation: "SET SECRET" | "DELETE SECRET"
+): QueryResult {
+  if (!result.ok) throw new Error(result.error ?? `${operation} failed`);
+  return {
+    ...result,
+    query: operation,
+    record_count: 0,
+    result: { columns: [], records: [] },
+  };
 }
 
 export function parseShowConfigResult(result: QueryResult): ConfigEntry[] {
@@ -261,5 +285,17 @@ export class SettingsAuthoringClient {
   async unsetConfig(key: string): Promise<QueryResult> {
     const result = await this.transport.query(buildDeleteConfigStatement(key));
     return parseConfigMutationResult(result, "DELETE CONFIG");
+  }
+
+  async setSecret(key: string, value: string): Promise<QueryResult> {
+    const result = await this.transport.query(
+      buildSetSecretStatement(key, value)
+    );
+    return parseSecretMutationResult(result, "SET SECRET");
+  }
+
+  async deleteSecret(key: string): Promise<QueryResult> {
+    const result = await this.transport.query(buildDeleteSecretStatement(key));
+    return parseSecretMutationResult(result, "DELETE SECRET");
   }
 }

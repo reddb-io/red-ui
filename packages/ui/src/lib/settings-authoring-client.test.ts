@@ -3,10 +3,13 @@ import type { QueryResult } from "./reddb/client";
 import {
   SettingsAuthoringClient,
   buildDeleteConfigStatement,
+  buildDeleteSecretStatement,
   buildSetConfigStatement,
+  buildSetSecretStatement,
   configValueToSqlLiteral,
   parseShowConfigResult,
   parseConfigMutationResult,
+  parseSecretMutationResult,
   parseShowSecretsResult,
   type QueryTransport,
 } from "./settings-authoring-client";
@@ -249,6 +252,45 @@ describe("SettingsAuthoringClient", () => {
     expect(calls).toEqual(["SHOW SECRETS mycompany.payments"]);
   });
 
+  it("sets and deletes secrets through SET/DELETE SECRET without echoing the value", async () => {
+    const calls: string[] = [];
+    const transport: QueryTransport = {
+      async query(sql) {
+        calls.push(sql);
+        return {
+          ok: true,
+          query: sql,
+          record_count: 1,
+          result: {
+            columns: ["message", "value"],
+            records: [
+              {
+                values: {
+                  message: "secret set",
+                  value: "sk_live_secret",
+                },
+              },
+            ],
+          },
+        };
+      },
+    };
+    const client = new SettingsAuthoringClient(transport);
+
+    const setResult = await client.setSecret(
+      "mycompany.payments.key",
+      "sk_live_secret"
+    );
+    const deleteResult = await client.deleteSecret("mycompany.payments.key");
+
+    expect(calls).toEqual([
+      "SET SECRET mycompany.payments.key = 'sk_live_secret'",
+      "DELETE SECRET mycompany.payments.key",
+    ]);
+    expect(JSON.stringify(setResult)).not.toContain("sk_live_secret");
+    expect(JSON.stringify(deleteResult)).not.toContain("sk_live_secret");
+  });
+
   it("sets config through SET CONFIG with typed literals", async () => {
     const calls: string[] = [];
     const transport: QueryTransport = {
@@ -347,6 +389,74 @@ describe("config mutation SQL helpers", () => {
           error: "permission denied",
         },
         "DELETE CONFIG"
+      )
+    ).toThrow("permission denied");
+  });
+});
+
+describe("secret mutation SQL helpers", () => {
+  it("builds SET/DELETE SECRET statements and escapes literal values", () => {
+    expect(buildSetSecretStatement("mycompany.payments.key", "sk_live")).toBe(
+      "SET SECRET mycompany.payments.key = 'sk_live'"
+    );
+    expect(buildSetSecretStatement("mycompany.payments.key", "o'hara")).toBe(
+      "SET SECRET mycompany.payments.key = 'o''hara'"
+    );
+    expect(buildDeleteSecretStatement("mycompany.payments.key")).toBe(
+      "DELETE SECRET mycompany.payments.key"
+    );
+  });
+
+  it("rejects unsafe secret keys before query transport sees them", async () => {
+    const calls: string[] = [];
+    const transport: QueryTransport = {
+      async query(sql) {
+        calls.push(sql);
+        return result([]);
+      },
+    };
+    const client = new SettingsAuthoringClient(transport);
+
+    await expect(
+      client.setSecret("mycompany.payments.key; DROP TABLE x", "sk")
+    ).rejects.toThrow("dotted identifier path");
+    await expect(
+      client.deleteSecret("mycompany.payments.key; DROP TABLE x")
+    ).rejects.toThrow("dotted identifier path");
+    expect(calls).toEqual([]);
+  });
+
+  it("redacts successful secret mutation envelopes and surfaces failures", () => {
+    const parsed = parseSecretMutationResult(
+      {
+        ok: true,
+        query: "SET SECRET mycompany.payments.key = 'sk_live_secret'",
+        record_count: 1,
+        result: {
+          columns: ["value"],
+          records: [{ values: { value: "sk_live_secret" } }],
+        },
+      },
+      "SET SECRET"
+    );
+
+    expect(parsed).toEqual({
+      ok: true,
+      query: "SET SECRET",
+      record_count: 0,
+      result: { columns: [], records: [] },
+    });
+    expect(JSON.stringify(parsed)).not.toContain("sk_live_secret");
+    expect(() =>
+      parseSecretMutationResult(
+        {
+          ok: false,
+          query: "DELETE SECRET mycompany.payments.key",
+          record_count: 0,
+          result: { columns: [], records: [] },
+          error: "permission denied",
+        },
+        "DELETE SECRET"
       )
     ).toThrow("permission denied");
   });

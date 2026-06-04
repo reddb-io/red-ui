@@ -34,7 +34,10 @@ describe("settings panes registry", () => {
       action: "config:write",
       resource: { kind: "config", name: "*" },
     });
-    expect(SETTINGS_PANES[1].writeGrant).toBeUndefined();
+    expect(SETTINGS_PANES[1].writeGrant).toEqual({
+      action: "vault:write",
+      resource: { kind: "vault", name: "*" },
+    });
   });
 
   it("resolves a pane by id and falls back to Config", () => {

@@ -78,6 +78,10 @@ export const SETTINGS_PANES: SettingsPane[] = [
       action: "vault:read_metadata",
       resource: { kind: "vault", name: "*" },
     },
+    writeGrant: {
+      action: "vault:write",
+      resource: { kind: "vault", name: "*" },
+    },
   },
 ];
 
