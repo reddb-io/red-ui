@@ -7,6 +7,7 @@ export { default as CollectionHistory } from "./CollectionHistory.svelte";
 export { default as CommandPalette } from "./CommandPalette.svelte";
 export { default as ConnectDropdown } from "./ConnectDropdown.svelte";
 export { default as EmptyState } from "./EmptyState.svelte";
+export { default as GlobalProgressBar } from "./GlobalProgressBar.svelte";
 export { default as LiveChanges } from "./LiveChanges.svelte";
 export { default as MasterPasswordDialog } from "./MasterPasswordDialog.svelte";
 export { default as PageHeader } from "./PageHeader.svelte";

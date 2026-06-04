@@ -16,61 +16,65 @@
 // without untrack, the effect would track those as dependencies and our
 // own writes would re-fire it — infinite loop (`effect_update_depth_exceeded`).
 
-import { untrack } from 'svelte'
+import { untrack } from "svelte";
 
 export interface ActivityEntry {
-  id: number
-  label: string
-  startedAt: number
-  durationMs: number | null
-  status: 'pending' | 'ok' | 'error'
-  error?: string
+  id: number;
+  label: string;
+  startedAt: number;
+  durationMs: number | null;
+  status: "pending" | "ok" | "error";
+  error?: string;
 }
 
-const MAX_LOG = 20
+const MAX_LOG = 20;
 
 class ActivityStore {
-  inflight = $state(0)
-  log = $state<ActivityEntry[]>([])
-  private nextId = 1
+  inflight = $state(0);
+  active = $derived(this.inflight > 0);
+  log = $state<ActivityEntry[]>([]);
+  private nextId = 1;
 
   async track<T>(label: string, op: () => Promise<T>): Promise<T> {
-    const id = this.nextId++
+    const id = this.nextId++;
     const entry: ActivityEntry = {
       id,
       label,
       startedAt: Date.now(),
       durationMs: null,
-      status: 'pending',
-    }
+      status: "pending",
+    };
     untrack(() => {
-      this.log = [entry, ...this.log].slice(0, MAX_LOG)
-      this.inflight += 1
-    })
+      this.log = [entry, ...this.log].slice(0, MAX_LOG);
+      this.inflight += 1;
+    });
     try {
-      const result = await op()
+      const result = await op();
       untrack(() =>
-        this.update(id, { durationMs: Date.now() - entry.startedAt, status: 'ok' }),
-      )
-      return result
+        this.update(id, {
+          durationMs: Date.now() - entry.startedAt,
+          status: "ok",
+        })
+      );
+      return result;
     } catch (err) {
       untrack(() =>
         this.update(id, {
           durationMs: Date.now() - entry.startedAt,
-          status: 'error',
+          status: "error",
           error: (err as Error).message,
-        }),
-      )
-      throw err
+        })
+      );
+      throw err;
     } finally {
       untrack(() => {
-        this.inflight = Math.max(0, this.inflight - 1)
-      })
+        this.inflight = Math.max(0, this.inflight - 1);
+      });
     }
   }
 
   private update(id: number, patch: Partial<ActivityEntry>) {
-    this.log = this.log.map((e) => (e.id === id ? { ...e, ...patch } : e))
+    this.log = this.log.map((e) => (e.id === id ? { ...e, ...patch } : e));
   }
 
   /** Panic button for when the indicator gets stuck out of sync with
@@ -79,13 +83,18 @@ class ActivityStore {
   reset() {
     untrack(() => {
       this.log = this.log.map((e) =>
-        e.status === 'pending'
-          ? { ...e, status: 'error', error: 'reset by user', durationMs: Date.now() - e.startedAt }
-          : e,
-      )
-      this.inflight = 0
-    })
+        e.status === "pending"
+          ? {
+              ...e,
+              status: "error",
+              error: "reset by user",
+              durationMs: Date.now() - e.startedAt,
+            }
+          : e
+      );
+      this.inflight = 0;
+    });
   }
 }
 
-export const activity = new ActivityStore()
+export const activity = new ActivityStore();

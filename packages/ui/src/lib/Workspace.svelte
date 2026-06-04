@@ -6,6 +6,7 @@
   // The SvelteKit Surface wraps this same component with a Kit-backed router.
   import { onMount, untrack } from 'svelte'
   import Splash from './Splash.svelte'
+  import GlobalProgressBar from './GlobalProgressBar.svelte'
   import Topbar from './Topbar.svelte'
   import StatusBar from './StatusBar.svelte'
   import CommandPalette from './CommandPalette.svelte'
@@ -236,7 +237,8 @@
 {#if !booted}
   <Splash onDone={() => (booted = true)} />
 {:else}
-  <div class="app grid grid-rows-[44px_32px_1fr] h-screen">
+  <div class="app relative grid grid-rows-[44px_32px_1fr] h-screen">
+    <GlobalProgressBar />
     <Topbar showConnect={showConnect} />
     <StatusBar />
     <main class="relative overflow-hidden z-[1]">
