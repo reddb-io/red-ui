@@ -1,6 +1,6 @@
-@import 'tailwindcss';
-@import '@fontsource-variable/inter';
-@import '@fontsource-variable/jetbrains-mono';
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
 
 /* ============================================================================
    Design tokens. Linear/Vercel vibe — surgical accent, contemporary type.
@@ -51,8 +51,8 @@
      (#e11d48) keeps the same reddb identity while clearing 4.5:1 against
      white surfaces and against white button labels. */
   --color-accent: #e11d48;
-  --color-accent-soft: rgba(225, 29, 72, 0.10);
-  --color-accent-glow: rgba(225, 29, 72, 0.30);
+  --color-accent-soft: rgba(225, 29, 72, 0.1);
+  --color-accent-glow: rgba(225, 29, 72, 0.3);
 
   /* Semantic — darker variants so they stay AA on white surfaces */
   --color-ok: #16a34a;
@@ -90,8 +90,10 @@
   --text-2xl: 28px;
   --text-2xl--line-height: 1.15;
 
-  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SF Mono', 'Menlo', monospace;
+  --font-sans: "Inter Variable", "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono:
+    "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "SF Mono",
+    "Menlo", monospace;
 
   /* ease-out-expo for ambient transitions, ease-out-quart for snappier UI */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -99,11 +101,12 @@
 
   /* Shadows — light variant: smaller alpha, slate tint */
   --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 0 0 1px var(--color-line-2);
-  --shadow-lg: 0 16px 48px rgba(15, 23, 42, 0.14), 0 0 0 1px var(--color-line-2);
+  --shadow-lg:
+    0 16px 48px rgba(15, 23, 42, 0.14), 0 0 0 1px var(--color-line-2);
 }
 
 /* Dark theme — opt-in via `data-theme="dark"` on the document root. */
-:root[data-theme='dark'] {
+:root[data-theme="dark"] {
   --color-bg-0: #050607;
   --color-bg-1: #0d0f13;
   --color-bg-2: #181b21;
@@ -162,15 +165,18 @@
     --radius: var(--radius-md);
   }
 
-  * { box-sizing: border-box; }
+  * {
+    box-sizing: border-box;
+  }
 
-  html, body {
+  html,
+  body {
     background: var(--color-bg-0);
     color: var(--color-fg-0);
     font-family: var(--font-sans);
     font-size: 13px;
     line-height: 1.5;
-    font-feature-settings: 'cv11', 'ss01', 'ss03';
+    font-feature-settings: "cv11", "ss01", "ss03";
     letter-spacing: -0.005em;
     margin: 0;
     -webkit-font-smoothing: antialiased;
@@ -214,25 +220,85 @@
   /* Ambient grid — 96px squares; lines use line-1 so the texture
      reads as "barely there" in both themes. */
   body::before {
-    content: '';
+    content: "";
     position: fixed;
     inset: 0;
     background-image:
-      radial-gradient(ellipse 80% 50% at 50% -10%, var(--color-ambient-glow), transparent),
+      radial-gradient(
+        ellipse 80% 50% at 50% -10%,
+        var(--color-ambient-glow),
+        transparent
+      ),
       linear-gradient(var(--color-line-1) 1px, transparent 1px),
       linear-gradient(90deg, var(--color-line-1) 1px, transparent 1px);
-    background-size: 100% 100%, 96px 96px, 96px 96px;
+    background-size:
+      100% 100%,
+      96px 96px,
+      96px 96px;
     opacity: 0.35;
     pointer-events: none;
     z-index: 0;
   }
 
-  ::selection { background: var(--color-accent-soft); color: var(--color-fg-0); }
+  ::selection {
+    background: var(--color-accent-soft);
+    color: var(--color-fg-0);
+  }
 
   /* Default scrollbar styling — border matches page bg so the thumb
      "floats" off the surface in both themes. */
-  ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--color-line-2); border-radius: 8px; border: 2px solid var(--color-bg-0); }
-  ::-webkit-scrollbar-thumb:hover { background: var(--color-line-3); }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-line-2);
+    border-radius: 8px;
+    border: 2px solid var(--color-bg-0);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-line-3);
+  }
+}
+
+.global-progress {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 30;
+  height: 2px;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--color-accent-soft);
+}
+
+.global-progress__bar {
+  width: 42%;
+  height: 100%;
+  background: var(--color-accent);
+  box-shadow: 0 0 14px var(--color-accent-glow);
+  transform-origin: left center;
+  animation: global-progress-slide 1.05s var(--ease-snap) infinite;
+}
+
+@keyframes global-progress-slide {
+  0% {
+    transform: translateX(-110%) scaleX(0.7);
+  }
+  50% {
+    transform: translateX(90%) scaleX(1);
+  }
+  100% {
+    transform: translateX(245%) scaleX(0.85);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .global-progress__bar {
+    width: 100%;
+    animation: none;
+    opacity: 0.85;
+  }
 }
