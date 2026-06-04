@@ -6,6 +6,8 @@
     Download,
     FileJson,
     KeyRound,
+    Eye,
+    EyeOff,
     Link2,
     Plus,
     RefreshCw,
@@ -83,6 +85,17 @@
   let editingSecretSelectionKey = $state<string | null>(null)
   let secretWriteKey = $state('')
   let secretWriteValue = $state('')
+  let revealing = $state(false)
+  let revealStatus = $state<{
+    tone: 'ok' | 'error'
+    message: string
+    key: string
+  } | null>(null)
+  let revealedSecret = $state<{
+    key: string
+    value: string
+  } | null>(null)
+  let revealTimer: ReturnType<typeof setTimeout> | null = null
 
   const connected = $derived(connection.connected)
   const activeUrl = $derived(connection.active.url)
@@ -114,6 +127,14 @@
       !!activePane.writeGrant &&
       permissions?.cachedCan(activePane.writeGrant) === true,
   )
+  const canRevealSecrets = $derived(
+    activePane.id === 'secrets' &&
+      !!activePane.revealGrant &&
+      permissions?.cachedCan(activePane.revealGrant) === true,
+  )
+  const selectedSecretPlaintext = $derived(
+    selectedSecret && revealedSecret?.key === selectedSecret.key ? revealedSecret.value : null,
+  )
 
   function setQuery(value: string) {
     if (!hasVisiblePane) return
@@ -122,6 +143,28 @@
 
   function setWriteStatus(paneId: string, tone: 'ok' | 'error', message: string) {
     writeStatus = { paneId, tone, message }
+  }
+
+  function clearRevealedSecret() {
+    if (revealTimer) {
+      clearTimeout(revealTimer)
+      revealTimer = null
+    }
+    revealedSecret = null
+  }
+
+  function showRevealedSecret(key: string, value: string) {
+    clearRevealedSecret()
+    revealedSecret = { key, value }
+    revealTimer = setTimeout(() => {
+      revealedSecret = null
+      revealTimer = null
+    }, 30_000)
+  }
+
+  function selectSecretKey(key: string) {
+    if (selectedSecretKey !== key) clearRevealedSecret()
+    selectedSecretKey = key
   }
 
   function onWindowKey(e: KeyboardEvent) {
@@ -147,6 +190,8 @@
     editingSecretSelectionKey = null
     secretWriteKey = ''
     secretWriteValue = ''
+    revealStatus = null
+    clearRevealedSecret()
 
     if (!client || !connected) {
       permissionsLoading = false
@@ -159,7 +204,9 @@
       await activity.track('settings · auth.can panes', () =>
         gate.preload(
           SETTINGS_PANES.flatMap((pane) =>
-            pane.writeGrant ? [pane.readGrant, pane.writeGrant] : [pane.readGrant],
+            [pane.readGrant, pane.writeGrant, pane.revealGrant].filter(
+              (check): check is NonNullable<typeof check> => !!check,
+            ),
           ),
         ),
       )
@@ -203,6 +250,8 @@
     loading = true
     if (activePane.id === 'secrets') {
       secretsLoadError = null
+      revealStatus = null
+      clearRevealedSecret()
     } else {
       configLoadError = null
     }
@@ -381,6 +430,36 @@
       setWriteStatus('secrets', 'error', (e as Error).message)
     } finally {
       writing = false
+    }
+  }
+
+  async function revealSelectedSecret() {
+    const client = connection.client
+    if (!client || !selectedSecret || !canRevealSecrets || revealing) return
+
+    const key = selectedSecret.key
+    revealing = true
+    revealStatus = null
+    clearRevealedSecret()
+    try {
+      const authoring = new SettingsAuthoringClient(client)
+      const revealed = await activity.track('settings · reveal secret', () =>
+        authoring.revealSecret(key),
+      )
+      showRevealedSecret(revealed.key, revealed.value)
+      revealStatus = {
+        tone: 'ok',
+        key,
+        message: 'Plaintext revealed temporarily.',
+      }
+    } catch (e) {
+      revealStatus = {
+        tone: 'error',
+        key,
+        message: (e as Error).message,
+      }
+    } finally {
+      revealing = false
     }
   }
 
@@ -608,7 +687,7 @@
                 <button
                   type="button"
                   aria-current={selectedSecret?.key === entry.key ? 'page' : undefined}
-                  onclick={() => (selectedSecretKey = entry.key)}
+                  onclick={() => selectSecretKey(entry.key)}
                   class="min-w-0 text-left"
                 >
                   <span class="block truncate text-[13px]">{control.label}</span>
@@ -771,14 +850,14 @@
                   <div class="divide-y divide-line-1 overflow-hidden rounded-lg border border-line-1 bg-bg-1">
                     <ListRow
                       title={selectedSecretControl.label}
-                      description="Vault metadata row; plaintext is not available in this pane."
+                      description="Vault metadata row; plaintext is masked unless break-glass reveal is granted."
                       hint={selectedSecret.key}
                       wide
                     >
                       {#snippet action()}
                         <input
                           readonly
-                          value={selectedSecret.value}
+                          value={selectedSecretPlaintext ?? selectedSecret.value}
                           aria-label={selectedSecretControl.label}
                           class="h-8 w-full rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none"
                         />
@@ -804,6 +883,33 @@
                       {/snippet}
                     </ListRow>
 
+                    {#if canRevealSecrets}
+                      <ListRow title="Break-glass reveal" description="Calls reddb's audited UNSEAL VAULT path and clears plaintext after 30 seconds.">
+                        {#snippet action()}
+                          {#if selectedSecretPlaintext !== null}
+                            <button
+                              type="button"
+                              onclick={clearRevealedSecret}
+                              class="inline-flex h-8 items-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 hover:border-line-3 hover:text-fg-0"
+                            >
+                              <EyeOff class="size-3.5" />
+                              hide
+                            </button>
+                          {:else}
+                            <button
+                              type="button"
+                              onclick={revealSelectedSecret}
+                              disabled={revealing}
+                              class="inline-flex h-8 items-center gap-1.5 rounded-md border border-warn/40 bg-warn/5 px-2.5 text-[11px] font-mono text-warn hover:border-warn/70 disabled:cursor-not-allowed disabled:opacity-40"
+                            >
+                              <Eye class={revealing ? 'size-3.5 animate-pulse' : 'size-3.5'} />
+                              reveal
+                            </button>
+                          {/if}
+                        {/snippet}
+                      </ListRow>
+                    {/if}
+
                     {#if canWriteSecrets}
                       <ListRow title="Authoring" description="Delete the selected vault secret through DELETE SECRET.">
                         {#snippet action()}
@@ -821,6 +927,21 @@
                     {/if}
                   </div>
                 </section>
+              {/if}
+
+              {#if revealStatus && revealStatus.key === selectedSecret?.key}
+                <div
+                  class={[
+                    'inline-flex max-w-full items-center gap-1.5 rounded-md border px-2.5 py-1.5 font-mono text-[11px]',
+                    revealStatus.tone === 'ok'
+                      ? 'border-ok/30 bg-ok/5 text-ok'
+                      : 'border-danger/30 bg-danger/5 text-danger',
+                  ].join(' ')}
+                  role="status"
+                >
+                  <AlertCircle class="size-3 shrink-0" />
+                  <span class="truncate">{revealStatus.message}</span>
+                </div>
               {/if}
 
               {#if canWriteSecrets}

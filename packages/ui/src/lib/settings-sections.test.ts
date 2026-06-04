@@ -38,6 +38,10 @@ describe("settings panes registry", () => {
       action: "vault:write",
       resource: { kind: "vault", name: "*" },
     });
+    expect(SETTINGS_PANES[1].revealGrant).toEqual({
+      action: "vault:read",
+      resource: { kind: "vault", name: "*" },
+    });
   });
 
   it("resolves a pane by id and falls back to Config", () => {

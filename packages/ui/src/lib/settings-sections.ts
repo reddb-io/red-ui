@@ -52,6 +52,8 @@ export interface SettingsPane {
   readGrant: PermissionCheck;
   /** Pane-level grant that enables authoring controls when present. */
   writeGrant?: PermissionCheck;
+  /** Pane-level grant that enables break-glass secret reveal controls. */
+  revealGrant?: PermissionCheck;
 }
 
 export const SETTINGS_PANES: SettingsPane[] = [
@@ -80,6 +82,10 @@ export const SETTINGS_PANES: SettingsPane[] = [
     },
     writeGrant: {
       action: "vault:write",
+      resource: { kind: "vault", name: "*" },
+    },
+    revealGrant: {
+      action: "vault:read",
       resource: { kind: "vault", name: "*" },
     },
   },

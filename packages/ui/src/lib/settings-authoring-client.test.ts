@@ -4,11 +4,13 @@ import {
   SettingsAuthoringClient,
   buildDeleteConfigStatement,
   buildDeleteSecretStatement,
+  buildRevealSecretStatement,
   buildSetConfigStatement,
   buildSetSecretStatement,
   configValueToSqlLiteral,
   parseShowConfigResult,
   parseConfigMutationResult,
+  parseRevealSecretResult,
   parseSecretMutationResult,
   parseShowSecretsResult,
   type QueryTransport,
@@ -291,6 +293,45 @@ describe("SettingsAuthoringClient", () => {
     expect(JSON.stringify(deleteResult)).not.toContain("sk_live_secret");
   });
 
+  it("reveals a secret through UNSEAL VAULT without using SHOW SECRETS", async () => {
+    const calls: string[] = [];
+    const transport: QueryTransport = {
+      async query(sql) {
+        calls.push(sql);
+        return result([
+          { key: "mycompany.payments.key", value: "sk_live_secret" },
+        ]);
+      },
+    };
+
+    await expect(
+      new SettingsAuthoringClient(transport).revealSecret(
+        "mycompany.payments.key"
+      )
+    ).resolves.toEqual({
+      key: "mycompany.payments.key",
+      value: "sk_live_secret",
+    });
+    expect(calls).toEqual(["UNSEAL VAULT mycompany.payments.key"]);
+  });
+
+  it("rejects unsafe reveal keys before calling the transport", async () => {
+    const calls: string[] = [];
+    const transport: QueryTransport = {
+      async query(sql) {
+        calls.push(sql);
+        return result([]);
+      },
+    };
+
+    await expect(
+      new SettingsAuthoringClient(transport).revealSecret(
+        "mycompany.payments.key; SHOW SECRETS"
+      )
+    ).rejects.toThrow("dotted identifier path");
+    expect(calls).toEqual([]);
+  });
+
   it("sets config through SET CONFIG with typed literals", async () => {
     const calls: string[] = [];
     const transport: QueryTransport = {
@@ -459,5 +500,60 @@ describe("secret mutation SQL helpers", () => {
         "DELETE SECRET"
       )
     ).toThrow("permission denied");
+  });
+});
+
+describe("secret reveal SQL helpers", () => {
+  it("builds UNSEAL VAULT statements", () => {
+    expect(buildRevealSecretStatement("mycompany.payments.key")).toBe(
+      "UNSEAL VAULT mycompany.payments.key"
+    );
+  });
+
+  it("parses plaintext from supported UNSEAL VAULT result columns", () => {
+    expect(
+      parseRevealSecretResult(
+        result([{ key: "mycompany.payments.value", value: "from-value" }]),
+        "mycompany.payments.value"
+      )
+    ).toEqual({ key: "mycompany.payments.value", value: "from-value" });
+    expect(
+      parseRevealSecretResult(
+        result([
+          { key: "mycompany.payments.plaintext", plaintext: "from-plaintext" },
+        ]),
+        "mycompany.payments.plaintext"
+      )
+    ).toEqual({
+      key: "mycompany.payments.plaintext",
+      value: "from-plaintext",
+    });
+    expect(
+      parseRevealSecretResult(
+        result([{ key: "mycompany.payments.secret", secret: "from-secret" }]),
+        "mycompany.payments.secret"
+      )
+    ).toEqual({ key: "mycompany.payments.secret", value: "from-secret" });
+  });
+
+  it("surfaces UNSEAL VAULT failures and missing plaintext", () => {
+    expect(() =>
+      parseRevealSecretResult(
+        {
+          ok: false,
+          query: "UNSEAL VAULT mycompany.payments.key",
+          record_count: 0,
+          result: { columns: [], records: [] },
+          error: "permission denied",
+        },
+        "mycompany.payments.key"
+      )
+    ).toThrow("permission denied");
+    expect(() =>
+      parseRevealSecretResult(
+        result([{ key: "mycompany.payments.key" }]),
+        "mycompany.payments.key"
+      )
+    ).toThrow("UNSEAL VAULT returned no plaintext value");
   });
 });

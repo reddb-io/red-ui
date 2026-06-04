@@ -40,6 +40,11 @@ export interface SecretEntry {
   version?: number;
 }
 
+export interface RevealedSecret {
+  key: string;
+  value: string;
+}
+
 export interface QueryTransport {
   query(sql: string): Promise<QueryResult>;
 }
@@ -178,6 +183,10 @@ export function buildDeleteSecretStatement(key: string): string {
   return `DELETE SECRET ${normalizeConfigPath(key, "DELETE SECRET key")}`;
 }
 
+export function buildRevealSecretStatement(key: string): string {
+  return `UNSEAL VAULT ${normalizeConfigPath(key, "UNSEAL VAULT key")}`;
+}
+
 export function parseConfigMutationResult(
   result: QueryResult,
   operation: "SET CONFIG" | "DELETE CONFIG"
@@ -197,6 +206,24 @@ export function parseSecretMutationResult(
     record_count: 0,
     result: { columns: [], records: [] },
   };
+}
+
+export function parseRevealSecretResult(
+  result: QueryResult,
+  key: string
+): RevealedSecret {
+  if (!result.ok) throw new Error(result.error ?? "UNSEAL VAULT failed");
+
+  for (const record of result.result.records) {
+    const values = record.values;
+    const rowKey = optionalString(values.key);
+    if (rowKey && rowKey !== key) continue;
+
+    const value = values.value ?? values.plaintext ?? values.secret;
+    if (typeof value === "string") return { key, value };
+  }
+
+  throw new Error("UNSEAL VAULT returned no plaintext value");
 }
 
 export function parseShowConfigResult(result: QueryResult): ConfigEntry[] {
@@ -297,5 +324,13 @@ export class SettingsAuthoringClient {
   async deleteSecret(key: string): Promise<QueryResult> {
     const result = await this.transport.query(buildDeleteSecretStatement(key));
     return parseSecretMutationResult(result, "DELETE SECRET");
+  }
+
+  async revealSecret(key: string): Promise<RevealedSecret> {
+    const normalized = normalizeConfigPath(key, "UNSEAL VAULT key");
+    const result = await this.transport.query(
+      buildRevealSecretStatement(normalized)
+    );
+    return parseRevealSecretResult(result, normalized);
   }
 }
