@@ -166,6 +166,28 @@ describe("runQueryPreferStream", () => {
     expect(r).toBe(buffered);
   });
 
+  it("passes AbortSignal through to non-SELECT buffered query()", async () => {
+    const controller = new AbortController();
+    const buffered = {
+      ok: true,
+      query: "x",
+      record_count: 0,
+      result: { columns: [], records: [] },
+    };
+    const client = {
+      query: vi.fn(async () => buffered),
+      queryStreamCollect: vi.fn(),
+    };
+
+    await runQueryPreferStream(client, "INSERT INTO t VALUES (1)", {
+      signal: controller.signal,
+    });
+
+    expect(client.query).toHaveBeenCalledWith("INSERT INTO t VALUES (1)", {
+      signal: controller.signal,
+    });
+  });
+
   it("falls back to buffered query() when streaming fails (older server / 404)", async () => {
     const buffered = {
       ok: true,
@@ -183,5 +205,24 @@ describe("runQueryPreferStream", () => {
     expect(client.queryStreamCollect).toHaveBeenCalledOnce();
     expect(client.query).toHaveBeenCalledWith("SELECT * FROM t");
     expect(r).toBe(buffered);
+  });
+
+  it("does not fall back to buffered query() after an abort", async () => {
+    const err = new DOMException("Aborted", "AbortError");
+    const controller = new AbortController();
+    controller.abort();
+    const client = {
+      query: vi.fn(),
+      queryStreamCollect: vi.fn(async () => {
+        throw err;
+      }),
+    };
+
+    await expect(
+      runQueryPreferStream(client, "SELECT * FROM t", {
+        signal: controller.signal,
+      })
+    ).rejects.toBe(err);
+    expect(client.query).not.toHaveBeenCalled();
   });
 });

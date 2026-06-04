@@ -113,7 +113,9 @@
       queryTabs.setExecutor(null)
       return
     }
-    queryTabs.setExecutor((sql) => runQueryPreferStream(client, sql))
+    queryTabs.setExecutor((sql, options) =>
+      runQueryPreferStream(client, sql, options)
+    )
     pendingChanges.setExecutor(async (changes) =>
       Promise.all(
         changes.map(async (c): Promise<CommitOutcome> => {
