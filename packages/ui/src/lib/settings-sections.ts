@@ -1,29 +1,17 @@
-// Data-driven settings registry + a pure config-key resolver.
-//
-// Settings are defined as DATA, not hand-built rows: `SECTIONS` lists the
-// curated config keys per section, and three override maps (`LABELS`,
-// `DESCRIPTIONS`, `ENUM_OPTIONS`) keyed by config path supply the human copy.
-// `resolveControl(key, value)` maps a single reddb config/connection key to a
-// rendered control descriptor (human label, description, input kind, enum
-// options), degrading gracefully for keys nobody curated. Adding a curated key
-// is a one-line edit to a section's `keys` array.
-//
-// Kept framework-free (no Svelte imports) so the registry and the resolver are
-// trivially unit-testable. Icons are mapped to components in `SettingsView`,
-// not here — a section carries only an icon *name*. Mirrors the registry idiom
-// in `renderers/registry`: a tiny pure surface over curated data.
+// Data-driven settings registry + pure schema resolver for the Settings surface.
+// This slice ships only the real Config pane. Secrets and Policies are absent
+// until they have live backing data, keeping the surface "live or empty" rather
+// than rendering placeholders.
+import type { ConfigEntry, ConfigValueType } from "./settings-authoring-client";
 
-/** The input control a config value is rendered through. */
-export type ControlKind = "text" | "number" | "boolean" | "enum";
-
-/** Where a config key is sourced from — gates permission-aware rendering. */
-export type SettingsSource = "stats" | "cluster" | "capabilities" | "session";
+/** The read-only control a config value is rendered through. */
+export type ControlKind = "text" | "number" | "boolean" | "enum" | "list";
 
 /** A resolved control for one config key. */
 export interface ControlDescriptor {
   /** The config path this descriptor was resolved from. */
   key: string;
-  /** Human label — a curated override or a humanized key. */
+  /** Human label: a curated override or a humanized key. */
   label: string;
   /** Optional one-line explanation. */
   description?: string;
@@ -31,10 +19,14 @@ export interface ControlDescriptor {
   kind: ControlKind;
   /** Allowed values when `kind === "enum"`. */
   options?: readonly string[];
+  /** Server-reported config schema type, when SHOW CONFIG projects it. */
+  valueType?: ConfigValueType;
+  /** Server-reported config schema version, when SHOW CONFIG projects it. */
+  schemaVersion?: number;
 }
 
-export interface SettingsSection {
-  /** Stable identifier used as the active-section key (component state only). */
+export interface SettingsPane {
+  /** Stable identifier used as the active-pane key (component state only). */
   id: string;
   /** Nav label. */
   label: string;
@@ -42,119 +34,88 @@ export interface SettingsSection {
   blurb: string;
   /** Icon name resolved to a lucide component in `SettingsView`. */
   icon: string;
-  /** Curated config keys, rendered top-to-bottom. One-line edit to extend. */
-  keys: string[];
 }
 
-/**
- * The curated sections. Each `keys` entry is a flattened reddb config path
- * (see `flattenConfig`) sourced from `/stats`, `/cluster/status`,
- * `/capabilities`, or the session (`whoami`). Order is the render order.
- */
-export const SECTIONS: SettingsSection[] = [
+export const SETTINGS_PANES: SettingsPane[] = [
   {
-    id: "overview",
-    label: "Overview",
-    blurb: "What this reddb instance is and where it runs.",
+    id: "config",
+    label: "Config",
+    blurb: "Live non-secret configuration from SHOW CONFIG.",
     icon: "settings",
-    keys: [
-      "deployment.mode",
-      "read_only",
-      "system.os",
-      "system.arch",
-      "system.hostname",
-      "system.cpu_cores",
-    ],
-  },
-  {
-    id: "storage",
-    label: "Storage",
-    blurb: "Live store footprint for the active connection.",
-    icon: "database",
-    keys: [
-      "store.collection_count",
-      "store.total_entities",
-      "store.cross_ref_count",
-      "store.total_memory_bytes",
-    ],
-  },
-  {
-    id: "cluster",
-    label: "Cluster",
-    blurb: "Deployment and replication topology.",
-    icon: "network",
-    keys: [
-      "deployment.mode",
-      "deployment.file_path",
-      "replication.replica_count",
-      "replication.lag_ms",
-    ],
-  },
-  {
-    id: "capabilities",
-    label: "Capabilities",
-    blurb: "Endpoints negotiated for this server version.",
-    icon: "plug",
-    keys: [
-      "capabilities.vcs",
-      "capabilities.clusterStatus",
-      "capabilities.collectionMetadata",
-      "capabilities.cdcStream",
-    ],
-  },
-  {
-    id: "session",
-    label: "Session",
-    blurb: "Who red-ui is authenticated as on this connection.",
-    icon: "shield",
-    keys: ["session.username", "session.role", "session.authenticated"],
   },
 ];
 
 /** Curated label overrides, keyed by config path. */
 export const LABELS: Record<string, string> = {
-  "deployment.mode": "Deployment mode",
-  "deployment.file_path": "Backing file",
-  read_only: "Read-only",
-  "system.os": "Operating system",
-  "system.arch": "Architecture",
-  "system.hostname": "Hostname",
-  "system.cpu_cores": "CPU cores",
-  "store.collection_count": "Collections",
-  "store.total_entities": "Entities",
-  "store.cross_ref_count": "Cross-references",
-  "store.total_memory_bytes": "Memory in use",
-  "replication.replica_count": "Replicas",
-  "replication.lag_ms": "Replication lag",
-  "capabilities.vcs": "Version control",
-  "capabilities.clusterStatus": "Cluster status",
-  "capabilities.collectionMetadata": "Collection metadata",
-  "capabilities.cdcStream": "Change stream",
-  "session.username": "Username",
-  "session.role": "Role",
-  "session.authenticated": "Authenticated",
+  "durability.mode": "Durability mode",
+  "concurrency.locking.enabled": "Locking",
+  "cache.blob.l1_bytes_max": "Blob L1 cache",
+  "cache.blob.l2_bytes_max": "Blob L2 cache",
+  "red.auth.enabled": "Authentication",
+  "red.auth.require_auth": "Require authentication",
+  "red.auth.session_ttl_secs": "Session TTL",
+  "red.backup.backend": "Backup backend",
+  "red.backup.enabled": "Backups",
+  "red.backup.interval_secs": "Backup interval",
+  "red.cdc.enabled": "Change data capture",
+  "red.config.secret.auto_decrypt": "Auto-decrypt config secrets",
+  "red.config.secret.auto_encrypt": "Auto-encrypt config secrets",
+  "red.server.max_body_size": "Max request body",
+  "red.server.max_scan_limit": "Max scan limit",
+  "red.server.read_timeout_ms": "Read timeout",
+  "red.server.write_timeout_ms": "Write timeout",
+  "red.storage.page_size": "Page size",
+  "red.storage.page_cache_capacity": "Page cache capacity",
+  "red.storage.verify_checksums": "Verify checksums",
+  "red.system.os": "Operating system",
+  "red.system.arch": "Architecture",
+  "red.system.hostname": "Hostname",
+  "red.system.cpu_cores": "CPU cores",
+  "red.system.total_memory_bytes": "System memory",
+  "red.vcs.default_branch": "Default branch",
+  "red.vcs.protected_branches": "Protected branches",
+  "runtime.result_cache.backend": "Result cache backend",
+  "runtime.result_cache.enabled": "Result cache",
+  "storage.bgwriter.delay_ms": "Background writer delay",
+  "storage.btree.lehman_yao": "Lehman-Yao B-tree",
+  "storage.wal.max_interval_ms": "WAL max interval",
+  "system.bootstrap.completed": "Bootstrap completed",
+  "system.bootstrap.preset": "Bootstrap preset",
 };
 
 /** Curated descriptions, keyed by config path. */
 export const DESCRIPTIONS: Record<string, string> = {
-  "deployment.mode": "How this reddb instance is running.",
-  "deployment.file_path": "On-disk store path for an embedded or local server.",
-  read_only: "Whether the store rejects writes (a lock or a replica role).",
-  "store.total_memory_bytes": "Resident memory the store currently holds.",
-  "replication.lag_ms": "How far this replica trails the primary, in ms.",
-  "capabilities.vcs": "Commit and diff endpoints — gated when unsupported.",
-  "capabilities.cdcStream": "Server-sent change stream over /changes/stream.",
-  "session.role": "The role granted to this principal on the active target.",
+  "durability.mode": "Write durability policy currently reported by reddb.",
+  "red.auth.enabled":
+    "Whether reddb authentication is enabled for this instance.",
+  "red.auth.require_auth": "Whether unauthenticated requests are rejected.",
+  "red.backup.backend": "The selected backup storage backend.",
+  "red.backup.enabled": "Whether scheduled backups are enabled.",
+  "red.cdc.enabled": "Whether the change stream subsystem is enabled.",
+  "red.server.max_body_size":
+    "Maximum accepted HTTP request body size, in bytes.",
+  "red.server.max_scan_limit": "Default cap for scan-heavy API paths.",
+  "red.storage.page_size": "On-disk page size used by the storage engine.",
+  "red.storage.verify_checksums":
+    "Whether page checksums are verified on read.",
+  "red.vcs.default_branch":
+    "Branch name used when VCS features need a default.",
+  "red.vcs.protected_branches":
+    "Branches protected from destructive operations.",
+  "runtime.result_cache.enabled": "Whether query result caching is enabled.",
+  "system.bootstrap.preset": "The bootstrap profile that initialized defaults.",
 };
 
 /** Curated enum options, keyed by config path. Presence ⇒ `kind: "enum"`. */
 export const ENUM_OPTIONS: Record<string, readonly string[]> = {
-  "deployment.mode": ["embedded", "server", "docker", "replicated"],
+  "durability.mode": ["sync", "async", "none"],
+  "red.backup.backend": ["local", "s3", "gcs"],
+  "runtime.result_cache.backend": ["legacy", "blob_cache"],
 };
 
 /**
  * Turn a config path into a human label when nobody curated one:
- * `store.total_memory_bytes` → "Total memory bytes". Uses the last path
+ * `store.total_memory_bytes` becomes "Total memory bytes". Uses the last path
  * segment, swaps `_`/`-` for spaces, and sentence-cases the result.
  */
 export function humanizeKey(key: string): string {
@@ -164,104 +125,71 @@ export function humanizeKey(key: string): string {
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
-/**
- * Resolve a config key (and its live value) to a rendered control descriptor.
- *
- * Resolution order, each degrading gracefully:
- *  - label: `LABELS[key]` → `humanizeKey(key)`
- *  - description: `DESCRIPTIONS[key]` → omitted
- *  - kind: `ENUM_OPTIONS[key]` ⇒ `"enum"`; else inferred from the value's
- *    runtime type (boolean / number) → `"text"` for everything else, including
- *    `undefined`. So an unknown key with no value still yields a valid `"text"`
- *    descriptor rather than throwing.
- */
-export function resolveControl(
-  key: string,
-  value?: unknown
-): ControlDescriptor {
-  const options = ENUM_OPTIONS[key];
+function kindFromValueType(
+  valueType: ConfigValueType | undefined
+): ControlKind | null {
+  switch (valueType) {
+    case "bool":
+    case "boolean":
+      return "boolean";
+    case "int":
+    case "integer":
+    case "float":
+    case "number":
+    case "count":
+      return "number";
+    case "array":
+    case "list":
+      return "list";
+    case "object":
+    case "string":
+    case "text":
+    case "url":
+      return "text";
+    default:
+      return null;
+  }
+}
+
+function kindFromRuntimeValue(value: unknown): ControlKind {
+  if (typeof value === "boolean") return "boolean";
+  if (typeof value === "number") return "number";
+  if (Array.isArray(value)) return "list";
+  return "text";
+}
+
+export function resolveConfigControl(entry: ConfigEntry): ControlDescriptor {
+  const options = ENUM_OPTIONS[entry.key];
   const kind: ControlKind = options
     ? "enum"
-    : typeof value === "boolean"
-      ? "boolean"
-      : typeof value === "number"
-        ? "number"
-        : "text";
+    : (kindFromValueType(entry.valueType) ?? kindFromRuntimeValue(entry.value));
   const descriptor: ControlDescriptor = {
-    key,
-    label: LABELS[key] ?? humanizeKey(key),
+    key: entry.key,
+    label: LABELS[entry.key] ?? humanizeKey(entry.key),
     kind,
   };
-  const description = DESCRIPTIONS[key];
+  const description = DESCRIPTIONS[entry.key];
   if (description) descriptor.description = description;
   if (options) descriptor.options = options;
+  if (entry.valueType) descriptor.valueType = entry.valueType;
+  if (entry.schemaVersion !== undefined)
+    descriptor.schemaVersion = entry.schemaVersion;
   return descriptor;
 }
 
-/** Which live source a config key is read from — drives permission-awareness. */
-export function sourceForKey(key: string): SettingsSource {
-  if (key.startsWith("capabilities.")) return "capabilities";
-  if (key.startsWith("session.")) return "session";
-  if (
-    key.startsWith("deployment.") ||
-    key.startsWith("storage.") ||
-    key.startsWith("wal.") ||
-    key.startsWith("throughput.") ||
-    key.startsWith("replication.")
-  ) {
-    return "cluster";
-  }
-  return "stats";
+export function resolvePane(id: string | null): SettingsPane {
+  return SETTINGS_PANES.find((pane) => pane.id === id) ?? SETTINGS_PANES[0];
 }
 
-/**
- * Flatten a nested config snapshot into dotted leaf paths. Nested plain objects
- * recurse (`{ store: { collection_count: 3 } }` → `"store.collection_count"`);
- * arrays and primitives are kept as leaf values. `undefined`/`null` branches
- * are skipped so a server that omits a sub-tree simply yields no keys for it.
- */
-export function flattenConfig(
-  input: Record<string, unknown>
-): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
-  const walk = (obj: Record<string, unknown>, prefix: string) => {
-    for (const [k, v] of Object.entries(obj)) {
-      const key = prefix ? `${prefix}.${k}` : k;
-      if (v === undefined || v === null) continue;
-      if (typeof v === "object" && !Array.isArray(v)) {
-        walk(v as Record<string, unknown>, key);
-      } else {
-        out[key] = v;
-      }
-    }
-  };
-  walk(input, "");
-  return out;
-}
-
-/**
- * Resolve a section by id, falling back to the first section when the id is
- * unknown or null. The settings view drives the active section purely from
- * component state, so this never touches the URL.
- */
-export function resolveSection(id: string | null): SettingsSection {
-  return SECTIONS.find((s) => s.id === id) ?? SECTIONS[0];
-}
-
-/**
- * Filter a section's curated keys by a free-text query, matching against both
- * the config path AND the resolved human label (case-insensitive). An empty or
- * whitespace-only query returns the keys unchanged. Pure + framework-free so
- * the settings search is unit-testable without rendering. The settings view
- * keeps one query string per section id, so switching sections preserves each
- * section's typed query.
- */
-export function filterKeys(keys: readonly string[], query: string): string[] {
+export function filterConfigEntries(
+  entries: readonly ConfigEntry[],
+  query: string
+): ConfigEntry[] {
   const q = query.trim().toLowerCase();
-  if (!q) return [...keys];
-  return keys.filter(
-    (key) =>
-      key.toLowerCase().includes(q) ||
-      resolveControl(key).label.toLowerCase().includes(q)
+  if (!q) return [...entries];
+  return entries.filter(
+    (entry) =>
+      entry.key.toLowerCase().includes(q) ||
+      resolveConfigControl(entry).label.toLowerCase().includes(q)
   );
 }
