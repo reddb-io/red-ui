@@ -4,22 +4,33 @@
   import EmptyState from '$lib/EmptyState.svelte'
   import { activity } from '$lib/activity.svelte'
   import { connection } from '$lib/connections.svelte'
+  import type { PermissionDecision } from '$lib/permission-gate'
+  import {
+    POLICY_READ_CHECK,
+    assembleCapabilityMatrix,
+    capabilityMatrixChecksFromPolicies,
+    type CapabilityMatrixRow,
+  } from '$lib/policies'
   import { secureStore } from '$lib/secureStore.svelte'
   import type { AuthPolicy, AuthTenant, AuthUser, Whoami } from '#reddb'
-  import { Building2, Lock, RefreshCw, ScrollText, Shield, ShieldAlert, Users } from 'lucide-svelte'
+  import { Building2, CheckCircle2, Lock, RefreshCw, ScrollText, ShieldAlert, Users, XCircle } from 'lucide-svelte'
 
   let whoami = $state<Whoami | null>(null)
   let tenants = $state<AuthTenant[]>([])
   let users = $state<AuthUser[]>([])
   let policies = $state<AuthPolicy[]>([])
+  let policyReadDecision = $state<PermissionDecision | null>(null)
+  let capabilityRows = $state<CapabilityMatrixRow[]>([])
   let loading = $state(false)
   let whoamiError = $state<string | null>(null)
   let tenantsError = $state<string | null>(null)
   let usersError = $state<string | null>(null)
   let policiesError = $state<string | null>(null)
+  let capabilityError = $state<string | null>(null)
 
   const activeUrl = $derived(connection.active.url)
   const connected = $derived(connection.connected)
+  const showPolicyPane = $derived(policyReadDecision?.allowed === true)
 
   function fmtTime(v: number | undefined): string {
     if (!v) return '-'
@@ -34,6 +45,8 @@
       tenants = []
       users = []
       policies = []
+      policyReadDecision = null
+      capabilityRows = []
       return
     }
     loading = true
@@ -41,6 +54,9 @@
     tenantsError = null
     usersError = null
     policiesError = null
+    capabilityError = null
+    policyReadDecision = null
+    capabilityRows = []
     try {
       whoami = await activity.track('security · whoami', () => client.whoami())
     } catch (e) {
@@ -48,13 +64,51 @@
       whoami = null
     }
     try {
+      tenants = await activity.track('security · tenants', () => client.tenants())
+    } catch (e) {
+      tenantsError = (e as Error).message
+      tenants = []
+    }
+    try {
       users = await activity.track('security · users', () => client.users())
     } catch (e) {
       usersError = (e as Error).message
       users = []
-    } finally {
-      loading = false
     }
+    try {
+      const [decision] = await activity.track('security · auth.can policy read', () => client.authCan([POLICY_READ_CHECK]))
+      policyReadDecision = decision ?? {
+        ...POLICY_READ_CHECK,
+        allowed: false,
+        reason: 'auth.can omitted policy-read decision',
+      }
+    } catch (e) {
+      policyReadDecision = {
+        ...POLICY_READ_CHECK,
+        allowed: false,
+        reason: (e as Error).message || 'auth.can failed',
+      }
+    }
+    if (policyReadDecision.allowed) {
+      try {
+        policies = await activity.track('security · policies', () => client.policies())
+      } catch (e) {
+        policiesError = (e as Error).message
+        policies = []
+      }
+      try {
+        const checks = capabilityMatrixChecksFromPolicies(policies)
+        const decisions = await activity.track('security · auth.can capability matrix', () => client.authCan(checks))
+        capabilityRows = assembleCapabilityMatrix(policies, decisions)
+      } catch (e) {
+        capabilityError = (e as Error).message
+        capabilityRows = []
+      }
+    } else {
+      policies = []
+      capabilityRows = []
+    }
+    loading = false
   }
 
   $effect(() => {
@@ -142,38 +196,40 @@
           {/if}
         </Card>
 
-        <Card title="policies">
-          {#if policiesError}
-            <div class="mb-2 inline-flex items-center gap-1.5 rounded border border-warn/40 bg-bg-0 px-2 py-1 text-[11px] font-mono text-warn">
-              <ShieldAlert class="size-3.5" />
-              policies endpoint denied or unavailable
-            </div>
-            <pre class="whitespace-pre-wrap break-words text-[12px] font-mono text-fg-3">{policiesError}</pre>
-          {:else if policies.length === 0}
-            <div class="flex items-center gap-2 text-[12px] font-mono text-fg-3">
-              <ScrollText class="size-4" />
-              <span>No policies returned for this principal.</span>
-            </div>
-          {:else}
-            <div class="grid gap-1 text-[12px] font-mono">
-              {#each policies.slice(0, 6) as policy, i (`${policy.id ?? policy.name ?? i}`)}
-                <div class="rounded border border-line-1 bg-bg-0 px-2 py-1.5">
-                  <div class="flex items-center gap-2">
-                    <span class="text-fg-0">{policy.name ?? policy.id ?? 'policy'}</span>
-                    {#if policy.effect}<Badge tone={policy.effect === 'deny' ? 'danger' : 'ok'}>{policy.effect}</Badge>{/if}
+        {#if showPolicyPane}
+          <Card title="policies">
+            {#if policiesError}
+              <div class="mb-2 inline-flex items-center gap-1.5 rounded border border-warn/40 bg-bg-0 px-2 py-1 text-[11px] font-mono text-warn">
+                <ShieldAlert class="size-3.5" />
+                policies endpoint denied or unavailable
+              </div>
+              <pre class="whitespace-pre-wrap break-words text-[12px] font-mono text-fg-3">{policiesError}</pre>
+            {:else if policies.length === 0}
+              <div class="flex items-center gap-2 text-[12px] font-mono text-fg-3">
+                <ScrollText class="size-4" />
+                <span>No policies returned for this principal.</span>
+              </div>
+            {:else}
+              <div class="grid gap-1 text-[12px] font-mono">
+                {#each policies.slice(0, 6) as policy, i (`${policy.id ?? policy.name ?? i}`)}
+                  <div class="rounded border border-line-1 bg-bg-0 px-2 py-1.5">
+                    <div class="flex items-center gap-2">
+                      <span class="text-fg-0">{policy.name ?? policy.id ?? 'policy'}</span>
+                      {#if policy.effect}<Badge tone={policy.effect === 'deny' ? 'danger' : 'ok'}>{policy.effect}</Badge>{/if}
+                    </div>
+                    <div class="mt-1 text-fg-3">
+                      {policy.action ?? '*'} · {policy.resource ?? '*'}
+                      {#if policy.tenant} · tenant {policy.tenant}{/if}
+                    </div>
                   </div>
-                  <div class="mt-1 text-fg-3">
-                    {policy.action ?? '*'} · {policy.resource ?? '*'}
-                    {#if policy.tenant} · tenant {policy.tenant}{/if}
-                  </div>
-                </div>
-              {/each}
-              {#if policies.length > 6}
-                <div class="text-[11px] text-fg-3">{policies.length - 6} more policies in the table.</div>
-              {/if}
-            </div>
-          {/if}
-        </Card>
+                {/each}
+                {#if policies.length > 6}
+                  <div class="text-[11px] text-fg-3">{policies.length - 6} more policies in the table.</div>
+                {/if}
+              </div>
+            {/if}
+          </Card>
+        {/if}
       </div>
 
       <div class="grid gap-3 content-start">
@@ -217,38 +273,93 @@
           {/if}
         </Card>
 
-        <Card title="policy table">
-          {#if policiesError}
-            <div class="text-[12px] font-mono text-fg-3">Policy table unavailable for this principal.</div>
-          {:else if policies.length === 0}
-            <div class="text-[12px] font-mono text-fg-3">No policies to tabulate.</div>
-          {:else}
-            <div class="overflow-auto">
-              <table class="w-full border-collapse text-[12px] font-mono">
-                <thead class="sticky top-0 bg-bg-1">
-                  <tr class="border-b border-line-1 text-fg-3">
-                    <th class="px-2 py-1.5 text-left font-normal">effect</th>
-                    <th class="px-2 py-1.5 text-left font-normal">principal</th>
-                    <th class="px-2 py-1.5 text-left font-normal">action</th>
-                    <th class="px-2 py-1.5 text-left font-normal">resource</th>
-                    <th class="px-2 py-1.5 text-left font-normal">tenant</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {#each policies as policy, i (`${policy.id ?? policy.name ?? i}`)}
-                    <tr class="border-b border-line-1/60 hover:bg-bg-1/40">
-                      <td class="px-2 py-1">{#if policy.effect}<Badge tone={policy.effect === 'deny' ? 'danger' : 'ok'}>{policy.effect}</Badge>{:else}<span class="text-fg-3">-</span>{/if}</td>
-                      <td class="px-2 py-1 text-fg-1">{policy.principal ?? '-'}</td>
-                      <td class="px-2 py-1 text-accent">{policy.action ?? '*'}</td>
-                      <td class="px-2 py-1 text-fg-1">{policy.resource ?? '*'}</td>
-                      <td class="px-2 py-1 text-fg-2">{policy.tenant ?? '-'}</td>
+        {#if showPolicyPane}
+          <Card title="policy table">
+            {#if policiesError}
+              <div class="text-[12px] font-mono text-fg-3">Policy table unavailable for this principal.</div>
+            {:else if policies.length === 0}
+              <div class="text-[12px] font-mono text-fg-3">No policies to tabulate.</div>
+            {:else}
+              <div class="overflow-auto">
+                <table class="w-full border-collapse text-[12px] font-mono">
+                  <thead class="sticky top-0 bg-bg-1">
+                    <tr class="border-b border-line-1 text-fg-3">
+                      <th class="px-2 py-1.5 text-left font-normal">effect</th>
+                      <th class="px-2 py-1.5 text-left font-normal">principal</th>
+                      <th class="px-2 py-1.5 text-left font-normal">action</th>
+                      <th class="px-2 py-1.5 text-left font-normal">resource</th>
+                      <th class="px-2 py-1.5 text-left font-normal">tenant</th>
                     </tr>
-                  {/each}
-                </tbody>
-              </table>
-            </div>
-          {/if}
-        </Card>
+                  </thead>
+                  <tbody>
+                    {#each policies as policy, i (`${policy.id ?? policy.name ?? i}`)}
+                      <tr class="border-b border-line-1/60 hover:bg-bg-1/40">
+                        <td class="px-2 py-1">{#if policy.effect}<Badge tone={policy.effect === 'deny' ? 'danger' : 'ok'}>{policy.effect}</Badge>{:else}<span class="text-fg-3">-</span>{/if}</td>
+                        <td class="px-2 py-1 text-fg-1">{policy.principal ?? '-'}</td>
+                        <td class="px-2 py-1 text-accent">{policy.action ?? '*'}</td>
+                        <td class="px-2 py-1 text-fg-1">{policy.resource ?? '*'}</td>
+                        <td class="px-2 py-1 text-fg-2">{policy.tenant ?? '-'}</td>
+                      </tr>
+                    {/each}
+                  </tbody>
+                </table>
+              </div>
+            {/if}
+          </Card>
+
+          <Card title="my capabilities">
+            {#if capabilityError}
+              <div class="mb-2 inline-flex items-center gap-1.5 rounded border border-warn/40 bg-bg-0 px-2 py-1 text-[11px] font-mono text-warn">
+                <ShieldAlert class="size-3.5" />
+                capability matrix unavailable
+              </div>
+              <pre class="whitespace-pre-wrap break-words text-[12px] font-mono text-fg-3">{capabilityError}</pre>
+            {:else if capabilityRows.length === 0}
+              <div class="text-[12px] font-mono text-fg-3">No capability checks returned.</div>
+            {:else}
+              <div class="overflow-auto">
+                <table class="w-full border-collapse text-[12px] font-mono">
+                  <thead class="sticky top-0 bg-bg-1">
+                    <tr class="border-b border-line-1 text-fg-3">
+                      <th class="px-2 py-1.5 text-left font-normal">can</th>
+                      <th class="px-2 py-1.5 text-left font-normal">action</th>
+                      <th class="px-2 py-1.5 text-left font-normal">resource</th>
+                      <th class="px-2 py-1.5 text-left font-normal">policy effect</th>
+                      <th class="px-2 py-1.5 text-left font-normal">reason</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {#each capabilityRows as row (row.id)}
+                      <tr class="border-b border-line-1/60 hover:bg-bg-1/40">
+                        <td class="px-2 py-1">
+                          {#if row.allowed}
+                            <span class="inline-flex items-center gap-1 text-ok"><CheckCircle2 class="size-3.5" /> yes</span>
+                          {:else}
+                            <span class="inline-flex items-center gap-1 text-danger"><XCircle class="size-3.5" /> no</span>
+                          {/if}
+                        </td>
+                        <td class="px-2 py-1 text-accent">{row.action}</td>
+                        <td class="px-2 py-1 text-fg-1">{row.resourceLabel}</td>
+                        <td class="px-2 py-1">
+                          {#if row.effects.length === 0}
+                            <span class="text-fg-3">-</span>
+                          {:else}
+                            <span class="inline-flex flex-wrap gap-1">
+                              {#each row.effects as effect}
+                                <Badge tone={effect === 'deny' ? 'danger' : 'ok'}>{effect}</Badge>
+                              {/each}
+                            </span>
+                          {/if}
+                        </td>
+                        <td class="max-w-[320px] px-2 py-1 text-fg-3">{row.reason ?? '-'}</td>
+                      </tr>
+                    {/each}
+                  </tbody>
+                </table>
+              </div>
+            {/if}
+          </Card>
+        {/if}
       </div>
     </div>
   {/if}
