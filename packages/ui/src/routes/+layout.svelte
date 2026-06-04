@@ -15,7 +15,9 @@
 
   const router = createKitRouter()
   const path = $derived(page.url.pathname.slice(base.length) || '/')
-  const renderRouteContent = $derived(path === '/graph' || path === '/shadow-dom-spike')
+  const renderRouteContent = $derived(
+    path === '/graph' || path === '/shadow-dom-spike' || path === '/redwire-ws-spike',
+  )
 </script>
 
 {#if renderRouteContent}
