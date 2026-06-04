@@ -27,6 +27,8 @@
   let error = $state<string | null>(null)
   let search = $state('')
   let capabilityFilter = $state<Capability | 'all'>('all')
+  const skeletonRows = Array.from({ length: 10 }, (_, i) => i)
+  const skeletonChips = Array.from({ length: 4 }, (_, i) => i)
 
   const connected = $derived(connection.connected)
   const activeUrl = $derived(connection.active.url)
@@ -113,7 +115,29 @@
     <div class="mt-1 break-words">{error}</div>
   </div>
 {:else if loading && items.length === 0}
-  <div class="p-3 text-[12px] text-fg-3 font-mono">Loading…</div>
+  <div class="schema-skeleton" aria-busy="true" aria-label="Loading schema">
+    <div class="p-2 border-b border-line-1 grid gap-2">
+      <div class="flex items-center gap-1.5 h-7 rounded border border-line-1 bg-bg-0 px-2">
+        <Search class="size-3 text-fg-3" />
+        <div class="h-3 w-32 rounded bg-bg-2 motion-safe:animate-pulse"></div>
+      </div>
+
+      <div class="flex flex-wrap gap-1">
+        {#each skeletonChips as chip (chip)}
+          <div class="h-5 rounded border border-line-1 bg-bg-1 px-1.5 motion-safe:animate-pulse" style={`width: ${chip === 0 ? 42 : 28 + chip * 8}px`}></div>
+        {/each}
+      </div>
+    </div>
+
+    <ul class="py-1" role="presentation">
+      {#each skeletonRows as row (row)}
+        <li class="flex h-7 items-center gap-2 px-3">
+          <div class="h-4 w-4 rounded bg-bg-2 motion-safe:animate-pulse"></div>
+          <div class="h-3 rounded bg-bg-2 motion-safe:animate-pulse" style={`width: ${row % 3 === 0 ? 132 : row % 3 === 1 ? 96 : 164}px`}></div>
+        </li>
+      {/each}
+    </ul>
+  </div>
 {:else if items.length === 0}
   <div class="p-3 flex flex-col items-start gap-2 text-[12px] text-fg-3 font-mono leading-relaxed">
     <span class="text-fg-2">No user collections.</span>

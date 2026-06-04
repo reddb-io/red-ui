@@ -24,6 +24,12 @@
   let known = $state<KnownNode[]>([])
   let loading = $state(true)
   let selectedId = $state<string | null>(null)
+  const clusterSkeletonNodes = [
+    { id: 'primary', x: '50%', y: '38%', role: 'primary', label: 92 },
+    { id: 'replica', x: '68%', y: '54%', role: 'replica', label: 112 },
+    { id: 'embedded', x: '32%', y: '54%', role: 'embedded', label: 104 },
+  ]
+  const clusterSkeletonRows = Array.from({ length: 3 }, (_, i) => i)
   // Per-preset failure tracking. Dead nodes back off to one probe per ~60s
   // instead of one per 5s so unreachable presets (e.g. embedded with no
   // local file-backed reddb running) don't flood DevTools with native
@@ -259,8 +265,55 @@
 </script>
 
 {#if loading}
-  <div class="absolute inset-0 grid place-items-center text-fg-3 font-mono text-[12px]">
-    Probing reachable nodes…
+  <div class="absolute inset-0 overflow-hidden bg-bg-0" aria-busy="true" aria-label="Loading cluster topology">
+    <div class="absolute inset-0 cluster-skeleton-grid"></div>
+
+    <svg class="absolute inset-0 h-full w-full" aria-hidden="true">
+      <line x1="50%" y1="38%" x2="32%" y2="54%" class="cluster-skeleton-edge motion-safe:animate-pulse" />
+      <line x1="50%" y1="38%" x2="68%" y2="54%" class="cluster-skeleton-edge motion-safe:animate-pulse" />
+    </svg>
+
+    {#each clusterSkeletonNodes as node (node.id)}
+      <div
+        class="absolute w-[220px] rounded border border-line-2 bg-bg-1 p-3 shadow-md motion-safe:animate-pulse"
+        style={`left: ${node.x}; top: ${node.y}; transform: translate(-50%, -50%);`}
+      >
+        <div class="mb-3 flex items-center gap-2">
+          <div class={[
+            'h-2 w-2 rounded-full',
+            node.role === 'primary' ? 'bg-role-primary' : node.role === 'replica' ? 'bg-role-replica' : 'bg-role-embedded',
+          ].join(' ')}></div>
+          <div class="h-3 rounded bg-bg-3" style={`width: ${node.label}px`}></div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="h-9 rounded border border-line-1 bg-bg-2"></div>
+          <div class="h-9 rounded border border-line-1 bg-bg-2"></div>
+        </div>
+      </div>
+    {/each}
+
+    <div class="absolute top-4 left-4 z-10 w-64 rounded border border-line-2 bg-bg-1 p-3 shadow-md">
+      <div class="mb-3 h-3 w-16 rounded bg-bg-2 motion-safe:animate-pulse"></div>
+      <div class="mb-3 grid grid-cols-2 gap-3 border-b border-line-1 pb-3">
+        <div>
+          <div class="mb-2 h-3 w-16 rounded bg-bg-2 motion-safe:animate-pulse"></div>
+          <div class="h-6 w-12 rounded bg-bg-2 motion-safe:animate-pulse"></div>
+        </div>
+        <div>
+          <div class="mb-2 h-3 w-14 rounded bg-bg-2 motion-safe:animate-pulse"></div>
+          <div class="h-6 w-20 rounded bg-bg-2 motion-safe:animate-pulse"></div>
+        </div>
+      </div>
+      <div class="grid gap-1">
+        {#each clusterSkeletonRows as row (row)}
+          <div class="flex h-[30px] items-center gap-2.5 rounded px-2">
+            <div class="h-1.5 w-1.5 rounded-full bg-bg-2 motion-safe:animate-pulse"></div>
+            <div class="h-3 flex-1 rounded bg-bg-2 motion-safe:animate-pulse"></div>
+            <div class="h-3 rounded bg-bg-2 motion-safe:animate-pulse" style={`width: ${row === 0 ? 36 : 24}px`}></div>
+          </div>
+        {/each}
+      </div>
+    </div>
   </div>
 {:else if secureStore.locked}
   <div class="p-6">
@@ -537,5 +590,16 @@
     background: var(--color-bg-2) !important;
     color: var(--color-fg-0) !important;
     fill: var(--color-fg-0) !important;
+  }
+  .cluster-skeleton-grid {
+    background-image: radial-gradient(var(--color-line-2) 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.55;
+  }
+  .cluster-skeleton-edge {
+    stroke: var(--color-line-2);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    opacity: 0.7;
   }
 </style>

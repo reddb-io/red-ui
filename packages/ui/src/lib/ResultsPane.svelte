@@ -38,6 +38,8 @@
     { value: 'document', label: 'Document' },
     { value: 'json', label: 'JSON' },
   ]
+  const resultsSkeletonRows = Array.from({ length: 14 }, (_, i) => i)
+  const resultsSkeletonColumns = Array.from({ length: 6 }, (_, i) => i)
 
   let results = $state<Record<string, QueryResult | null>>({})
   let errors = $state<Record<string, string>>({})
@@ -588,8 +590,71 @@
             <pre class="whitespace-pre-wrap">{err}</pre>
           </div>
         {:else if !result}
-          <div class="h-full grid place-items-center text-fg-3 text-[12px] font-mono">
-            Loading {tab.label}…
+          <div class="h-full flex flex-col" aria-busy="true" aria-label={`Loading ${tab.label} results`}>
+            <div class="border-b border-line-1 bg-bg-1/35 px-3 py-2">
+              <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+                <div class="min-w-[180px] flex-1">
+                  <div class="flex items-center gap-2">
+                    <div class="h-[21px] w-[78px] rounded border border-line-1 bg-bg-2 motion-safe:animate-pulse"></div>
+                    <div class="h-4 w-44 max-w-[45vw] rounded bg-bg-2 motion-safe:animate-pulse"></div>
+                  </div>
+                  <div class="mt-1 flex flex-wrap gap-1">
+                    <div class="h-[21px] w-24 rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
+                    <div class="h-[21px] w-32 rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
+                    <div class="h-[21px] w-20 rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                  <div class="h-[30px] w-[94px] rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
+                  <div class="h-[30px] w-[92px] rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
+                  <div class="h-[30px] w-[92px] rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
+                  <div class="h-[30px] w-[78px] rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
+                  <div class="h-[30px] w-[78px] rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="border-b border-line-1 px-3 py-1.5 flex items-center gap-2 bg-bg-1/40">
+              <div class="h-6 w-[70px] rounded border border-line-1 bg-bg-2 motion-safe:animate-pulse"></div>
+              <div class="h-6 w-[54px] rounded border border-line-1 bg-bg-2 motion-safe:animate-pulse"></div>
+              <div class="h-4 w-px bg-line-1"></div>
+              <div class="h-6 w-[76px] rounded border border-line-1 bg-bg-2 motion-safe:animate-pulse"></div>
+              <div class="ml-auto h-3 w-[58px] rounded bg-bg-2 motion-safe:animate-pulse"></div>
+            </div>
+
+            <div class="flex-1 overflow-hidden">
+              <div class="min-w-[760px]">
+                <div class="grid h-8 grid-cols-[40px_repeat(6,minmax(96px,1fr))] border-b border-line-1 bg-bg-1">
+                  <div class="px-2 py-2">
+                    <div class="ml-auto h-3 w-4 rounded bg-bg-2 motion-safe:animate-pulse"></div>
+                  </div>
+                  {#each resultsSkeletonColumns as col (col)}
+                    <div class="px-2 py-2">
+                      <div class="h-3 rounded bg-bg-2 motion-safe:animate-pulse" style={`width: ${col % 3 === 0 ? 72 : col % 3 === 1 ? 104 : 56}px`}></div>
+                    </div>
+                  {/each}
+                </div>
+                {#each resultsSkeletonRows as row (row)}
+                  <div class="grid h-[29px] grid-cols-[40px_repeat(6,minmax(96px,1fr))] border-b border-line-1/60">
+                    <div class="px-2 py-2">
+                      <div class="ml-auto h-3 w-4 rounded bg-bg-2 motion-safe:animate-pulse"></div>
+                    </div>
+                    {#each resultsSkeletonColumns as col (col)}
+                      <div class="px-2 py-2">
+                        <div class="h-3 rounded bg-bg-2 motion-safe:animate-pulse" style={`width: ${col === 0 ? 48 : 64 + ((row + col) % 4) * 18}px`}></div>
+                      </div>
+                    {/each}
+                  </div>
+                {/each}
+              </div>
+            </div>
+
+            <div class="border-t border-line-1 px-3 py-1.5 flex items-center gap-3">
+              <div class="h-3 w-28 rounded bg-bg-2 motion-safe:animate-pulse"></div>
+              <div class="h-3 w-44 rounded bg-bg-2 motion-safe:animate-pulse"></div>
+              <div class="h-3 w-20 rounded bg-bg-2 motion-safe:animate-pulse"></div>
+            </div>
           </div>
         {:else}
           {@const renderer = pickRenderer(tab, result)}
