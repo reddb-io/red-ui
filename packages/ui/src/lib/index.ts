@@ -36,6 +36,7 @@ export * from "./collection-pages";
 export * from "./router.svelte";
 export * from "./settings-sections";
 export * from "./settings-authoring-client";
+export * from "./permission-gate";
 export * from "./cn";
 export * from "./connections.svelte";
 export * from "./shortcuts";

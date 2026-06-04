@@ -4,6 +4,7 @@ import {
   ENUM_OPTIONS,
   SETTINGS_PANES,
   filterConfigEntries,
+  filterSettingsPanesByGrant,
   humanizeKey,
   resolveConfigControl,
   resolvePane,
@@ -18,6 +19,9 @@ describe("settings panes registry", () => {
       expect(pane.label).not.toBe("");
       expect(pane.blurb).not.toBe("");
       expect(pane.icon).not.toBe("");
+      expect(pane.readGrant.action).not.toBe("");
+      expect(pane.readGrant.resource.kind).not.toBe("");
+      expect(pane.readGrant.resource.name).not.toBe("");
     }
   });
 
@@ -25,6 +29,19 @@ describe("settings panes registry", () => {
     expect(resolvePane("config")).toBe(SETTINGS_PANES[0]);
     expect(resolvePane("missing")).toBe(SETTINGS_PANES[0]);
     expect(resolvePane(null)).toBe(SETTINGS_PANES[0]);
+  });
+
+  it("filters panes by cached read grants", () => {
+    expect(
+      filterSettingsPanesByGrant(SETTINGS_PANES, { cachedCan: () => true }).map(
+        (pane) => pane.id
+      )
+    ).toEqual(["config"]);
+    expect(
+      filterSettingsPanesByGrant(SETTINGS_PANES, {
+        cachedCan: (check) => check.action !== "config:read",
+      })
+    ).toEqual([]);
   });
 });
 
