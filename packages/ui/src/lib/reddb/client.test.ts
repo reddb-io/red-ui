@@ -129,4 +129,59 @@ describe("RedClient collection metadata probing", () => {
       })
     );
   });
+
+  it("posts auth.can checks using the server batch envelope", async () => {
+    const fetchMock = vi.fn(
+      async (_input: RequestInfo | URL, init?: RequestInit) =>
+        Response.json({
+          ok: true,
+          results: [
+            {
+              allowed: true,
+              reason: "allow at p1.statement[0]",
+              action: "config:read",
+              resource: { kind: "config", name: "*" },
+            },
+            {
+              allowed: false,
+              reason: "no statement matched (default deny)",
+              action: "vault:read_metadata",
+              resource: { kind: "vault", name: "*" },
+            },
+          ],
+        })
+    );
+    const client = new RedClient("http://reddb.test", {
+      fetch: fetchMock as typeof fetch,
+    });
+    const checks = [
+      { action: "config:read", resource: { kind: "config", name: "*" } },
+      {
+        action: "vault:read_metadata",
+        resource: { kind: "vault", name: "*" },
+      },
+    ];
+
+    await expect(client.authCan(checks)).resolves.toEqual([
+      {
+        action: "config:read",
+        resource: { kind: "config", name: "*" },
+        allowed: true,
+        reason: "allow at p1.statement[0]",
+      },
+      {
+        action: "vault:read_metadata",
+        resource: { kind: "vault", name: "*" },
+        allowed: false,
+        reason: "no statement matched (default deny)",
+      },
+    ]);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://reddb.test/auth/can",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ checks }),
+      })
+    );
+  });
 });

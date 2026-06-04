@@ -3,6 +3,7 @@
 // until they have live backing data, keeping the surface "live or empty" rather
 // than rendering placeholders.
 import type { ConfigEntry, ConfigValueType } from "./settings-authoring-client";
+import type { PermissionCheck } from "./permission-gate";
 
 /** The read-only control a config value is rendered through. */
 export type ControlKind = "text" | "number" | "boolean" | "enum" | "list";
@@ -34,6 +35,8 @@ export interface SettingsPane {
   blurb: string;
   /** Icon name resolved to a lucide component in `SettingsView`. */
   icon: string;
+  /** Pane-level grant that must be allowed before this pane is rendered. */
+  readGrant: PermissionCheck;
 }
 
 export const SETTINGS_PANES: SettingsPane[] = [
@@ -42,6 +45,10 @@ export const SETTINGS_PANES: SettingsPane[] = [
     label: "Config",
     blurb: "Live non-secret configuration from SHOW CONFIG.",
     icon: "settings",
+    readGrant: {
+      action: "config:read",
+      resource: { kind: "config", name: "*" },
+    },
   },
 ];
 
@@ -177,8 +184,18 @@ export function resolveConfigControl(entry: ConfigEntry): ControlDescriptor {
   return descriptor;
 }
 
-export function resolvePane(id: string | null): SettingsPane {
-  return SETTINGS_PANES.find((pane) => pane.id === id) ?? SETTINGS_PANES[0];
+export function resolvePane(
+  id: string | null,
+  panes: readonly SettingsPane[] = SETTINGS_PANES
+): SettingsPane {
+  return panes.find((pane) => pane.id === id) ?? panes[0] ?? SETTINGS_PANES[0];
+}
+
+export function filterSettingsPanesByGrant(
+  panes: readonly SettingsPane[],
+  gate: { cachedCan(check: PermissionCheck): boolean }
+): SettingsPane[] {
+  return panes.filter((pane) => gate.cachedCan(pane.readGrant));
 }
 
 export function filterConfigEntries(

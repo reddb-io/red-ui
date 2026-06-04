@@ -7,6 +7,11 @@ import {
   type RawCapabilities,
   type ServerCapabilities,
 } from "./server-capabilities";
+import type {
+  PermissionCheck,
+  PermissionDecision,
+  PermissionResource,
+} from "../permission-gate";
 
 export interface QueryRow {
   values: Record<string, unknown>;
@@ -199,6 +204,12 @@ export interface AuthPolicy {
   created_at?: number;
 }
 
+interface AuthCanResponse {
+  ok?: boolean;
+  results?: Array<Partial<PermissionDecision>>;
+  error?: string;
+}
+
 export interface ChangeEvent {
   lsn: number;
   timestamp: number;
@@ -277,6 +288,18 @@ function isUnsupportedRoute(e: unknown): boolean {
 function unsupportedCollectionMetadataError(baseUrl: string): Error {
   return new Error(
     `GET /collections/:name unsupported by this reddb server (${baseUrl})`
+  );
+}
+
+function isPermissionResource(value: unknown): value is PermissionResource {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as Partial<PermissionResource>;
+  return (
+    typeof candidate.kind === "string" &&
+    candidate.kind.length > 0 &&
+    typeof candidate.name === "string" &&
+    candidate.name.length > 0 &&
+    (candidate.tenant === undefined || typeof candidate.tenant === "string")
   );
 }
 
@@ -673,6 +696,33 @@ export class RedClient {
       "/auth/policies"
     );
     return r.policies ?? [];
+  }
+
+  async authCan(checks: PermissionCheck[]): Promise<PermissionDecision[]> {
+    const r = await this.json<AuthCanResponse>("/auth/can", {
+      method: "POST",
+      body: JSON.stringify({ checks }),
+    });
+    if (!Array.isArray(r.results)) {
+      throw new Error(r.error ?? "POST /auth/can returned no results");
+    }
+    return checks.map((check, index) => {
+      const result = r.results?.[index] ?? {};
+      const resource = isPermissionResource(result.resource)
+        ? result.resource
+        : check.resource;
+      return {
+        action:
+          typeof result.action === "string" ? result.action : check.action,
+        resource,
+        current_tenant:
+          typeof result.current_tenant === "string"
+            ? result.current_tenant
+            : check.current_tenant,
+        allowed: result.allowed === true,
+        reason: typeof result.reason === "string" ? result.reason : undefined,
+      };
+    });
   }
 
   async changes(

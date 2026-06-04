@@ -8,6 +8,7 @@
     RefreshCw,
     Search,
     Settings2,
+    ShieldOff,
     SlidersHorizontal,
     Unplug,
     type Icon,
@@ -16,13 +17,16 @@
   import EmptyState from '$lib/EmptyState.svelte'
   import { activity } from '$lib/activity.svelte'
   import { connection } from '$lib/connections.svelte'
+  import { PermissionGate } from '$lib/permission-gate'
   import { SettingsAuthoringClient, type ConfigEntry } from '$lib/settings-authoring-client'
   import {
     SETTINGS_PANES,
     filterConfigEntries,
+    filterSettingsPanesByGrant,
     resolveConfigControl,
     resolvePane,
     type ControlDescriptor,
+    type SettingsPane,
   } from '$lib/settings-sections'
 
   const icons: Record<string, typeof Icon> = {
@@ -30,11 +34,18 @@
   }
 
   let activePaneId = $state(SETTINGS_PANES[0].id)
-  const activePane = $derived(resolvePane(activePaneId))
+  let visiblePanes = $state<SettingsPane[]>([])
+  let permissions = $state<PermissionGate | null>(null)
+  let permissionsLoading = $state(false)
+  let permissionError = $state<string | null>(null)
+  let permissionRun = 0
+
+  const hasVisiblePane = $derived(visiblePanes.length > 0)
+  const activePane = $derived(resolvePane(activePaneId, visiblePanes))
 
   let queries = $state<Record<string, string>>({})
   let searchEl = $state<HTMLInputElement | null>(null)
-  const query = $derived(queries[activePaneId] ?? '')
+  const query = $derived(hasVisiblePane ? (queries[activePane.id] ?? '') : '')
 
   let entries = $state<ConfigEntry[]>([])
   let selectedKey = $state<string | null>(null)
@@ -53,7 +64,8 @@
   )
 
   function setQuery(value: string) {
-    queries = { ...queries, [activePaneId]: value }
+    if (!hasVisiblePane) return
+    queries = { ...queries, [activePane.id]: value }
   }
 
   function onWindowKey(e: KeyboardEvent) {
@@ -64,9 +76,55 @@
     }
   }
 
+  async function refreshPermissions() {
+    const client = connection.client
+    const run = ++permissionRun
+    permissions = null
+    visiblePanes = []
+    permissionError = null
+    entries = []
+    selectedKey = null
+
+    if (!client || !connected) {
+      permissionsLoading = false
+      return
+    }
+
+    permissionsLoading = true
+    const gate = new PermissionGate(client)
+    try {
+      await activity.track('settings · auth.can panes', () =>
+        gate.preload(SETTINGS_PANES.map((pane) => pane.readGrant)),
+      )
+      if (run !== permissionRun) return
+
+      permissions = gate
+      const nextPanes = filterSettingsPanesByGrant(SETTINGS_PANES, gate)
+      visiblePanes = nextPanes
+      if (nextPanes.length > 0 && !nextPanes.some((pane) => pane.id === activePaneId)) {
+        activePaneId = nextPanes[0].id
+      }
+    } catch (e) {
+      if (run !== permissionRun) return
+      visiblePanes = []
+      permissions = null
+      permissionError = (e as Error).message
+    } finally {
+      if (run === permissionRun) permissionsLoading = false
+    }
+  }
+
   async function refresh() {
     const client = connection.client
-    if (!client || !connected) {
+    const gate = permissions
+    if (
+      !client ||
+      !connected ||
+      !gate ||
+      !hasVisiblePane ||
+      !gate.cachedCan(activePane.readGrant) ||
+      activePane.id !== 'config'
+    ) {
       entries = []
       selectedKey = null
       loadError = null
@@ -96,6 +154,15 @@
   $effect(() => {
     void activeUrl
     void connected
+    refreshPermissions()
+  })
+
+  $effect(() => {
+    void activeUrl
+    void connected
+    void activePaneId
+    void permissions
+    void visiblePanes
     refresh()
   })
 
@@ -148,6 +215,10 @@
     a.click()
     URL.revokeObjectURL(url)
   }
+
+  function paneCount(pane: SettingsPane): number {
+    return pane.id === 'config' ? entries.length : 0
+  }
 </script>
 
 <svelte:window onkeydown={onWindowKey} />
@@ -164,7 +235,7 @@
         <div class="mt-1 text-[13px] text-fg-1">Governance surface</div>
       </div>
       <nav class="grid gap-0.5 p-2">
-        {#each SETTINGS_PANES as pane (pane.id)}
+        {#each visiblePanes as pane (pane.id)}
           {@const PaneIcon = icons[pane.icon] ?? Settings2}
           <NavItem
             label={pane.label}
@@ -172,12 +243,18 @@
             onclick={() => (activePaneId = pane.id)}
           >
             {#snippet icon()}<PaneIcon class="size-3.5" />{/snippet}
-            {#snippet trailing()}<Pill>{entries.length}</Pill>{/snippet}
+            {#snippet trailing()}<Pill>{paneCount(pane)}</Pill>{/snippet}
           </NavItem>
         {/each}
       </nav>
       <div class="mt-auto border-t border-line-1 px-3 py-2.5 text-[11px] text-fg-3">
-        <span class="font-mono text-fg-2">{entries.length}</span> live keys
+        {#if permissionsLoading}
+          checking grants
+        {:else if hasVisiblePane}
+          <span class="font-mono text-fg-2">{entries.length}</span> live keys
+        {:else}
+          no readable panes
+        {/if}
       </div>
     </aside>
 
@@ -195,7 +272,7 @@
             type="text"
             placeholder="Search config  ⌘K"
             value={query}
-            disabled={unreachable}
+            disabled={permissionsLoading || !hasVisiblePane || unreachable}
             oninput={(e) => setQuery(e.currentTarget.value)}
             onkeydown={(e) => {
               if (e.key === 'Escape') {
@@ -209,7 +286,22 @@
       </div>
 
       <div class="min-h-0 flex-1 overflow-y-auto">
-        {#if unreachable}
+        {#if permissionsLoading}
+          <div class="grid gap-1 p-2">
+            {#each Array(4) as _, i (i)}
+              <div class="h-12 rounded-md bg-bg-2 motion-safe:animate-pulse"></div>
+            {/each}
+          </div>
+        {:else if !hasVisiblePane}
+          <EmptyState
+            icon={ShieldOff}
+            title={connected ? 'No readable settings panes' : 'No active connection'}
+            message={connected
+              ? 'The current principal has no Settings read grant.'
+              : 'Connect to a reddb instance to inspect its live configuration.'}
+            hint={permissionError ?? (connected ? 'auth.can denied settings reads' : 'red serve')}
+          />
+        {:else if unreachable}
           <EmptyState
             icon={Unplug}
             title={connected ? 'Config is unreachable' : 'No active connection'}
@@ -301,21 +393,44 @@
         <button
           type="button"
           onclick={exportConfig}
-          disabled={loading || entries.length === 0}
+          disabled={permissionsLoading || !hasVisiblePane || loading || entries.length === 0}
           class="inline-flex h-7 items-center justify-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 transition-colors hover:border-line-3 hover:text-fg-0 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <Download class="size-3.5" />
           export config
         </button>
         <div class="truncate text-[11px] text-fg-3">
-          Live from <span class="font-mono text-fg-2">{activeUrl}</span>.
+          {#if hasVisiblePane}
+            Live from <span class="font-mono text-fg-2">{activeUrl}</span>.
+          {:else}
+            Requires a Settings read grant.
+          {/if}
         </div>
       </div>
     </section>
 
     <main class="min-h-0 min-w-0 overflow-auto bg-bg-0">
       <div class="p-6">
-        <PageHeader eyebrow="Settings" title={activePane.label} subtitle={activePane.blurb}>
+        {#if permissionsLoading}
+          <PageHeader eyebrow="Settings" title="Settings" subtitle="Checking Settings grants." />
+          <EmptyState
+            icon={ShieldOff}
+            title="Checking settings grants"
+            message="red-ui is asking reddb which Settings panes this principal can read."
+            hint="POST /auth/can"
+          />
+        {:else if !hasVisiblePane}
+          <PageHeader eyebrow="Settings" title="Settings" subtitle="No readable governance surface." />
+          <EmptyState
+            icon={ShieldOff}
+            title={connected ? 'No readable settings panes' : 'No active connection'}
+            message={connected
+              ? 'Missing Settings read grant for this principal.'
+              : 'Start or select a reddb target, then return here to inspect live config.'}
+            hint={permissionError ?? (connected ? 'missing Settings read grant' : 'docker compose -f docker/compose.yml up -d')}
+          />
+        {:else}
+          <PageHeader eyebrow="Settings" title={activePane.label} subtitle={activePane.blurb}>
           {#snippet actions()}
             <button
               type="button"
@@ -327,9 +442,9 @@
               refresh
             </button>
           {/snippet}
-        </PageHeader>
+          </PageHeader>
 
-        {#if unreachable}
+          {#if unreachable}
           <EmptyState
             icon={Unplug}
             title={connected ? 'Unable to read config' : 'No active connection'}
@@ -338,13 +453,13 @@
               : 'Start or select a reddb target, then return here to inspect live config.'}
             hint={connected ? loadError ?? activeUrl : 'docker compose -f docker/compose.yml up -d'}
           />
-        {:else if !selectedEntry || !selectedControl}
+          {:else if !selectedEntry || !selectedControl}
           <EmptyState
             icon={FileJson}
             title="No config entry selected"
             message="Select a live SHOW CONFIG row to inspect its read-only control."
           />
-        {:else}
+          {:else}
           <section>
             <SectionHeading title={selectedControl.label} class="mb-2">
               {#snippet icon()}<SlidersHorizontal class="size-3.5" />{/snippet}
@@ -422,6 +537,7 @@
               </ListRow>
             </div>
           </section>
+          {/if}
         {/if}
       </div>
     </main>
