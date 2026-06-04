@@ -357,7 +357,9 @@ export async function runQueryPreferStream(
   sql: string,
   opts: { maxRows?: number; signal?: AbortSignal } = {}
 ): Promise<QueryResult> {
-  if (!SELECT_RE.test(sql)) return client.query(sql);
+  const queryOpts = opts.signal ? { signal: opts.signal } : undefined;
+  if (!SELECT_RE.test(sql))
+    return queryOpts ? client.query(sql, queryOpts) : client.query(sql);
   try {
     const s = await client.queryStreamCollect(sql, opts);
     return {
@@ -371,8 +373,14 @@ export async function runQueryPreferStream(
       streamed: true,
       truncated: s.truncated,
     };
-  } catch {
-    return client.query(sql);
+  } catch (e) {
+    if (
+      opts.signal?.aborted ||
+      (e instanceof Error && e.name === "AbortError")
+    ) {
+      throw e;
+    }
+    return queryOpts ? client.query(sql, queryOpts) : client.query(sql);
   }
 }
 
@@ -520,10 +528,14 @@ export class RedClient {
     );
   }
 
-  async query(query: string): Promise<QueryResult> {
+  async query(
+    query: string,
+    opts: { signal?: AbortSignal } = {}
+  ): Promise<QueryResult> {
     return this.json<QueryResult>("/query", {
       method: "POST",
       body: JSON.stringify({ query }),
+      signal: opts.signal,
     });
   }
 

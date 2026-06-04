@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { Play, Loader2 } from 'lucide-svelte'
+  import { Play, Loader2, X } from 'lucide-svelte'
   import { connection } from '$lib/connections.svelte'
-  import { queryTabs, deriveQueryLabel } from '$lib/query-tabs.svelte'
+  import { queryTabs, deriveQueryLabel, formatElapsed } from '$lib/query-tabs.svelte'
   import { tabs } from '$lib/tabs.svelte'
   import { registry } from '$lib/renderers'
   import type { Capability } from '$lib/renderers'
@@ -23,6 +23,19 @@
   const tab = $derived(tabs.tabs.find((t) => t.id === tabId))
 
   let textareaEl: HTMLTextAreaElement | undefined = $state()
+  let now = $state(Date.now())
+  const elapsed = $derived(
+    qs?.runningStartedAt ? formatElapsed(Math.max(0, now - qs.runningStartedAt)) : '0ms'
+  )
+
+  $effect(() => {
+    if (!qs?.running) return
+    now = Date.now()
+    const id = setInterval(() => {
+      now = Date.now()
+    }, 100)
+    return () => clearInterval(id)
+  })
 
   function setSql(value: string) {
     queryTabs.setSql(tabId, value)
@@ -34,6 +47,10 @@
 
   async function run() {
     await queryTabs.run(tabId)
+  }
+
+  function cancel() {
+    queryTabs.cancel(tabId)
   }
 
   function onKey(e: KeyboardEvent) {
@@ -93,14 +110,38 @@
   </div>
 
   <div class="flex-1 overflow-hidden bg-bg-0">
-    {#if qs?.error}
+    {#if qs?.running}
+      <div class="h-full grid place-items-center p-6" aria-live="polite" aria-busy="true">
+        <div class="w-full max-w-md rounded border border-line-1 bg-bg-1 p-4 font-mono">
+          <div class="flex items-start justify-between gap-4">
+            <div class="min-w-0">
+              <div class="flex items-center gap-2 text-fg-1 text-[13px]">
+                <Loader2 class="size-4 animate-spin text-accent" />
+                <span>Running query</span>
+              </div>
+              <div class="mt-2 text-[11px] text-fg-3">
+                elapsed <span class="tabular-nums text-fg-2">{elapsed}</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="inline-flex h-7 items-center gap-1 rounded border border-line-2 px-2 text-[11px] text-fg-2 hover:border-danger/50 hover:text-danger cursor-pointer"
+              onclick={cancel}
+              aria-label="Cancel running query"
+            >
+              <X class="size-3.5" />
+              <span>Cancel</span>
+            </button>
+          </div>
+          <div class="mt-3 max-h-24 overflow-hidden rounded bg-bg-0 px-2 py-1.5 text-[11px] text-fg-3">
+            <pre class="m-0 whitespace-pre-wrap break-words">{qs.sql.trim()}</pre>
+          </div>
+        </div>
+      </div>
+    {:else if qs?.error}
       <div class="p-4 text-[12px] font-mono text-warn">
         <div class="font-semibold mb-1">Query failed</div>
         <pre class="whitespace-pre-wrap">{qs.error}</pre>
-      </div>
-    {:else if qs?.running && !qs.result}
-      <div class="h-full grid place-items-center text-fg-3 text-[12px] font-mono">
-        Running…
       </div>
     {:else if !qs?.result}
       <div class="h-full grid place-items-center text-fg-3 text-[12px] font-mono">
