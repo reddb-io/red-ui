@@ -44,6 +44,14 @@ export interface QueryTransport {
   query(sql: string): Promise<QueryResult>;
 }
 
+export type ConfigMutationValue =
+  | string
+  | number
+  | boolean
+  | null
+  | unknown[]
+  | Record<string, unknown>;
+
 function optionalString(value: unknown): string | undefined {
   return typeof value === "string" && value.trim() ? value : undefined;
 }
@@ -110,10 +118,61 @@ function readSecretReference(value: unknown): SecretReference | undefined {
 function normalizeConfigPrefix(prefix: string | undefined): string | undefined {
   const suffix = prefix?.trim();
   if (!suffix) return undefined;
-  if (!/^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*$/.test(suffix)) {
-    throw new Error("SHOW CONFIG prefix must be a dotted identifier path");
+  return normalizeConfigPath(suffix, "SHOW CONFIG prefix");
+}
+
+function normalizeConfigPath(path: string, label: string): string {
+  const trimmed = path.trim();
+  if (!/^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*$/.test(trimmed)) {
+    throw new Error(`${label} must be a dotted identifier path`);
   }
-  return suffix;
+  return trimmed;
+}
+
+function quoteSqlString(value: string): string {
+  return `'${value.replace(/'/g, "''")}'`;
+}
+
+export function configValueToSqlLiteral(value: ConfigMutationValue): string {
+  if (value === null) return "NULL";
+  if (typeof value === "boolean") return value ? "true" : "false";
+  if (typeof value === "number") {
+    if (!Number.isFinite(value)) {
+      throw new Error("Config number value must be finite");
+    }
+    return String(value);
+  }
+  if (typeof value === "string") return quoteSqlString(value);
+  return JSON.stringify(value);
+}
+
+export function buildSetConfigStatement(
+  key: string,
+  value: ConfigMutationValue
+): string {
+  return `SET CONFIG ${normalizeConfigPath(
+    key,
+    "SET CONFIG key"
+  )} = ${configValueToSqlLiteral(value)}`;
+}
+
+export function buildDeleteConfigStatement(key: string): string {
+  const normalized = normalizeConfigPath(key, "DELETE CONFIG key");
+  const splitAt = normalized.lastIndexOf(".");
+  if (splitAt <= 0 || splitAt === normalized.length - 1) {
+    throw new Error("DELETE CONFIG key must include a collection and key");
+  }
+  return `DELETE CONFIG ${normalized.slice(0, splitAt)} ${normalized.slice(
+    splitAt + 1
+  )}`;
+}
+
+export function parseConfigMutationResult(
+  result: QueryResult,
+  operation: "SET CONFIG" | "DELETE CONFIG"
+): QueryResult {
+  if (!result.ok) throw new Error(result.error ?? `${operation} failed`);
+  return result;
 }
 
 export function parseShowConfigResult(result: QueryResult): ConfigEntry[] {
@@ -187,5 +246,20 @@ export class SettingsAuthoringClient {
       suffix ? `SHOW SECRETS ${suffix}` : "SHOW SECRETS"
     );
     return parseShowSecretsResult(result);
+  }
+
+  async setConfig(
+    key: string,
+    value: ConfigMutationValue
+  ): Promise<QueryResult> {
+    const result = await this.transport.query(
+      buildSetConfigStatement(key, value)
+    );
+    return parseConfigMutationResult(result, "SET CONFIG");
+  }
+
+  async unsetConfig(key: string): Promise<QueryResult> {
+    const result = await this.transport.query(buildDeleteConfigStatement(key));
+    return parseConfigMutationResult(result, "DELETE CONFIG");
   }
 }

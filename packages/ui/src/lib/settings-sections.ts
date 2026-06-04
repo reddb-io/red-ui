@@ -1,6 +1,7 @@
 // Data-driven settings registry + pure schema resolver for the Settings surface.
 import type {
   ConfigEntry,
+  ConfigMutationValue,
   ConfigValueType,
   SecretEntry,
   SecretReference,
@@ -49,6 +50,8 @@ export interface SettingsPane {
   icon: string;
   /** Pane-level grant that must be allowed before this pane is rendered. */
   readGrant: PermissionCheck;
+  /** Pane-level grant that enables authoring controls when present. */
+  writeGrant?: PermissionCheck;
 }
 
 export const SETTINGS_PANES: SettingsPane[] = [
@@ -59,6 +62,10 @@ export const SETTINGS_PANES: SettingsPane[] = [
     icon: "settings",
     readGrant: {
       action: "config:read",
+      resource: { kind: "config", name: "*" },
+    },
+    writeGrant: {
+      action: "config:write",
       resource: { kind: "config", name: "*" },
     },
   },
@@ -273,4 +280,74 @@ export function filterSecretEntries(
       resolveSecretControl(entry).label.toLowerCase().includes(q) ||
       entry.status?.toLowerCase().includes(q)
   );
+}
+
+export interface ParsedConfigEditValue {
+  ok: boolean;
+  value?: ConfigMutationValue;
+  error?: string;
+}
+
+export function initialConfigEditValue(entry: ConfigEntry): string {
+  if (
+    Array.isArray(entry.value) ||
+    (entry.value && typeof entry.value === "object")
+  ) {
+    return JSON.stringify(entry.value, null, 2);
+  }
+  if (entry.value === null || entry.value === undefined) return "";
+  return String(entry.value);
+}
+
+export function parseConfigEditValue(
+  control: ControlDescriptor,
+  raw: string
+): ParsedConfigEditValue {
+  const value = raw.trim();
+  switch (control.kind) {
+    case "boolean":
+      if (value === "true") return { ok: true, value: true };
+      if (value === "false") return { ok: true, value: false };
+      return {
+        ok: false,
+        error: "Boolean config values must be true or false.",
+      };
+    case "number": {
+      if (!value)
+        return { ok: false, error: "Number config values cannot be empty." };
+      const parsed = Number(value);
+      if (!Number.isFinite(parsed)) {
+        return { ok: false, error: "Number config values must be finite." };
+      }
+      return { ok: true, value: parsed };
+    }
+    case "enum":
+      if (!control.options?.includes(raw)) {
+        return { ok: false, error: "Choose one of the allowed config values." };
+      }
+      return { ok: true, value: raw };
+    case "list": {
+      try {
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) {
+          return {
+            ok: false,
+            error: "List config values must be a JSON array.",
+          };
+        }
+        return { ok: true, value: parsed };
+      } catch {
+        return { ok: false, error: "List config values must be valid JSON." };
+      }
+    }
+    case "secret-reference":
+      return {
+        ok: false,
+        error:
+          "Secret references can be unset, but not edited as plaintext config.",
+      };
+    case "text":
+    default:
+      return { ok: true, value: raw };
+  }
 }
