@@ -1,10 +1,11 @@
 <script lang="ts">
-  // Settings surface: a bounded pane shell whose only real pane in this slice
-  // is Config. The list is populated by live SHOW CONFIG over RedClient.query().
+  // Settings surface: a bounded pane shell backed by live SQL introspection.
   import { ListRow, NavItem, Pill, SectionHeading } from '@reddb-io/ui-kit'
   import {
     Download,
     FileJson,
+    KeyRound,
+    Link2,
     RefreshCw,
     Search,
     Settings2,
@@ -18,18 +19,26 @@
   import { activity } from '$lib/activity.svelte'
   import { connection } from '$lib/connections.svelte'
   import { PermissionGate } from '$lib/permission-gate'
-  import { SettingsAuthoringClient, type ConfigEntry } from '$lib/settings-authoring-client'
+  import {
+    SettingsAuthoringClient,
+    type ConfigEntry,
+    type SecretEntry,
+    type SecretReference,
+  } from '$lib/settings-authoring-client'
   import {
     SETTINGS_PANES,
     filterConfigEntries,
+    filterSecretEntries,
     filterSettingsPanesByGrant,
     resolveConfigControl,
     resolvePane,
+    resolveSecretControl,
     type ControlDescriptor,
     type SettingsPane,
   } from '$lib/settings-sections'
 
   const icons: Record<string, typeof Icon> = {
+    key: KeyRound,
     settings: Settings2,
   }
 
@@ -47,20 +56,33 @@
   let searchEl = $state<HTMLInputElement | null>(null)
   const query = $derived(hasVisiblePane ? (queries[activePane.id] ?? '') : '')
 
-  let entries = $state<ConfigEntry[]>([])
-  let selectedKey = $state<string | null>(null)
+  let configEntries = $state<ConfigEntry[]>([])
+  let secretEntries = $state<SecretEntry[]>([])
+  let selectedConfigKey = $state<string | null>(null)
+  let selectedSecretKey = $state<string | null>(null)
   let loading = $state(false)
-  let loadError = $state<string | null>(null)
+  let configLoadError = $state<string | null>(null)
+  let secretsLoadError = $state<string | null>(null)
 
   const connected = $derived(connection.connected)
   const activeUrl = $derived(connection.active.url)
+  const loadError = $derived(activePane.id === 'secrets' ? secretsLoadError : configLoadError)
   const unreachable = $derived(!connected || loadError !== null)
-  const rows = $derived(filterConfigEntries(entries, query))
+  const configRows = $derived(filterConfigEntries(configEntries, query))
+  const secretRows = $derived(filterSecretEntries(secretEntries, query))
+  const activeRowCount = $derived(activePane.id === 'secrets' ? secretRows.length : configRows.length)
+  const activeTotalCount = $derived(activePane.id === 'secrets' ? secretEntries.length : configEntries.length)
   const selectedEntry = $derived(
-    rows.find((entry) => entry.key === selectedKey) ?? rows[0] ?? null,
+    configRows.find((entry) => entry.key === selectedConfigKey) ?? configRows[0] ?? null,
+  )
+  const selectedSecret = $derived(
+    secretRows.find((entry) => entry.key === selectedSecretKey) ?? secretRows[0] ?? null,
   )
   const selectedControl = $derived(
     selectedEntry ? resolveConfigControl(selectedEntry) : null,
+  )
+  const selectedSecretControl = $derived(
+    selectedSecret ? resolveSecretControl(selectedSecret) : null,
   )
 
   function setQuery(value: string) {
@@ -82,8 +104,10 @@
     permissions = null
     visiblePanes = []
     permissionError = null
-    entries = []
-    selectedKey = null
+    configEntries = []
+    secretEntries = []
+    selectedConfigKey = null
+    selectedSecretKey = null
 
     if (!client || !connected) {
       permissionsLoading = false
@@ -122,30 +146,52 @@
       !connected ||
       !gate ||
       !hasVisiblePane ||
-      !gate.cachedCan(activePane.readGrant) ||
-      activePane.id !== 'config'
+      !gate.cachedCan(activePane.readGrant)
     ) {
-      entries = []
-      selectedKey = null
-      loadError = null
+      configEntries = []
+      secretEntries = []
+      selectedConfigKey = null
+      selectedSecretKey = null
+      configLoadError = null
+      secretsLoadError = null
       return
     }
 
     loading = true
-    loadError = null
+    if (activePane.id === 'secrets') {
+      secretsLoadError = null
+    } else {
+      configLoadError = null
+    }
     try {
       const authoring = new SettingsAuthoringClient(client)
-      const next = await activity.track('settings · show config', () =>
-        authoring.showConfig(),
-      )
-      entries = next
-      if (!selectedKey || !next.some((entry) => entry.key === selectedKey)) {
-        selectedKey = next[0]?.key ?? null
+      if (activePane.id === 'secrets') {
+        const next = await activity.track('settings · show secrets', () =>
+          authoring.showSecrets(),
+        )
+        secretEntries = next
+        if (!selectedSecretKey || !next.some((entry) => entry.key === selectedSecretKey)) {
+          selectedSecretKey = next[0]?.key ?? null
+        }
+      } else {
+        const next = await activity.track('settings · show config', () =>
+          authoring.showConfig(),
+        )
+        configEntries = next
+        if (!selectedConfigKey || !next.some((entry) => entry.key === selectedConfigKey)) {
+          selectedConfigKey = next[0]?.key ?? null
+        }
       }
     } catch (e) {
-      entries = []
-      selectedKey = null
-      loadError = (e as Error).message
+      if (activePane.id === 'secrets') {
+        secretEntries = []
+        selectedSecretKey = null
+        secretsLoadError = (e as Error).message
+      } else {
+        configEntries = []
+        selectedConfigKey = null
+        configLoadError = (e as Error).message
+      }
     } finally {
       loading = false
     }
@@ -178,8 +224,18 @@
     return `${i === 0 ? value : value.toFixed(1)} ${units[i]}`
   }
 
+  function formatSecretReference(ref: SecretReference): string {
+    if (ref.masked) return '&***'
+    return `&${ref.collection ? `${ref.collection}.` : ''}${ref.key}`
+  }
+
+  function isSecretReferenceValue(value: unknown): value is SecretReference {
+    return !!value && typeof value === 'object' && !Array.isArray(value) && 'type' in value && value.type === 'secret_ref'
+  }
+
   function formatValue(entry: ConfigEntry): string {
     const value = entry.value
+    if (isSecretReferenceValue(value)) return formatSecretReference(value)
     if (typeof value === 'number' && entry.key.endsWith('_bytes')) return formatBytes(value)
     if (Array.isArray(value)) return `${value.length} item${value.length === 1 ? '' : 's'}`
     if (value && typeof value === 'object') return JSON.stringify(value)
@@ -200,7 +256,7 @@
       url: activeUrl,
       exportedAt: new Date().toISOString(),
       projection: 'SHOW CONFIG',
-      config: entries.map((entry) => ({
+      config: configEntries.map((entry) => ({
         key: entry.key,
         value: entry.value,
         value_type: entry.valueType ?? null,
@@ -217,7 +273,8 @@
   }
 
   function paneCount(pane: SettingsPane): number {
-    return pane.id === 'config' ? entries.length : 0
+    if (pane.id === 'secrets') return secretEntries.length
+    return configEntries.length
   }
 </script>
 
@@ -251,7 +308,7 @@
         {#if permissionsLoading}
           checking grants
         {:else if hasVisiblePane}
-          <span class="font-mono text-fg-2">{entries.length}</span> live keys
+          <span class="font-mono text-fg-2">{activeTotalCount}</span> live rows
         {:else}
           no readable panes
         {/if}
@@ -270,7 +327,7 @@
           <input
             bind:this={searchEl}
             type="text"
-            placeholder="Search config  ⌘K"
+            placeholder={`Search ${activePane.label.toLowerCase()}  ⌘K`}
             value={query}
             disabled={permissionsLoading || !hasVisiblePane || unreachable}
             oninput={(e) => setQuery(e.currentTarget.value)}
@@ -304,29 +361,58 @@
         {:else if unreachable}
           <EmptyState
             icon={Unplug}
-            title={connected ? 'Config is unreachable' : 'No active connection'}
+            title={connected ? `${activePane.label} is unreachable` : 'No active connection'}
             message={connected
-              ? 'red-ui could not read SHOW CONFIG from the active target.'
+              ? `red-ui could not read ${activePane.id === 'secrets' ? 'SHOW SECRETS' : 'SHOW CONFIG'} from the active target.`
               : 'Connect to a reddb instance to inspect its live configuration.'}
             hint={connected ? loadError ?? activeUrl : 'red serve'}
           />
-        {:else if loading && rows.length === 0}
+        {:else if loading && activeRowCount === 0}
           <div class="grid gap-1 p-2">
             {#each Array(8) as _, i (i)}
               <div class="h-12 rounded-md bg-bg-2 motion-safe:animate-pulse"></div>
             {/each}
           </div>
-        {:else if rows.length === 0}
+        {:else if activeRowCount === 0}
           <EmptyState
             icon={Search}
-            title={query ? 'No config matches' : 'No config reported'}
+            title={query ? `No ${activePane.label.toLowerCase()} match` : `No ${activePane.label.toLowerCase()} reported`}
             message={query
-              ? 'Search checks the config key and curated human label.'
-              : 'SHOW CONFIG returned no rows for this connection.'}
+              ? `Search checks the ${activePane.label.toLowerCase()} key and metadata.`
+              : `${activePane.id === 'secrets' ? 'SHOW SECRETS' : 'SHOW CONFIG'} returned no rows for this connection.`}
           />
+        {:else if activePane.id === 'secrets'}
+          <div class="grid gap-1 p-2">
+            {#each secretRows as entry (entry.key)}
+              {@const control = resolveSecretControl(entry)}
+              <div
+                class={[
+                  'grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-md px-2.5 py-2 transition-colors',
+                  selectedSecret?.key === entry.key
+                    ? 'bg-bg-3 text-fg-0'
+                    : 'text-fg-1 hover:bg-bg-2',
+                ].join(' ')}
+              >
+                <button
+                  type="button"
+                  aria-current={selectedSecret?.key === entry.key ? 'page' : undefined}
+                  onclick={() => (selectedSecretKey = entry.key)}
+                  class="min-w-0 text-left"
+                >
+                  <span class="block truncate text-[13px]">{control.label}</span>
+                  <span class="block truncate font-mono text-[11px] text-fg-3">{entry.key}</span>
+                </button>
+
+                <div class="inline-flex h-6 items-center gap-1.5 rounded border border-line-2 bg-bg-2 px-1.5 font-mono text-[11px] text-fg-2">
+                  <KeyRound class="size-3" />
+                  {entry.value}
+                </div>
+              </div>
+            {/each}
+          </div>
         {:else}
           <div class="grid gap-1 p-2">
-            {#each rows as entry (entry.key)}
+            {#each configRows as entry (entry.key)}
               {@const control = resolveConfigControl(entry)}
               <div
                 class={[
@@ -339,7 +425,7 @@
                 <button
                   type="button"
                   aria-current={selectedEntry?.key === entry.key ? 'page' : undefined}
-                  onclick={() => (selectedKey = entry.key)}
+                  onclick={() => (selectedConfigKey = entry.key)}
                   class="min-w-0 text-left"
                 >
                   <span class="block truncate text-[13px]">{control.label}</span>
@@ -390,15 +476,17 @@
       </div>
 
       <div class="grid gap-2 border-t border-line-1 px-3 py-2.5">
-        <button
-          type="button"
-          onclick={exportConfig}
-          disabled={permissionsLoading || !hasVisiblePane || loading || entries.length === 0}
-          class="inline-flex h-7 items-center justify-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 transition-colors hover:border-line-3 hover:text-fg-0 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          <Download class="size-3.5" />
-          export config
-        </button>
+        {#if activePane.id === 'config'}
+          <button
+            type="button"
+            onclick={exportConfig}
+            disabled={permissionsLoading || !hasVisiblePane || loading || configEntries.length === 0}
+            class="inline-flex h-7 items-center justify-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 transition-colors hover:border-line-3 hover:text-fg-0 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <Download class="size-3.5" />
+            export config
+          </button>
+        {/if}
         <div class="truncate text-[11px] text-fg-3">
           {#if hasVisiblePane}
             Live from <span class="font-mono text-fg-2">{activeUrl}</span>.
@@ -447,12 +535,64 @@
           {#if unreachable}
           <EmptyState
             icon={Unplug}
-            title={connected ? 'Unable to read config' : 'No active connection'}
+            title={connected ? `Unable to read ${activePane.label.toLowerCase()}` : 'No active connection'}
             message={connected
-              ? 'The Config pane is intentionally empty because SHOW CONFIG did not complete.'
+              ? `The ${activePane.label} pane is intentionally empty because ${activePane.id === 'secrets' ? 'SHOW SECRETS' : 'SHOW CONFIG'} did not complete.`
               : 'Start or select a reddb target, then return here to inspect live config.'}
             hint={connected ? loadError ?? activeUrl : 'docker compose -f docker/compose.yml up -d'}
           />
+          {:else if activePane.id === 'secrets'}
+            {#if !selectedSecret || !selectedSecretControl}
+              <EmptyState
+                icon={KeyRound}
+                title="No secret selected"
+                message="Select a live SHOW SECRETS row to inspect its masked metadata."
+              />
+            {:else}
+              <section>
+                <SectionHeading title={selectedSecretControl.label} class="mb-2">
+                  {#snippet icon()}<KeyRound class="size-3.5" />{/snippet}
+                  {#snippet meta()}<Pill>masked</Pill>{/snippet}
+                </SectionHeading>
+
+                <div class="divide-y divide-line-1 overflow-hidden rounded-lg border border-line-1 bg-bg-1">
+                  <ListRow
+                    title={selectedSecretControl.label}
+                    description="Vault metadata row; plaintext is not available in this pane."
+                    hint={selectedSecret.key}
+                    wide
+                  >
+                    {#snippet action()}
+                      <input
+                        readonly
+                        value={selectedSecret.value}
+                        aria-label={selectedSecretControl.label}
+                        class="h-8 w-full rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none"
+                      />
+                    {/snippet}
+                  </ListRow>
+
+                  <ListRow title="Key" hint={selectedSecret.key}>
+                    {#snippet action()}
+                      <span class="font-mono text-[12px] text-fg-1">{selectedSecret.key}</span>
+                    {/snippet}
+                  </ListRow>
+
+                  <ListRow title="Metadata">
+                    {#snippet action()}
+                      <div class="flex flex-wrap justify-end gap-1.5">
+                        <Pill>{selectedSecret.status ?? 'status unknown'}</Pill>
+                        <Pill
+                          >version {selectedSecret.version === undefined
+                            ? 'unknown'
+                            : selectedSecret.version}</Pill
+                        >
+                      </div>
+                    {/snippet}
+                  </ListRow>
+                </div>
+              </section>
+            {/if}
           {:else if !selectedEntry || !selectedControl}
           <EmptyState
             icon={FileJson}
@@ -462,7 +602,13 @@
           {:else}
           <section>
             <SectionHeading title={selectedControl.label} class="mb-2">
-              {#snippet icon()}<SlidersHorizontal class="size-3.5" />{/snippet}
+              {#snippet icon()}
+                {#if selectedControl.kind === 'secret-reference'}
+                  <Link2 class="size-3.5" />
+                {:else}
+                  <SlidersHorizontal class="size-3.5" />
+                {/if}
+              {/snippet}
               {#snippet meta()}<Pill>{selectedControl.kind}</Pill>{/snippet}
             </SectionHeading>
 

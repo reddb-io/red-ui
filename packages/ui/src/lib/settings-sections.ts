@@ -1,12 +1,20 @@
 // Data-driven settings registry + pure schema resolver for the Settings surface.
-// This slice ships only the real Config pane. Secrets and Policies are absent
-// until they have live backing data, keeping the surface "live or empty" rather
-// than rendering placeholders.
-import type { ConfigEntry, ConfigValueType } from "./settings-authoring-client";
+import type {
+  ConfigEntry,
+  ConfigValueType,
+  SecretEntry,
+  SecretReference,
+} from "./settings-authoring-client";
 import type { PermissionCheck } from "./permission-gate";
 
 /** The read-only control a config value is rendered through. */
-export type ControlKind = "text" | "number" | "boolean" | "enum" | "list";
+export type ControlKind =
+  | "text"
+  | "number"
+  | "boolean"
+  | "enum"
+  | "list"
+  | "secret-reference";
 
 /** A resolved control for one config key. */
 export interface ControlDescriptor {
@@ -24,6 +32,10 @@ export interface ControlDescriptor {
   valueType?: ConfigValueType;
   /** Server-reported config schema version, when SHOW CONFIG projects it. */
   schemaVersion?: number;
+  /** True when this row must not render plaintext. */
+  masked?: boolean;
+  /** Vault path referenced by a config value, if this is a secret reference. */
+  secretReference?: SecretReference;
 }
 
 export interface SettingsPane {
@@ -48,6 +60,16 @@ export const SETTINGS_PANES: SettingsPane[] = [
     readGrant: {
       action: "config:read",
       resource: { kind: "config", name: "*" },
+    },
+  },
+  {
+    id: "secrets",
+    label: "Secrets",
+    blurb: "Vault inventory from SHOW SECRETS with values masked.",
+    icon: "key",
+    readGrant: {
+      action: "vault:read_metadata",
+      resource: { kind: "vault", name: "*" },
     },
   },
 ];
@@ -165,11 +187,27 @@ function kindFromRuntimeValue(value: unknown): ControlKind {
   return "text";
 }
 
+export function isSecretReference(value: unknown): value is SecretReference {
+  return (
+    !!value &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    (value as SecretReference).type === "secret_ref" &&
+    typeof (value as SecretReference).key === "string"
+  );
+}
+
 export function resolveConfigControl(entry: ConfigEntry): ControlDescriptor {
   const options = ENUM_OPTIONS[entry.key];
-  const kind: ControlKind = options
-    ? "enum"
-    : (kindFromValueType(entry.valueType) ?? kindFromRuntimeValue(entry.value));
+  const secretReference = isSecretReference(entry.value)
+    ? entry.value
+    : undefined;
+  const kind: ControlKind = secretReference
+    ? "secret-reference"
+    : options
+      ? "enum"
+      : (kindFromValueType(entry.valueType) ??
+        kindFromRuntimeValue(entry.value));
   const descriptor: ControlDescriptor = {
     key: entry.key,
     label: LABELS[entry.key] ?? humanizeKey(entry.key),
@@ -181,7 +219,17 @@ export function resolveConfigControl(entry: ConfigEntry): ControlDescriptor {
   if (entry.valueType) descriptor.valueType = entry.valueType;
   if (entry.schemaVersion !== undefined)
     descriptor.schemaVersion = entry.schemaVersion;
+  if (secretReference) descriptor.secretReference = secretReference;
   return descriptor;
+}
+
+export function resolveSecretControl(entry: SecretEntry): ControlDescriptor {
+  return {
+    key: entry.key,
+    label: humanizeKey(entry.key),
+    kind: "text",
+    masked: true,
+  };
 }
 
 export function resolvePane(
@@ -207,6 +255,22 @@ export function filterConfigEntries(
   return entries.filter(
     (entry) =>
       entry.key.toLowerCase().includes(q) ||
-      resolveConfigControl(entry).label.toLowerCase().includes(q)
+      resolveConfigControl(entry).label.toLowerCase().includes(q) ||
+      (isSecretReference(entry.value) &&
+        entry.value.key.toLowerCase().includes(q))
+  );
+}
+
+export function filterSecretEntries(
+  entries: readonly SecretEntry[],
+  query: string
+): SecretEntry[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return [...entries];
+  return entries.filter(
+    (entry) =>
+      entry.key.toLowerCase().includes(q) ||
+      resolveSecretControl(entry).label.toLowerCase().includes(q) ||
+      entry.status?.toLowerCase().includes(q)
   );
 }
