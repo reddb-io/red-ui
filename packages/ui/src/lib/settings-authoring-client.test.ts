@@ -2,7 +2,11 @@ import { describe, expect, it } from "vitest";
 import type { QueryResult } from "./reddb/client";
 import {
   SettingsAuthoringClient,
+  buildDeleteConfigStatement,
+  buildSetConfigStatement,
+  configValueToSqlLiteral,
   parseShowConfigResult,
+  parseConfigMutationResult,
   parseShowSecretsResult,
   type QueryTransport,
 } from "./settings-authoring-client";
@@ -243,5 +247,107 @@ describe("SettingsAuthoringClient", () => {
       "mycompany.payments"
     );
     expect(calls).toEqual(["SHOW SECRETS mycompany.payments"]);
+  });
+
+  it("sets config through SET CONFIG with typed literals", async () => {
+    const calls: string[] = [];
+    const transport: QueryTransport = {
+      async query(sql) {
+        calls.push(sql);
+        return result([{ message: "config set" }]);
+      },
+    };
+
+    await new SettingsAuthoringClient(transport).setConfig(
+      "red.auth.enabled",
+      true
+    );
+    await new SettingsAuthoringClient(transport).setConfig(
+      "red.ai.default.provider",
+      "o'hara"
+    );
+    await new SettingsAuthoringClient(transport).setConfig(
+      "red.vcs.protected_branches",
+      ["main", "release"]
+    );
+
+    expect(calls).toEqual([
+      "SET CONFIG red.auth.enabled = true",
+      "SET CONFIG red.ai.default.provider = 'o''hara'",
+      'SET CONFIG red.vcs.protected_branches = ["main","release"]',
+    ]);
+  });
+
+  it("unsets config through DELETE CONFIG collection key", async () => {
+    const calls: string[] = [];
+    const transport: QueryTransport = {
+      async query(sql) {
+        calls.push(sql);
+        return result([{ message: "config deleted" }]);
+      },
+    };
+
+    await new SettingsAuthoringClient(transport).unsetConfig(
+      "red.server.max_scan_limit"
+    );
+
+    expect(calls).toEqual(["DELETE CONFIG red.server max_scan_limit"]);
+  });
+
+  it("rejects unsafe config mutation keys before calling the transport", async () => {
+    const calls: string[] = [];
+    const transport: QueryTransport = {
+      async query(sql) {
+        calls.push(sql);
+        return result([]);
+      },
+    };
+    const client = new SettingsAuthoringClient(transport);
+
+    await expect(
+      client.setConfig("red.auth.enabled; DROP TABLE x", false)
+    ).rejects.toThrow("dotted identifier path");
+    await expect(client.unsetConfig("single")).rejects.toThrow(
+      "collection and key"
+    );
+    expect(calls).toEqual([]);
+  });
+});
+
+describe("config mutation SQL helpers", () => {
+  it("builds SET/DELETE CONFIG statements without transport side effects", () => {
+    expect(buildSetConfigStatement("red.auth.enabled", false)).toBe(
+      "SET CONFIG red.auth.enabled = false"
+    );
+    expect(buildSetConfigStatement("red.server.max_scan_limit", 2500)).toBe(
+      "SET CONFIG red.server.max_scan_limit = 2500"
+    );
+    expect(buildDeleteConfigStatement("durability.mode")).toBe(
+      "DELETE CONFIG durability mode"
+    );
+  });
+
+  it("serializes supported config literals", () => {
+    expect(configValueToSqlLiteral(null)).toBe("NULL");
+    expect(configValueToSqlLiteral({ a: 1, b: true })).toBe('{"a":1,"b":true}');
+    expect(() => configValueToSqlLiteral(Number.NaN)).toThrow("finite");
+  });
+
+  it("parses config mutation envelopes and surfaces server failures", () => {
+    expect(
+      parseConfigMutationResult(result([{ message: "ok" }]), "SET CONFIG").ok
+    ).toBe(true);
+    expect(() =>
+      parseConfigMutationResult(
+        {
+          ok: false,
+          query: "DELETE CONFIG red.auth enabled",
+          record_count: 0,
+          result: { columns: [], records: [] },
+          error: "permission denied",
+        },
+        "DELETE CONFIG"
+      )
+    ).toThrow("permission denied");
   });
 });

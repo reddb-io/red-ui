@@ -7,6 +7,8 @@ import {
   filterSecretEntries,
   filterSettingsPanesByGrant,
   humanizeKey,
+  initialConfigEditValue,
+  parseConfigEditValue,
   resolveConfigControl,
   resolvePane,
   resolveSecretControl,
@@ -28,6 +30,11 @@ describe("settings panes registry", () => {
       expect(pane.readGrant.resource.kind).not.toBe("");
       expect(pane.readGrant.resource.name).not.toBe("");
     }
+    expect(SETTINGS_PANES[0].writeGrant).toEqual({
+      action: "config:write",
+      resource: { kind: "config", name: "*" },
+    });
+    expect(SETTINGS_PANES[1].writeGrant).toBeUndefined();
   });
 
   it("resolves a pane by id and falls back to Config", () => {
@@ -130,6 +137,66 @@ describe("resolveSecretControl", () => {
       kind: "text",
       masked: true,
     });
+  });
+});
+
+describe("config edit value validation", () => {
+  const control = (
+    overrides: Partial<ConfigEntry>
+  ): ReturnType<typeof resolveConfigControl> =>
+    resolveConfigControl({
+      key: "red.auth.enabled",
+      value: false,
+      ...overrides,
+    });
+
+  it("prepares existing values for editable controls", () => {
+    expect(initialConfigEditValue({ key: "x", value: true })).toBe("true");
+    expect(initialConfigEditValue({ key: "x", value: ["main"] })).toBe(
+      '[\n  "main"\n]'
+    );
+  });
+
+  it("validates boolean, number, enum, list, and text values before submit", () => {
+    expect(parseConfigEditValue(control({ value: false }), "true")).toEqual({
+      ok: true,
+      value: true,
+    });
+    expect(
+      parseConfigEditValue(control({ value: 10, valueType: "int" }), "12.5")
+    ).toEqual({ ok: true, value: 12.5 });
+    expect(
+      parseConfigEditValue(
+        control({ key: "durability.mode", value: "sync" }),
+        "async"
+      )
+    ).toEqual({ ok: true, value: "async" });
+    expect(
+      parseConfigEditValue(control({ value: ["main"] }), '["main","release"]')
+    ).toEqual({ ok: true, value: ["main", "release"] });
+    expect(parseConfigEditValue(control({ value: "reddb" }), " red ")).toEqual({
+      ok: true,
+      value: " red ",
+    });
+  });
+
+  it("rejects invalid values by control kind", () => {
+    expect(
+      parseConfigEditValue(control({ value: false }), "yes").error
+    ).toMatch(/true or false/);
+    expect(
+      parseConfigEditValue(control({ value: 10, valueType: "int" }), "nan")
+        .error
+    ).toMatch(/finite/);
+    expect(
+      parseConfigEditValue(
+        control({ key: "durability.mode", value: "sync" }),
+        "eventual"
+      ).error
+    ).toMatch(/allowed/);
+    expect(
+      parseConfigEditValue(control({ value: ["main"] }), "{}").error
+    ).toMatch(/array/);
   });
 });
 

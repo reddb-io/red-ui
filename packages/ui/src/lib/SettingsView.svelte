@@ -2,15 +2,19 @@
   // Settings surface: a bounded pane shell backed by live SQL introspection.
   import { ListRow, NavItem, Pill, SectionHeading } from '@reddb-io/ui-kit'
   import {
+    AlertCircle,
     Download,
     FileJson,
     KeyRound,
     Link2,
+    Plus,
     RefreshCw,
     Search,
+    Save,
     Settings2,
     ShieldOff,
     SlidersHorizontal,
+    Trash2,
     Unplug,
     type Icon,
   } from 'lucide-svelte'
@@ -30,6 +34,8 @@
     filterConfigEntries,
     filterSecretEntries,
     filterSettingsPanesByGrant,
+    initialConfigEditValue,
+    parseConfigEditValue,
     resolveConfigControl,
     resolvePane,
     resolveSecretControl,
@@ -63,6 +69,13 @@
   let loading = $state(false)
   let configLoadError = $state<string | null>(null)
   let secretsLoadError = $state<string | null>(null)
+  let writing = $state(false)
+  let writeStatus = $state<{ tone: 'ok' | 'error'; message: string } | null>(null)
+  let editingConfigKey = $state<string | null>(null)
+  let editValue = $state('')
+  let newConfigKey = $state('')
+  let newConfigKind = $state<'text' | 'number' | 'boolean' | 'list'>('text')
+  let newConfigValue = $state('')
 
   const connected = $derived(connection.connected)
   const activeUrl = $derived(connection.active.url)
@@ -83,6 +96,11 @@
   )
   const selectedSecretControl = $derived(
     selectedSecret ? resolveSecretControl(selectedSecret) : null,
+  )
+  const canWriteConfig = $derived(
+    activePane.id === 'config' &&
+      !!activePane.writeGrant &&
+      permissions?.cachedCan(activePane.writeGrant) === true,
   )
 
   function setQuery(value: string) {
@@ -108,6 +126,8 @@
     secretEntries = []
     selectedConfigKey = null
     selectedSecretKey = null
+    writeStatus = null
+    editingConfigKey = null
 
     if (!client || !connected) {
       permissionsLoading = false
@@ -118,7 +138,11 @@
     const gate = new PermissionGate(client)
     try {
       await activity.track('settings · auth.can panes', () =>
-        gate.preload(SETTINGS_PANES.map((pane) => pane.readGrant)),
+        gate.preload(
+          SETTINGS_PANES.flatMap((pane) =>
+            pane.writeGrant ? [pane.readGrant, pane.writeGrant] : [pane.readGrant],
+          ),
+        ),
       )
       if (run !== permissionRun) return
 
@@ -197,6 +221,95 @@
     }
   }
 
+  function parseNewConfigValue() {
+    return parseConfigEditValue(
+      {
+        key: newConfigKey,
+        label: newConfigKey,
+        kind: newConfigKind,
+      },
+      newConfigKind === 'boolean' && !newConfigValue.trim() ? 'false' : newConfigValue,
+    )
+  }
+
+  async function saveSelectedConfig() {
+    const client = connection.client
+    if (!client || !selectedEntry || !selectedControl || !canWriteConfig || writing) return
+
+    const parsed = parseConfigEditValue(selectedControl, editValue)
+    if (!parsed.ok) {
+      writeStatus = { tone: 'error', message: parsed.error ?? 'Invalid config value.' }
+      return
+    }
+
+    writing = true
+    writeStatus = null
+    try {
+      const authoring = new SettingsAuthoringClient(client)
+      await activity.track('settings · set config', () =>
+        authoring.setConfig(selectedEntry.key, parsed.value ?? null),
+      )
+      selectedConfigKey = selectedEntry.key
+      writeStatus = { tone: 'ok', message: `${selectedEntry.key} saved.` }
+      await refresh()
+    } catch (e) {
+      writeStatus = { tone: 'error', message: (e as Error).message }
+    } finally {
+      writing = false
+    }
+  }
+
+  async function unsetSelectedConfig() {
+    const client = connection.client
+    if (!client || !selectedEntry || !canWriteConfig || writing) return
+    if (!window.confirm(`Unset ${selectedEntry.key}?`)) return
+
+    const key = selectedEntry.key
+    writing = true
+    writeStatus = null
+    try {
+      const authoring = new SettingsAuthoringClient(client)
+      await activity.track('settings · delete config', () => authoring.unsetConfig(key))
+      selectedConfigKey = key
+      writeStatus = { tone: 'ok', message: `${key} unset.` }
+      await refresh()
+    } catch (e) {
+      writeStatus = { tone: 'error', message: (e as Error).message }
+    } finally {
+      writing = false
+    }
+  }
+
+  async function setNewConfig() {
+    const client = connection.client
+    if (!client || !canWriteConfig || writing) return
+
+    const parsed = parseNewConfigValue()
+    if (!parsed.ok) {
+      writeStatus = { tone: 'error', message: parsed.error ?? 'Invalid config value.' }
+      return
+    }
+
+    const key = newConfigKey.trim()
+    writing = true
+    writeStatus = null
+    try {
+      const authoring = new SettingsAuthoringClient(client)
+      await activity.track('settings · set config', () =>
+        authoring.setConfig(key, parsed.value ?? null),
+      )
+      selectedConfigKey = key
+      newConfigKey = ''
+      newConfigValue = ''
+      writeStatus = { tone: 'ok', message: `${key} set.` }
+      await refresh()
+    } catch (e) {
+      writeStatus = { tone: 'error', message: (e as Error).message }
+    } finally {
+      writing = false
+    }
+  }
+
   $effect(() => {
     void activeUrl
     void connected
@@ -210,6 +323,19 @@
     void permissions
     void visiblePanes
     refresh()
+  })
+
+  $effect(() => {
+    if (!selectedEntry) {
+      editingConfigKey = null
+      editValue = ''
+      return
+    }
+    if (editingConfigKey !== selectedEntry.key) {
+      editingConfigKey = selectedEntry.key
+      editValue = initialConfigEditValue(selectedEntry)
+      writeStatus = null
+    }
   })
 
   function formatBytes(n: number): string {
@@ -626,16 +752,18 @@
                     >
                       <input
                         type="checkbox"
-                        checked={selectedEntry.value === true}
-                        disabled
+                        checked={canWriteConfig ? editValue === 'true' : selectedEntry.value === true}
+                        disabled={!canWriteConfig || writing}
+                        onchange={(e) => (editValue = e.currentTarget.checked ? 'true' : 'false')}
                         class="size-3 accent-current"
                       />
-                      {selectedEntry.value ? 'true' : 'false'}
+                      {canWriteConfig ? editValue : selectedEntry.value ? 'true' : 'false'}
                     </label>
                   {:else if selectedControl.kind === 'enum'}
                     <select
-                      disabled
-                      value={String(selectedEntry.value)}
+                      disabled={!canWriteConfig || writing}
+                      value={canWriteConfig ? editValue : String(selectedEntry.value)}
+                      onchange={(e) => (editValue = e.currentTarget.value)}
                       class="h-8 min-w-[12rem] rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 disabled:opacity-100"
                     >
                       {#if !selectedControl.options?.includes(String(selectedEntry.value))}
@@ -647,16 +775,27 @@
                     </select>
                   {:else if selectedControl.kind === 'list'}
                     <textarea
-                      readonly
+                      readonly={!canWriteConfig}
+                      disabled={writing}
                       rows="5"
-                      value={formatLongValue(selectedEntry.value)}
+                      value={canWriteConfig ? editValue : formatLongValue(selectedEntry.value)}
+                      oninput={(e) => (editValue = e.currentTarget.value)}
                       class="min-h-24 w-full resize-y rounded-md border border-line-2 bg-bg-2 px-2.5 py-2 font-mono text-[12px] text-fg-1 outline-none"
                     ></textarea>
-                  {:else}
+                  {:else if selectedControl.kind === 'secret-reference'}
                     <input
                       readonly
-                      type={selectedControl.kind === 'number' ? 'text' : 'text'}
+                      type="text"
                       value={formatValue(selectedEntry)}
+                      class="h-8 w-full rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none"
+                    />
+                  {:else}
+                    <input
+                      readonly={!canWriteConfig}
+                      disabled={writing}
+                      type={selectedControl.kind === 'number' ? 'text' : 'text'}
+                      value={canWriteConfig ? editValue : formatValue(selectedEntry)}
+                      oninput={(e) => (editValue = e.currentTarget.value)}
                       class="h-8 w-full rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none"
                     />
                   {/if}
@@ -681,7 +820,130 @@
                   </div>
                 {/snippet}
               </ListRow>
+
+              {#if canWriteConfig}
+                <ListRow title="Authoring" description="Submit changes through SET CONFIG or unset through DELETE CONFIG.">
+                  {#snippet action()}
+                    <div class="flex flex-wrap justify-end gap-2">
+                      <button
+                        type="button"
+                        onclick={saveSelectedConfig}
+                        disabled={writing || selectedControl.kind === 'secret-reference'}
+                        title={selectedControl.kind === 'secret-reference'
+                          ? 'Secret references can be unset, but not edited as plaintext config.'
+                          : 'Save config value'}
+                        class="inline-flex h-8 items-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 hover:border-line-3 hover:text-fg-0 disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        <Save class="size-3.5" />
+                        save
+                      </button>
+                      <button
+                        type="button"
+                        onclick={unsetSelectedConfig}
+                        disabled={writing}
+                        class="inline-flex h-8 items-center gap-1.5 rounded-md border border-danger/30 bg-danger/5 px-2.5 text-[11px] font-mono text-danger hover:border-danger/60 disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        <Trash2 class="size-3.5" />
+                        unset
+                      </button>
+                    </div>
+                  {/snippet}
+                </ListRow>
+              {/if}
             </div>
+
+            {#if canWriteConfig}
+              {#if writeStatus}
+                <div
+                  class={[
+                    'mt-3 inline-flex max-w-full items-center gap-1.5 rounded-md border px-2.5 py-1.5 font-mono text-[11px]',
+                    writeStatus.tone === 'ok'
+                      ? 'border-ok/30 bg-ok/5 text-ok'
+                      : 'border-danger/30 bg-danger/5 text-danger',
+                  ].join(' ')}
+                  role="status"
+                >
+                  <AlertCircle class="size-3 shrink-0" />
+                  <span class="truncate">{writeStatus.message}</span>
+                </div>
+              {/if}
+
+              <section class="mt-4 border-t border-line-1 pt-4">
+                <SectionHeading title="Set config key" class="mb-2">
+                  {#snippet icon()}<Plus class="size-3.5" />{/snippet}
+                </SectionHeading>
+                <div class="grid gap-2 rounded-lg border border-line-1 bg-bg-1 p-3">
+                  <div class="grid gap-2 @min-[42rem]:grid-cols-[minmax(0,1fr)_8rem]">
+                    <input
+                      type="text"
+                      value={newConfigKey}
+                      oninput={(e) => (newConfigKey = e.currentTarget.value)}
+                      placeholder="red.example.key"
+                      disabled={writing}
+                      aria-label="New config key"
+                      class="h-8 rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none placeholder:text-fg-3 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                    <select
+                      value={newConfigKind}
+                      onchange={(e) => (newConfigKind = e.currentTarget.value as typeof newConfigKind)}
+                      disabled={writing}
+                      aria-label="New config value type"
+                      class="h-8 rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <option value="text">text</option>
+                      <option value="number">number</option>
+                      <option value="boolean">boolean</option>
+                      <option value="list">list</option>
+                    </select>
+                  </div>
+
+                  {#if newConfigKind === 'boolean'}
+                    <label class="inline-flex h-8 w-fit items-center gap-2 rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1">
+                      <input
+                        type="checkbox"
+                        checked={newConfigValue === 'true'}
+                        disabled={writing}
+                        onchange={(e) => (newConfigValue = e.currentTarget.checked ? 'true' : 'false')}
+                        class="size-3 accent-current"
+                      />
+                      {newConfigValue === 'true' ? 'true' : 'false'}
+                    </label>
+                  {:else if newConfigKind === 'list'}
+                    <textarea
+                      rows="4"
+                      value={newConfigValue}
+                      oninput={(e) => (newConfigValue = e.currentTarget.value)}
+                      placeholder='["main", "release"]'
+                      disabled={writing}
+                      aria-label="New config value"
+                      class="min-h-20 resize-y rounded-md border border-line-2 bg-bg-2 px-2.5 py-2 font-mono text-[12px] text-fg-1 outline-none placeholder:text-fg-3 disabled:cursor-not-allowed disabled:opacity-50"
+                    ></textarea>
+                  {:else}
+                    <input
+                      type="text"
+                      value={newConfigValue}
+                      oninput={(e) => (newConfigValue = e.currentTarget.value)}
+                      placeholder={newConfigKind === 'number' ? '1000' : 'value'}
+                      disabled={writing}
+                      aria-label="New config value"
+                      class="h-8 rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none placeholder:text-fg-3 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                  {/if}
+
+                  <div class="flex justify-end">
+                    <button
+                      type="button"
+                      onclick={setNewConfig}
+                      disabled={writing || !newConfigKey.trim()}
+                      class="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 hover:border-line-3 hover:text-fg-0 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      <Plus class="size-3.5" />
+                      set
+                    </button>
+                  </div>
+                </div>
+              </section>
+            {/if}
           </section>
           {/if}
         {/if}
