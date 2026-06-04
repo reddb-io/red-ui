@@ -25,6 +25,21 @@ export interface ConfigEntry {
   tags?: unknown;
 }
 
+export interface SecretReference {
+  type: "secret_ref";
+  store?: string;
+  collection?: string;
+  key: string;
+  masked?: boolean;
+}
+
+export interface SecretEntry {
+  key: string;
+  value: "***";
+  status?: string;
+  version?: number;
+}
+
 export interface QueryTransport {
   query(sql: string): Promise<QueryResult>;
 }
@@ -59,6 +74,39 @@ function readSchemaVersion(
   );
 }
 
+function readSecretReference(value: unknown): SecretReference | undefined {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (trimmed === "&***") {
+      return { type: "secret_ref", key: "***", masked: true };
+    }
+    if (/^&[A-Za-z0-9_.-]+$/.test(trimmed)) {
+      return { type: "secret_ref", key: trimmed.slice(1) };
+    }
+    return undefined;
+  }
+
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return undefined;
+  }
+
+  const ref = value as Record<string, unknown>;
+  if (ref.type !== "secret_ref") return undefined;
+  const key =
+    optionalString(ref.key) ??
+    optionalString(ref.path) ??
+    optionalString(ref.name);
+  if (!key) return undefined;
+
+  const secretRef: SecretReference = { type: "secret_ref", key };
+  const store = optionalString(ref.store);
+  const collection = optionalString(ref.collection);
+  if (store) secretRef.store = store;
+  if (collection) secretRef.collection = collection;
+  if (key === "***") secretRef.masked = true;
+  return secretRef;
+}
+
 function normalizeConfigPrefix(prefix: string | undefined): string | undefined {
   const suffix = prefix?.trim();
   if (!suffix) return undefined;
@@ -79,7 +127,7 @@ export function parseShowConfigResult(result: QueryResult): ConfigEntry[] {
 
     const entry: ConfigEntry = {
       key,
-      value: values.value,
+      value: readSecretReference(values.value) ?? values.value,
     };
     const collection = optionalString(values.collection);
     const version = optionalNumber(values.version);
@@ -97,6 +145,31 @@ export function parseShowConfigResult(result: QueryResult): ConfigEntry[] {
   return entries.sort((left, right) => left.key.localeCompare(right.key));
 }
 
+export function parseShowSecretsResult(result: QueryResult): SecretEntry[] {
+  if (!result.ok) throw new Error(result.error ?? "SHOW SECRETS failed");
+
+  const entries: SecretEntry[] = [];
+  for (const record of result.result.records) {
+    const values = record.values;
+    const key = optionalString(values.key);
+    if (!key) continue;
+
+    const value = values.value;
+    if (value !== "***") {
+      throw new Error("SHOW SECRETS returned an unmasked secret value");
+    }
+
+    const entry: SecretEntry = { key, value: "***" };
+    const status = optionalString(values.status);
+    const version = optionalNumber(values.version);
+    if (status) entry.status = status;
+    if (version !== undefined) entry.version = version;
+    entries.push(entry);
+  }
+
+  return entries.sort((left, right) => left.key.localeCompare(right.key));
+}
+
 export class SettingsAuthoringClient {
   constructor(private readonly transport: QueryTransport) {}
 
@@ -106,5 +179,13 @@ export class SettingsAuthoringClient {
       suffix ? `SHOW CONFIG ${suffix}` : "SHOW CONFIG"
     );
     return parseShowConfigResult(result);
+  }
+
+  async showSecrets(prefix?: string): Promise<SecretEntry[]> {
+    const suffix = normalizeConfigPrefix(prefix);
+    const result = await this.transport.query(
+      suffix ? `SHOW SECRETS ${suffix}` : "SHOW SECRETS"
+    );
+    return parseShowSecretsResult(result);
   }
 }

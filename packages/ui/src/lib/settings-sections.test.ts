@@ -1,18 +1,23 @@
 import { describe, expect, it } from "vitest";
-import type { ConfigEntry } from "./settings-authoring-client";
+import type { ConfigEntry, SecretEntry } from "./settings-authoring-client";
 import {
   ENUM_OPTIONS,
   SETTINGS_PANES,
   filterConfigEntries,
+  filterSecretEntries,
   filterSettingsPanesByGrant,
   humanizeKey,
   resolveConfigControl,
   resolvePane,
+  resolveSecretControl,
 } from "./settings-sections";
 
 describe("settings panes registry", () => {
   it("ships only real panes with stable, unique ids", () => {
-    expect(SETTINGS_PANES.map((pane) => pane.id)).toEqual(["config"]);
+    expect(SETTINGS_PANES.map((pane) => pane.id)).toEqual([
+      "config",
+      "secrets",
+    ]);
     const ids = SETTINGS_PANES.map((pane) => pane.id);
     expect(new Set(ids).size).toBe(ids.length);
     for (const pane of SETTINGS_PANES) {
@@ -36,12 +41,12 @@ describe("settings panes registry", () => {
       filterSettingsPanesByGrant(SETTINGS_PANES, { cachedCan: () => true }).map(
         (pane) => pane.id
       )
-    ).toEqual(["config"]);
+    ).toEqual(["config", "secrets"]);
     expect(
       filterSettingsPanesByGrant(SETTINGS_PANES, {
         cachedCan: (check) => check.action !== "config:read",
-      })
-    ).toEqual([]);
+      }).map((pane) => pane.id)
+    ).toEqual(["secrets"]);
   });
 });
 
@@ -92,6 +97,40 @@ describe("resolveConfigControl", () => {
     expect(control.valueType).toBe("bool");
     expect(control.schemaVersion).toBe(2);
   });
+
+  it("renders secret references as references", () => {
+    const control = resolveConfigControl(
+      entry({
+        key: "red.config.ai.openai.default.api_key",
+        value: {
+          type: "secret_ref",
+          key: "red.secret.ai.openai.default.api_key",
+        },
+      })
+    );
+
+    expect(control.kind).toBe("secret-reference");
+    expect(control.secretReference).toEqual({
+      type: "secret_ref",
+      key: "red.secret.ai.openai.default.api_key",
+    });
+  });
+});
+
+describe("resolveSecretControl", () => {
+  it("marks vault rows as masked controls", () => {
+    expect(
+      resolveSecretControl({
+        key: "mycompany.payments.stripe.key",
+        value: "***",
+        status: "active",
+      })
+    ).toMatchObject({
+      key: "mycompany.payments.stripe.key",
+      kind: "text",
+      masked: true,
+    });
+  });
 });
 
 describe("humanizeKey", () => {
@@ -128,5 +167,45 @@ describe("filterConfigEntries (per-pane search)", () => {
     expect(
       filterConfigEntries(entries, "durability").map((entry) => entry.key)
     ).toEqual(["durability.mode"]);
+  });
+
+  it("matches secret reference targets without resolving them", () => {
+    expect(
+      filterConfigEntries(
+        [
+          ...entries,
+          {
+            key: "red.config.ai.openai.default.api_key",
+            value: {
+              type: "secret_ref",
+              key: "red.secret.ai.openai.default.api_key",
+            },
+          },
+        ],
+        "secret.ai"
+      ).map((entry) => entry.key)
+    ).toEqual(["red.config.ai.openai.default.api_key"]);
+  });
+});
+
+describe("filterSecretEntries (per-pane search)", () => {
+  const entries: SecretEntry[] = [
+    { key: "mycompany.payments.stripe.key", value: "***", status: "active" },
+    { key: "legacy.missing.key", value: "***", status: "restore_failed" },
+  ];
+
+  it("returns all entries (a copy) for an empty or whitespace query", () => {
+    expect(filterSecretEntries(entries, "")).toEqual(entries);
+    expect(filterSecretEntries(entries, "   ")).toEqual(entries);
+    expect(filterSecretEntries(entries, "")).not.toBe(entries);
+  });
+
+  it("matches secret keys and metadata case-insensitively", () => {
+    expect(
+      filterSecretEntries(entries, "PAYMENTS").map((entry) => entry.key)
+    ).toEqual(["mycompany.payments.stripe.key"]);
+    expect(
+      filterSecretEntries(entries, "restore").map((entry) => entry.key)
+    ).toEqual(["legacy.missing.key"]);
   });
 });
