@@ -33,6 +33,19 @@ The single contract through which a Shell supplies the Core with a connected red
 **Embedded connection**:
 A connection where reddb runs in-process against a local file (`file://`/`memory://`) rather than over the network. Reachable only where the runtime has filesystem access — natively in the Desktop App, via the MCP server for the MCP App, and not at all from a plain browser Surface today.
 
+**Settings surface**:
+The Core view for inspecting and authoring a connection's settings. One discoverable entry point holding three bounded panes — **Config**, **Secrets**, **Policies** — that share search and a schema-driven renderer but each enforce their store's own read/write/audit/permission semantics. Not one undifferentiated list: the three reddb stores have genuinely different rules.
+_Avoid_: "the config screen" (collapses three distinct stores into one)
+
+**Config** (red-ui sense):
+Non-secret operational/application settings, read in plaintext and authored via reddb's Config store. Distinct from **Secrets** and **Policies**.
+
+**Secret**:
+A value held in reddb's encrypted vault, read back **masked** (`***`) by default. Plaintext reveal is a separate server-gated (break-glass) action, surfaced in the Core only when the principal holds the grant — otherwise the control is absent, never disabled.
+
+**Policy**:
+A permission/restriction rule (RBAC, column, ops) authored against reddb's policy surface. A first-class store alongside **Config** and **Secrets**, with its own audit and permission semantics — not a kind of Config.
+
 ## Relationships
 
 - One **Core** is rendered by all three **Surfaces**.
