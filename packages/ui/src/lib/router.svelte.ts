@@ -19,10 +19,12 @@ import { collectionPageHref } from "./collection-pages";
 
 /** The top-level destinations of the Mountable Root. */
 export type View =
+  | "ask"
   | "query"
   | "collections"
   | "cluster"
   | "security"
+  | "analytics"
   | "settings"
   | "appearance";
 
@@ -31,10 +33,12 @@ export type View =
  * within the collections workspace; the other targets are the bare views.
  */
 export type RouteTarget =
+  | { view: "ask" }
   | { view: "query" }
   | { view: "collections" }
   | { view: "cluster" }
   | { view: "security" }
+  | { view: "analytics" }
   | { view: "settings" }
   | { view: "appearance" }
   | { view: "collection"; collection: string; subpage: string };
@@ -71,6 +75,8 @@ export interface Router {
 /** Map a `RouteTarget` to its canonical path. */
 export function targetToHref(target: RouteTarget): string {
   switch (target.view) {
+    case "ask":
+      return "/ask";
     case "query":
       return "/query";
     case "collections":
@@ -79,6 +85,8 @@ export function targetToHref(target: RouteTarget): string {
       return "/cluster";
     case "security":
       return "/security";
+    case "analytics":
+      return "/analytics";
     case "settings":
       return "/settings";
     case "appearance":
@@ -106,12 +114,16 @@ export function targetToLocation(target: RouteTarget): RouteLocation {
  * `/collections` for the bare collections workspace.
  */
 export function pathToLocation(pathname: string): RouteLocation {
+  if (pathname.startsWith("/ask"))
+    return { view: "ask", collection: null, subpage: null };
   if (pathname.startsWith("/query"))
     return { view: "query", collection: null, subpage: null };
   if (pathname.startsWith("/cluster"))
     return { view: "cluster", collection: null, subpage: null };
   if (pathname.startsWith("/security"))
     return { view: "security", collection: null, subpage: null };
+  if (pathname.startsWith("/analytics"))
+    return { view: "analytics", collection: null, subpage: null };
   if (pathname.startsWith("/settings"))
     return { view: "settings", collection: null, subpage: null };
   if (pathname.startsWith("/appearance"))

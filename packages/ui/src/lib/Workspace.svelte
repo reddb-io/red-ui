@@ -15,6 +15,7 @@
   import PendingChangesPanel from './PendingChangesPanel.svelte'
   import CollectionsView from './CollectionsView.svelte'
   import ClusterView from './ClusterView.svelte'
+  import AskView from './AskView.svelte'
   import SecurityView from './SecurityView.svelte'
   import SettingsView from './SettingsView.svelte'
   import Appearance from './Appearance.svelte'
@@ -244,10 +245,20 @@
     <Topbar showConnect={showConnect} />
     <StatusBar />
     <main class="relative overflow-hidden z-[1]">
-      {#if router.view === 'cluster'}
+      {#if router.view === 'ask'}
+        <AskView />
+      {:else if router.view === 'cluster'}
         <ClusterView />
       {:else if router.view === 'security'}
         <SecurityView />
+      {:else if router.view === 'analytics'}
+        <!-- Lazy: LayerChart + d3 are heavy, so the charting bundle only
+             loads when the user actually opens Analytics. -->
+        {#await import('./AnalyticsView.svelte')}
+          <div class="flex h-full items-center justify-center font-mono text-[12px] text-fg-3">loading analytics…</div>
+        {:then { default: AnalyticsView }}
+          <AnalyticsView />
+        {/await}
       {:else if router.view === 'settings'}
         <SettingsView />
       {:else if router.view === 'appearance'}

@@ -2,7 +2,7 @@
   import { Kbd } from '@reddb-io/ui-kit'
   import ConnectDropdown from './ConnectDropdown.svelte'
   import ActivityIndicator from './ActivityIndicator.svelte'
-  import { Search, Sun, Moon, Network, Database, FileCode2, Shield, Settings2 } from 'lucide-svelte'
+  import { Search, Sun, Moon, Network, Database, FileCode2, Shield, Settings2, LineChart, Sparkles } from 'lucide-svelte'
   import { theme } from './theme.svelte'
   import { useRouter } from './router.svelte'
 
@@ -14,10 +14,12 @@
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, ctrlKey: true, bubbles: true }))
   }
 
+  const onAsk = $derived(router.view === 'ask')
   const onQuery = $derived(router.view === 'query')
   const onCollections = $derived(router.view === 'collections')
   const onCluster = $derived(router.view === 'cluster')
   const onSecurity = $derived(router.view === 'security')
+  const onAnalytics = $derived(router.view === 'analytics')
   const onSettings = $derived(router.view === 'settings')
 </script>
 
@@ -38,6 +40,19 @@
       <div class="w-px h-[18px] bg-line-2"></div>
     {/if}
     <nav class="flex items-center gap-0.5">
+      <a
+        href={router.href({ view: 'ask' })}
+        onclick={(e) => router.go({ view: 'ask' }, e)}
+        title="Ask — grounded natural-language query"
+        aria-current={onAsk ? 'page' : undefined}
+        class={[
+          'inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs no-underline transition-colors',
+          onAsk ? 'bg-bg-2 text-accent' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
+        ].join(' ')}
+      >
+        <Sparkles class="size-3.5" />
+        <span>Ask</span>
+      </a>
       <a
         href={router.href({ view: 'query' })}
         onclick={(e) => router.go({ view: 'query' }, e)}
@@ -89,6 +104,19 @@
       >
         <Shield class="size-3.5" />
         <span>Security</span>
+      </a>
+      <a
+        href={router.href({ view: 'analytics' })}
+        onclick={(e) => router.go({ view: 'analytics' }, e)}
+        title="Analytics"
+        aria-current={onAnalytics ? 'page' : undefined}
+        class={[
+          'inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs no-underline transition-colors',
+          onAnalytics ? 'bg-bg-2 text-fg-0' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
+        ].join(' ')}
+      >
+        <LineChart class="size-3.5" />
+        <span>Analytics</span>
       </a>
       <a
         href={router.href({ view: 'settings' })}
