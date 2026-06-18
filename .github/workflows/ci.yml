@@ -56,6 +56,16 @@ jobs:
       RUSTC_WRAPPER: sccache
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      # `generate_context!()` validates `frontendDist` (packages/ui/build) at
+      # compile time, so the SvelteKit bundle must exist before `cargo check`
+      # — otherwise the proc macro panics with "this path doesn't exist".
+      # release.yml builds the frontend ahead of the tauri step for the same
+      # reason; mirror it here.
+      - run: pnpm --filter @reddb-io/ui build
       - uses: dtolnay/rust-toolchain@1.95.0
       - uses: rui314/setup-mold@v1
       - uses: mozilla-actions/sccache-action@v0.0.10
