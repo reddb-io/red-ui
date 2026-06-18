@@ -27,10 +27,12 @@
   }
 
   const commands: Command[] = [
+    { id: 'ask', group: 'navigate', label: 'Open ask', hint: '/ask', run: () => navigate({ view: 'ask' }) },
     { id: 'query', group: 'navigate', label: 'Open query', hint: '/query', run: () => navigate({ view: 'query' }) },
     { id: 'collections', group: 'navigate', label: 'Open collections', hint: '/collections', run: () => navigate({ view: 'collections' }) },
     { id: 'topology', group: 'navigate', label: 'Open cluster', hint: '/cluster', run: () => navigate({ view: 'cluster' }) },
     { id: 'security', group: 'navigate', label: 'Open security', hint: '/security', run: () => navigate({ view: 'security' }) },
+    { id: 'analytics', group: 'navigate', label: 'Open analytics', hint: '/analytics', run: () => navigate({ view: 'analytics' }) },
     { id: 'settings', group: 'navigate', label: 'Open settings', hint: '/settings', run: () => navigate({ view: 'settings' }) },
     { id: 'appearance', group: 'navigate', label: 'Open appearance', hint: '/appearance', run: () => navigate({ view: 'appearance' }) },
 

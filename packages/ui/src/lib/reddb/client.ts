@@ -12,6 +12,9 @@ import type {
   PermissionDecision,
   PermissionResource,
 } from "../permission-gate";
+import type { ClusterStatus, ReplicationStatus } from "./cluster-status";
+import type { MetricDescriptor, PromResponse } from "./analytics";
+import type { AskResponse, AskOptions } from "./ask";
 
 export interface QueryRow {
   values: Record<string, unknown>;
@@ -107,59 +110,6 @@ export interface Stats {
    */
   read_only?: boolean;
   read_only_reason?: string;
-}
-
-export interface ClusterStatus {
-  ok?: boolean;
-  deployment?: {
-    mode?: "embedded" | "server" | "docker" | "replicated" | string;
-    file_path?: string;
-    process_kind?: string;
-    container_id?: string;
-    image?: string;
-    configured_by?: string;
-  };
-  storage?: {
-    capacity_bytes?: number;
-    used_bytes?: number;
-    free_bytes?: number;
-  };
-  wal?: {
-    size_bytes?: number;
-    lsn?: number;
-    oldest_lsn?: number;
-  };
-  throughput?: {
-    requests_per_second?: number;
-    reads_per_second?: number;
-    writes_per_second?: number;
-    avg_response_ms?: number;
-  };
-  system?: {
-    cpu_usage_percent?: number;
-    memory_used_bytes?: number;
-    memory_total_bytes?: number;
-  };
-  replication?: {
-    replica_count?: number;
-    lag_ms?: number;
-    lag_lsn?: number;
-  };
-}
-
-export interface ReplicationStatus {
-  ok: boolean;
-  role: "primary" | "replica" | "standalone";
-  state?: "healthy" | "lagging" | "disconnected";
-  primary_addr?: string;
-  /** primary perspective */
-  wal_lsn?: number;
-  oldest_lsn?: number;
-  replica_count?: number;
-  /** replica perspective */
-  last_applied_lsn?: number;
-  last_seen_primary_lsn?: number;
-  last_seen_oldest_lsn?: number;
 }
 
 export interface Whoami {
@@ -419,6 +369,60 @@ export class RedClient {
 
   async clusterStatus(): Promise<ClusterStatus> {
     return this.json<ClusterStatus>("/cluster/status");
+  }
+
+  /**
+   * List registered metric descriptors from the typed `red.metrics`
+   * projection (reddb #747). One row per `CREATE METRIC`, carrying the
+   * `kind` (counter|gauge|histogram|ratio|derived) the UI uses to auto-select
+   * a chart. Returns `[]` when the server has no analytics surface.
+   */
+  async metricsCatalog(): Promise<MetricDescriptor[]> {
+    const r = await this.query(
+      "SELECT path, kind, role, unit, supports_prometheus_query, created_at_ms FROM red.metrics"
+    );
+    return r.result.records.map((rec) => {
+      const v = rec.values;
+      return {
+        path: String(v.path ?? ""),
+        kind: v.kind as MetricDescriptor["kind"],
+        role: String(v.role ?? "metric"),
+        unit: (v.unit as string | null) ?? null,
+        supports_prometheus_query: v.supports_prometheus_query !== false,
+        created_at_ms:
+          typeof v.created_at_ms === "number" ? v.created_at_ms : undefined,
+      } satisfies MetricDescriptor;
+    });
+  }
+
+  /**
+   * Prometheus instant query (`GET /api/v1/query`). Returns the raw
+   * Prometheus-shaped envelope; callers normalise with `parsePromVector`.
+   */
+  async promQuery(query: string, time?: number): Promise<PromResponse> {
+    const qs = new URLSearchParams({ query });
+    if (time !== undefined) qs.set("time", String(time));
+    return this.json<PromResponse>(`/api/v1/query?${qs}`);
+  }
+
+  /**
+   * Prometheus range query (`GET /api/v1/query_range`). `start`/`end` are unix
+   * seconds, `step` is the resolution in seconds. Normalise with
+   * `parsePromMatrix`.
+   */
+  async promQueryRange(
+    query: string,
+    start: number,
+    end: number,
+    step: number
+  ): Promise<PromResponse> {
+    const qs = new URLSearchParams({
+      query,
+      start: String(start),
+      end: String(end),
+      step: String(step),
+    });
+    return this.json<PromResponse>(`/api/v1/query_range?${qs}`);
   }
 
   async ping(): Promise<
@@ -687,6 +691,20 @@ export class RedClient {
 
   async whoami(): Promise<Whoami> {
     return this.json<Whoami>("/auth/whoami");
+  }
+
+  /**
+   * Grounded natural-language query (`POST /ai/ask`, ADR 0013). Returns the
+   * synthesised answer plus the `sources_flat` it was grounded on and the
+   * `[^N]` citations linking claims to sources. Requires the server's AI
+   * provider to be configured; an unconfigured server answers with an error
+   * status (surfaced by `json()`).
+   */
+  async ask(question: string, opts: AskOptions = {}): Promise<AskResponse> {
+    return this.json<AskResponse>("/ai/ask", {
+      method: "POST",
+      body: JSON.stringify({ question, ...opts }),
+    });
   }
 
   async users(): Promise<AuthUser[]> {
