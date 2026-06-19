@@ -173,11 +173,27 @@ export function makeCustomConnection(input: string): ConnectionPreset {
 // Transport reachability is a Surface property (#34, ADR-0003): a Tauri shell
 // can open native unix/embedded connections the browser can't. Detect the
 // Surface here so the default provider declares the right reachable set.
-function surfaceTransports(): Transport[] {
-  const tauri =
+function isTauriSurface(): boolean {
+  return (
     typeof window !== "undefined" &&
-    ("__TAURI_INTERNALS__" in window || "__TAURI__" in window);
-  return [...(tauri ? DESKTOP_TRANSPORTS : BROWSER_TRANSPORTS)];
+    ("__TAURI_INTERNALS__" in window || "__TAURI__" in window)
+  );
+}
+
+function surfaceTransports(): Transport[] {
+  return [...(isTauriSurface() ? DESKTOP_TRANSPORTS : BROWSER_TRANSPORTS)];
+}
+
+/**
+ * Open a `file://` connection by asking the Tauri shell to spawn a local
+ * file-backed reddb sidecar; returns the `http://127.0.0.1:<port>` URL the
+ * HTTP client then talks to. Only wired on a Tauri Surface — the browser has
+ * no filesystem/process access, so `file://` stays unreachable there.
+ */
+async function tauriOpenEmbedded(fileUrl: string): Promise<string> {
+  const path = fileUrl.replace(/^file:\/\//i, "");
+  const { invoke } = await import("@tauri-apps/api/core");
+  return invoke<string>("open_embedded", { path });
 }
 
 function isHandoffTokenConsumer(
@@ -198,6 +214,7 @@ export const provider: ConnectionProvider & {
   presets: PRESETS,
   history: historyStore,
   transports: surfaceTransports(),
+  embeddedResolver: isTauriSurface() ? tauriOpenEmbedded : undefined,
   // Boot-params pre-configuration (#36, ADR-0005): a Surface (the MCP App)
   // seeds the endpoint + initial route in the app URL; the Core reads it
   // through the provider. Query tokens are ignored and hash tokens are not

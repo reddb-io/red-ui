@@ -77,6 +77,13 @@ jobs:
           shared-key: tauri-${{ runner.os }}-rust-1.95.0
           cache-on-failure: "true"
       - uses: ./.github/actions/tauri-linux-deps
+      # The `red` sidecar (Tauri externalBin) is a ~15MB binary, gitignored
+      # rather than committed. tauri-build validates `binaries/red-<triple>`
+      # exists at compile time, so provision it before `cargo check`.
+      - name: provision red sidecar
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/reddb-io/reddb/main/install.sh | bash
+          bash scripts/sync-desktop-sidecar.sh "$HOME/.local/bin/red"
       - run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
       - name: sccache stats
         if: always()

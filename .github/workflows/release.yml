@@ -110,6 +110,13 @@ jobs:
       - name: verify frontend bundle
         run: ls -la packages/ui/build/ && test -f packages/ui/build/index.html
 
+      # Provision the `red` sidecar (Tauri externalBin) — gitignored, not
+      # committed. Must exist before tauri-action bundles the app.
+      - name: provision red sidecar
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/reddb-io/reddb/main/install.sh | bash
+          bash scripts/sync-desktop-sidecar.sh "$HOME/.local/bin/red"
+
       - name: build tauri
         uses: tauri-apps/tauri-action@v0
         env:
