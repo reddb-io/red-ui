@@ -16,9 +16,13 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 tauri = { version = "2", features = [] }
 tauri-plugin-deep-link = "2"
+tauri-plugin-shell = "2"
+# Rust-side HTTP so the webview can reach a file-backed/local reddb that emits
+# no CORS headers (the cross-origin webview fetch would be blocked otherwise).
+tauri-plugin-http = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-tokio = { version = "1", features = ["net", "io-util", "rt-multi-thread", "macros", "process"] }
+tokio = { version = "1", features = ["net", "io-util", "rt-multi-thread", "macros", "process", "time"] }
 anyhow = "1"
 # OS keychain bridge for the EncryptedStore. macOS → Keychain Services,
 # Windows → Credential Manager, Linux → libsecret via the Secret Service API.

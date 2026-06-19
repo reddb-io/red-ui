@@ -32,3 +32,8 @@ apps/desktop/src-tauri/WixTools/
 # needed because ${CLAUDE_PLUGIN_ROOT} doesn't resolve at project scope.
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
+
+# Tauri sidecar binaries — ~15MB platform blobs, provisioned per-machine via
+# scripts/sync-desktop-sidecar.sh (and in CI before the tauri job).
+apps/desktop/src-tauri/binaries/*
+!apps/desktop/src-tauri/binaries/.gitkeep

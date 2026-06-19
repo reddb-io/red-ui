@@ -175,6 +175,61 @@ describe("LocalUrlProvider — implementation-specific", () => {
     expect(JSON.stringify(history.load())).not.toContain("mock-handoff-token");
   });
 
+  it("resolves a file:// target through the embedded resolver, keeping file:// for display", async () => {
+    const clientFactory = vi.fn(fakeClient);
+    const embeddedResolver = vi
+      .fn<(u: string) => Promise<string>>()
+      .mockResolvedValue("http://127.0.0.1:48211");
+    const p = new LocalUrlProvider({
+      presets: [],
+      history: memoryHistory(),
+      clientFactory,
+      embeddedResolver,
+    });
+
+    const active = await p.connect("file://./test.rdb");
+
+    // The resolver saw the original file:// string…
+    expect(embeddedResolver).toHaveBeenCalledWith("file://./test.rdb");
+    // …the client was built against the resolved local URL…
+    expect(clientFactory).toHaveBeenCalledWith(
+      "http://127.0.0.1:48211",
+      undefined
+    );
+    // …but the connection's identity stays the file path the user typed.
+    expect(active.connection.url).toBe("file://./test.rdb");
+  });
+
+  it("surfaces a failed embedded resolve as UnreachableConnectionError", async () => {
+    const p = new LocalUrlProvider({
+      presets: [],
+      history: memoryHistory(),
+      clientFactory: fakeClient,
+      embeddedResolver: vi
+        .fn<(u: string) => Promise<string>>()
+        .mockRejectedValue(new Error("sidecar `red` unavailable")),
+    });
+    await expect(p.connect("file://./missing.rdb")).rejects.toBeInstanceOf(
+      UnreachableConnectionError
+    );
+  });
+
+  it("leaves http targets untouched even when an embedded resolver is present", async () => {
+    const clientFactory = vi.fn(fakeClient);
+    const embeddedResolver = vi
+      .fn<(u: string) => Promise<string>>()
+      .mockResolvedValue("http://127.0.0.1:1");
+    const p = new LocalUrlProvider({
+      presets: [],
+      history: memoryHistory(),
+      clientFactory,
+      embeddedResolver,
+    });
+    await p.connect("http://host:5055");
+    expect(embeddedResolver).not.toHaveBeenCalled();
+    expect(clientFactory).toHaveBeenCalledWith("http://host:5055", undefined);
+  });
+
   it("history is capped at historyMax", async () => {
     const history = memoryHistory();
     const p = new LocalUrlProvider({

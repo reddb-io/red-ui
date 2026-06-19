@@ -61,6 +61,7 @@
     "@sigma/edge-curve": "^3.1.0",
     "@sigma/node-border": "^3.0.0",
     "@tauri-apps/api": "^2.5.0",
+    "@tauri-apps/plugin-http": "^2.5.9",
     "@xyflow/svelte": "^1.2.0",
     "bits-ui": "^2.18.1",
     "clsx": "^2.1.1",

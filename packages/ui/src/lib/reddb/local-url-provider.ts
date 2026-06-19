@@ -50,6 +50,14 @@ export interface LocalUrlProviderOptions {
    * auto-connect without the Connect flow. Tokens must never be placed here.
    */
   bootParams?: BootParams;
+  /**
+   * Resolve a `file://` connection to a reachable URL (#embedded-file). Only a
+   * Tauri Surface supplies this: it spawns a local file-backed reddb sidecar
+   * and returns its `http://127.0.0.1:<port>` URL, which the HTTP client then
+   * talks to. Absent on the browser Surface, where `file://` is unreachable by
+   * design. Receives the original `file://…` string, returns the client URL.
+   */
+  embeddedResolver?: (fileUrl: string) => Promise<string>;
 }
 
 export interface HandoffTokenConsumer {
@@ -102,6 +110,7 @@ export class LocalUrlProvider implements ConnectionProvider {
   private readonly historyMax: number;
   private readonly supportedTransports: Transport[];
   private readonly boot: BootParams | null;
+  private readonly embeddedResolver?: (fileUrl: string) => Promise<string>;
   private readonly handoffTokens = new Map<string, string>();
   private active: ActiveConnection | null = null;
 
@@ -120,6 +129,7 @@ export class LocalUrlProvider implements ConnectionProvider {
       (hasBootEndpoint(opts.bootParams) || hasBootRoute(opts.bootParams))
         ? { ...opts.bootParams }
         : null;
+    this.embeddedResolver = opts.embeddedResolver;
   }
 
   transports(): Transport[] {
@@ -162,9 +172,30 @@ export class LocalUrlProvider implements ConnectionProvider {
     const target = this.resolve(id);
     if (!target) throw new UnknownConnectionError(id);
 
+    // A `file://` target is opened by the Surface's embedded resolver (Tauri
+    // spawns a local file-backed reddb and hands back its http URL). The
+    // displayed connection keeps the `file://` identity; only the client talks
+    // to the resolved local URL.
+    let clientUrl = target.url;
+    if (this.embeddedResolver && /^file:\/\//i.test(target.url)) {
+      try {
+        clientUrl = await this.embeddedResolver(target.url);
+      } catch (e) {
+        // Tauri's `invoke` rejects with a plain string (the Rust `Err`), not an
+        // Error — so read the message defensively instead of assuming `.message`.
+        const reason =
+          e instanceof Error
+            ? e.message
+            : typeof e === "string"
+              ? e
+              : String(e);
+        throw new UnreachableConnectionError(target.id, reason);
+      }
+    }
+
     const token = this.consumeHandoffToken(target.url);
     const client = this.clientFactory(
-      target.url,
+      clientUrl,
       token ? { headers: { Authorization: `Bearer ${token}` } } : undefined
     );
     const ping = await client.ping();
