@@ -187,16 +187,26 @@ async fn open_embedded(app: tauri::AppHandle, path: String) -> Result<String, St
     let bind = format!("127.0.0.1:{port}");
     let url = format!("http://{bind}");
 
-    let (mut rx, child) = app
-        .shell()
+    let args = ["server", "--path", abs.as_str(), "--http-bind", bind.as_str()];
+    let shell = app.shell();
+    // Prefer the bundled sidecar (production). In `tauri dev` the sidecar binary
+    // isn't copied next to the dev executable, so fall back to `red` on PATH.
+    // `RED_HTTP_TLS_DEV=1` lets reddb serve plain HTTP on 127.0.0.1.
+    let sidecar_spawn = shell
         .sidecar("red")
-        .map_err(|e| format!("sidecar `red` unavailable: {e}"))?
-        .args(["server", "--path", abs.as_str(), "--http-bind", bind.as_str()])
-        // reddb refuses plain HTTP without this in dev (it otherwise wants a
-        // TLS cert); the local client speaks plain http on 127.0.0.1.
-        .env("RED_HTTP_TLS_DEV", "1")
-        .spawn()
-        .map_err(|e| format!("failed to spawn embedded reddb: {e}"))?;
+        .ok()
+        .map(|cmd| cmd.args(args).env("RED_HTTP_TLS_DEV", "1").spawn());
+    let (mut rx, child) = match sidecar_spawn {
+        Some(Ok(pair)) => pair,
+        _ => shell
+            .command("red")
+            .args(args)
+            .env("RED_HTTP_TLS_DEV", "1")
+            .spawn()
+            .map_err(|e| {
+                format!("failed to spawn `red` (bundled sidecar and PATH both unavailable): {e}")
+            })?,
+    };
 
     // Drain the sidecar's output channel so its pipe never fills and blocks.
     tauri::async_runtime::spawn(async move { while rx.recv().await.is_some() {} });
