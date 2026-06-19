@@ -187,14 +187,49 @@ function surfaceTransports(): Transport[] {
 /**
  * Open a `file://` connection by asking the Tauri shell to spawn a local
  * file-backed reddb sidecar; returns the `http://127.0.0.1:<port>` URL the
- * HTTP client then talks to. Only wired on a Tauri Surface — the browser has
- * no filesystem/process access, so `file://` stays unreachable there.
+ * HTTP client then talks to.
+ *
+ * Tauri-ness is checked HERE, at call time — not when the provider is built.
+ * In `tauri dev` this module can evaluate before Tauri injects its globals, so
+ * gating the resolver at construction left it unwired and `file://` fell
+ * through to a raw fetch ("Load failed"). At connect time the IPC bridge is
+ * always present. The browser has no filesystem/process access, so we fail
+ * with a clear message there instead.
  */
 async function tauriOpenEmbedded(fileUrl: string): Promise<string> {
+  if (!isTauriSurface()) {
+    throw new Error("file:// databases can only be opened in the desktop app");
+  }
   const path = fileUrl.replace(/^file:\/\//i, "");
   const { invoke } = await import("@tauri-apps/api/core");
   return invoke<string>("open_embedded", { path });
 }
+
+/**
+ * Desktop HTTP for loopback targets goes through Tauri's rust-side fetch.
+ *
+ * An embedded file-backed reddb (and the bundled `red` generally) emits no CORS
+ * headers, so a cross-origin webview fetch from the app/dev origin to
+ * `127.0.0.1:<port>` is blocked ("Load failed"). Tauri's HTTP plugin issues the
+ * request from Rust, bypassing the webview's same-origin policy. Only loopback
+ * targets are rerouted; remote servers keep the plain webview fetch. In the
+ * browser this is always the plain fetch.
+ */
+const desktopFetch: typeof fetch = async (input, init) => {
+  const url =
+    typeof input === "string"
+      ? input
+      : input instanceof URL
+        ? input.href
+        : input.url;
+  const isLoopback =
+    /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?(\/|$)/i.test(url);
+  if (isTauriSurface() && isLoopback) {
+    const { fetch: tauriFetch } = await import("@tauri-apps/plugin-http");
+    return tauriFetch(input as URL | Request | string, init as RequestInit);
+  }
+  return fetch(input, init);
+};
 
 function isHandoffTokenConsumer(
   candidate: ConnectionProvider
@@ -214,7 +249,13 @@ export const provider: ConnectionProvider & {
   presets: PRESETS,
   history: historyStore,
   transports: surfaceTransports(),
-  embeddedResolver: isTauriSurface() ? tauriOpenEmbedded : undefined,
+  // Always wired: the resolver itself decides (at call time) whether it's on a
+  // Tauri Surface, so a not-yet-injected global at module load can't disable it.
+  embeddedResolver: tauriOpenEmbedded,
+  // Route loopback HTTP through Tauri's rust-side fetch (CORS bypass for the
+  // embedded/local reddb); plain webview fetch everywhere else.
+  clientFactory: (url, opts) =>
+    new RedClient(url, { ...opts, fetch: desktopFetch }),
   // Boot-params pre-configuration (#36, ADR-0005): a Surface (the MCP App)
   // seeds the endpoint + initial route in the app URL; the Core reads it
   // through the provider. Query tokens are ignored and hash tokens are not
