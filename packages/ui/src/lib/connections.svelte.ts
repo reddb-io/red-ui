@@ -225,8 +225,19 @@ const desktopFetch: typeof fetch = async (input, init) => {
   const isLoopback =
     /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?(\/|$)/i.test(url);
   if (isTauriSurface() && isLoopback) {
-    const { fetch: tauriFetch } = await import("@tauri-apps/plugin-http");
-    return tauriFetch(input as URL | Request | string, init as RequestInit);
+    try {
+      const { fetch: tauriFetch } = await import("@tauri-apps/plugin-http");
+      return await tauriFetch(
+        input as URL | Request | string,
+        init as RequestInit
+      );
+    } catch (e) {
+      // Surface the real reason — the http plugin can reject with a bare
+      // string/object that would otherwise read as "undefined" upstream.
+      const reason =
+        e instanceof Error ? e.message : typeof e === "string" ? e : String(e);
+      throw new Error(`rust-side fetch failed for ${url}: ${reason}`);
+    }
   }
   return fetch(input, init);
 };

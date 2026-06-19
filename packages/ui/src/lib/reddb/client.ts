@@ -294,6 +294,27 @@ async function* parseNdjsonFrames(
 const SELECT_RE = /^\s*select\b/i;
 
 /**
+ * Extract a human-readable message from any thrown value. Tauri's `invoke` and
+ * the HTTP plugin reject with plain strings or bare objects (not `Error`), so
+ * `(e as Error).message` is often `undefined` — this never returns that.
+ */
+export function errorText(e: unknown): string {
+  if (e instanceof Error) return e.message || String(e);
+  if (typeof e === "string") return e;
+  if (e && typeof e === "object") {
+    const m = (e as { message?: unknown }).message;
+    if (typeof m === "string" && m) return m;
+    try {
+      const s = JSON.stringify(e);
+      if (s && s !== "{}") return s;
+    } catch {
+      /* circular — fall through */
+    }
+  }
+  return String(e);
+}
+
+/**
  * Run a query, preferring the bounded-memory NDJSON stream for a plain SELECT
  * and falling back to the buffered `POST /query` for everything else — and for
  * any streaming failure (network, a non-SELECT 400, or an older server with no
@@ -433,7 +454,7 @@ export class RedClient {
       await this.json("/stats");
       return { ok: true, rtt_ms: Math.round(performance.now() - start) };
     } catch (e) {
-      return { ok: false, error: (e as Error).message };
+      return { ok: false, error: errorText(e) };
     }
   }
 
