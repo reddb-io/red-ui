@@ -7,6 +7,7 @@
   import { tabs, type Tab } from '$lib/tabs.svelte'
   import { queryTabs } from '$lib/query-tabs.svelte'
   import { defaultSubpage, subpageCapability } from '$lib/collection-pages'
+  import { collectionPreviewQuery, safeCollectionName } from '$lib/collection-preview'
   import {
     collectionCatalogBadges,
     collectionCatalogFromRow,
@@ -171,10 +172,6 @@
     }
   }
 
-  function safeCollectionName(collection: string): string {
-    return collection.replace(/[^A-Za-z0-9_./-]/g, '')
-  }
-
   function sqlString(s: string): string {
     return `'${s.replace(/'/g, "''")}'`
   }
@@ -242,7 +239,8 @@
       const shouldFetchQueue = subpage === 'queue' || tab.capability === 'queue'
       const shouldFetchVector = subpage === 'vector' || tab.capability === 'vector'
       const shouldFetchStats = subpage === 'stats' || tab.capability === 'stats'
-      const fetchMode = shouldFetchGraph ? 'graph-subgraph' : shouldFetchQueue ? 'queue-peek' : shouldFetchVector ? 'vector-inspector' : shouldFetchStats ? 'stats-info' : tab.capability ?? 'unknown'
+      const shouldFetchKv = subpage === 'kv' || tab.capability === 'kv'
+      const fetchMode = shouldFetchGraph ? 'graph-subgraph' : shouldFetchQueue ? 'queue-peek' : shouldFetchVector ? 'vector-inspector' : shouldFetchStats ? 'stats-info' : shouldFetchKv ? 'kv-list' : tab.capability ?? 'unknown'
       const cacheKey = `${tab.key}:${subpage}:${fetchMode}`
       if (resultKeys[tab.id] && resultKeys[tab.id] !== cacheKey) {
         delete results[tab.id]
@@ -269,9 +267,14 @@
               `${collection} · stats preview`,
               () => fetchStatsCollection(client, collection),
             )
+        : shouldFetchKv
+          ? activity.track(
+              `${collection} · LIST KV (LIMIT 200)`,
+              () => client.query(collectionPreviewQuery(collection, 'kv')),
+            )
         : activity.track(
             `${collection} · SELECT * (LIMIT 200)`,
-            () => client.query(`SELECT * FROM ${collection} LIMIT 200`),
+            () => client.query(collectionPreviewQuery(collection, tab.capability)),
           )
       job
         .then((r) => { results[tab.id] = r })
