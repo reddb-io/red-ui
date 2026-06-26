@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.3.1
+
+### Patch Changes
+
+- 0c8a198: Use `LIST KV` when previewing native key-value collections, so embedded red-ui can open legacy Red Request stores such as `rr_requests`.
+  - @reddb-io/ui-kit@0.3.1
+  - @reddb-io/ui-mcp@0.3.1
+
 ## 0.3.0
 
 ### Minor Changes
