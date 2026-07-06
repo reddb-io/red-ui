@@ -6,6 +6,7 @@
   // The SvelteKit Surface wraps this same component with a Kit-backed router.
   import { onMount, untrack } from 'svelte'
   import Splash from './Splash.svelte'
+  import LoadingOverlay from './LoadingOverlay.svelte'
   import GlobalProgressBar from './GlobalProgressBar.svelte'
   import Topbar from './Topbar.svelte'
   import StatusBar from './StatusBar.svelte'
@@ -309,3 +310,8 @@
     <PendingChangesPanel open={pendingOpen} onClose={() => (pendingOpen = false)} />
   </div>
 {/if}
+
+<!-- Step-logged loading overlay (#127): sits above the shell during a slow
+     connect/boot; self-hides once the open resolves and never flashes on fast
+     opens. -->
+<LoadingOverlay />
