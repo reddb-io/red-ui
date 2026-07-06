@@ -9,6 +9,7 @@
   import { page } from '$app/state'
   import '../app.css'
   import Workspace from '$lib/Workspace.svelte'
+  import ErrorBoundary from '$lib/ErrorBoundary.svelte'
   import { createKitRouter } from './kit-router.svelte'
 
   let { children }: { children: Snippet } = $props()
@@ -23,5 +24,9 @@
 {#if renderRouteContent}
   {@render children()}
 {:else}
-  <Workspace {router} />
+  <!-- Black-screen shield (#126): a render crash in the Workspace shows the
+       recovery screen instead of tearing down the webview to black. -->
+  <ErrorBoundary>
+    <Workspace {router} />
+  </ErrorBoundary>
 {/if}
