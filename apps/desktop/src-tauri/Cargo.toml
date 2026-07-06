@@ -22,11 +22,17 @@ tauri-plugin-shell = "2"
 tauri-plugin-http = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-tokio = { version = "1", features = ["net", "io-util", "rt-multi-thread", "macros", "process", "time"] }
+tokio = { version = "1", features = ["net", "io-util", "rt-multi-thread", "macros", "process", "time", "signal"] }
 anyhow = "1"
 # OS keychain bridge for the EncryptedStore. macOS → Keychain Services,
 # Windows → Credential Manager, Linux → libsecret via the Secret Service API.
 keyring = { version = "3", features = ["apple-native", "windows-native", "linux-native-sync-persistent"] }
+
+# Unix signalling for graceful sidecar shutdown (#116): SIGTERM the child, poll
+# for a clean exit with signal 0, then force-kill as a backstop. Tauri's
+# `CommandChild::kill()` is a hard SIGKILL, which skips the store's checkpoint.
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
 
 [features]
 default = ["custom-protocol"]
