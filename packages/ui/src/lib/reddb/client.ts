@@ -15,6 +15,7 @@ import type {
 import type { ClusterStatus, ReplicationStatus } from "./cluster-status";
 import type { MetricDescriptor, PromResponse } from "./analytics";
 import type { AskResponse, AskOptions } from "./ask";
+import { devConsole, sanitizePayload } from "./dev-console";
 
 export interface QueryRow {
   values: Record<string, unknown>;
@@ -294,6 +295,25 @@ async function* parseNdjsonFrames(
 const SELECT_RE = /^\s*select\b/i;
 
 /**
+ * Pull a row count out of a parsed response for the developer console (#128).
+ * Recognises the `/query` envelope (`record_count`, else the length of
+ * `result.records`) and a bare array; returns `undefined` when the shape
+ * carries no notion of rows. Purely structural — never throws.
+ */
+export function extractRowCount(data: unknown): number | undefined {
+  if (Array.isArray(data)) return data.length;
+  if (data && typeof data === "object") {
+    const d = data as {
+      record_count?: unknown;
+      result?: { records?: unknown };
+    };
+    if (typeof d.record_count === "number") return d.record_count;
+    if (Array.isArray(d.result?.records)) return d.result.records.length;
+  }
+  return undefined;
+}
+
+/**
  * Extract a human-readable message from any thrown value. Tauri's `invoke` and
  * the HTTP plugin reject with plain strings or bare objects (not `Error`), so
  * `(e as Error).message` is often `undefined` — this never returns that.
@@ -374,14 +394,66 @@ export class RedClient {
     Object.assign(headers, this.headers as Record<string, string> | undefined);
     Object.assign(headers, init?.headers as Record<string, string> | undefined);
 
-    const res = await this.fetcher(url, { ...init, headers });
+    // Developer console instrumentation (#128). Every HTTP call the client
+    // makes is timed and logged from this single seam, so every Surface is
+    // covered without touching each caller. The request body is sanitized
+    // before it lands in an entry — a copy action can never leak a secret.
+    const verb = init?.method ?? "GET";
+    const startedAt = Date.now();
+    const start = performance.now();
+    const payload = sanitizePayload(init?.body);
+    const elapsed = () => Math.round(performance.now() - start);
+
+    let res: Response;
+    try {
+      res = await this.fetcher(url, { ...init, headers });
+    } catch (e) {
+      devConsole.record({
+        kind: "http",
+        verb,
+        target: path,
+        startedAt,
+        durationMs: elapsed(),
+        ok: false,
+        payload,
+        error: errorText(e),
+      });
+      throw e;
+    }
+
     if (!res.ok) {
       const body = await res.text().catch(() => "");
-      throw new Error(
-        `${init?.method ?? "GET"} ${path} → ${res.status} ${body.slice(0, 200)}`
-      );
+      const message = `${verb} ${path} → ${res.status} ${body.slice(0, 200)}`;
+      devConsole.record({
+        kind: "http",
+        verb,
+        target: path,
+        startedAt,
+        durationMs: elapsed(),
+        ok: false,
+        status: res.status,
+        payload,
+        error: message,
+      });
+      throw new Error(message);
     }
-    return res.json() as Promise<T>;
+
+    const data = (await res.json()) as T;
+    const rowCount = extractRowCount(data);
+    devConsole.record({
+      // A response carrying a row count is a query round-trip; everything else
+      // is a plain HTTP call. This is how `/query` entries mark themselves.
+      kind: rowCount === undefined ? "http" : "query",
+      verb,
+      target: path,
+      startedAt,
+      durationMs: elapsed(),
+      ok: true,
+      status: res.status,
+      ...(rowCount === undefined ? {} : { rowCount }),
+      payload,
+    });
+    return data;
   }
 
   async stats(): Promise<Stats> {
@@ -588,17 +660,51 @@ export class RedClient {
     };
     Object.assign(headers, this.headers as Record<string, string> | undefined);
 
-    const res = await this.fetcher(`${this.baseUrl}/query/stream`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({ query }),
-      signal: opts.signal,
-    });
+    // Developer console instrumentation (#128). The streaming endpoint skips
+    // `json()`, so it logs its own query round-trip here (verb `POST`, target
+    // `/query/stream`) with the collected row count.
+    const startedAt = Date.now();
+    const start = performance.now();
+    const body = JSON.stringify({ query });
+    const payload = sanitizePayload(body);
+    const elapsed = () => Math.round(performance.now() - start);
+
+    let res: Response;
+    try {
+      res = await this.fetcher(`${this.baseUrl}/query/stream`, {
+        method: "POST",
+        headers,
+        body,
+        signal: opts.signal,
+      });
+    } catch (e) {
+      devConsole.record({
+        kind: "query",
+        verb: "POST",
+        target: "/query/stream",
+        startedAt,
+        durationMs: elapsed(),
+        ok: false,
+        payload,
+        error: errorText(e),
+      });
+      throw e;
+    }
     if (!res.ok || !res.body) {
-      const body = res.body ? await res.text().catch(() => "") : "";
-      throw new Error(
-        `POST /query/stream → ${res.status} ${body.slice(0, 200)}`
-      );
+      const errBody = res.body ? await res.text().catch(() => "") : "";
+      const message = `POST /query/stream → ${res.status} ${errBody.slice(0, 200)}`;
+      devConsole.record({
+        kind: "query",
+        verb: "POST",
+        target: "/query/stream",
+        startedAt,
+        durationMs: elapsed(),
+        ok: false,
+        status: res.status,
+        payload,
+        error: message,
+      });
+      throw new Error(message);
     }
 
     const out: StreamedQueryResult = {
@@ -625,6 +731,18 @@ export class RedClient {
         break;
       }
     }
+
+    devConsole.record({
+      kind: "query",
+      verb: "POST",
+      target: "/query/stream",
+      startedAt,
+      durationMs: elapsed(),
+      ok: true,
+      status: res.status,
+      rowCount: out.rowCount,
+      payload,
+    });
 
     // We stopped early with more rows on the server — release the pinned cursor.
     if (out.truncated && out.cursor) {
