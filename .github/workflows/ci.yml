@@ -42,10 +42,10 @@ jobs:
       - run: pnpm --filter @reddb-io/ui build
 
   tauri:
-    # Verify the Rust shell still compiles on every PR; doesn't bundle
-    # installers (that's the release workflow's job) — just runs
-    # `cargo check` against the same workspace tauri-action will later use.
-    # Skipped on draft PRs (the slowest job; don't burn it on WIP).
+    # Verify the Rust shell still compiles and its unit tests pass on every PR;
+    # doesn't bundle installers (that's the release workflow's job) — runs
+    # `cargo check` plus `cargo test` against the same workspace tauri-action
+    # will later use. Skipped on draft PRs (the slowest job; don't burn it on WIP).
     if: github.event.pull_request.draft != true
     runs-on: blacksmith-4vcpu-ubuntu-2404
     env:
@@ -85,6 +85,10 @@ jobs:
           curl -fsSL https://raw.githubusercontent.com/reddb-io/reddb/main/install.sh | bash
           bash scripts/sync-desktop-sidecar.sh "$HOME/.local/bin/red"
       - run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
+      # Run the crate's colocated unit tests (lifecycle helpers, #116). `--lib`
+      # keeps this to the fast, headless unit tests — no windowed integration
+      # harness — matching the pure functions under test.
+      - run: cargo test --lib --manifest-path apps/desktop/src-tauri/Cargo.toml
       - name: sccache stats
         if: always()
         run: sccache --show-stats
