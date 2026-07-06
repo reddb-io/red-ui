@@ -2,7 +2,7 @@
   import { useRouter } from './router.svelte'
   import { connection } from './connections.svelte'
   import { pendingChanges } from './pending-changes.svelte'
-  import { ArrowRight, FilePenLine, Lock } from 'lucide-svelte'
+  import { ArrowRight, FilePenLine, Lock, Terminal } from 'lucide-svelte'
   import { readBuildInfo } from './build-info'
 
   const build = readBuildInfo()
@@ -46,6 +46,12 @@
 
   function openConnect() {
     window.dispatchEvent(new CustomEvent('red:open-connect'))
+  }
+
+  // Toggle the instrumented developer console (#128). Neutral chrome — the
+  // console never claims the accent, matching one-accent-per-screen.
+  function toggleConsole() {
+    window.dispatchEvent(new CustomEvent('red:toggle-dev-console'))
   }
 
   function openCluster(e: MouseEvent) {
@@ -153,6 +159,18 @@
       <ArrowRight class="size-3" />
     </button>
   {/if}
+
+  <button
+    type="button"
+    onclick={toggleConsole}
+    data-no-nav
+    aria-label="Toggle developer console"
+    title="Developer console — every query and HTTP call, with timing and row counts"
+    class="inline-flex items-center gap-1 px-3 text-fg-3 hover:text-fg-1 hover:bg-bg-2/60 transition-colors cursor-pointer bg-transparent border-0 border-l border-line-1"
+  >
+    <Terminal class="size-3" />
+    <span>Console</span>
+  </button>
 
   <span
     class="inline-flex items-center px-3 shrink-0 font-mono text-fg-3 border-l border-line-1 select-none"
