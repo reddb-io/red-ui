@@ -1,4 +1,5 @@
 import { type EncryptedStore, SecureStoreError } from './secure-store'
+import { desktopErrorMessage } from './desktop-error'
 
 export type TauriInvoke = <T = unknown>(cmd: string, args?: Record<string, unknown>) => Promise<T>
 
@@ -35,7 +36,7 @@ export class TauriEncryptedStore implements EncryptedStore {
     try {
       await this.invoke<void>('keychain_set', { service: this.service, key, value })
     } catch (e) {
-      throw new SecureStoreError('BACKEND_FAILURE', `keychain_set failed: ${stringifyError(e)}`)
+      throw new SecureStoreError('BACKEND_FAILURE', `keychain_set failed: ${desktopErrorMessage(e)}`)
     }
   }
 
@@ -44,7 +45,7 @@ export class TauriEncryptedStore implements EncryptedStore {
       const v = await this.invoke<string | null>('keychain_get', { service: this.service, key })
       return v ?? null
     } catch (e) {
-      throw new SecureStoreError('BACKEND_FAILURE', `keychain_get failed: ${stringifyError(e)}`)
+      throw new SecureStoreError('BACKEND_FAILURE', `keychain_get failed: ${desktopErrorMessage(e)}`)
     }
   }
 
@@ -52,13 +53,7 @@ export class TauriEncryptedStore implements EncryptedStore {
     try {
       await this.invoke<void>('keychain_delete', { service: this.service, key })
     } catch (e) {
-      throw new SecureStoreError('BACKEND_FAILURE', `keychain_delete failed: ${stringifyError(e)}`)
+      throw new SecureStoreError('BACKEND_FAILURE', `keychain_delete failed: ${desktopErrorMessage(e)}`)
     }
   }
-}
-
-function stringifyError(e: unknown): string {
-  if (e instanceof Error) return e.message
-  if (typeof e === 'string') return e
-  try { return JSON.stringify(e) } catch { return String(e) }
 }
