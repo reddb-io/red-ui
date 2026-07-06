@@ -1,7 +1,22 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { connection, makeCustomConnection } from './connections.svelte'
-  import { Zap, Loader2, AlertCircle, CheckCircle2, Clock, X, Plug, ChevronDown } from 'lucide-svelte'
+  import {
+    connection,
+    makeCustomConnection,
+    openDatabaseFile,
+    unreachableConnectHint,
+  } from './connections.svelte'
+  import {
+    Zap,
+    Loader2,
+    AlertCircle,
+    CheckCircle2,
+    Clock,
+    X,
+    Plug,
+    ChevronDown,
+    FolderOpen,
+  } from 'lucide-svelte'
 
   const DEFAULT_URL = 'red://localhost'
 
@@ -29,7 +44,11 @@
     // opaque transport-unsupported error from the client.
     if (!connection.canReach(cleaned)) {
       status = 'error'
-      error = `This app can't reach that transport here — supported: ${supportedHint}`
+      // A file:// target on the web gets an honest, actionable explanation
+      // (#123) instead of the generic transport-unsupported line.
+      error =
+        unreachableConnectHint(cleaned) ??
+        `This app can't reach that transport here — supported: ${supportedHint}`
       return
     }
     status = 'probing'
@@ -49,6 +68,27 @@
   function submit(e: Event) {
     e.preventDefault()
     attempt(url)
+  }
+
+  // Desktop-only "Open database file…" flow (#123): the native OS picker feeds
+  // the chosen .rdb into the existing file:// connect path. Hidden on the web
+  // Surface, where there is no picker (file:// is unreachable there).
+  async function openFile() {
+    status = 'probing'
+    error = null
+    rtt = null
+    const res = await openDatabaseFile()
+    if (res.ok) {
+      status = 'ok'
+      rtt = connection.probe.rtt_ms ?? null
+      url = connection.active.url
+      setTimeout(() => (open = false), 350)
+    } else if (res.cancelled) {
+      status = 'idle'
+    } else {
+      status = 'error'
+      error = res.reason ?? 'unreachable'
+    }
   }
 
   function fmtRel(ms: number) {
@@ -110,6 +150,10 @@
   const reachableHistory = $derived(
     connection.history.filter((h) => !h.url || connection.canReach(h.url)),
   )
+
+  // Native file open is only reachable on a Surface that can speak the unix /
+  // embedded-file transport (the Tauri desktop shell) (#123).
+  const canOpenFile = $derived(connection.supportedTransports.includes('unix'))
 </script>
 
 <div class="relative">
@@ -175,6 +219,19 @@
           {/if}
         </div>
       </form>
+
+      {#if canOpenFile}
+        <button
+          type="button"
+          onclick={openFile}
+          disabled={status === 'probing'}
+          title="Open a local .rdb database file"
+          class="mt-1 w-full h-9 bg-bg-2 border border-line-2 text-fg-1 font-medium rounded-md cursor-pointer transition-colors hover:border-line-3 hover:text-fg-0 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-[13px]"
+        >
+          <FolderOpen class="size-3.5 text-fg-3" />
+          Open database file…
+        </button>
+      {/if}
 
       {#if reachableHistory.length > 0}
         <div class="mt-3 pt-3 border-t border-line-1">

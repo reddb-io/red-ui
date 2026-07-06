@@ -6,6 +6,7 @@
   "permissions": [
     "core:default",
     "deep-link:default",
+    "dialog:default",
     {
       "identifier": "http:default",
       "allow": [

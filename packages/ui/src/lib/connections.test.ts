@@ -2,8 +2,11 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   connection,
   getConnectionProvider,
+  LOCAL_FILE_DESKTOP_ONLY,
+  openDatabaseFile,
   provider,
   setConnectionProvider,
+  unreachableConnectHint,
 } from "./connections.svelte";
 import {
   DESKTOP_TRANSPORTS,
@@ -177,6 +180,82 @@ describe("transport reachability (#34)", () => {
     );
     expect(connection.canReach("file:///data/app.redb")).toBe(true);
     expect(connection.supportedTransports).toContain("unix");
+  });
+});
+
+describe("open local database file (#123)", () => {
+  it("web Surface: a file:// target explains it needs the desktop app", () => {
+    // afterEach restored the default LocalUrlProvider (browser transports).
+    expect(unreachableConnectHint("file:///data/app.rdb")).toBe(
+      LOCAL_FILE_DESKTOP_ONLY
+    );
+  });
+
+  it("gives no file hint for a reachable http target", () => {
+    expect(unreachableConnectHint("http://h:5055")).toBeNull();
+  });
+
+  it("desktop Surface: a reachable file:// target gets no unreachable hint", () => {
+    setConnectionProvider(
+      new LocalUrlProvider({ transports: [...DESKTOP_TRANSPORTS] })
+    );
+    expect(unreachableConnectHint("file:///data/app.rdb")).toBeNull();
+  });
+
+  it("connects to the picked file via the embedded file:// flow (dialog mocked)", async () => {
+    const client = fakeClient();
+    setConnectionProvider(
+      new LocalUrlProvider({
+        transports: [...DESKTOP_TRANSPORTS],
+        embeddedResolver: async () => "http://127.0.0.1:9999",
+        clientFactory: () => client,
+      })
+    );
+    const pick = vi.fn(async () => "/home/me/data.rdb");
+
+    const res = await openDatabaseFile(pick);
+
+    expect(pick).toHaveBeenCalledOnce();
+    expect(res).toEqual({ ok: true });
+    expect(connection.connected).toBe(true);
+    // The displayed connection keeps the file:// identity; only the client
+    // talks to the resolved loopback URL.
+    expect(connection.active.url).toBe("file:///home/me/data.rdb");
+  });
+
+  it("reports cancellation when the picker returns null", async () => {
+    const pick = vi.fn(async () => null);
+
+    const res = await openDatabaseFile(pick);
+
+    expect(res).toEqual({ ok: false, cancelled: true });
+    expect(connection.connected).toBe(false);
+  });
+
+  it("on the web Surface (no picker) refuses with the desktop-only message", async () => {
+    // No injected picker and no Tauri global → browser Surface.
+    const res = await openDatabaseFile();
+    expect(res).toEqual({ ok: false, reason: LOCAL_FILE_DESKTOP_ONLY });
+    expect(connection.connected).toBe(false);
+  });
+
+  it("surfaces the connect failure reason when the sidecar can't open the file", async () => {
+    setConnectionProvider(
+      new LocalUrlProvider({
+        transports: [...DESKTOP_TRANSPORTS],
+        embeddedResolver: async () => {
+          throw new Error("sidecar boom");
+        },
+      })
+    );
+    const pick = vi.fn(async () => "/home/me/data.rdb");
+
+    const res = await openDatabaseFile(pick);
+
+    expect(res.ok).toBe(false);
+    expect(res.cancelled).toBeUndefined();
+    expect(res.reason).toContain("sidecar boom");
+    expect(connection.connected).toBe(false);
   });
 });
 
