@@ -19,7 +19,7 @@
   import SecurityView from './SecurityView.svelte'
   import SettingsView from './SettingsView.svelte'
   import Appearance from './Appearance.svelte'
-  import { connection, setConnectionProvider } from './connections.svelte'
+  import { connection, makeCustomConnection, setConnectionProvider } from './connections.svelte'
   import { runQueryPreferStream, type ConnectionProvider } from '#reddb'
   import { theme, type Theme } from './theme.svelte'
   import { skins } from './skins/skins.svelte'
@@ -103,6 +103,42 @@
     const handler = () => (pendingOpen = true)
     window.addEventListener('red:open-pending-changes', handler as EventListener)
     return () => window.removeEventListener('red:open-pending-changes', handler as EventListener)
+  })
+
+  // Runtime deep-link routing: subscribe to Tauri "deep-link" events so that
+  // clicking a red:// URL while the app is already running focuses the window
+  // (handled Rust-side via single-instance) and routes to the target connection.
+  // Boot-time deep links go through connection.bootstrap(); this path handles
+  // everything that arrives after the app is already mounted.
+  onMount(() => {
+    if (typeof window === 'undefined') return
+    if (!('__TAURI_INTERNALS__' in window || '__TAURI__' in window)) return
+
+    let unlisten: (() => void) | undefined
+
+    void import('@tauri-apps/api/event')
+      .then(({ listen }) =>
+        listen<string[]>('deep-link', async (event) => {
+          const raw = event.payload?.[0]
+          if (!raw) return
+
+          // Extract ?to= route before normalizing the connection target.
+          let target = raw
+          let route: string | null = null
+          try {
+            const equiv = raw.replace(/^reds?(\+[a-z]+)?:\/\//, 'http://')
+            const u = new URL(equiv)
+            route = u.searchParams.get('to')
+            if (route) target = raw.split('?')[0]
+          } catch {}
+
+          await connection.tryConnect(makeCustomConnection(target))
+          if (route) navigateToBootRoute(route)
+        })
+      )
+      .then((fn) => { unlisten = fn })
+
+    return () => { unlisten?.() }
   })
 
   // Wire the commit executor to the active client. Re-binds whenever the
