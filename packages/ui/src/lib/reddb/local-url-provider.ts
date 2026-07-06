@@ -181,14 +181,10 @@ export class LocalUrlProvider implements ConnectionProvider {
       try {
         clientUrl = await this.embeddedResolver(target.url);
       } catch (e) {
-        // Tauri's `invoke` rejects with a plain string (the Rust `Err`), not an
-        // Error — so read the message defensively instead of assuming `.message`.
-        const reason =
-          e instanceof Error
-            ? e.message
-            : typeof e === "string"
-              ? e
-              : String(e);
+        // The resolver (the standalone-Surface adapter) already classified the
+        // command failure into an Error with a human-readable message — no
+        // defensive shape-coercion here; just carry the reason through.
+        const reason = e instanceof Error ? e.message : String(e);
         throw new UnreachableConnectionError(target.id, reason);
       }
     }
