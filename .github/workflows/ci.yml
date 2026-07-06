@@ -84,10 +84,12 @@ jobs:
       # The `red` sidecar (Tauri externalBin) is a ~15MB binary, gitignored
       # rather than committed. tauri-build validates `binaries/red-<triple>`
       # exists at compile time, so provision it before `cargo check`.
+      # fetch-sidecar.sh downloads the pinned release asset for the host triple,
+      # preferring the static musl build on Linux, and verifies the sha256.
       - name: provision red sidecar
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/reddb-io/reddb/main/install.sh | bash
-          bash scripts/sync-desktop-sidecar.sh "$HOME/.local/bin/red"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash scripts/fetch-sidecar.sh
       - run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
       - name: sccache stats
         if: always()
