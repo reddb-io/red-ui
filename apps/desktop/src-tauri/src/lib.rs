@@ -261,10 +261,157 @@ fn close_embedded(app: tauri::AppHandle, path: String) -> Result<(), CommandErro
         .map_err(lock_err)?
         .remove(&abs)
     {
-        let _ = embedded.child.kill();
+        graceful_shutdown(embedded);
     }
     Ok(())
 }
+
+// ---------------------------------------------------------------------------
+// Graceful sidecar shutdown & reaping (#116)
+//
+// `CommandChild::kill()` is a hard SIGKILL: it terminates the embedded reddb
+// server before its store can checkpoint, which risks a model-mismatch class of
+// error the next time the same file is opened. Instead we ask the child to
+// exit cleanly (SIGTERM), wait a bounded window for it to checkpoint, and only
+// force-kill as a backstop. The reap routine is idempotent so it can be wired
+// to every exit path (window-destroyed, exit-requested, and OS signals), not
+// just the graceful window close Tauri handles on its own.
+// ---------------------------------------------------------------------------
+
+/// How long to wait between SIGTERM and the force-kill backstop. Long enough
+/// for the store to flush a checkpoint, short enough not to hang app exit.
+const GRACEFUL_SHUTDOWN_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(5);
+/// How often to poll for a clean exit inside the grace window.
+const GRACEFUL_POLL_INTERVAL: std::time::Duration = std::time::Duration::from_millis(100);
+
+/// The next action while draining a child after SIGTERM. Split out as a pure
+/// function so the escalation policy is unit-testable without spawning a real
+/// process.
+#[derive(Debug, PartialEq, Eq)]
+enum ShutdownStep {
+    /// The process exited on its own; nothing more to do.
+    Exited,
+    /// Still inside the grace window; keep polling.
+    Wait,
+    /// The grace window elapsed while the process is still alive; escalate.
+    ForceKill,
+}
+
+/// Decide what to do next given whether the child is still alive and how long
+/// it has been since we sent SIGTERM. Pure — no I/O, no clock, no process.
+fn next_shutdown_step(
+    alive: bool,
+    elapsed: std::time::Duration,
+    timeout: std::time::Duration,
+) -> ShutdownStep {
+    if !alive {
+        ShutdownStep::Exited
+    } else if elapsed >= timeout {
+        ShutdownStep::ForceKill
+    } else {
+        ShutdownStep::Wait
+    }
+}
+
+/// Send SIGTERM to `pid`. Returns `false` if the signal could not be delivered
+/// (e.g. the process already exited), so the caller can fall back to a hard
+/// kill. No-op on non-unix platforms, where `CommandChild::kill()` is the only
+/// available mechanism.
+#[cfg(unix)]
+fn send_sigterm(pid: u32) -> bool {
+    // SAFETY: `kill(2)` with a real signal number is always safe to call; a
+    // non-zero return just means the target is gone (ESRCH) or we lack
+    // permission, both of which we treat as "fall back to force-kill".
+    unsafe { libc::kill(pid as libc::pid_t, libc::SIGTERM) == 0 }
+}
+
+#[cfg(not(unix))]
+fn send_sigterm(_pid: u32) -> bool {
+    false
+}
+
+/// Whether a process is still alive, via the signal-0 liveness probe.
+#[cfg(unix)]
+fn process_alive(pid: u32) -> bool {
+    // SAFETY: signal 0 performs the permission/existence check without
+    // actually delivering a signal — the canonical liveness probe.
+    unsafe { libc::kill(pid as libc::pid_t, 0) == 0 }
+}
+
+#[cfg(not(unix))]
+fn process_alive(_pid: u32) -> bool {
+    false
+}
+
+/// Gracefully stop one embedded sidecar: SIGTERM, a bounded wait for a clean
+/// checkpoint, then a force-kill backstop. Idempotent for a child that has
+/// already exited — the liveness probe short-circuits to the force-kill path,
+/// which harmlessly reaps the (already dead) handle.
+fn graceful_shutdown(embedded: Embedded) {
+    let pid = embedded.child.pid();
+    // On unix, ask for a clean exit first and wait out the grace window.
+    if send_sigterm(pid) {
+        let start = std::time::Instant::now();
+        loop {
+            match next_shutdown_step(process_alive(pid), start.elapsed(), GRACEFUL_SHUTDOWN_TIMEOUT)
+            {
+                ShutdownStep::Exited => return,
+                ShutdownStep::ForceKill => break,
+                ShutdownStep::Wait => std::thread::sleep(GRACEFUL_POLL_INTERVAL),
+            }
+        }
+    }
+    // Backstop (grace window elapsed, or non-unix where SIGTERM is unavailable).
+    let _ = embedded.child.kill();
+}
+
+/// Idempotently reap every embedded sidecar. Draining the registry means a
+/// second call finds an empty map and does nothing, so this is safe to wire to
+/// multiple, possibly-overlapping exit paths. Reaps even through a poisoned
+/// lock — during teardown a leaked server is worse than a broken invariant.
+fn reap_all(registry: &EmbeddedRegistry) {
+    let drained: Vec<Embedded> = match registry.0.lock() {
+        Ok(mut map) => map.drain().map(|(_, e)| e).collect(),
+        Err(poisoned) => poisoned.into_inner().drain().map(|(_, e)| e).collect(),
+    };
+    for embedded in drained {
+        graceful_shutdown(embedded);
+    }
+}
+
+/// Install a handler that reaps embedded sidecars on SIGTERM/SIGINT/SIGHUP and
+/// then exits — Tauri's `RunEvent` loop never sees these signals, so without
+/// this a `kill`/Ctrl-C/terminal-hangup on the shell would leak the children.
+#[cfg(unix)]
+fn install_signal_reaper(handle: tauri::AppHandle) {
+    tauri::async_runtime::spawn(async move {
+        use tokio::signal::unix::{signal, SignalKind};
+        let mut term = match signal(SignalKind::terminate()) {
+            Ok(s) => s,
+            Err(_) => return,
+        };
+        let mut int = match signal(SignalKind::interrupt()) {
+            Ok(s) => s,
+            Err(_) => return,
+        };
+        let mut hup = match signal(SignalKind::hangup()) {
+            Ok(s) => s,
+            Err(_) => return,
+        };
+        tokio::select! {
+            _ = term.recv() => {},
+            _ = int.recv() => {},
+            _ = hup.recv() => {},
+        }
+        if let Some(registry) = handle.try_state::<EmbeddedRegistry>() {
+            reap_all(&registry);
+        }
+        handle.exit(0);
+    });
+}
+
+#[cfg(not(unix))]
+fn install_signal_reaper(_handle: tauri::AppHandle) {}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -279,6 +426,9 @@ pub fn run() {
                 let urls: Vec<String> = event.urls().into_iter().map(|u| u.to_string()).collect();
                 let _ = handle.emit("deep-link", urls);
             });
+            // Reap embedded sidecars on OS signals to the shell process itself,
+            // which Tauri's RunEvent loop never observes (#116).
+            install_signal_reaper(app.handle().clone());
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -292,15 +442,21 @@ pub fn run() {
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|app_handle, event| {
-            // Reap any embedded reddb sidecars when the app exits so we never
-            // leak a file-backed server holding the database open.
-            if let tauri::RunEvent::Exit = event {
+            // Reap embedded reddb sidecars on every teardown path so we never
+            // leak a file-backed server holding the database open: the last
+            // window being destroyed, an exit being requested, and the final
+            // exit. `reap_all` is idempotent, so overlapping events are safe.
+            let should_reap = matches!(
+                event,
+                tauri::RunEvent::WindowEvent {
+                    event: tauri::WindowEvent::Destroyed,
+                    ..
+                } | tauri::RunEvent::ExitRequested { .. }
+                    | tauri::RunEvent::Exit
+            );
+            if should_reap {
                 if let Some(registry) = app_handle.try_state::<EmbeddedRegistry>() {
-                    if let Ok(mut map) = registry.0.lock() {
-                        for (_, embedded) in map.drain() {
-                            let _ = embedded.child.kill();
-                        }
-                    }
+                    reap_all(&registry);
                 }
             }
         });
@@ -353,5 +509,80 @@ mod tests {
     fn resolve_embedded_path_absolute_is_untouched() {
         let resolved = resolve_embedded_path("file:///tmp/data.rdb").expect("absolute path");
         assert_eq!(resolved, "/tmp/data.rdb");
+    }
+
+    use std::time::Duration;
+
+    #[test]
+    fn shutdown_step_exits_when_process_gone() {
+        // A dead child ends the loop regardless of elapsed time — a clean exit
+        // inside the grace window must never escalate to force-kill.
+        assert_eq!(
+            next_shutdown_step(false, Duration::ZERO, GRACEFUL_SHUTDOWN_TIMEOUT),
+            ShutdownStep::Exited
+        );
+        assert_eq!(
+            next_shutdown_step(false, Duration::from_secs(60), GRACEFUL_SHUTDOWN_TIMEOUT),
+            ShutdownStep::Exited
+        );
+    }
+
+    #[test]
+    fn shutdown_step_waits_inside_grace_window() {
+        assert_eq!(
+            next_shutdown_step(true, Duration::ZERO, GRACEFUL_SHUTDOWN_TIMEOUT),
+            ShutdownStep::Wait
+        );
+        assert_eq!(
+            next_shutdown_step(
+                true,
+                GRACEFUL_SHUTDOWN_TIMEOUT - Duration::from_millis(1),
+                GRACEFUL_SHUTDOWN_TIMEOUT
+            ),
+            ShutdownStep::Wait
+        );
+    }
+
+    #[test]
+    fn shutdown_step_force_kills_after_timeout() {
+        // At exactly the timeout, and beyond, a still-alive child escalates.
+        assert_eq!(
+            next_shutdown_step(true, GRACEFUL_SHUTDOWN_TIMEOUT, GRACEFUL_SHUTDOWN_TIMEOUT),
+            ShutdownStep::ForceKill
+        );
+        assert_eq!(
+            next_shutdown_step(
+                true,
+                GRACEFUL_SHUTDOWN_TIMEOUT + Duration::from_secs(1),
+                GRACEFUL_SHUTDOWN_TIMEOUT
+            ),
+            ShutdownStep::ForceKill
+        );
+    }
+
+    #[test]
+    fn reap_all_on_empty_registry_is_a_noop() {
+        // The idempotency backbone: reaping an already-drained registry does
+        // nothing and never panics, so wiring it to overlapping exit paths is
+        // safe.
+        let registry = EmbeddedRegistry::default();
+        reap_all(&registry);
+        assert!(registry.0.lock().expect("lock").is_empty());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn process_alive_tracks_a_real_child() {
+        // Our own process is alive; a child we spawn and fully reap is not.
+        // The probe must distinguish the two for the grace-window loop to
+        // terminate instead of spinning to the force-kill backstop every time.
+        assert!(process_alive(std::process::id()));
+
+        let mut child = std::process::Command::new("true")
+            .spawn()
+            .expect("spawn `true`");
+        let pid = child.id();
+        child.wait().expect("reap child");
+        assert!(!process_alive(pid));
     }
 }
