@@ -8,12 +8,6 @@ use tauri_plugin_shell::ShellExt;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 
-#[derive(Serialize)]
-struct PingResult {
-    ok: bool,
-    rtt_ms: u128,
-}
-
 #[derive(Deserialize, Serialize)]
 struct ConnectionBootstrap {
     target: Option<String>,
@@ -31,24 +25,6 @@ fn connection_bootstrap() -> Result<Option<ConnectionBootstrap>, String> {
         Err(std::env::VarError::NotPresent) => Ok(None),
         Err(e) => Err(e.to_string()),
     }
-}
-
-#[tauri::command]
-async fn tcp_ping(host: String, port: u16) -> Result<PingResult, String> {
-    let start = std::time::Instant::now();
-    let mut stream = TcpStream::connect((host.as_str(), port))
-        .await
-        .map_err(|e| e.to_string())?;
-    stream
-        .write_all(b"PING\r\n")
-        .await
-        .map_err(|e| e.to_string())?;
-    let mut buf = [0u8; 64];
-    let _ = stream.read(&mut buf).await.map_err(|e| e.to_string())?;
-    Ok(PingResult {
-        ok: true,
-        rtt_ms: start.elapsed().as_millis(),
-    })
 }
 
 // OS keychain bridge for the EncryptedStore (issue #5). Three commands —
@@ -82,21 +58,6 @@ fn keychain_delete(service: String, key: String) -> Result<(), String> {
         Err(keyring::Error::NoEntry) => Ok(()),
         Err(e) => Err(e.to_string()),
     }
-}
-
-#[tauri::command]
-async fn docker_exec(container: String, cmd: Vec<String>) -> Result<String, String> {
-    let output = tokio::process::Command::new("docker")
-        .arg("exec")
-        .arg(&container)
-        .args(&cmd)
-        .output()
-        .await
-        .map_err(|e| e.to_string())?;
-    if !output.status.success() {
-        return Err(String::from_utf8_lossy(&output.stderr).to_string());
-    }
-    Ok(String::from_utf8_lossy(&output.stdout).to_string())
 }
 
 // Embedded file-backed reddb (the desktop-only "open a .rdb file" capability).
@@ -257,8 +218,6 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             connection_bootstrap,
-            tcp_ping,
-            docker_exec,
             keychain_set,
             keychain_get,
             keychain_delete,
