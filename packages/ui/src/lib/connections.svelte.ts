@@ -19,6 +19,7 @@ import {
   isUrlReachable,
   parseBootParams,
   resolveConnectionBootstrap,
+  transportForUrl,
   type Connection,
   type ConnectionBootstrap,
   type ConnectionProvider,
@@ -568,3 +569,78 @@ class ConnectionStore {
 }
 
 export const connection = new ConnectionStore();
+
+/**
+ * Honest, actionable copy for a `file://` target that can't be opened on the
+ * current Surface (#123). The web build has no filesystem/process access, so a
+ * local database file needs the desktop app — say that plainly instead of
+ * failing with a generic transport-unsupported error (live-or-empty honesty
+ * applied to the Connect flow).
+ */
+export const LOCAL_FILE_DESKTOP_ONLY =
+  "Local database files (file://) can only be opened in the desktop app — the web version can't reach files on your machine.";
+
+/**
+ * Explanation for an unreachable connection target, or null when the target IS
+ * reachable / has no file-specific guidance. The Connect UI shows this instead
+ * of the generic "unsupported transport" line when the user types a `file://`
+ * URL on the web (#123). Kept in the store (not the component) so the
+ * connect-flow seam is unit-testable without rendering.
+ */
+export function unreachableConnectHint(url: string): string | null {
+  if (connection.canReach(url)) return null;
+  return transportForUrl(url) === "unix" ? LOCAL_FILE_DESKTOP_ONLY : null;
+}
+
+/**
+ * Native file picker — the subset of `@tauri-apps/plugin-dialog`'s `open` we
+ * use. Injected by tests; in production it's the lazily-imported dialog plugin.
+ */
+export type FilePicker = (options: {
+  multiple: false;
+  directory: false;
+  title: string;
+  filters: { name: string; extensions: string[] }[];
+}) => Promise<string | null>;
+
+export interface OpenDatabaseFileResult {
+  ok: boolean;
+  /** True when the user dismissed the picker without choosing a file. */
+  cancelled?: boolean;
+  /** Human-readable reason when the flow failed (not a cancellation). */
+  reason?: string;
+}
+
+/**
+ * Desktop "Open database file…" flow (#123): open the OS picker for a `.rdb`
+ * file and connect to it through the existing `file://` embedded path (Tauri
+ * spawns a local file-backed reddb sidecar; the UI talks HTTP to it). Only the
+ * standalone (Tauri) Surface has a native picker — on the web there is none, so
+ * this returns the honest desktop-only message the caller surfaces.
+ *
+ * `pick` is injected by tests; in production it's the Tauri dialog plugin's
+ * `open`, imported lazily so the browser bundle never pulls it in.
+ */
+export async function openDatabaseFile(
+  pick?: FilePicker
+): Promise<OpenDatabaseFileResult> {
+  if (!pick && !isTauriSurface()) {
+    return { ok: false, reason: LOCAL_FILE_DESKTOP_ONLY };
+  }
+  const open =
+    pick ??
+    ((await import("@tauri-apps/plugin-dialog")).open as unknown as FilePicker);
+  const selected = await open({
+    multiple: false,
+    directory: false,
+    title: "Open database file",
+    filters: [{ name: "reddb database", extensions: ["rdb"] }],
+  });
+  if (!selected) return { ok: false, cancelled: true };
+  const ok = await connection.tryConnect(
+    makeCustomConnection(`file://${selected}`)
+  );
+  return ok
+    ? { ok: true }
+    : { ok: false, reason: connection.probe.error ?? "unreachable" };
+}
