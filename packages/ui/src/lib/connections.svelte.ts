@@ -36,6 +36,7 @@ import {
 } from "./connection-history";
 import { secureStore } from "./secureStore.svelte";
 import { activity } from "./activity.svelte";
+import { loading } from "./loading.svelte";
 
 export type { HistoryEntry } from "./connection-history";
 
@@ -448,7 +449,13 @@ class ConnectionStore {
     // An explicit connect attempt means a target has been chosen — unblocks
     // automatic refresh from here on (#21).
     this.#targetResolved = true;
+    // Step-logged loading (#127): the connect sequence appends real,
+    // timestamped steps so a slow open (sidecar spawn, readiness, handshake,
+    // initial stats/schema fetch) shows honest feedback instead of a frozen
+    // screen. Fast opens finish before the overlay's reveal threshold.
+    loading.begin(`Opening ${preset.label}`);
     try {
+      loading.step("Reaching server", preset.url);
       const active = await activity.track(`connect · ${preset.label}`, () =>
         getConnectionProvider().connect(preset.id)
       );
@@ -459,6 +466,7 @@ class ConnectionStore {
         description: preset.description,
       };
       persist(this.active);
+      loading.step("Fetching stats & capabilities");
       const [stats, replication, capabilities] = await Promise.all([
         activity
           .track(`connect · ${preset.label} stats`, () => active.client.stats())
@@ -483,9 +491,11 @@ class ConnectionStore {
       };
       this.#capabilities = capabilities;
       this.connected = true;
+      loading.succeed();
       return true;
     } catch (e) {
       this.probe = { reachable: false, error: (e as Error).message };
+      loading.fail((e as Error).message);
       return false;
     }
   }
