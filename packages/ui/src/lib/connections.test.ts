@@ -3,6 +3,8 @@ import {
   connection,
   getConnectionProvider,
   LOCAL_FILE_DESKTOP_ONLY,
+  makeCustomConnection,
+  normalizeUrl,
   openDatabaseFile,
   provider,
   setConnectionProvider,
@@ -455,5 +457,61 @@ describe("target resolution gate (#21)", () => {
     setConnectionProvider(new InjectedClientProvider({ client: fakeClient() }));
     await connection.adoptInjected();
     expect(connection.targetResolved).toBe(true);
+  });
+});
+
+describe("normalizeUrl — deep-link URL-to-connection-intent mapping (#124)", () => {
+  it("red:// → http on port 5055", () => {
+    expect(normalizeUrl("red://localhost")).toBe("http://localhost:5055");
+  });
+
+  it("red:// with explicit port — port in URI is ignored, always 5055", () => {
+    expect(normalizeUrl("red://myhost:1234")).toBe("http://myhost:5055");
+  });
+
+  it("red+tcp:// and red+wire:// are treated identically to red://", () => {
+    expect(normalizeUrl("red+tcp://myhost")).toBe("http://myhost:5055");
+    expect(normalizeUrl("red+wire://myhost")).toBe("http://myhost:5055");
+  });
+
+  it("reds:// → https on port 5055", () => {
+    expect(normalizeUrl("reds://securehost")).toBe("https://securehost:5055");
+  });
+
+  it("red+tls:// → https on port 5055", () => {
+    expect(normalizeUrl("red+tls://securehost")).toBe("https://securehost:5055");
+  });
+
+  it("http:// and https:// pass through unchanged", () => {
+    expect(normalizeUrl("http://myhost:5055")).toBe("http://myhost:5055");
+    expect(normalizeUrl("https://remote:5055/")).toBe("https://remote:5055");
+  });
+
+  it("bare host:port → http with that port", () => {
+    expect(normalizeUrl("myhost:9000")).toBe("http://myhost:9000");
+  });
+
+  it("empty string → empty string", () => {
+    expect(normalizeUrl("")).toBe("");
+  });
+});
+
+describe("makeCustomConnection — connection preset from deep-link URL (#124)", () => {
+  it("red:// produces a preset pointing at the http API port", () => {
+    const preset = makeCustomConnection("red://dbhost");
+    expect(preset.url).toBe("http://dbhost:5055");
+    expect(preset.label).toBe("dbhost:5055");
+    expect(preset.id).toBe("http://dbhost:5055");
+  });
+
+  it("reds:// produces an https preset", () => {
+    const preset = makeCustomConnection("reds://securedb");
+    expect(preset.url).toBe("https://securedb:5055");
+  });
+
+  it("http:// url is passed through as-is", () => {
+    const preset = makeCustomConnection("http://my-server:5055");
+    expect(preset.url).toBe("http://my-server:5055");
+    expect(preset.label).toBe("my-server:5055");
   });
 });
