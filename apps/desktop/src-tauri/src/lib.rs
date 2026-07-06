@@ -269,6 +269,31 @@ fn close_embedded(app: tauri::AppHandle, path: String) -> Result<(), CommandErro
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        // Single-instance guard: a second launch focuses the running window and
+        // forwards any URL arguments as a "deep-link" event so the frontend
+        // handler picks them up the same way macOS does via on_open_url.
+        .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.show();
+                let _ = window.unminimize();
+                let _ = window.set_focus();
+            }
+            // argv[0] is the executable path; skip it and forward any URL args.
+            let urls: Vec<String> = argv
+                .into_iter()
+                .skip(1)
+                .filter(|a| {
+                    a.starts_with("red://")
+                        || a.starts_with("reds://")
+                        || a.starts_with("red+tls://")
+                        || a.starts_with("red+tcp://")
+                        || a.starts_with("red+unix://")
+                })
+                .collect();
+            if !urls.is_empty() {
+                let _ = app.emit("deep-link", urls);
+            }
+        }))
         .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_http::init())
