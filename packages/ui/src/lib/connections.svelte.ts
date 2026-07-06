@@ -11,6 +11,7 @@
 import {
   BROWSER_TRANSPORTS,
   DESKTOP_TRANSPORTS,
+  DesktopError,
   EMPTY_SERVER_CAPABILITIES,
   LocalUrlProvider,
   RedClient,
@@ -202,7 +203,14 @@ async function tauriOpenEmbedded(fileUrl: string): Promise<string> {
   }
   const path = fileUrl.replace(/^file:\/\//i, "");
   const { invoke } = await import("@tauri-apps/api/core");
-  return invoke<string>("open_embedded", { path });
+  try {
+    return await invoke<string>("open_embedded", { path });
+  } catch (e) {
+    // The standalone-Surface adapter seam: classify the command's structured
+    // error (or a legacy string/plugin error) in exactly one place, then throw
+    // a plain Error the provider can surface without any further coercion.
+    throw DesktopError.from(e);
+  }
 }
 
 /**
