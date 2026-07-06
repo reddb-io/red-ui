@@ -7,6 +7,7 @@
   import { onMount, untrack } from 'svelte'
   import Splash from './Splash.svelte'
   import LoadingOverlay from './LoadingOverlay.svelte'
+  import DevConsole from './DevConsole.svelte'
   import GlobalProgressBar from './GlobalProgressBar.svelte'
   import Topbar from './Topbar.svelte'
   import StatusBar from './StatusBar.svelte'
@@ -315,3 +316,7 @@
      connect/boot; self-hides once the open resolves and never flashes on fast
      opens. -->
 <LoadingOverlay />
+
+<!-- Instrumented developer console (#128): a collapsible, accent-free log of
+     every query/HTTP call the client made, toggled from the StatusBar. -->
+<DevConsole />

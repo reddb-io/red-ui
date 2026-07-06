@@ -4,6 +4,7 @@ export * from "./cluster-status";
 export * from "./analytics";
 export * from "./ask";
 export * from "./client";
+export * from "./dev-console";
 export * from "./connection-provider";
 export * from "./local-url-provider";
 export * from "./injected-client-provider";
