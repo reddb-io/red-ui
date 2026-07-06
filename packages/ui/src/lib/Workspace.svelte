@@ -32,6 +32,7 @@
   import { detectCapability } from './capability'
   import { defaultSubpage } from './collection-pages'
   import { createStateRouter, pathToLocation, setRouter, type Router, type View } from './router.svelte'
+  import { workspaceSession, type WorkspaceSnapshot } from './workspace-session'
 
   let {
     router: injectedRouter,
@@ -83,6 +84,27 @@
     }
   }
 
+  function buildSnapshot(): WorkspaceSnapshot {
+    return {
+      view: router.view,
+      collection: router.collection,
+      subpage: router.subpage,
+      tabs: tabs.tabs,
+      activeTabId: tabs.activeId,
+    }
+  }
+
+  function applySnapshot(snap: WorkspaceSnapshot): void {
+    if (snap.tabs.length > 0) tabs.hydrate(snap.tabs, snap.activeTabId)
+    router.go(
+      snap.collection
+        ? { view: 'collection', collection: snap.collection, subpage: snap.subpage ?? 'table' }
+        : { view: snap.view },
+      undefined,
+      true,
+    )
+  }
+
   onMount(() => {
     if (connectionProvider) {
       // Host-injected provider (#33): adopt its authenticated connection.
@@ -93,7 +115,13 @@
       // Connection Bootstrap: one boot resolver handles Tauri IPC, host globals,
       // the Open Contract URL/hash, and finally persisted standalone state.
       void connection.bootstrap().then((route) => {
-        if (route) navigateToBootRoute(route)
+        if (route) {
+          navigateToBootRoute(route)
+        } else {
+          // No explicit boot route — restore the last workspace session.
+          const snap = workspaceSession.restore()
+          if (snap) applySnapshot(snap)
+        }
       })
     }
   })
@@ -201,6 +229,47 @@
   // history URLs from the encrypted store so the dropdown can reconnect.
   $effect(() => {
     if (secureStore.store) connection.hydrateUrls()
+  })
+
+  // Autosave: debounce-schedule a snapshot on every router/tab state change.
+  // Guard on `booted` so we don't snapshot the blank pre-splash state.
+  $effect(() => {
+    if (!booted) return
+    const snap = buildSnapshot()
+    workspaceSession.schedule(snap)
+  })
+
+  // Flush immediately on page hide / window blur so an edit made
+  // right before closing is never lost to the debounce window.
+  onMount(() => {
+    const flush = () => { if (booted) workspaceSession.flush(buildSnapshot()) }
+    document.addEventListener('visibilitychange', flush)
+    window.addEventListener('blur', flush)
+    return () => {
+      document.removeEventListener('visibilitychange', flush)
+      window.removeEventListener('blur', flush)
+    }
+  })
+
+  // Tauri close-request: flush, then destroy the window. The Rust watchdog
+  // races this — if the webview hangs, it force-destroys after its bound.
+  onMount(() => {
+    if (typeof window === 'undefined') return
+    if (!('__TAURI_INTERNALS__' in window || '__TAURI__' in window)) return
+
+    let unlisten: (() => void) | undefined
+
+    void import('@tauri-apps/api/event')
+      .then(({ listen }) =>
+        listen<void>('close-request', async () => {
+          workspaceSession.flush(buildSnapshot())
+          const { getCurrentWindow } = await import('@tauri-apps/api/window')
+          await getCurrentWindow().destroy()
+        }),
+      )
+      .then((fn) => { unlisten = fn })
+
+    return () => { unlisten?.() }
   })
 
   function openNewQuery() {

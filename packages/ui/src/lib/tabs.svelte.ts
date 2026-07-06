@@ -106,6 +106,11 @@ class TabsStore {
     )
   }
 
+  hydrate(savedTabs: Tab[], savedActiveId: string | null): void {
+    this.tabs = savedTabs
+    this.activeId = savedActiveId
+  }
+
   clear(): void {
     this.tabs = []
     this.activeId = null

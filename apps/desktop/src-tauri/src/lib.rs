@@ -318,16 +318,39 @@ pub fn run() {
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|app_handle, event| {
-            // Reap any embedded reddb sidecars when the app exits so we never
-            // leak a file-backed server holding the database open.
-            if let tauri::RunEvent::Exit = event {
-                if let Some(registry) = app_handle.try_state::<EmbeddedRegistry>() {
-                    if let Ok(mut map) = registry.0.lock() {
-                        for (_, embedded) in map.drain() {
-                            let _ = embedded.child.kill();
+            match event {
+                // Reap any embedded reddb sidecars when the app exits so we never
+                // leak a file-backed server holding the database open.
+                tauri::RunEvent::Exit => {
+                    if let Some(registry) = app_handle.try_state::<EmbeddedRegistry>() {
+                        if let Ok(mut map) = registry.0.lock() {
+                            for (_, embedded) in map.drain() {
+                                let _ = embedded.child.kill();
+                            }
                         }
                     }
                 }
+                // Close-request watchdog (#129): prevent the OS close, signal
+                // the webview to flush its session and destroy the window, then
+                // arm a 500 ms watchdog that force-destroys if the webview hangs
+                // so the OS close button can never be trapped.
+                tauri::RunEvent::WindowEvent { label, event, .. } => {
+                    if let tauri::WindowEvent::CloseRequested { api } = event {
+                        api.prevent_close();
+                        if let Some(window) = app_handle.get_webview_window(&label) {
+                            let _ = window.emit("close-request", ());
+                            let win = window.clone();
+                            tauri::async_runtime::spawn(async move {
+                                tokio::time::sleep(
+                                    std::time::Duration::from_millis(500),
+                                )
+                                .await;
+                                let _ = win.destroy();
+                            });
+                        }
+                    }
+                }
+                _ => {}
             }
         });
 }
