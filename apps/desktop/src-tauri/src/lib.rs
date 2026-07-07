@@ -335,7 +335,7 @@ pub fn run() {
                 // arm a 500 ms watchdog that force-destroys if the webview hangs
                 // so the OS close button can never be trapped.
                 tauri::RunEvent::WindowEvent { label, event, .. } => {
-                    if let tauri::WindowEvent::CloseRequested { api } = event {
+                    if let tauri::WindowEvent::CloseRequested { api, .. } = event {
                         api.prevent_close();
                         if let Some(window) = app_handle.get_webview_window(&label) {
                             let _ = window.emit("close-request", ());
