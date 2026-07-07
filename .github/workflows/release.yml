@@ -143,6 +143,46 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
+      # Stage copies of tauri's versioned bundles under stable, version-free
+      # names (red-ui-linux-x86_64.deb, …) so install.sh can fetch
+      # .../releases/latest/download/<asset> without knowing the version.
+      # Best-effort: a missing bundle warns instead of failing the release.
+      - name: stage stable-named assets (for install.sh)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          target="apps/desktop/src-tauri/target"
+          staged=()
+          stage() { # src stable-name
+            if [ -n "$1" ] && [ -f "$1" ]; then
+              cp "$1" "$2" && staged+=("$2")
+            else
+              echo "::warning::no bundle found for $2"
+            fi
+          }
+          case "$(uname -s)" in
+            Linux*)
+              arch="$(uname -m)"
+              stage "$(find "$target" -path '*/bundle/deb/*.deb' -print -quit)" "red-ui-linux-${arch}.deb"
+              stage "$(find "$target" -path '*/bundle/appimage/*.AppImage' -print -quit)" "red-ui-linux-${arch}.AppImage"
+              ;;
+            Darwin*)
+              # The macOS leg builds universal-apple-darwin — one dmg serves
+              # both arches, so stage it under both stable names.
+              dmg="$(find "$target" -path '*/bundle/dmg/*.dmg' -print -quit)"
+              stage "$dmg" "red-ui-darwin-aarch64.dmg"
+              stage "$dmg" "red-ui-darwin-x86_64.dmg"
+              ;;
+            MINGW*|MSYS*|CYGWIN*)
+              stage "$(find "$target" -path '*/bundle/nsis/*-setup.exe' -print -quit)" "red-ui-windows-x86_64-setup.exe"
+              ;;
+          esac
+          [ "${#staged[@]}" -gt 0 ] || { echo "::warning::nothing staged"; exit 0; }
+          gh release upload "$TAG" "${staged[@]}" --clobber
+
   pwa-build:
     name: pwa · build + zip
     runs-on: blacksmith-4vcpu-ubuntu-2404
@@ -191,6 +231,30 @@ jobs:
         with:
           name: pwa-bundle
           path: packages/ui/build
+
+  # sha256 manifest over the stable-named assets (and the web zip), consumed
+  # by install.sh's verify step. Runs after both producers so every asset is
+  # already attached to the (draft) release. gh resolves draft releases by
+  # tag for authenticated maintainers, so draft-then-publish keeps working.
+  checksums:
+    name: checksums.txt
+    needs: [tauri, pwa-build]
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG: ${{ github.ref_name }}
+    steps:
+      - name: build + upload checksums.txt
+        run: |
+          set -euo pipefail
+          mkdir dl && cd dl
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern 'red-ui-*' \
+            || { echo "::warning::no red-ui-* assets on $TAG — skipping checksums"; exit 0; }
+          sha256sum * > checksums.txt
+          cat checksums.txt
+          gh release upload "$TAG" checksums.txt --clobber --repo "$GITHUB_REPOSITORY"
 
   # GitHub Pages deployment for https://ui.reddb.io is handled by
   # .github/workflows/pages.yml on pushes to main.
