@@ -1,6 +1,7 @@
 import appCss from "../../app.css?inline";
 import type { Component } from "svelte";
-import type { ConnectionProvider } from "../reddb";
+import type { ConnectionProvider, ConsoleSink } from "../reddb";
+import { devConsole } from "../reddb/dev-console";
 import type { Theme } from "../theme.svelte";
 import { RED_UI_VERSION, readBuildInfo } from "../build-info";
 
@@ -18,6 +19,9 @@ export {
   RedClient,
   type Connection,
   type ConnectionProvider,
+  type ConsoleEntry,
+  type ConsoleEntryKind,
+  type ConsoleSink,
   type InjectedClientOptions,
   type RedClientOptions,
 } from "../reddb";
@@ -27,6 +31,14 @@ export interface RedUiEmbedOptions {
   initialRoute?: string;
   theme?: Theme;
   shadowRoot?: ShadowRootInit;
+  /**
+   * Host tap on red-ui's developer console. When set, every query/HTTP
+   * round-trip the embedded Core records — verb, target, duration, row count,
+   * sanitized payload — is also delivered to the host, so a host app (e.g.
+   * red-request) can mirror red-ui's RQL/SQL traffic into its own developer
+   * bar. Entries are already secret-redacted before they reach the sink.
+   */
+  consoleSink?: ConsoleSink;
 }
 
 export interface RedUiEmbedHandle {
@@ -167,11 +179,16 @@ export async function mountRedUi(
     },
   });
 
+  const removeSink = opts.consoleSink
+    ? devConsole.addSink(opts.consoleSink)
+    : undefined;
+
   return {
     host,
     shadowRoot,
     portalTarget,
     destroy: () => {
+      removeSink?.();
       void unmount(instance);
       shadowRoot.textContent = "";
     },
@@ -180,6 +197,7 @@ export async function mountRedUi(
 
 export class RedUiElement extends HTMLElement {
   #connectionProvider: ConnectionProvider | null = null;
+  #consoleSink: ConsoleSink | null = null;
   initialRoute: string | undefined;
   theme: Theme | undefined;
   #handle: RedUiEmbedHandle | null = null;
@@ -198,6 +216,20 @@ export class RedUiElement extends HTMLElement {
 
   set connectionProvider(provider: ConnectionProvider | null) {
     this.#connectionProvider = provider;
+    if (this.isConnected) this.#mounting = this.#mount();
+  }
+
+  get consoleSink(): ConsoleSink | null {
+    return this.#consoleSink;
+  }
+
+  /**
+   * Host tap on the embedded Core's developer console (see
+   * `RedUiEmbedOptions.consoleSink`). Setting it after mount remounts, like
+   * `connectionProvider` — hosts normally assign both before attach.
+   */
+  set consoleSink(sink: ConsoleSink | null) {
+    this.#consoleSink = sink;
     if (this.isConnected) this.#mounting = this.#mount();
   }
 
@@ -220,6 +252,7 @@ export class RedUiElement extends HTMLElement {
       connectionProvider: this.#connectionProvider,
       initialRoute: this.initialRoute,
       theme: this.theme,
+      consoleSink: this.#consoleSink ?? undefined,
     });
   }
 }

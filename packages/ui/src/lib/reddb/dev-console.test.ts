@@ -31,7 +31,9 @@ describe("redactSecrets", () => {
 
 describe("sanitizePayload", () => {
   it("parses a JSON body and redacts secrets in the copyable text", () => {
-    const out = sanitizePayload(JSON.stringify({ query: "SELECT 1", token: "secret" }));
+    const out = sanitizePayload(
+      JSON.stringify({ query: "SELECT 1", token: "secret" })
+    );
     expect(out).toContain("SELECT 1");
     expect(out).toContain("«redacted»");
     expect(out).not.toContain("secret");
@@ -110,6 +112,32 @@ describe("DevConsoleStore", () => {
     expect(store.size).toBe(3);
     // ids 3,4,5 survive; 1,2 were dropped.
     expect(store.snapshot().map((e) => e.id)).toEqual([3, 4, 5]);
+  });
+
+  it("delivers each new entry to sinks exactly once, without replaying history", () => {
+    const store = new DevConsoleStore();
+    store.record(baseEntry()); // recorded before the sink exists — not replayed
+    const seen: number[] = [];
+    const removeSink = store.addSink((entry) => seen.push(entry.id));
+    store.record(baseEntry());
+    store.record(baseEntry());
+    expect(seen).toEqual([2, 3]);
+    removeSink();
+    store.record(baseEntry());
+    expect(seen).toEqual([2, 3]); // detached sink hears nothing
+  });
+
+  it("survives a throwing sink: the entry is still stored and other sinks still fire", () => {
+    const store = new DevConsoleStore();
+    const seen: number[] = [];
+    store.addSink(() => {
+      throw new Error("host sink exploded");
+    });
+    store.addSink((entry) => seen.push(entry.id));
+    const entry = store.record(baseEntry());
+    expect(entry.id).toBe(1);
+    expect(store.size).toBe(1);
+    expect(seen).toEqual([1]);
   });
 });
 

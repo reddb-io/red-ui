@@ -39,6 +39,14 @@ export interface ConsoleEntry {
 /** A record as handed to the store — the store owns `id`. */
 export type ConsoleEntryInput = Omit<ConsoleEntry, "id">;
 
+/**
+ * A per-entry tap on the console. Unlike `subscribe` (which observes the whole
+ * snapshot for rendering), a sink receives each entry exactly once, as it is
+ * recorded — the shape an embedding host wants for mirroring red-ui's traffic
+ * into its own developer console.
+ */
+export type ConsoleSink = (entry: ConsoleEntry) => void;
+
 type Listener = (entries: readonly ConsoleEntry[]) => void;
 
 /** Keys whose values are always masked, matched case-insensitively as substrings. */
@@ -61,7 +69,9 @@ export function redactSecrets(value: unknown, depth = 0): unknown {
   if (value && typeof value === "object") {
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
-      out[k] = SENSITIVE_KEY_RE.test(k) ? REDACTED : redactSecrets(v, depth + 1);
+      out[k] = SENSITIVE_KEY_RE.test(k)
+        ? REDACTED
+        : redactSecrets(v, depth + 1);
     }
     return out;
   }
@@ -101,6 +111,7 @@ export function sanitizePayload(body: unknown): string | undefined {
 export class DevConsoleStore {
   private entries: ConsoleEntry[] = [];
   private readonly listeners = new Set<Listener>();
+  private readonly sinks = new Set<ConsoleSink>();
   private nextId = 1;
 
   /** Cap on retained entries; oldest are dropped past this. */
@@ -114,7 +125,26 @@ export class DevConsoleStore {
       this.entries.splice(0, this.entries.length - this.capacity);
     }
     this.emit();
+    for (const sink of this.sinks) {
+      try {
+        sink(entry);
+      } catch {
+        // A host-owned sink must never be able to break the client seam.
+      }
+    }
     return entry;
+  }
+
+  /**
+   * Tap every future entry. Entries recorded before the sink was added are
+   * not replayed — a host mirrors live traffic, it doesn't import history.
+   * Returns an unsubscribe.
+   */
+  addSink(sink: ConsoleSink): () => void {
+    this.sinks.add(sink);
+    return () => {
+      this.sinks.delete(sink);
+    };
   }
 
   /** A frozen, newest-last snapshot of the log. */
