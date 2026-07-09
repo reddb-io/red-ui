@@ -27,7 +27,9 @@ concurrency:
 
 jobs:
   check:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    # Public repo — ubuntu-latest is free; this pnpm lane is light enough
+    # that a paid Blacksmith runner buys nothing (cost policy, July 2026).
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -45,8 +47,10 @@ jobs:
     # Verify the Rust shell still compiles on every PR; doesn't bundle
     # installers (that's the release workflow's job) — just runs
     # `cargo check` against the same workspace tauri-action will later use.
-    # Skipped on draft PRs (the slowest job; don't burn it on WIP).
-    if: github.event.pull_request.draft != true
+    # Cost policy (July 2026, Blacksmith bill): the slowest job runs
+    # POST-MERGE on push to main only — never on an open PR. Rust shell
+    # breakage surfaces after merge; release.yml still hard-gates on tags.
+    if: github.event_name != 'pull_request'
     runs-on: blacksmith-4vcpu-ubuntu-2404
     env:
       # sccache object-cache; CARGO_INCREMENTAL must be 0 (incremental and
