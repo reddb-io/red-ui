@@ -32,8 +32,22 @@ concurrency:
 # tauri + pwa, triggered by a manually-pushed v* tag when you want a desktop/PWA
 # release. This keeps npm with exactly one publisher (no double-publish).
 jobs:
+  # Preflight: verify the pinned reddb release has all required sidecar assets
+  # before the Tauri build matrix starts. A missing asset fails here in seconds
+  # rather than after each platform runner has warmed up and run Rust compilation.
+  preflight:
+    name: preflight · reddb assets
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    steps:
+      - uses: actions/checkout@v4
+      - name: check reddb release assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash scripts/preflight-release-assets.sh
+
   tauri:
     name: tauri · ${{ matrix.platform }}
+    needs: preflight
     permissions:
       contents: write
     strategy:
@@ -111,11 +125,14 @@ jobs:
         run: ls -la packages/ui/build/ && test -f packages/ui/build/index.html
 
       # Provision the `red` sidecar (Tauri externalBin) — gitignored, not
-      # committed. Must exist before tauri-action bundles the app.
+      # committed. fetch-sidecar.sh downloads the pinned release asset for
+      # the build target, preferring the static musl build on Linux (no glibc
+      # dependency), and verifies the sha256 checksum before placing it in
+      # apps/desktop/src-tauri/binaries/red-<triple>.
       - name: provision red sidecar
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/reddb-io/reddb/main/install.sh | bash
-          bash scripts/sync-desktop-sidecar.sh "$HOME/.local/bin/red"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash scripts/fetch-sidecar.sh
 
       - name: build tauri
         uses: tauri-apps/tauri-action@v0
