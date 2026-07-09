@@ -4,6 +4,14 @@ Universal client for [reddb](https://github.com/reddb-io/reddb) — connect to e
 
 Ships as both a desktop app (Tauri 2) and a PWA built from the same Svelte source.
 
+## Install
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/reddb-io/red-ui/main/install.sh | bash
+```
+
+Detects your platform, downloads the matching release asset, and verifies its sha256 against the release's `checksums.txt`. Linux installs the `.deb` by default (`--appimage` for the portable single-file build); macOS/Windows get the verified installer handed to them. Re-running the same one-liner upgrades in place — it's the update mechanism too. Remove with `uninstall.sh`.
+
 ## Stack
 
 - **SvelteKit** + `adapter-static` — single bundle, deployable as PWA or wrapped by Tauri.
