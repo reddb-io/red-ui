@@ -53,15 +53,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # macOS and Windows builds are intentionally commented out until
-        # the Linux pipeline is green end-to-end. Uncomment to restore.
+        # Linux and Windows build. The macOS leg stays commented out until
+        # signing/notarization secrets are in place — uncomment to restore.
         include:
           - platform: blacksmith-8vcpu-ubuntu-2404
             args: ""
           # - platform: blacksmith-6vcpu-macos-15
           #   args: '--target universal-apple-darwin'
-          # - platform: blacksmith-8vcpu-windows-2025
-          #   args: ''
+          - platform: blacksmith-8vcpu-windows-2025
+            args: ""
 
     runs-on: ${{ matrix.platform }}
     env:

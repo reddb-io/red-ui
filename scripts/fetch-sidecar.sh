@@ -49,6 +49,14 @@ if [ -z "$TRIPLE" ]; then
   esac
 fi
 
+# Windows sidecars must keep the `.exe` extension: Tauri resolves externalBin
+# as `binaries/red-<triple>.exe` on Windows and the bundler skips the sidecar
+# entirely when the extension is missing.
+case "$TRIPLE" in
+  *-windows-*) SIDECAR_EXT=".exe" ;;
+  *)           SIDECAR_EXT="" ;;
+esac
+
 # ── source-build path ────────────────────────────────────────────────────────
 if [[ "${1:-}" == "--source" ]]; then
   REDDB_SRC="${REDDB_SRC:-}"
@@ -62,9 +70,9 @@ if [[ "${1:-}" == "--source" ]]; then
   echo "▸ building red from source: $REDDB_SRC"
   (cd "$REDDB_SRC" && cargo build --release)
   mkdir -p "$DEST_DIR"
-  cp "$REDDB_SRC/target/release/red" "$DEST_DIR/red-$TRIPLE"
-  chmod +x "$DEST_DIR/red-$TRIPLE"
-  echo "▸ sidecar provisioned from source: binaries/red-$TRIPLE"
+  cp "$REDDB_SRC/target/release/red$SIDECAR_EXT" "$DEST_DIR/red-$TRIPLE$SIDECAR_EXT"
+  chmod +x "$DEST_DIR/red-$TRIPLE$SIDECAR_EXT"
+  echo "▸ sidecar provisioned from source: binaries/red-$TRIPLE$SIDECAR_EXT"
   exit 0
 fi
 
@@ -194,6 +202,6 @@ if [ -z "$FETCHED_ASSET" ]; then
   exit 1
 fi
 
-cp "$BIN_TMP" "$DEST_DIR/red-$TRIPLE"
-chmod +x "$DEST_DIR/red-$TRIPLE"
-echo "▸ sidecar provisioned: binaries/red-$TRIPLE  ($FETCHED_ASSET from $REDDB_REPO $REDDB_VERSION)"
+cp "$BIN_TMP" "$DEST_DIR/red-$TRIPLE$SIDECAR_EXT"
+chmod +x "$DEST_DIR/red-$TRIPLE$SIDECAR_EXT"
+echo "▸ sidecar provisioned: binaries/red-$TRIPLE$SIDECAR_EXT  ($FETCHED_ASSET from $REDDB_REPO $REDDB_VERSION)"
