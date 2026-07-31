@@ -81,6 +81,10 @@ jobs:
       CARGO_INCREMENTAL: "0"
       SCCACHE_GHA_ENABLED: "true"
       RUSTC_WRAPPER: sccache
+      # Which of the two build steps below runs. The `secrets` context is not
+      # available in a step `if:`, but it is in `env:`, so the decision is made
+      # here and read back as a plain string.
+      HAS_APPLE_CERT: ${{ secrets.APPLE_CERTIFICATE != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -158,7 +162,7 @@ jobs:
       # and fail the build ("failed to import keychain certificate"). Empty
       # TAURI_SIGNING_* and WINDOWS_CERTIFICATE are tolerated, so those stay put.
       - name: build tauri (unsigned — no Apple certificate configured)
-        if: ${{ secrets.APPLE_CERTIFICATE == '' }}
+        if: env.HAS_APPLE_CERT != 'true'
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -178,7 +182,7 @@ jobs:
           args: ${{ matrix.args }}
 
       - name: build tauri (signed)
-        if: ${{ secrets.APPLE_CERTIFICATE != '' }}
+        if: env.HAS_APPLE_CERT == 'true'
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
