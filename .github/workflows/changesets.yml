@@ -10,6 +10,11 @@ name: Changesets
 #   (@reddb-io/ui + ui-kit + ui-mcp), commits "chore(release): version packages",
 #   pushes it to main, and runs `changeset publish`.
 #
+# The publish step runs on every push to main, not only when this workflow did
+# the versioning: a bump that landed through a PR would otherwise never reach
+# npm. `changeset publish` skips versions already on the registry, so the extra
+# runs are no-ops.
+#
 # Auth: GITHUB_TOKEN (contents:write to push the bump) + NPM_TOKEN (registry).
 # Runs github-hosted because npm provenance only verifies there. The bot's own
 # bump commit is skipped by the actor guard, so it never loops.
@@ -65,14 +70,17 @@ jobs:
         run: |
           set -euo pipefail
           # `release:version` = changeset version (+ sync-desktop-version.mjs).
-          # No pending changesets ⇒ no file changes ⇒ we skip the publish.
           pnpm release:version
-          if [ -z "$(git status --porcelain)" ]; then
-            echo "No pending changesets — nothing to version or publish."
-            exit 0
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "chore(release): version packages"
+            git push origin HEAD:main
+          else
+            echo "No pending changesets — nothing to version."
           fi
-          git add -A
-          git commit -m "chore(release): version packages"
-          git push origin HEAD:main
-          # changeset publish is idempotent: it skips versions already on npm.
+          # Publish unconditionally. `changeset publish` is idempotent (it skips
+          # versions already on the registry), and running it even when nothing
+          # was versioned here is what lets npm catch up after a bump that
+          # landed through a PR instead of through this workflow — otherwise
+          # that version is simply never published.
           pnpm release:publish
