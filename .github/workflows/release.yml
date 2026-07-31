@@ -151,12 +151,37 @@ jobs:
           TAURI_TARGET_TRIPLE: ${{ matrix.triple }}
         run: bash scripts/fetch-sidecar.sh
 
-      - name: build tauri
+      # Two build steps, differing only in whether the APPLE_* signing variables
+      # are present at all. They can't be one step with empty values: the macOS
+      # bundler branches on the variable *existing*, not on it being non-empty,
+      # so an empty APPLE_CERTIFICATE makes it run `security import` on nothing
+      # and fail the build ("failed to import keychain certificate"). Empty
+      # TAURI_SIGNING_* and WINDOWS_CERTIFICATE are tolerated, so those stay put.
+      - name: build tauri (unsigned — no Apple certificate configured)
+        if: ${{ secrets.APPLE_CERTIFICATE == '' }}
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Tauri updater signing — empty values are tolerated by
           # tauri-action and produce unsigned builds (no autoUpdate).
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # Windows code signing
+          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+          WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+        with:
+          projectPath: apps/desktop
+          tagName: ${{ github.ref_name }}
+          releaseName: "red-ui ${{ github.ref_name }}"
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
+
+      - name: build tauri (signed)
+        if: ${{ secrets.APPLE_CERTIFICATE != '' }}
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           # macOS code signing + notarization

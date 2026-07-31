@@ -43,6 +43,25 @@ jobs:
       # caught when the runtime is wired up).
       - run: pnpm --filter @reddb-io/ui build
 
+      # icon.ico and icon.icns are container formats no Linux build ever opens,
+      # so PNGs carrying those extensions sat in the tree until the first
+      # Windows build failed on `RC2175: not in 3.00 format`. Check the magic
+      # bytes on every PR instead of on every other platform's first release.
+      - name: verify desktop icon formats
+        run: |
+          node -e '
+            const fs = require("fs");
+            const check = (p, magic, label) => {
+              const head = fs.readFileSync(p).subarray(0, magic.length);
+              if (!head.equals(Buffer.from(magic)))
+                throw new Error(`${p} is not a ${label} (magic ${head.toString("hex")})`);
+            };
+            const dir = "apps/desktop/src-tauri/icons";
+            check(`${dir}/icon.ico`, [0x00, 0x00, 0x01, 0x00], "Windows ICO");
+            check(`${dir}/icon.icns`, [0x69, 0x63, 0x6e, 0x73], "macOS ICNS");
+            console.log("icon formats ok");
+          '
+
   tauri:
     # Verify the Rust shell still compiles on every PR; doesn't bundle
     # installers (that's the release workflow's job) — just runs
