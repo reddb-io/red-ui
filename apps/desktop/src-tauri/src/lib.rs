@@ -127,18 +127,37 @@ struct Embedded {
 #[derive(Default)]
 struct EmbeddedRegistry(Mutex<HashMap<String, Embedded>>);
 
+/// The user's home directory. `HOME` on unix; Windows sets `USERPROFILE`
+/// instead (and only sets `HOME` under MSYS/Git-Bash-style shells), so try
+/// both before giving up.
+fn home_dir() -> Result<String, CommandError> {
+    std::env::var("HOME")
+        .or_else(|_| std::env::var("USERPROFILE"))
+        .map_err(|_| CommandError::new("PATH_RESOLUTION", "no HOME or USERPROFILE in the environment"))
+}
+
 /// Resolve a user-typed path (from a `file://` URL) to an absolute path. `~`
-/// and relative paths resolve against `$HOME`, so `file://./test.rdb` opens
-/// `~/test.rdb` — a predictable base for a GUI app whose cwd is unspecified.
+/// and relative paths resolve against the home directory, so `file://./test.rdb`
+/// opens `~/test.rdb` — a predictable base for a GUI app whose cwd is
+/// unspecified.
 fn resolve_embedded_path(input: &str) -> Result<String, CommandError> {
     let raw = input.trim();
     let raw = raw.strip_prefix("file://").unwrap_or(raw);
-    let home = || {
-        std::env::var("HOME")
-            .map_err(|_| CommandError::new("PATH_RESOLUTION", "HOME environment variable is not set"))
+    // A Windows file URL carries its drive behind the URL's own root slash
+    // (`file:///C:/db.rdb` → `/C:/db.rdb`), which `Path::is_absolute` rejects —
+    // the path would then be joined onto the home directory. Drop that slash.
+    let raw = match raw.strip_prefix('/') {
+        Some(rest)
+            if cfg!(windows)
+                && rest.as_bytes().first().is_some_and(u8::is_ascii_alphabetic)
+                && rest[1..].starts_with(':') =>
+        {
+            rest
+        }
+        _ => raw,
     };
     let expanded = if let Some(rest) = raw.strip_prefix("~/") {
-        format!("{}/{}", home()?, rest)
+        format!("{}/{}", home_dir()?, rest)
     } else {
         raw.to_string()
     };
@@ -146,7 +165,7 @@ fn resolve_embedded_path(input: &str) -> Result<String, CommandError> {
     let abs = if path.is_absolute() {
         path.to_path_buf()
     } else {
-        std::path::Path::new(&home()?).join(expanded.trim_start_matches("./"))
+        std::path::Path::new(&home_dir()?).join(expanded.trim_start_matches("./"))
     };
     Ok(abs.to_string_lossy().to_string())
 }
@@ -398,9 +417,29 @@ mod tests {
         assert!(err.detail.is_some());
     }
 
+    #[cfg(unix)]
     #[test]
     fn resolve_embedded_path_absolute_is_untouched() {
         let resolved = resolve_embedded_path("file:///tmp/data.rdb").expect("absolute path");
         assert_eq!(resolved, "/tmp/data.rdb");
+    }
+
+    // The dialog plugin hands back `file:///C:/…` on Windows; the drive has to
+    // survive, rather than the path being treated as relative and joined onto
+    // the user profile.
+    #[cfg(windows)]
+    #[test]
+    fn resolve_embedded_path_keeps_windows_drive() {
+        let resolved =
+            resolve_embedded_path("file:///C:/Users/dev/data.rdb").expect("absolute path");
+        assert_eq!(resolved, "C:/Users/dev/data.rdb");
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn resolve_embedded_path_expands_tilde_from_userprofile() {
+        let resolved = resolve_embedded_path("file://~/data.rdb").expect("home-relative path");
+        assert!(resolved.ends_with("data.rdb"));
+        assert!(!resolved.starts_with('~'));
     }
 }

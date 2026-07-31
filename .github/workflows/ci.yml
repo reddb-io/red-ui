@@ -78,7 +78,7 @@ jobs:
           workspaces: apps/desktop/src-tauri
           # Shared with release.yml's tauri job so the release build
           # warm-starts from CI's cache.
-          shared-key: tauri-${{ runner.os }}-rust-1.95.0
+          shared-key: tauri-x86_64-unknown-linux-gnu-rust-1.95.0
           cache-on-failure: "true"
       - uses: ./.github/actions/tauri-linux-deps
       # The `red` sidecar (Tauri externalBin) is a ~15MB binary, gitignored

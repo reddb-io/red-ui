@@ -26,12 +26,13 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DEST_DIR="$HERE/apps/desktop/src-tauri/binaries"
 
 # ── version pin ──────────────────────────────────────────────────────────────
-# WHY THIS PIN: v1.9.1 is the first release to ship static musl assets and to
-# emit Access-Control-Allow-Origin headers (required for browser fetches from
-# the SvelteKit bundle). Update REDDB_VERSION when reddb ships a newer release
-# that red-ui requires, then confirm the new release has all required assets
-# via: scripts/preflight-release-assets.sh
-REDDB_VERSION="${REDDB_VERSION:-v1.9.1}"
+# WHY THIS PIN: >=1.9.1 emits Access-Control-Allow-Origin headers (required for
+# browser fetches from the SvelteKit bundle); v1.23.2 is the current release and
+# the one whose asset set is verified against the mapping below. Update
+# REDDB_VERSION when reddb ships a newer release that red-ui requires, then
+# confirm the new release has all required assets via:
+#   scripts/preflight-release-assets.sh
+REDDB_VERSION="${REDDB_VERSION:-v1.23.2}"
 REDDB_REPO="reddb-io/reddb"
 
 # ── target triple ────────────────────────────────────────────────────────────
@@ -45,6 +46,7 @@ if [ -z "$TRIPLE" ]; then
     Linux-aarch64)           TRIPLE="aarch64-unknown-linux-gnu" ;;
     Darwin-x86_64)           TRIPLE="x86_64-apple-darwin" ;;
     Darwin-arm64|Darwin-aarch64) TRIPLE="aarch64-apple-darwin" ;;
+    MINGW*-x86_64|MSYS*-x86_64|CYGWIN*-x86_64) TRIPLE="x86_64-pc-windows-msvc" ;;
     *) echo "✗ cannot determine target triple; set TAURI_TARGET_TRIPLE" >&2; exit 1 ;;
   esac
 fi
@@ -72,25 +74,34 @@ fi
 # Maps each Tauri target triple to the reddb GitHub release asset filename.
 # PREFERRED is fetched first; FALLBACK is tried when PREFERRED is absent.
 # Linux: musl static build preferred; glibc build as fallback.
+#
+# These names are reddb's own release convention (`<arch>` as uname reports it,
+# `-static` for the musl link) — verify against a real release before editing:
+#   gh release view v1.23.2 -R reddb-io/reddb --json assets --jq '.assets[].name'
 case "$TRIPLE" in
   x86_64-unknown-linux-*)
-    PREFERRED="red-linux-amd64-musl"
-    FALLBACK="red-linux-amd64"
+    PREFERRED="red-linux-x86_64-static"
+    FALLBACK="red-linux-x86_64"
     ;;
   aarch64-unknown-linux-*)
-    PREFERRED="red-linux-arm64-musl"
-    FALLBACK="red-linux-arm64"
+    PREFERRED="red-linux-aarch64-static"
+    FALLBACK="red-linux-aarch64"
     ;;
   x86_64-apple-darwin)
-    PREFERRED="red-darwin-amd64"
+    PREFERRED="red-macos-x86_64"
     FALLBACK=""
     ;;
   aarch64-apple-darwin)
-    PREFERRED="red-darwin-arm64"
+    PREFERRED="red-macos-aarch64"
     FALLBACK=""
     ;;
   x86_64-pc-windows-msvc)
-    PREFERRED="red-windows-amd64.exe"
+    PREFERRED="red-windows-x86_64.exe"
+    FALLBACK=""
+    ;;
+  universal-apple-darwin)
+    # Handled below by fetching both slices and lipo-ing them together.
+    PREFERRED=""
     FALLBACK=""
     ;;
   *)
@@ -98,6 +109,11 @@ case "$TRIPLE" in
     exit 1
     ;;
 esac
+
+# Tauri appends the host's executable suffix when it resolves an externalBin,
+# so the Windows sidecar has to land as red-<triple>.exe.
+DEST_SUFFIX=""
+case "$TRIPLE" in *-windows-*) DEST_SUFFIX=".exe" ;; esac
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 GH_AUTH=()
@@ -173,6 +189,30 @@ fetch_and_verify() {
   return 0
 }
 
+# ── universal macOS: lipo the two slices ─────────────────────────────────────
+# `tauri build --target universal-apple-darwin` resolves the externalBin as
+# red-universal-apple-darwin, and no such asset exists upstream — reddb ships
+# one binary per arch. Fuse them here. The per-arch files are kept too, so a
+# plain `tauri dev` on the same machine (which resolves the host triple) works.
+if [ "$TRIPLE" = "universal-apple-darwin" ]; then
+  command -v lipo >/dev/null 2>&1 || { echo "✗ lipo not found (macOS only)" >&2; exit 1; }
+  mkdir -p "$DEST_DIR"
+  SLICES=()
+  for pair in "x86_64-apple-darwin:red-macos-x86_64" "aarch64-apple-darwin:red-macos-aarch64"; do
+    slice_triple="${pair%%:*}"
+    slice_asset="${pair##*:}"
+    fetch_and_verify "$slice_asset" "$TMPDIR_LOCAL/$slice_asset" \
+      || { echo "✗ could not fetch $slice_asset from $REDDB_REPO@$REDDB_VERSION" >&2; exit 1; }
+    cp "$TMPDIR_LOCAL/$slice_asset" "$DEST_DIR/red-$slice_triple"
+    chmod +x "$DEST_DIR/red-$slice_triple"
+    SLICES+=("$DEST_DIR/red-$slice_triple")
+  done
+  lipo -create -output "$DEST_DIR/red-universal-apple-darwin" "${SLICES[@]}"
+  chmod +x "$DEST_DIR/red-universal-apple-darwin"
+  echo "▸ sidecar provisioned: binaries/red-universal-apple-darwin  (lipo of both macOS slices, $REDDB_REPO $REDDB_VERSION)"
+  exit 0
+fi
+
 # ── fetch the binary ──────────────────────────────────────────────────────────
 mkdir -p "$DEST_DIR"
 BIN_TMP="$TMPDIR_LOCAL/red-bin"
@@ -194,6 +234,6 @@ if [ -z "$FETCHED_ASSET" ]; then
   exit 1
 fi
 
-cp "$BIN_TMP" "$DEST_DIR/red-$TRIPLE"
-chmod +x "$DEST_DIR/red-$TRIPLE"
-echo "▸ sidecar provisioned: binaries/red-$TRIPLE  ($FETCHED_ASSET from $REDDB_REPO $REDDB_VERSION)"
+cp "$BIN_TMP" "$DEST_DIR/red-$TRIPLE$DEST_SUFFIX"
+chmod +x "$DEST_DIR/red-$TRIPLE$DEST_SUFFIX"
+echo "▸ sidecar provisioned: binaries/red-$TRIPLE$DEST_SUFFIX  ($FETCHED_ASSET from $REDDB_REPO $REDDB_VERSION)"
