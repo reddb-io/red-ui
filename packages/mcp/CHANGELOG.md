@@ -1,5 +1,20 @@
 # @reddb-io/ui-mcp
 
+## 0.3.2
+
+### Patch Changes
+
+- Release binaries for every supported platform and publish them where installers can find them.
+
+  Tags now build Linux x86_64 and aarch64, a universal macOS bundle, and Windows
+  x86_64, and the release is published (not left as a draft) once every platform
+  and the checksum job succeed — `/releases/latest` skips drafts, so nothing could
+  install a tag before. `install.ps1` joins `install.sh` as the Windows one-liner.
+
+  Also fixes the sidecar fetch, which pointed at a reddb release and asset names
+  that do not exist, and `resolve_embedded_path`, which could not resolve a
+  Windows `file:///C:/…` path or find the home directory on Windows.
+
 ## 0.3.1
 
 ## 0.3.0

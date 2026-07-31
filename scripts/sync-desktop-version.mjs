@@ -57,6 +57,22 @@ const edits = [];
   }
 }
 
+// Cargo.lock — the red-ui package entry. Cargo would rewrite this itself on the
+// next build, but leaving it stale means the release tag and the committed
+// lockfile disagree about what version was built.
+{
+  const path = join(root, "apps/desktop/src-tauri/Cargo.lock");
+  const lock = readFileSync(path, "utf8");
+  const updated = lock.replace(
+    /(name = "red-ui"\nversion = ")[^"]*(")/,
+    `$1${version}$2`
+  );
+  if (updated !== lock) {
+    writeFileSync(path, updated);
+    edits.push(`Cargo.lock → ${version}`);
+  }
+}
+
 if (edits.length === 0) {
   console.log(`sync-desktop-version: desktop already at ${version}`);
 } else {
