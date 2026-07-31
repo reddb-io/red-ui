@@ -47,6 +47,17 @@ jobs:
       # so PNGs carrying those extensions sat in the tree until the first
       # Windows build failed on `RC2175: not in 3.00 format`. Check the magic
       # bytes on every PR instead of on every other platform's first release.
+      # An invalid workflow file isn't a normal failure — GitHub creates a run
+      # with zero jobs and no log, so a broken release.yml looks like "the
+      # release didn't happen" rather than an error. That is exactly how a
+      # `secrets` context in a step `if:` (not allowed there) reached a tag.
+      # shellcheck integration is off: this gates workflow *validity*, and the
+      # runner's shellcheck would also start failing CI on existing run blocks.
+      - name: lint workflows
+        run: |
+          bash <(curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/v1.7.12/scripts/download-actionlint.bash) 1.7.12
+          ./actionlint -shellcheck=
+
       - name: verify desktop icon formats
         run: |
           node -e '

@@ -1,0 +1,11 @@
+# Runner labels actionlint can't know about: Blacksmith-hosted runners, which
+# are self-hosted from GitHub's point of view. Keep in sync with the `runs-on`
+# values across .github/workflows (grep for "blacksmith-").
+self-hosted-runner:
+  labels:
+    - blacksmith-2vcpu-ubuntu-2404
+    - blacksmith-4vcpu-ubuntu-2404
+    - blacksmith-8vcpu-ubuntu-2404
+    - blacksmith-8vcpu-ubuntu-2404-arm
+    - blacksmith-6vcpu-macos-15
+    - blacksmith-8vcpu-windows-2025
