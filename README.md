@@ -7,10 +7,18 @@ Ships as both a desktop app (Tauri 2) and a PWA built from the same Svelte sourc
 ## Install
 
 ```sh
+# Linux · macOS
 curl -fsSL https://raw.githubusercontent.com/reddb-io/red-ui/main/install.sh | bash
 ```
 
-Detects your platform, downloads the matching release asset, and verifies its sha256 against the release's `checksums.txt`. Linux installs the `.deb` by default (`--appimage` for the portable single-file build); macOS/Windows get the verified installer handed to them. Re-running the same one-liner upgrades in place — it's the update mechanism too. Remove with `uninstall.sh`.
+```powershell
+# Windows
+irm https://raw.githubusercontent.com/reddb-io/red-ui/main/install.ps1 | iex
+```
+
+Detects your platform, downloads the matching release asset, and verifies its sha256 against the release's `checksums.txt`. Linux installs the `.deb` by default (`--appimage` for the portable single-file build); macOS gets the verified installer handed to it. Re-running the same one-liner upgrades in place — it's the update mechanism too. Remove with `uninstall.sh`.
+
+Releases carry Linux x86_64 and aarch64, a universal macOS build, and Windows x86_64.
 
 ## Stack
 

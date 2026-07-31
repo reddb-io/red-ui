@@ -46,22 +46,31 @@ jobs:
         run: bash scripts/preflight-release-assets.sh
 
   tauri:
-    name: tauri · ${{ matrix.platform }}
+    name: tauri · ${{ matrix.triple }}
     needs: preflight
     permissions:
       contents: write
     strategy:
       fail-fast: false
       matrix:
-        # macOS and Windows builds are intentionally commented out until
-        # the Linux pipeline is green end-to-end. Uncomment to restore.
+        # One entry per shipped architecture. `triple` drives the sidecar
+        # fetch, the rust-cache key, and (on macOS) the build target. Linux
+        # aarch64 builds natively on a Blacksmith ARM runner rather than
+        # cross-compiling — cross-building webkit2gtk is not worth the pain
+        # (the same call reddb-io/reddb made for its aarch64 leg).
         include:
           - platform: blacksmith-8vcpu-ubuntu-2404
+            triple: x86_64-unknown-linux-gnu
             args: ""
-          # - platform: blacksmith-6vcpu-macos-15
-          #   args: '--target universal-apple-darwin'
-          # - platform: blacksmith-8vcpu-windows-2025
-          #   args: ''
+          - platform: blacksmith-8vcpu-ubuntu-2404-arm
+            triple: aarch64-unknown-linux-gnu
+            args: ""
+          - platform: blacksmith-6vcpu-macos-15
+            triple: universal-apple-darwin
+            args: "--target universal-apple-darwin"
+          - platform: blacksmith-8vcpu-windows-2025
+            triple: x86_64-pc-windows-msvc
+            args: ""
 
     runs-on: ${{ matrix.platform }}
     env:
@@ -100,9 +109,11 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: apps/desktop/src-tauri
-          # Same key as ci.yml's tauri job so the release build warm-starts
-          # from CI's cache.
-          shared-key: tauri-${{ runner.os }}-rust-1.95.0
+          # Keyed by triple, not runner.os — the two Linux legs share an OS but
+          # not an architecture, and one key would have them overwriting each
+          # other's cache. The x86_64-linux key matches ci.yml's tauri job so
+          # the release build warm-starts from CI's cache.
+          shared-key: tauri-${{ matrix.triple }}-rust-1.95.0
           cache-on-failure: "true"
 
       - name: linux deps
@@ -122,6 +133,7 @@ jobs:
         run: pnpm --filter @reddb-io/ui build
 
       - name: verify frontend bundle
+        shell: bash
         run: ls -la packages/ui/build/ && test -f packages/ui/build/index.html
 
       # Provision the `red` sidecar (Tauri externalBin) — gitignored, not
@@ -130,8 +142,13 @@ jobs:
       # dependency), and verifies the sha256 checksum before placing it in
       # apps/desktop/src-tauri/binaries/red-<triple>.
       - name: provision red sidecar
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Explicit, because the runner's host triple isn't always the build
+          # target: the macOS leg builds universal-apple-darwin, for which the
+          # script lipos both Darwin slices together.
+          TAURI_TARGET_TRIPLE: ${{ matrix.triple }}
         run: bash scripts/fetch-sidecar.sh
 
       - name: build tauri
@@ -272,6 +289,30 @@ jobs:
           sha256sum * > checksums.txt
           cat checksums.txt
           gh release upload "$TAG" checksums.txt --clobber --repo "$GITHUB_REPOSITORY"
+
+  # Everything above uploads into a *draft* release, so a half-built tag is
+  # never visible. This job is the gate that makes it real, and it only runs
+  # when every platform in the matrix succeeded (`needs` requires success).
+  #
+  # Publishing is what makes the release installable at all: /releases/latest
+  # and the releases API skip drafts, so install.sh, install.ps1 (and winget,
+  # scoop, homebrew…) cannot see a tag until this step flips it.
+  publish:
+    name: publish · undraft
+    needs: [tauri, pwa-build, checksums]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG: ${{ github.ref_name }}
+    steps:
+      - name: publish release
+        run: gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false --latest
+
+      - name: assets
+        run: gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name'
 
   # GitHub Pages deployment for https://ui.reddb.io is handled by
   # .github/workflows/pages.yml on pushes to main.

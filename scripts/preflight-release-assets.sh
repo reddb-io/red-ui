@@ -18,15 +18,19 @@ set -euo pipefail
 
 REDDB_REPO="reddb-io/reddb"
 # Keep in sync with the default in scripts/fetch-sidecar.sh.
-REDDB_VERSION="${REDDB_VERSION:-v1.9.1}"
+REDDB_VERSION="${REDDB_VERSION:-v1.23.2}"
 
-# Assets required for the full release matrix.
-# Update when adding a new platform to the tauri build matrix in release.yml.
+# Assets required for the full release matrix — one per entry in release.yml's
+# tauri matrix (the macOS universal build needs both Darwin slices to lipo).
+# Names follow reddb's release convention; confirm against a real release
+# rather than guessing:
+#   gh release view v1.23.2 -R reddb-io/reddb --json assets --jq '.assets[].name'
 REQUIRED_ASSETS=(
-  "red-linux-amd64-musl"    # Linux x86_64 — static musl (preferred)
-  "red-darwin-arm64"        # macOS Apple Silicon
-  "red-darwin-amd64"        # macOS Intel
-  "red-windows-amd64.exe"   # Windows x86_64
+  "red-linux-x86_64-static"   # Linux x86_64 — static musl (preferred)
+  "red-linux-aarch64-static"  # Linux aarch64 — static musl (preferred)
+  "red-macos-aarch64"         # macOS Apple Silicon
+  "red-macos-x86_64"          # macOS Intel
+  "red-windows-x86_64.exe"    # Windows x86_64
 )
 
 # ── query the GitHub release ─────────────────────────────────────────────────
