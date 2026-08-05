@@ -31,7 +31,8 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
-    "tailwind-variants": "^2.1.0"
+    "tailwind-variants": "^2.1.0",
+    "@reddb-io/kit-app": "workspace:*"
   },
   "engines": {
     "node": ">=20"
