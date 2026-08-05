@@ -44,7 +44,7 @@
   }
 
   /** Without an `href`: everything a native <button> accepts. */
-  interface ButtonMode extends Common, Omit<HTMLButtonAttributes, "class"> {
+  interface ButtonMode extends Common, Omit<HTMLButtonAttributes, "class" | "disabled"> {
     href?: never;
   }
 
@@ -93,7 +93,7 @@
 
 <svelte:element
   this={tag}
-  {...rest}
+  {...(rest as Record<string, unknown>)}
   {...native}
   class={button({ variant, size, block, class: className })}
   aria-busy={loading ? "true" : undefined}
