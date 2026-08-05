@@ -5,8 +5,8 @@ on:
     tags: ["v*"]
   workflow_dispatch:
 
-# Runners: Blacksmith-hosted, matching reddb-io/reddb's setup.
-# 8vcpu for the heavy Rust+webview Tauri builds; 4vcpu elsewhere.
+# Runners: free standard GitHub-hosted runners for this public repository.
+# Blacksmith remains available for explicit Testbox/performance investigations.
 #
 # Signing secrets (all optional — the workflow falls back to unsigned
 # builds when a secret is missing):
@@ -55,20 +55,19 @@ jobs:
       matrix:
         # One entry per shipped architecture. `triple` drives the sidecar
         # fetch, the rust-cache key, and (on macOS) the build target. Linux
-        # aarch64 builds natively on a Blacksmith ARM runner rather than
-        # cross-compiling — cross-building webkit2gtk is not worth the pain
-        # (the same call reddb-io/reddb made for its aarch64 leg).
+        # aarch64 builds natively on GitHub's public ARM runner rather than
+        # cross-compiling — cross-building webkit2gtk is not worth the pain.
         include:
-          - platform: blacksmith-8vcpu-ubuntu-2404
+          - platform: ubuntu-24.04
             triple: x86_64-unknown-linux-gnu
             args: ""
-          - platform: blacksmith-8vcpu-ubuntu-2404-arm
+          - platform: ubuntu-24.04-arm
             triple: aarch64-unknown-linux-gnu
             args: ""
-          - platform: blacksmith-6vcpu-macos-15
+          - platform: macos-15
             triple: universal-apple-darwin
             args: "--target universal-apple-darwin"
-          - platform: blacksmith-8vcpu-windows-2025
+          - platform: windows-2025
             triple: x86_64-pc-windows-msvc
             args: ""
 
