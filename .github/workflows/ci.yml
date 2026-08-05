@@ -81,7 +81,8 @@ jobs:
     # POST-MERGE on push to main only — never on an open PR. Rust shell
     # breakage surfaces after merge; release.yml still hard-gates on tags.
     if: github.event_name != 'pull_request'
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    # Public repo: the post-merge compile check is free on GitHub-hosted Linux.
+    runs-on: ubuntu-latest
     env:
       # sccache object-cache; CARGO_INCREMENTAL must be 0 (incremental and
       # sccache are mutually exclusive). Harvested from reddb-io/reddb.
