@@ -1,4 +1,5 @@
-// Card's styling. See button.variants.ts for the split and the colour rule.
+// Card's styling. See button.variants.ts for the split, the colour rule and the
+// spatial rule.
 //
 // A Card is several surfaces that must agree — a border the header rule has to
 // match, padding the footer has to repeat — so it is expressed as tailwind-
@@ -27,20 +28,34 @@ const VARIANT = {
   },
 } as const;
 
+// Each step's padding is wider than it is tall, and the axis ships one inset
+// family — so a step routes the side of its inset that the axis has a role at
+// the very length for, and leaves the other where it is. Routing both would
+// square the padding off and change what the neutral stop renders, which is the
+// one thing adopting the axis was not allowed to do.
 const PADDING = {
   none: { header: "px-0 py-0", body: "px-0 py-0", footer: "px-0 py-0" },
-  sm: { header: "px-3 py-2", body: "px-3 py-2", footer: "px-3 py-2" },
-  md: { header: "px-5 py-4", body: "px-5 py-4", footer: "px-5 py-4" },
+  sm: {
+    header: "px-[var(--reddb-spatial-inset-sm)] py-2",
+    body: "px-[var(--reddb-spatial-inset-sm)] py-2",
+    footer: "px-[var(--reddb-spatial-inset-sm)] py-2",
+  },
+  md: {
+    header: "px-5 py-[var(--reddb-spatial-inset-md)]",
+    body: "px-5 py-[var(--reddb-spatial-inset-md)]",
+    footer: "px-5 py-[var(--reddb-spatial-inset-md)]",
+  },
 } as const;
 
 export const card = tv({
   slots: {
     root: "flex flex-col rounded-lg border bg-transparent text-foreground",
-    header: "flex flex-col gap-1 border-b",
+    header: "flex flex-col gap-[var(--reddb-spatial-gap-sm)] border-b",
     title: "text-base font-medium leading-none text-foreground",
     description: "text-sm text-muted",
     body: "flex-1",
-    footer: "flex flex-wrap items-center gap-2 border-t",
+    footer:
+      "flex flex-wrap items-center gap-[var(--reddb-spatial-gap-md)] border-t",
   },
   variants: { variant: VARIANT, padding: PADDING },
   defaultVariants: { variant: "outline", padding: "md" },

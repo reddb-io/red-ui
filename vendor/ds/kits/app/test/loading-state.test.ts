@@ -4,6 +4,10 @@
 // where a spinner usually fails: the animation says "waiting" to the eye and
 // nothing at all to anything else. The label must therefore be in the DOM in
 // every configuration — hiding it is a visual choice, never an audible one.
+//
+// The same reasoning runs the other way for motion. A reader who has asked the
+// platform to stop moving things is asking this component too, so the rotation
+// is gated on `motion-safe:` and what remains has to still read as waiting.
 
 import { describe, expect, it } from "vitest";
 import LoadingState from "../src/primitives/LoadingState.svelte";
@@ -48,7 +52,53 @@ describe("LoadingState", () => {
   it("hides the spinner from assistive technology, since the label carries it", () => {
     const spinner = rendered(render(LoadingState, {})).querySelector("svg")!;
     expect(spinner.getAttribute("aria-hidden")).toBe("true");
-    expect(classes(spinner).has("animate-spin")).toBe(true);
+  });
+
+  it("spins only where motion is welcome", () => {
+    // `prefers-reduced-motion: reduce` is a request to stop moving, and the
+    // `motion-safe:` modifier is the whole of the guard that honours it. So the
+    // unconditional utility has to be ABSENT, not merely accompanied: a class
+    // list carrying both would animate for everyone, gate and all.
+    for (const size of LOADING_STATE_SIZES) {
+      const spinner = rendered(render(LoadingState, { size })).querySelector(
+        "svg"
+      )!;
+      expect(classes(spinner).has("motion-safe:animate-spin")).toBe(true);
+      for (const name of classes(spinner)) {
+        expect(
+          name.startsWith("animate-"),
+          `${name} animates regardless of preference`
+        ).toBe(false);
+      }
+    }
+  });
+
+  it("still draws a waiting indicator once the rotation is off", () => {
+    // What is left when nothing moves has to mean "waiting" on its own: the
+    // ring and its arc, the sentence beside them, and the live region that
+    // announces it. None of those may be gated on motion.
+    const element = rendered(render(LoadingState, {}));
+    const spinner = element.querySelector("svg")!;
+
+    expect(spinner.querySelector("circle")).not.toBeNull();
+    expect(spinner.querySelector("path")).not.toBeNull();
+    for (const shape of spinner.children) {
+      for (const name of classes(shape)) {
+        expect(
+          name.startsWith("motion-safe:"),
+          `${name} disappears under reduced motion`
+        ).toBe(false);
+      }
+    }
+
+    // The track is faint under rotation, where movement carries the shape, and
+    // stronger without it, where the whole ring is what makes the mark legible.
+    expect(
+      classes(spinner.querySelector("circle")!).has("motion-reduce:opacity-50")
+    ).toBe(true);
+
+    expect(element.querySelector("span")!.textContent).toBe("Loading…");
+    expect(element.getAttribute("role")).toBe("status");
   });
 
   it("paints the spinner through a token, never a stroke value", () => {

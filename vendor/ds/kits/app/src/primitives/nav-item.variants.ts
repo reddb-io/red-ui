@@ -1,4 +1,5 @@
-// NavItem's styling. See button.variants.ts for the split and the colour rule.
+// NavItem's styling. See button.variants.ts for the split, the colour rule and
+// the spatial rule.
 //
 // The active state is drawn with a tinted surface and a full-weight foreground
 // rather than with an accent bar down one side: a side bar is a per-side
@@ -29,7 +30,7 @@ const DISABLED = {
 
 export const navItem = tv({
   slots: {
-    root: "inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+    root: "inline-flex w-full items-center gap-[var(--reddb-spatial-gap-md)] rounded-md px-[var(--reddb-spatial-inset-sm)] py-2 text-sm leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
     icon: "shrink-0",
     label: "truncate",
     trailing: "ms-auto shrink-0",

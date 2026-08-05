@@ -1,6 +1,7 @@
 @import "tailwindcss";
 /* DS 2026.08 (ds-sync pin): brand tokens + Theme Layer + vendored Kit sources. */
 @import "../../../vendor/ds/tokens/tokens.css";
+@import "../../../vendor/ds/tokens/density-comfortable.css";
 @import "../../../vendor/ds/theme/theme.css";
 @source "../../../vendor/ds/kits";
 @import "@fontsource-variable/inter";

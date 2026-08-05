@@ -1,4 +1,5 @@
-// ListRow's styling. See button.variants.ts for the split and the colour rule.
+// ListRow's styling. See button.variants.ts for the split, the colour rule and
+// the spatial rule.
 //
 // Slots, because a row is a rail: a leading affordance, a two-line text block
 // that must truncate rather than wrap, and a trailing rail pushed to the end.
@@ -12,11 +13,21 @@
 
 import { tv, type VariantProps } from "tailwind-variants";
 
+// This row's own `density` and the DS's Density axis are two different things
+// wearing one word, and they compose rather than compete: the row's axis picks
+// WHICH spatial role each slot wears, and the document's stop decides what
+// those roles resolve to. A compact row inside a spacious page is therefore a
+// compact row, laid out spaciously — which is the arrangement a dense table
+// inside a marketing page actually wants (ADR 0003).
 const DENSITY = {
   /** The default: a row you can hit with a thumb. */
-  comfortable: { root: "gap-3 px-4 py-3" },
+  comfortable: {
+    root: "gap-[var(--reddb-spatial-gap-lg)] px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-sm)]",
+  },
   /** For long lists where the scan matters more than the target. */
-  compact: { root: "gap-2 px-3 py-2" },
+  compact: {
+    root: "gap-[var(--reddb-spatial-gap-md)] px-[var(--reddb-spatial-inset-sm)] py-2",
+  },
 } as const;
 
 const INTERACTIVE = {
@@ -41,7 +52,8 @@ export const listRow = tv({
     text: "flex min-w-0 flex-col gap-0.5",
     title: "truncate text-sm font-medium text-foreground",
     description: "truncate text-xs text-muted",
-    trailing: "ms-auto flex shrink-0 items-center gap-2",
+    trailing:
+      "ms-auto flex shrink-0 items-center gap-[var(--reddb-spatial-gap-md)]",
   },
   variants: { density: DENSITY, interactive: INTERACTIVE, selected: SELECTED },
   defaultVariants: {

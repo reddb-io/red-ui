@@ -1,6 +1,6 @@
 {
   "source": "reddb-io/design-system",
-  "version": "2026.08",
+  "version": "2026.08.1",
   "consumer": "red-ui",
   "kits": ["app"],
   "dest": "vendor/ds"

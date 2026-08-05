@@ -63,6 +63,45 @@ still wrong here, because no Theme reassigns it, so a component wearing it
 would look identical under base and dark. The showcase's per-component routes
 are where you see that hold.
 
+## How it answers to Density
+
+Spatial values — control heights, insets, gaps — are named the same way, as
+roles of the Density axis rather than as Tailwind steps: `h-8` compiles to a
+fixed length, so a Kit written in steps is frozen against a density stop exactly
+as a Kit written in hex would be frozen against a Theme. What a component wears
+instead is a reference to the role:
+
+```
+h-[var(--reddb-spatial-control-height-md)] px-[var(--reddb-spatial-inset-md)]
+```
+
+A stop reassigns those roles onto steps of the Brand's spacing scale (ADR 0003),
+so the same component renders denser inside a `data-density="compact"` subtree
+without knowing the axis exists. The neutral stop anchors every role at the step
+the Kit already shipped, so adopting the axis moved nothing on screen.
+
+Three things stay on Tailwind's own steps, and each is a decision rather than an
+omission. **Type, radius and icon scale**, because density shrinks components,
+not legibility — a `Kbd` cap is sized to the sentence it sits in, and a spinner
+keeps the scale of the label beside it. **A width**, such as `SplitView`'s
+divider, because the Brand ships no token family for widths at all. And **a
+value the axis has no role at**: the axis ships three steps each of height,
+inset and gap, and a Kit value that falls between them is left where it is
+rather than pushed onto the nearest, which would move what the neutral renders.
+
+The same `lint` enforces this half too. A spatial position the axis owns —
+`h-*`/`min-h-*`/`max-h-*`, any padding, any gap — must name a role, and the lint
+knows which steps are owned by reading where each role anchors under the neutral
+stop: `h-9` compiles to 2.25rem, which is what `control-height-md` renders at,
+so it is a violation, while `pt-1` is the same 0.25rem as `gap-sm` in a position
+the axis ships no inset for and is left alone. An arbitrary value in one of
+those positions holds a `--reddb-spatial-*` role or nothing: a raw length is the
+same freeze spelled out, and `[var(--reddb-space-6)]` is a real token that no
+stop reassigns. `test/fixtures/raw-spatial.variants.ts` is a component written
+all four wrong ways, kept committed so the rule is known to fail; between it and
+`test/density.test.ts`, where every routed value is pinned, a step the axis owns
+cannot quietly come back.
+
 ## Consuming it
 
 A Product Application receives this directory as vendorable Svelte 5 source via
@@ -76,14 +115,38 @@ A Product Application receives this directory as vendorable Svelte 5 source via
 <Button variant="secondary" size="sm">Search <Kbd keys={["Ctrl", "K"]} /></Button>
 ```
 
+What lands is installable as it arrives: `ds-sync` rewrites the Kit's
+`package.json` down to its runtime contract — `dependencies` and
+`peerDependencies`, no workspace refs and none of the DS-internal scripts below
+— and inlines the `extends` chain of its `tsconfig.json`, so neither file
+reaches for anything outside the consumer tree (`scripts/producer/README.md`).
+
 Tailwind must be told to scan the vendored Kit, since it lives outside the
 consumer's own source tree — see `apps/showcase/src/app.css` for the
 `@source` line the showcase uses.
 
+The same file shows the stylesheets an application has to link. One of them is
+newly load-bearing: **a density stop artifact must be linked**, or the roles the
+Kit's spatial classes name resolve to nothing, the declarations are dropped, and
+every control loses its height and inset. Linking
+`@reddb-io/tokens/density-comfortable.css` alone is enough and changes nothing —
+it is the neutral, declared at `:where(:root)`, which is what the Kit already
+rendered at. Link the other two as well to let the application switch stops, and
+declare the one it runs at in `data-density` on the root.
+
+Because the Kit ships as source, the compiler that judges it is the consumer's.
+`tsconfig.consumer.json` is that compiler's settings — strict, with no DS base
+config behind it — and the `check` command runs the consumer's own
+`svelte-check` against it over `src`. A component can compile, mount and pass
+every test here while failing the first `svelte-check` it meets in an
+application; this is what closes that gap (issue #50), and
+`test/consumer-check.test.ts` runs it on every `test` so it cannot reopen.
+
 ## Commands
 
 ```
-pnpm --filter @reddb-io/kit-app test    # component tests, the Primitive test, the lint's own tests
-pnpm --filter @reddb-io/kit-app lint    # anti-hardcode lint over the Kit's source
+pnpm --filter @reddb-io/kit-app test    # component tests, the Primitive test, the lint's and check's own tests
+pnpm --filter @reddb-io/kit-app check   # consumer svelte-check over the Kit's source, strict tsconfig
+pnpm --filter @reddb-io/kit-app lint    # anti-hardcode lint over the Kit's source: colour, radius, spatial
 pnpm --filter @reddb-io/kit-app build   # stage the vendorable source into dist/ for the release bundle
 ```

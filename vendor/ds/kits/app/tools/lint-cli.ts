@@ -3,10 +3,11 @@
 //   pnpm --filter @reddb-io/kit-app lint            # lint the Kit's own source
 //   pnpm --filter @reddb-io/kit-app lint <file...>  # lint specific files
 //
-// Exits non-zero (and prints each offender) when a component carries a Brand
-// value the Themes cannot reassign. Mirrors the Theme Layer's lint command
-// (packages/theme/src/lint-cli.ts) down to its output shape, because it is the
-// same invariant asked one Layer higher.
+// Exits non-zero (and prints each offender) when a component carries a value
+// no Layer can reassign — a colour or radius the Themes do not own, or a
+// spatial step the Density axis ships a role for. Mirrors the Theme Layer's
+// lint command (packages/theme/src/lint-cli.ts) down to its output shape,
+// because it is the same invariant asked one Layer higher.
 
 import { existsSync } from "node:fs";
 import { relative } from "node:path";
@@ -41,12 +42,15 @@ if (violations.length > 0) {
   }
   process.stderr.write(
     `\nanti-hardcode lint failed: ${violations.length} hardcoded value(s); ` +
-      "every colour and radius a Kit wears must name a token the Themes reassign.\n"
+      "every colour and radius a Kit wears must name a token the Themes reassign, " +
+      "and every spatial value the Density axis ships a role for must name that role.\n"
   );
   process.exit(1);
 }
 
 process.stdout.write(
-  "anti-hardcode lint passed: every colour and radius names a Theme-declared token " +
-    `(${files.length} file(s); colours ${vocabulary.colours.join(", ")}; radii ${vocabulary.radii.join(", ")}).\n`
+  "anti-hardcode lint passed: every colour and radius names a Theme-declared token, " +
+    "every routable spatial value names a Density role " +
+    `(${files.length} file(s); colours ${vocabulary.colours.join(", ")}; radii ${vocabulary.radii.join(", ")}; ` +
+    `spatial roles ${Object.keys(vocabulary.spatial).sort().join(", ")}).\n`
 );

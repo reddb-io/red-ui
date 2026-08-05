@@ -1,11 +1,19 @@
-// SplitView's styling. See button.variants.ts for the split and the colour
-// rule.
+// SplitView's styling. See button.variants.ts for the split, the colour rule
+// and the spatial rule.
 //
 // The pane sizes are NOT here, and cannot be: the divider's position is a
 // runtime number, so it reaches the element as an inline `flex-basis` rather
 // than as a class. That is not a hardcoded value in the sense the Kit's lint
 // cares about — it carries no Brand decision, only where the user last let go
 // of the divider — and there is no class name that could express it.
+//
+// It follows that this is the one component in the Kit with nothing for the
+// Density axis to re-resolve. Everything spatial about a SplitView is either
+// that runtime fraction or the divider's own thickness, and a rule's thickness
+// is a width — a dimension the Brand ships no token family for at all, which is
+// the same reason nav-item.variants.ts draws its active state without an accent
+// bar. A stop still reaches the panes' contents, which is where the space a
+// reader actually sees lives.
 
 import { tv, type VariantProps } from "tailwind-variants";
 
