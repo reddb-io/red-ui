@@ -15,4 +15,19 @@
   --radius-lg: var(--reddb-radius-lg);
   --radius-md: var(--reddb-radius-md);
   --radius-sm: var(--reddb-radius-sm);
+  --space-0: var(--reddb-space-0);
+  --space-1: var(--reddb-space-1);
+  --space-10: var(--reddb-space-10);
+  --space-11: var(--reddb-space-11);
+  --space-12: var(--reddb-space-12);
+  --space-13: var(--reddb-space-13);
+  --space-14: var(--reddb-space-14);
+  --space-2: var(--reddb-space-2);
+  --space-3: var(--reddb-space-3);
+  --space-4: var(--reddb-space-4);
+  --space-5: var(--reddb-space-5);
+  --space-6: var(--reddb-space-6);
+  --space-7: var(--reddb-space-7);
+  --space-8: var(--reddb-space-8);
+  --space-9: var(--reddb-space-9);
 }

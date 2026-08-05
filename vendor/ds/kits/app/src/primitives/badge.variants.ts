@@ -1,5 +1,11 @@
 // Badge's styling. See button.variants.ts for why the classes live apart from
-// the component and why colour is only ever named, never valued.
+// the component, why colour is only ever named, never valued, and why spatial
+// values name a Density role rather than a Tailwind step.
+//
+// Only the gap routes. A Badge sits inside running text, so its inset is a
+// notch — narrower than the smallest inset the Brand's spatial scale ships a
+// role for — and a value the axis has no role for is left as it is rather than
+// pushed onto the nearest one, which would move what the neutral stop renders.
 //
 // Badge and Pill are deliberately different shapes for different jobs: a Badge
 // is a rectangular status marker that sits inside other text (`rounded-md`,
@@ -17,7 +23,7 @@ const VARIANT = {
 } as const;
 
 export const badge = tv({
-  base: "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium leading-none whitespace-nowrap",
+  base: "inline-flex items-center gap-[var(--reddb-spatial-gap-sm)] rounded-md border px-2 py-0.5 text-xs font-medium leading-none whitespace-nowrap",
   variants: { variant: VARIANT },
   defaultVariants: { variant: "neutral" },
 });

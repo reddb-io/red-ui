@@ -1,4 +1,8 @@
-// Pill's styling. See button.variants.ts for the split and the colour rule.
+// Pill's styling. See button.variants.ts for the split, the colour rule and the
+// spatial rule — under which only the medium size's inset lands on a role the
+// axis ships. The small size is a notch below the narrowest one, and a value
+// the axis has no role for stays a step rather than being pushed onto the
+// nearest, which would move what the neutral stop renders.
 //
 // A Pill is round-ended (`rounded-full`) and stands on its own: a filter that
 // is on, a tag, a selected facet. That is why it — unlike Badge — has a size
@@ -14,7 +18,7 @@ const VARIANT = {
 
 const SIZE = {
   sm: "px-2.5 py-0.5 text-xs",
-  md: "px-3 py-1 text-sm",
+  md: "px-[var(--reddb-spatial-inset-sm)] py-1 text-sm",
 } as const;
 
 export const pill = tv({

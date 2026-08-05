@@ -12,6 +12,22 @@
 // what lets one Button render under any Theme without knowing Themes exist.
 // Where an emphasis change would need a colour the Brand has shipped no token
 // for, the change is made with opacity rather than with an invented value.
+//
+// Spatial values — the control's height, its inset, the gap it holds a spinner
+// at — are named the same way, through the Density axis's roles rather than
+// through a Tailwind step, because a step compiles to a fixed length and a Kit
+// written in steps is frozen against a density stop exactly as a Kit written in
+// hex would be frozen against a Theme. A stop reassigns those roles onto the
+// Brand's spacing scale (ADR 0003), so this Button renders denser inside a
+// `data-density="compact"` subtree without knowing the axis exists. The neutral
+// stop anchors every role at the step the Kit already shipped, so adopting the
+// axis moved nothing on screen.
+//
+// A `[var(--reddb-*)]` arbitrary value is the one arbitrary value the Kit's
+// lint allows, and for the reason it allows it in a colour position: it is a
+// reference to a token, not a value of its own. Type, radius and icon scale
+// stay on Tailwind's steps — density shrinks components, not legibility, so the
+// spinner beside a label keeps the label's scale rather than the control's.
 
 import { tv, type VariantProps } from "tailwind-variants";
 
@@ -26,9 +42,9 @@ const VARIANT = {
 } as const;
 
 const SIZE = {
-  sm: "h-8 px-3 text-sm",
-  md: "h-9 px-4 text-sm",
-  lg: "h-11 px-6 text-base",
+  sm: "h-[var(--reddb-spatial-control-height-sm)] px-[var(--reddb-spatial-inset-sm)] text-sm",
+  md: "h-[var(--reddb-spatial-control-height-md)] px-[var(--reddb-spatial-inset-md)] text-sm",
+  lg: "h-[var(--reddb-spatial-control-height-lg)] px-[var(--reddb-spatial-inset-lg)] text-base",
 } as const;
 
 const BLOCK = {
@@ -40,7 +56,7 @@ const BLOCK = {
 
 export const button = tv({
   base: [
-    "inline-flex items-center justify-center gap-2",
+    "inline-flex items-center justify-center gap-[var(--reddb-spatial-gap-md)]",
     "rounded-md border border-transparent",
     "font-medium leading-none whitespace-nowrap",
     "transition-opacity",

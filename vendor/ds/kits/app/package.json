@@ -1,9 +1,9 @@
 {
   "name": "@reddb-io/kit-app",
   "version": "0.0.0",
+  "description": "The application Kit: Svelte 5 Primitives in shadcn-svelte style (headless behavior + tailwind-variants), styled only through the Theme Layer's token-backed utilities.",
   "private": true,
   "type": "module",
-  "description": "The application Kit: Svelte 5 Primitives in shadcn-svelte style (headless behavior + tailwind-variants), styled only through the Theme Layer's token-backed utilities.",
   "exports": {
     ".": {
       "svelte": "./src/index.ts",

@@ -11,11 +11,17 @@
 //      the Themes cannot reach, and shadcn-svelte style has exactly one;
 //   3. every colour and radius utility the Kit wears names a token the Layers
 //      generated (see vocabulary.ts), never a Tailwind default and never an
-//      arbitrary `[...]` value that is not a `var(--reddb-*)` reference.
+//      arbitrary `[...]` value that is not a `var(--reddb-*)` reference;
+//   4. every spatial utility the Density axis ships a role for names that role
+//      rather than a fixed step — `h-9` compiles to 2.25rem, which is what
+//      `control-height-md` renders at, so a Kit written in steps is frozen
+//      against a density stop exactly as a Kit written in hex is frozen
+//      against a Theme (ADR 0003, issue #33's migration, this rule's contract).
 //
-// Together those are the mechanical form of "this component re-themes": there
-// is no path by which a Brand value reaches the rendered component except
-// through a token the active Theme reassigns.
+// Together those are the mechanical form of "this component re-themes and
+// re-densifies": there is no path by which a Brand value reaches the rendered
+// component except through a token the active Theme, or the declared density
+// stop, reassigns.
 //
 // What the lint reads, and what it therefore cannot see: class strings live in
 // `*.variants.ts` (by the Kit's own convention, one `tv()` call per component)
@@ -87,6 +93,39 @@ const RADIUS_PREFIXES = [
   "rounded-ee",
   "rounded-es",
 ] as const;
+
+// Spatial positions, grouped by the family of Density roles that owns them.
+// The axis ships three roles each of control height, inset and gap (ADR 0003),
+// and the grouping is what keeps them apart: 0.25rem is what `gap-sm` renders
+// at, so `gap-1` is frozen — while `pt-1` is the same length in a position the
+// axis ships no inset for, and is left alone.
+//
+// What is absent is as deliberate as what is present. `size-*` and `w-*` are
+// not here: an icon scale is not a control height (density shrinks components,
+// not legibility) and the Brand ships no width family at all, which is why a
+// SplitView's divider stays on a Tailwind step. Margins are not here either —
+// an inset is the space a component holds inside itself, and the space between
+// components is the caller's layout, not the Kit's.
+const SPATIAL_FAMILIES = [
+  { family: "control-height", prefixes: ["h", "min-h", "max-h"] },
+  {
+    family: "inset",
+    prefixes: ["p", "px", "py", "pt", "pr", "pb", "pl", "ps", "pe"],
+  },
+  { family: "gap", prefixes: ["gap", "gap-x", "gap-y"] },
+] as const;
+
+// Tailwind's own spacing scale: a step is a multiple of 0.25rem. That constant
+// is Tailwind's, not the Brand's — and it is the whole problem, because it is
+// applied at build time and leaves nothing behind for a stop to reassign.
+const TAILWIND_STEP_REM = 0.25;
+const TAILWIND_STEP_RE = /^\d+(?:\.\d+)?$/;
+const REM_RE = /^(\d+(?:\.\d+)?)rem$/;
+
+// The only arbitrary value a spatial position may hold: a reference to a role
+// the axis reassigns. A `--reddb-space-*` step is a real token and still wrong
+// here — a stop moves the roles, never the scale the roles land on.
+const SPATIAL_VAR_RE = /^\[var\(--reddb-spatial-([a-z0-9-]+)\)\]$/i;
 
 // Cascade keywords, legal in any position: they carry no Brand value, so no
 // Theme has anything to reassign about them.
@@ -176,13 +215,77 @@ function isArbitrary(value: string): boolean {
 // fallback for, for the same reason.
 const REDDB_VAR_RE = /^\[var\(--reddb-[a-z0-9-]+\)\]$/i;
 
+/** The length `value` denotes, in rem, or `null` when it denotes none. */
+function rem(value: string): number | null {
+  const match = REM_RE.exec(value);
+  return match === null ? null : Number(match[1]);
+}
+
+/** The role of `family` the neutral stop renders at `length`, if the axis ships one. */
+function roleAt(
+  spatial: Vocabulary["spatial"],
+  family: string,
+  length: number
+): string | null {
+  for (const [role, anchor] of Object.entries(spatial)) {
+    if (!role.startsWith(`${family}-`)) continue;
+    const anchored = rem(anchor);
+    // Both sides are rem because the Brand's spacing scale is: a role anchored
+    // in another unit is one this cannot compare, and silence beats a guess.
+    if (anchored !== null && Math.abs(anchored - length) < 1e-9) return role;
+  }
+  return null;
+}
+
+/**
+ * Check one class against the Density axis. A spatial position the axis ships
+ * a role for must name that role; a position it ships none for is left alone,
+ * because routing a value the axis has no role at would either move what the
+ * neutral stop renders or invent a role the Tokens Layer does not ship.
+ */
+function checkSpatial(utility: string, vocabulary: Vocabulary): string | null {
+  const roles = Object.keys(vocabulary.spatial).sort().join(", ");
+  for (const { family, prefixes } of SPATIAL_FAMILIES) {
+    const value = splitPrefix(utility, prefixes);
+    if (value === null) continue;
+
+    if (isArbitrary(value)) {
+      const named = SPATIAL_VAR_RE.exec(value);
+      if (named === null) {
+        return (
+          "spatial value written as a value — a density stop reassigns the axis's roles, " +
+          `so nothing else here moves with one; name a role instead (${roles})`
+        );
+      }
+      const role = named[1]!.toLowerCase();
+      return role in vocabulary.spatial
+        ? null
+        : `unknown spatial role "${role}" — it resolves to nothing and the declaration is dropped; the Density axis ships ${roles}`;
+    }
+
+    if (!TAILWIND_STEP_RE.test(value)) return null;
+    const role = roleAt(
+      vocabulary.spatial,
+      family,
+      Number(value) * TAILWIND_STEP_REM
+    );
+    return role === null
+      ? null
+      : `fixed spatial step — it compiles to the length "${role}" renders at, and a stop cannot reach it; write [var(--reddb-spatial-${role})]`;
+  }
+  return null;
+}
+
 /**
  * Check one class name against the vocabulary. Returns the reason it is not
- * allowed, or `null` when it is fine (including when it is not a colour or
- * radius utility at all, which is most classes).
+ * allowed, or `null` when it is fine (including when it is not a colour,
+ * radius or spatial utility at all, which is most classes).
  */
 export function checkClass(raw: string, vocabulary: Vocabulary): string | null {
   const { utility } = parseClass(raw);
+
+  const spatial = checkSpatial(utility, vocabulary);
+  if (spatial !== null) return spatial;
 
   const radius = splitPrefix(utility, RADIUS_PREFIXES);
   if (radius !== null) {

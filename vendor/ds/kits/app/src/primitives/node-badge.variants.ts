@@ -1,5 +1,6 @@
-// NodeBadge's styling. See button.variants.ts for the split and the colour
-// rule.
+// NodeBadge's styling. See button.variants.ts for the split, the colour rule
+// and the spatial rule — under which the dot keeps its own size, because it is
+// a mark read at a glance rather than a space between things.
 //
 // Four statuses and two Theme-declared colours to tell them apart with, so
 // colour is deliberately not the whole signal: each status is a pair — which
@@ -34,7 +35,7 @@ const LABELLED = {
 
 export const nodeBadge = tv({
   slots: {
-    root: "inline-flex items-center gap-2 rounded-full border border-muted px-2.5 py-1 text-xs leading-none whitespace-nowrap",
+    root: "inline-flex items-center gap-[var(--reddb-spatial-gap-md)] rounded-full border border-muted px-2.5 py-1 text-xs leading-none whitespace-nowrap",
     dot: "size-2 shrink-0 rounded-full border",
     name: "font-mono text-foreground",
     status: "",

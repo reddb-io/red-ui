@@ -43,7 +43,14 @@
     children?: Snippet;
   }
 
-  /** Without an `href`: everything a native <button> accepts. */
+  /**
+   * Without an `href`: everything a native <button> accepts.
+   *
+   * `disabled` is omitted alongside `class` because both are re-declared above:
+   * an interface may only inherit a name from two places when the two agree,
+   * and the platform's `disabled` is wider than the boolean this component
+   * documents. Omitting is what makes the narrower declaration the only one.
+   */
   interface ButtonMode extends Common, Omit<HTMLButtonAttributes, "class" | "disabled"> {
     href?: never;
   }
@@ -91,6 +98,14 @@
   );
 </script>
 
+<!--
+  `rest` is spread as a plain record because its type is the remainder of a
+  two-armed union of ~440 platform props, and checking that against the union
+  of what <button> and <a> each accept is a computation TypeScript gives up on
+  ("union type that is too complex to represent"). The props are still typed
+  where a caller writes them — at `Props` — which is the place that ever told
+  anyone anything; this only stops the element re-deriving the same union.
+-->
 <svelte:element
   this={tag}
   {...(rest as Record<string, unknown>)}

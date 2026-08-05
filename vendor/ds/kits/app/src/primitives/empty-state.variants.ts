@@ -1,5 +1,5 @@
-// EmptyState's styling. See button.variants.ts for the split and the colour
-// rule.
+// EmptyState's styling. See button.variants.ts for the split, the colour rule
+// and the spatial rule.
 //
 // Slots, like Card: an empty state is a region — a media slot, a title, a
 // supporting line and the action that fills the emptiness — and those have to
@@ -15,13 +15,16 @@ import { tv, type VariantProps } from "tailwind-variants";
 
 const SIZE = {
   sm: {
-    root: "gap-2 px-4 py-6",
+    root: "gap-[var(--reddb-spatial-gap-md)] px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-lg)]",
     title: "text-sm",
     description: "text-xs",
     hint: "text-xs",
   },
   md: {
-    root: "gap-3 px-6 py-10",
+    // The vertical room the large size takes is a step past the widest inset
+    // the axis ships a role for, so it stays a step: an empty region is meant
+    // to read as roomier than anything a control would ask for.
+    root: "gap-[var(--reddb-spatial-gap-lg)] px-[var(--reddb-spatial-inset-lg)] py-10",
     title: "text-base",
     description: "text-sm",
     // A notch under the description at both sizes: the hint is the literal
@@ -48,7 +51,8 @@ export const emptyState = tv({
     // may paraphrase. Its outline is solid where the region's is dashed: the
     // region's edge says "empty", this one says "literal".
     hint: "max-w-full rounded-md border border-muted px-2 py-1 font-mono text-muted",
-    actions: "flex flex-wrap items-center justify-center gap-2 pt-1",
+    actions:
+      "flex flex-wrap items-center justify-center gap-[var(--reddb-spatial-gap-md)] pt-1",
   },
   variants: { size: SIZE, bordered: BORDERED },
   defaultVariants: { size: "md", bordered: true },

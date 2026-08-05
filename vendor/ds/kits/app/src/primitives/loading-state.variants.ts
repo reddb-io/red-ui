@@ -1,5 +1,7 @@
-// LoadingState's styling. See button.variants.ts for the split and the colour
-// rule.
+// LoadingState's styling. See button.variants.ts for the split, the colour rule
+// and the spatial rule — under which the spinner's own size stays on the type
+// scale it shares with the label beside it, and only the gap between them
+// answers to a density stop.
 //
 // The spinner is an inline <svg> whose strokes are stroke-current, so its
 // colour is whatever the spinner slot's text colour is — one token named once,
@@ -12,6 +14,14 @@
 // The label is always in the DOM. `labelHidden` moves it to `sr-only` rather
 // than dropping it, because a spinner alone announces nothing: assistive
 // technology gets the same sentence either way, and only the eye loses it.
+//
+// The rotation is gated on `motion-safe:`, so `prefers-reduced-motion: reduce`
+// switches it off. Nothing else is: what remains is a whole component, not a
+// component with its indicator removed. The one thing the gate does change is
+// how the mark has to be drawn — under rotation the movement carries the
+// shape and a faint track is enough, while a still ring is read all at once,
+// so `motion-reduce:` brings the track up to meet the arc. A reader who asked
+// for stillness gets a legible waiting mark and the sentence beside it.
 
 import { tv, type VariantProps } from "tailwind-variants";
 
@@ -30,9 +40,9 @@ const LABEL_HIDDEN = {
 
 export const loadingState = tv({
   slots: {
-    root: "inline-flex items-center justify-center gap-2 text-muted",
-    spinner: "animate-spin text-primary",
-    track: "fill-none stroke-current opacity-25",
+    root: "inline-flex items-center justify-center gap-[var(--reddb-spatial-gap-md)] text-muted",
+    spinner: "motion-safe:animate-spin text-primary",
+    track: "fill-none stroke-current opacity-25 motion-reduce:opacity-50",
     head: "fill-none stroke-current",
     label: "leading-none",
   },

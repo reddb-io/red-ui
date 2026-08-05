@@ -1,5 +1,5 @@
-// SectionHeading's styling. See button.variants.ts for the split and the
-// colour rule.
+// SectionHeading's styling. See button.variants.ts for the split, the colour
+// rule and the spatial rule.
 //
 // Slots again, for the same reason as Card: the rule under the heading, the
 // title, its supporting line and the actions rail have to move together.
@@ -14,18 +14,18 @@ const SIZE = {
 
 const RULE = {
   /** A hairline under the whole heading, in the muted token. */
-  true: { root: "border-b border-muted pb-3" },
+  true: { root: "border-b border-muted pb-[var(--reddb-spatial-inset-sm)]" },
   /** No rule — for a heading that already sits on an edge. */
   false: { root: "border-b border-transparent pb-0" },
 } as const;
 
 export const sectionHeading = tv({
   slots: {
-    root: "flex flex-wrap items-end justify-between gap-3",
-    text: "flex flex-col gap-1",
+    root: "flex flex-wrap items-end justify-between gap-[var(--reddb-spatial-gap-lg)]",
+    text: "flex flex-col gap-[var(--reddb-spatial-gap-sm)]",
     title: "font-medium leading-tight text-foreground",
     description: "text-sm text-muted",
-    actions: "flex flex-wrap items-center gap-2",
+    actions: "flex flex-wrap items-center gap-[var(--reddb-spatial-gap-md)]",
   },
   variants: { size: SIZE, rule: RULE },
   defaultVariants: { size: "md", rule: true },

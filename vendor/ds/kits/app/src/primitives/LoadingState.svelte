@@ -6,6 +6,10 @@
   label is required to exist (it has a default), the spinner is
   `aria-hidden`, and the region announces itself through `role="status"` with
   `aria-live="polite"` — a load that finishes is news, not an interruption.
+
+  The spinner turns only under `motion-safe`. A reader who asked the platform
+  to stop moving things keeps the ring, the arc and the sentence — a waiting
+  indicator that is still one, standing still.
 -->
 <script lang="ts">
   import type { HTMLAttributes } from "svelte/elements";
@@ -41,7 +45,8 @@
   aria-busy="true"
 >
   <!-- The arc is drawn as a quarter of the circle it spins inside: the track
-       shows where it is going, which is what makes the rotation readable. -->
+       shows where it is going, which is what makes the rotation readable —
+       and, when there is no rotation, is what is left to read. -->
   <svg class={slots.spinner()} viewBox="0 0 24 24" aria-hidden="true">
     <circle class={slots.track()} cx="12" cy="12" r="9" stroke-width="3" />
     <path class={slots.head()} d="M21 12a9 9 0 0 0-9-9" stroke-width="3" stroke-linecap="round" />

@@ -14,4 +14,19 @@
   --reddb-radius-lg: 0.75rem;
   --reddb-radius-md: 0.5rem;
   --reddb-radius-sm: 0.25rem;
+  --reddb-space-0: 0rem;
+  --reddb-space-1: 0.125rem;
+  --reddb-space-10: 2rem;
+  --reddb-space-11: 2.25rem;
+  --reddb-space-12: 2.5rem;
+  --reddb-space-13: 2.75rem;
+  --reddb-space-14: 3rem;
+  --reddb-space-2: 0.25rem;
+  --reddb-space-3: 0.375rem;
+  --reddb-space-4: 0.5rem;
+  --reddb-space-5: 0.75rem;
+  --reddb-space-6: 1rem;
+  --reddb-space-7: 1.25rem;
+  --reddb-space-8: 1.5rem;
+  --reddb-space-9: 1.75rem;
 }

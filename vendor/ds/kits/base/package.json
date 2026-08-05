@@ -1,0 +1,26 @@
+{
+  "name": "@reddb-io/kit-base",
+  "version": "0.0.0",
+  "description": "The Base Kit: the parent Kit every other Kit inherits, routed to every consumer — home of the cross-audience components an application must reach without pulling a sibling Kit (ADR 0004).",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "svelte": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./components/*": {
+      "svelte": "./src/components/*",
+      "default": "./src/components/*"
+    }
+  },
+  "svelte": "./src/index.ts",
+  "files": [
+    "src",
+    "kit.json",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "svelte": "^5.0.0"
+  }
+}
