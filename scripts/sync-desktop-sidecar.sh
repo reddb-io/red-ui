@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Provision the bundled `red` sidecar for the host target triple.
 #
-# Tauri's `externalBin` (apps/desktop/src-tauri/binaries/red-<triple>) must
+# Tauri's `externalBin` (apps/desktop/src-tauri/binaries/red-ui-reddb-<triple>) must
 # exist before `cargo check`, `tauri dev`, or `tauri build` — tauri-build
 # validates the path at compile time. The binary itself is gitignored (it's a
 # ~15MB platform-specific blob), so install reddb's `red` and run this to drop
@@ -45,6 +45,6 @@ if [ -z "$RED_BIN" ] || [ ! -x "$RED_BIN" ]; then
 fi
 
 mkdir -p "$DEST_DIR"
-cp "$RED_BIN" "$DEST_DIR/red-$TRIPLE"
-chmod +x "$DEST_DIR/red-$TRIPLE"
-echo "▸ sidecar provisioned: binaries/red-$TRIPLE  (from $RED_BIN)"
+cp "$RED_BIN" "$DEST_DIR/red-ui-reddb-$TRIPLE"
+chmod +x "$DEST_DIR/red-ui-reddb-$TRIPLE"
+echo "▸ sidecar provisioned: binaries/red-ui-reddb-$TRIPLE  (from $RED_BIN)"

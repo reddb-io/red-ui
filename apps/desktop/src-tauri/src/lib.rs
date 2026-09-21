@@ -234,7 +234,7 @@ async fn open_embedded(app: tauri::AppHandle, path: String) -> Result<String, Co
     // isn't copied next to the dev executable, so fall back to `red` on PATH.
     // `RED_HTTP_TLS_DEV=1` lets reddb serve plain HTTP on 127.0.0.1.
     let sidecar_spawn = shell
-        .sidecar("red")
+        .sidecar("red-ui-reddb")
         .ok()
         .map(|cmd| cmd.args(args).env("RED_HTTP_TLS_DEV", "1").spawn());
     let (mut rx, child) = match sidecar_spawn {

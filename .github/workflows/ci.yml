@@ -113,7 +113,7 @@ jobs:
           cache-on-failure: "true"
       - uses: ./.github/actions/tauri-linux-deps
       # The `red` sidecar (Tauri externalBin) is a ~15MB binary, gitignored
-      # rather than committed. tauri-build validates `binaries/red-<triple>`
+      # rather than committed. tauri-build validates `binaries/red-ui-reddb-<triple>`
       # exists at compile time, so provision it before `cargo check`.
       # fetch-sidecar.sh downloads the pinned release asset for the host triple,
       # preferring the static musl build on Linux, and verifies the sha256.
