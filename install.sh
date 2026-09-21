@@ -296,7 +296,7 @@ clear_appimage_shadow() {
   have update-desktop-database && update-desktop-database "$DESKTOP_DIR" >/dev/null 2>&1 || true
 }
 
-# The .deb ships red-ui and the `red` sidecar in /usr/bin but no `rui` alias.
+# The .deb ships red-ui and its private `red-ui-reddb` sidecar in /usr/bin but no `rui` alias.
 # (Re)create it as a symlink in /usr/local/bin — that dir is on PATH for every
 # shell (bash/zsh/fish) out of the box, so `rui` just works with no rc-file
 # edits, unlike ~/.local/bin. Points at the system binary so `rui` tracks upgrades.
@@ -525,8 +525,10 @@ verify_install() { # red_ui_path
   else
     warn "$BIN_NAME not found at $app"
   fi
-  # The .deb installs a standalone /usr/bin/red; the AppImage bundles it (nothing on disk).
-  red="$(command -v red 2>/dev/null || true)"
+  # The .deb installs an app-private sidecar name so it can coexist with
+  # red-request, which also bundles reddb. The AppImage keeps it internal.
+  red="$(dirname "$app")/red-ui-reddb"
+  [[ -x "$red" ]] || red=""
   if [[ -n "$red" ]]; then
     if v="$("$red" --version 2>&1)"; then
       ok "$v"

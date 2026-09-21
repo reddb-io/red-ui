@@ -29,7 +29,7 @@
     "active": true,
     "targets": "all",
     "externalBin": [
-      "binaries/red"
+      "binaries/red-ui-reddb"
     ],
     "icon": [
       "icons/32x32.png",

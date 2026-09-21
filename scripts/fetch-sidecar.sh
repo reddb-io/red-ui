@@ -64,9 +64,9 @@ if [[ "${1:-}" == "--source" ]]; then
   echo "▸ building red from source: $REDDB_SRC"
   (cd "$REDDB_SRC" && cargo build --release)
   mkdir -p "$DEST_DIR"
-  cp "$REDDB_SRC/target/release/red" "$DEST_DIR/red-$TRIPLE"
-  chmod +x "$DEST_DIR/red-$TRIPLE"
-  echo "▸ sidecar provisioned from source: binaries/red-$TRIPLE"
+  cp "$REDDB_SRC/target/release/red" "$DEST_DIR/red-ui-reddb-$TRIPLE"
+  chmod +x "$DEST_DIR/red-ui-reddb-$TRIPLE"
+  echo "▸ sidecar provisioned from source: binaries/red-ui-reddb-$TRIPLE"
   exit 0
 fi
 
@@ -111,7 +111,7 @@ case "$TRIPLE" in
 esac
 
 # Tauri appends the host's executable suffix when it resolves an externalBin,
-# so the Windows sidecar has to land as red-<triple>.exe.
+# so the Windows sidecar has to land as red-ui-reddb-<triple>.exe.
 DEST_SUFFIX=""
 case "$TRIPLE" in *-windows-*) DEST_SUFFIX=".exe" ;; esac
 
@@ -191,7 +191,7 @@ fetch_and_verify() {
 
 # ── universal macOS: lipo the two slices ─────────────────────────────────────
 # `tauri build --target universal-apple-darwin` resolves the externalBin as
-# red-universal-apple-darwin, and no such asset exists upstream — reddb ships
+# red-ui-reddb-universal-apple-darwin, and no such asset exists upstream — reddb ships
 # one binary per arch. Fuse them here. The per-arch files are kept too, so a
 # plain `tauri dev` on the same machine (which resolves the host triple) works.
 if [ "$TRIPLE" = "universal-apple-darwin" ]; then
@@ -203,13 +203,13 @@ if [ "$TRIPLE" = "universal-apple-darwin" ]; then
     slice_asset="${pair##*:}"
     fetch_and_verify "$slice_asset" "$TMPDIR_LOCAL/$slice_asset" \
       || { echo "✗ could not fetch $slice_asset from $REDDB_REPO@$REDDB_VERSION" >&2; exit 1; }
-    cp "$TMPDIR_LOCAL/$slice_asset" "$DEST_DIR/red-$slice_triple"
-    chmod +x "$DEST_DIR/red-$slice_triple"
-    SLICES+=("$DEST_DIR/red-$slice_triple")
+    cp "$TMPDIR_LOCAL/$slice_asset" "$DEST_DIR/red-ui-reddb-$slice_triple"
+    chmod +x "$DEST_DIR/red-ui-reddb-$slice_triple"
+    SLICES+=("$DEST_DIR/red-ui-reddb-$slice_triple")
   done
-  lipo -create -output "$DEST_DIR/red-universal-apple-darwin" "${SLICES[@]}"
-  chmod +x "$DEST_DIR/red-universal-apple-darwin"
-  echo "▸ sidecar provisioned: binaries/red-universal-apple-darwin  (lipo of both macOS slices, $REDDB_REPO $REDDB_VERSION)"
+  lipo -create -output "$DEST_DIR/red-ui-reddb-universal-apple-darwin" "${SLICES[@]}"
+  chmod +x "$DEST_DIR/red-ui-reddb-universal-apple-darwin"
+  echo "▸ sidecar provisioned: binaries/red-ui-reddb-universal-apple-darwin  (lipo of both macOS slices, $REDDB_REPO $REDDB_VERSION)"
   exit 0
 fi
 
@@ -234,6 +234,6 @@ if [ -z "$FETCHED_ASSET" ]; then
   exit 1
 fi
 
-cp "$BIN_TMP" "$DEST_DIR/red-$TRIPLE$DEST_SUFFIX"
-chmod +x "$DEST_DIR/red-$TRIPLE$DEST_SUFFIX"
-echo "▸ sidecar provisioned: binaries/red-$TRIPLE$DEST_SUFFIX  ($FETCHED_ASSET from $REDDB_REPO $REDDB_VERSION)"
+cp "$BIN_TMP" "$DEST_DIR/red-ui-reddb-$TRIPLE$DEST_SUFFIX"
+chmod +x "$DEST_DIR/red-ui-reddb-$TRIPLE$DEST_SUFFIX"
+echo "▸ sidecar provisioned: binaries/red-ui-reddb-$TRIPLE$DEST_SUFFIX  ($FETCHED_ASSET from $REDDB_REPO $REDDB_VERSION)"
