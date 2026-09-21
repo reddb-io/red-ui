@@ -1,6 +1,6 @@
 {
   "name": "@reddb-io/ui-mcp",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "private": false,
   "description": "MCP Apps server for embedding RedDB UI in MCP clients.",
   "type": "module",

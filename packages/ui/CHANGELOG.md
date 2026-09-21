@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.3.3
+
+### Patch Changes
+
+- f3f7046: Rename the desktop app's bundled RedDB sidecar so the Linux package can coexist with red-request.
+  - @reddb-io/ui-kit@0.3.3
+  - @reddb-io/ui-mcp@0.3.3
+
 ## 0.3.2
 
 ### Patch Changes
