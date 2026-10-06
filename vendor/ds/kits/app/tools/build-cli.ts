@@ -1,6 +1,6 @@
 // Build command for the application Kit.
 //
-//   pnpm --filter @reddb-io/kit-app build
+//   pnpm --filter kit-app build
 //
 // A Kit's artifact is its source: components are distributed as vendorable
 // Svelte 5 source (ADR 0002), not as a compiled bundle, so "building" is

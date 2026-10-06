@@ -1,6 +1,6 @@
-import { readdirSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { filesUnder, kitSourceFiles as sourceFilesUnder } from "@reddb-io/kit-lint";
 
 // kits/app/tools
 const here = dirname(fileURLToPath(import.meta.url));
@@ -8,6 +8,15 @@ const here = dirname(fileURLToPath(import.meta.url));
 export const KIT_ROOT = join(here, "..");
 /** The vendorable component source — the whole of what a consumer receives. */
 export const SRC_DIR = join(KIT_ROOT, "src");
+/**
+ * Where each half of the Taxonomy lives
+ * (`.red/contexts/component-system/CONTEXT.md`). The directory is
+ * a claim, not the authority: `test/taxonomy.test.ts` reads the imports and
+ * decides which half a component actually belongs to, and fails when the file
+ * it is in disagrees.
+ */
+export const PRIMITIVES_DIR = join(SRC_DIR, "primitives");
+export const COMPOSITES_DIR = join(SRC_DIR, "composites");
 /** The Kit's routing manifest, read by ds-sync (ADR 0002). */
 export const KIT_MANIFEST = join(KIT_ROOT, "kit.json");
 /**
@@ -20,25 +29,16 @@ export const CONSUMER_TSCONFIG = join(KIT_ROOT, "tsconfig.consumer.json");
 export const DIST_DIR = join(KIT_ROOT, "dist");
 
 /** Every file under `dir`, recursively, sorted — a stable, reproducible order. */
-export function filesUnder(dir: string): string[] {
-  const out: string[] = [];
-  for (const entry of readdirSync(dir).sort()) {
-    const full = join(dir, entry);
-    if (statSync(full).isDirectory()) out.push(...filesUnder(full));
-    else out.push(full);
-  }
-  return out;
-}
+export { filesUnder };
 
 /**
- * The Kit's component source files: what the lint reads and what the Primitive
+ * The Kit's component source files: what the lint reads and what the Taxonomy
  * test inspects. Discovered rather than listed, so a component added without a
- * test or with a hardcoded colour is caught the moment its file exists.
+ * test or with a hardcoded colour is caught the moment its file exists. Which
+ * files count is the linter's answer, shared with every other Kit.
  */
 export function kitSourceFiles(dir: string = SRC_DIR): string[] {
-  return filesUnder(dir).filter(
-    (file) => file.endsWith(".svelte") || file.endsWith(".ts")
-  );
+  return sourceFilesUnder(dir);
 }
 
 /** The Kit's Svelte components, by file. */

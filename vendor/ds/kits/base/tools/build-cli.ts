@@ -1,6 +1,6 @@
 // Build command for the Base Kit.
 //
-//   pnpm --filter @reddb-io/kit-base build
+//   pnpm --filter kit-base build
 //
 // A Kit's artifact is its source (ADR 0002), so "building" is staging exactly
 // what a consumer receives into dist/ — the directory the release bundler

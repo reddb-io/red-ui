@@ -3,7 +3,7 @@
 
   One entry in a navigation list. Like ListRow it derives its element — an <a>
   when it goes somewhere, a <button> when it only does something — but unlike
-  ListRow it also has to say *where you are*: `active` sets `aria-current`, so
+  ListRow it also has to say *where you are*: `current` sets `aria-current`, so
   the current page is announced and not merely tinted. Colour alone would leave
   a screen reader with a list of identical links.
 
@@ -13,22 +13,27 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
+  import { warnDeprecated } from "@reddb-io/design-system/base";
   import { navItem } from "./nav-item.variants";
+
+  /** What `aria-current` says: `page` for a route, `step` in a wizard, `location` in a trail. */
+  type CurrentToken = "page" | "step" | "location" | "date" | "time" | "true";
 
   interface Props extends Omit<HTMLAttributes<HTMLElement>, "class"> {
     /** The item's text. Ignored when a `children` snippet is given. */
     label?: string;
     /** Where the item goes. Absent, the item is a <button>. */
     href?: string;
-    /** Is this the current destination? Defaults to false. */
+    /**
+     * Is this the current destination (ADR 0026)? `true` announces it as the
+     * current `page`; a token names what it is current within — `step`
+     * inside a wizard, `location` inside a breadcrumb trail. Defaults to false.
+     */
+    current?: boolean | CurrentToken;
+    /** @deprecated Renamed `current` (ADR 0026): `active` is `current`, `active current="step"` is `current="step"`. Removed next release. */
     active?: boolean;
     /** Unavailable for now: dimmed, and out of the tab order. */
     disabled?: boolean;
-    /**
-     * What `aria-current` says when the item is active. `page` for a route,
-     * `step` inside a wizard, `location` inside a breadcrumb trail.
-     */
-    current?: "page" | "step" | "location" | "date" | "time" | "true";
     /** Before the label. */
     icon?: Snippet;
     /** After the label, pushed to the end of the item. */
@@ -42,15 +47,24 @@
   const {
     label,
     href,
-    active = false,
+    current = false,
+    active,
     disabled = false,
-    current = "page",
     icon,
     trailing,
     children,
     class: className,
     ...rest
   }: Props = $props();
+
+  // A caller still on the deprecated `active` keeps its old meaning for one
+  // release: `active` decides current-ness, and a token in `current` only names it.
+  const isCurrent = $derived(active !== undefined ? active : current !== false);
+  const token = $derived<CurrentToken>(typeof current === "string" ? current : "page");
+
+  $effect(() => {
+    if (active !== undefined) warnDeprecated("NavItem", "active", "current");
+  });
 
   const tag = $derived(href !== undefined ? "a" : "button");
   // `pointer-events-none` stops the pointer; only these keep a keyboard out. A
@@ -67,8 +81,9 @@
   this={tag}
   {...rest}
   {...native}
-  class={navItem({ active, disabled }).root({ class: className })}
-  aria-current={active ? current : undefined}
+  data-nav-item
+  class={navItem({ current: isCurrent, disabled }).root({ class: className })}
+  aria-current={isCurrent ? token : undefined}
   aria-disabled={disabled ? "true" : undefined}
 >
   {#if icon}

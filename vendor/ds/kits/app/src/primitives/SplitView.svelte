@@ -1,7 +1,7 @@
 <!--
   SplitView — a Primitive: it imports no other Kit component. It imports its
   own behavior module, which is a `.ts` file and not a component, so the
-  mechanical test in test/primitives.test.ts reads it as what it is.
+  mechanical test in test/taxonomy.test.ts reads it as what it is.
 
   Two panes and a divider you can move, by pointer or by keyboard. The
   arithmetic lives in split-view.behavior.ts, where it can be tested without a
@@ -12,8 +12,9 @@
   hand-rolled splitter, and the reason this one is in the Kit rather than in
   each application.
 
-  `fraction` is bindable: an application that wants to persist the split reads
-  it, and one that does not can ignore it entirely.
+  `fraction` is bindable, and every move the user makes is reported through
+  `onfractionchange` (ADR 0026): an application that wants to persist the
+  split reads it, and one that does not can ignore it entirely.
 -->
 <script lang="ts">
   import type { Snippet } from "svelte";
@@ -34,6 +35,8 @@
     orientation?: SplitOrientation;
     /** How much of the container the start pane takes, 0–1. Bindable. */
     fraction?: number;
+    /** Called with the new fraction after each pointer or keyboard move. */
+    onfractionchange?: (fraction: number) => void;
     /** Smallest fraction the start pane may shrink to. */
     min?: number;
     /** Largest fraction it may grow to. */
@@ -51,6 +54,7 @@
   let {
     orientation = "horizontal",
     fraction = $bindable(0.5),
+    onfractionchange,
     min = SPLIT_BOUNDS.min,
     max = SPLIT_BOUNDS.max,
     label = "Resize panes",
@@ -71,8 +75,8 @@
     dragging = true;
     // Capture keeps the moves coming once the pointer outruns a divider four
     // pixels wide, which it does immediately. Where there is no pointer
-    // capture — jsdom, or a browser declining the id — the drag is the same
-    // drag, just bounded by the divider.
+    // capture — jsdom, or a browser declining the id — the root handlers keep
+    // the drag alive across either pane while the pointer remains in the split.
     try {
       (event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId);
     } catch {
@@ -90,7 +94,13 @@
     // A move the container cannot measure leaves the divider alone rather than
     // slamming it to an edge.
     if (next === null) return;
+    commit(next);
+  }
+
+  function commit(next: number): void {
+    if (next === fraction) return;
     fraction = next;
+    onfractionchange?.(next);
   }
 
   function release(): void {
@@ -102,7 +112,7 @@
     // Every other key — the other axis included — belongs to the page.
     if (next === null) return;
     event.preventDefault();
-    fraction = next;
+    commit(next);
   }
 </script>
 
@@ -111,6 +121,9 @@
   {...rest}
   class={slots.root({ class: className })}
   data-orientation={orientation}
+  onpointermove={move}
+  onpointerup={release}
+  onpointercancel={release}
 >
   <div class={slots.pane()} style="flex-basis: {percentOf(position)}">
     {@render start?.()}
@@ -125,6 +138,7 @@
   <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
   <div
     class={slots.divider()}
+    data-split-view-divider
     role="separator"
     tabindex="0"
     aria-label={label}
@@ -133,9 +147,6 @@
     aria-valuemin={Math.round(clampFraction(min, bounds) * 100)}
     aria-valuemax={Math.round(clampFraction(max, bounds) * 100)}
     onpointerdown={grab}
-    onpointermove={move}
-    onpointerup={release}
-    onpointercancel={release}
     onlostpointercapture={release}
     onkeydown={key}
   ></div>
