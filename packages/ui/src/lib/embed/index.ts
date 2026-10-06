@@ -2,7 +2,7 @@ import appCss from "../../app.css?inline";
 import type { Component } from "svelte";
 import type { ConnectionProvider, ConsoleSink } from "../reddb";
 import { devConsole } from "../reddb/dev-console";
-import type { Theme } from "../theme.svelte";
+import { applyAppearance, type Theme } from "../theme.svelte";
 import { RED_UI_VERSION, readBuildInfo } from "../build-info";
 
 /** Build version of the embeddable bundle, stamped at build time. */
@@ -60,7 +60,7 @@ const shadowCss = `
 }
 
 :host,
-:host([data-theme='light']) {
+:host([data-color-scheme='light']) {
   --color-bg-0: #ffffff;
   --color-bg-1: #fafafa;
   --color-bg-2: #f4f4f5;
@@ -87,7 +87,7 @@ const shadowCss = `
   --shadow-lg: 0 16px 48px rgba(15, 23, 42, 0.14), 0 0 0 1px var(--color-line-2);
 }
 
-:host([data-theme='dark']) {
+:host([data-color-scheme='dark']) {
   --color-bg-0: #050607;
   --color-bg-1: #0d0f13;
   --color-bg-2: #181b21;
@@ -144,7 +144,14 @@ export async function mountRedUi(
   opts: RedUiEmbedOptions
 ): Promise<RedUiEmbedHandle> {
   markEmbedSurface();
-  host.dataset.theme = opts.theme ?? host.dataset.theme ?? "dark";
+  // The DS axes (ADR 0008): `data-theme` is the Theme direction and
+  // `data-color-scheme` is light/dark. A host that still pre-sets the legacy
+  // `data-theme="light|dark"` keeps its choice.
+  const legacy = host.dataset.theme;
+  const preset =
+    host.dataset.colorScheme ??
+    (legacy === "light" || legacy === "dark" ? legacy : undefined);
+  applyAppearance(host, opts.theme ?? (preset as Theme | undefined) ?? "dark");
 
   const shadowRoot =
     host.shadowRoot ?? host.attachShadow(opts.shadowRoot ?? { mode: "open" });

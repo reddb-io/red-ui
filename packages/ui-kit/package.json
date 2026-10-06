@@ -28,11 +28,12 @@
   "devDependencies": {
     "svelte": "^5.20.0",
     "svelte-check": "^4.1.4",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
   },
   "dependencies": {
     "tailwind-variants": "^2.1.0",
-    "@reddb-io/kit-app": "workspace:*"
+    "@reddb-io/design-system": "workspace:*"
   },
   "engines": {
     "node": ">=20"

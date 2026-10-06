@@ -56,12 +56,12 @@ describe("ListRow", () => {
 });
 
 describe("NavItem", () => {
-  it("marks the active item with aria-current=page", () => {
+  it("marks the current item with aria-current=page", () => {
     const active = render(NavItem, {
-      props: { label: "General", active: true },
+      props: { label: "General", current: true },
     }).body;
     const idle = render(NavItem, {
-      props: { label: "General", active: false },
+      props: { label: "General", current: false },
     }).body;
     expect(active).toContain('aria-current="page"');
     expect(idle).not.toContain('aria-current="page"');

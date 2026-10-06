@@ -56,6 +56,7 @@
     "@aflsolutions/graphology-communities-leiden": "^1.1.1",
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
+    "@reddb-io/design-system": "workspace:*",
     "@reddb-io/ui-kit": "workspace:*",
     "@reddb-io/ui-mcp": "workspace:*",
     "@sigma/edge-curve": "^3.1.0",

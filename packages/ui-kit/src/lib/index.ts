@@ -1,8 +1,11 @@
-// ui-kit is the alias layer over the vendored DS application Kit (ADR 0002 /
+// ui-kit is the alias layer over the vendored design system (ADR 0002 /
 // Brand ADR 0006 no-flag-day seam): call sites keep importing @reddb-io/ui-kit
 // while each export resolves to the DS component when compatible, or to the
 // local override when red-ui deliberately diverges (documented per export).
-export { Kbd, NavItem, SplitView } from "@reddb-io/kit-app";
+// Since DS 2026.08.2 the Kits ship as one package with a subpath per Kit:
+// Kbd is a Base contract, NavItem and SplitView are Application Primitives.
+export { Kbd } from "@reddb-io/design-system/base";
+export { NavItem, SplitView } from "@reddb-io/design-system/app";
 // Local overrides — each is a recorded divergence, reconciled at its own pace
 // (Brand ADR 0006: one diff per component, never a silent fork):
 // - Button: keeps the `danger` variant (Brand ships no feedback colors yet)

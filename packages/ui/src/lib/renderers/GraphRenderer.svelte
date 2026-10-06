@@ -343,7 +343,7 @@
     const observer = new MutationObserver(() => {
       graphThemeVersion += 1
     })
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-color-scheme'] })
     return () => observer.disconnect()
   })
 
@@ -472,12 +472,12 @@
   // See packages/ui/src/lib/renderers/graph-render.ts → runGraphLayout.
   const layout = $derived(runGraphLayout(drawNodes, drawEdges))
 
-  // Dark/light is theme-aware; re-read on the data-theme mutation observer tick.
+  // Dark/light follows the DS Color Scheme; re-read on the mutation observer tick.
   const isDark = $derived.by(() => {
     void graphThemeVersion
     return typeof document === 'undefined'
       ? true
-      : document.documentElement.dataset.theme !== 'light'
+      : document.documentElement.dataset.colorScheme !== 'light'
   })
 
   // Group-in-a-box geometry in layout ([0,100]) space. Shared by the SVG
@@ -699,7 +699,7 @@
 
   // Theme-aware palette handed to the sigma reducers (dark tokens drive it).
   function sigmaThemeColors(): SigmaThemeColors {
-    const dark = document.documentElement.dataset.theme !== 'light'
+    const dark = document.documentElement.dataset.colorScheme !== 'light'
     return {
       background: cssColor('--color-bg-0', dark ? '#050607' : '#ffffff'),
       edge: cssColor('--color-line-3', dark ? '#3a424d' : '#c9cbd1'),
@@ -731,7 +731,7 @@
       layout: renderLayout,
       sizeScales: nodeSizeScales,
       orphanIds: orphanNodeIds,
-      dark: document.documentElement.dataset.theme !== 'light',
+      dark: document.documentElement.dataset.colorScheme !== 'light',
       edgeColor: sigmaThemeColors().edge,
       bundledCurvatures: bundleCurvatures ?? undefined,
     })
