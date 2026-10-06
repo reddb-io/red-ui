@@ -1,11 +1,16 @@
 // NavItem's styling. See button.variants.ts for the split, the colour rule and
 // the spatial rule.
 //
-// The active state is drawn with a tinted surface and a full-weight foreground
-// rather than with an accent bar down one side: a side bar is a per-side
-// border width, and the Brand ships no token family for widths — so the bar
-// would be a value the Themes cannot reach, in the one component whose whole
-// job is to show where you are.
+// The active state wears the shared selection language (DESIGN.md,
+// "Interactive states"): a neutral surface, full-weight foreground ink, and a
+// 2px Brand-red bar on the start edge. The bar's colour is the `primary` role
+// the Themes reassign; its width is a plain border width, like every other
+// rule the Kits draw. Every item carries the same edge, transparent until it
+// is current, so moving the current page shifts nothing. The Brand red never
+// fills the item — it marks the primary action, and here it only points.
+//
+// A horizontal rail of items (BottomNavigation) moves the bar to the edge it
+// sits against through its own slot class.
 //
 // Opacity is doing the work an extra surface token would otherwise do, which
 // is the same choice button.variants.ts made and for the same reason: the
@@ -13,13 +18,13 @@
 
 import { tv, type VariantProps } from "tailwind-variants";
 
-const ACTIVE = {
+// Current-ness is `current` on an item (ADR 0026), as on the Base Navbar's
+// links; `active` is its one-release alias, in the recipe as on the component.
+const CURRENT = {
   /** Where you are. */
-  true: { root: "bg-primary/10 font-medium text-foreground" },
+  true: { root: "border-primary bg-foreground/10 font-medium text-foreground" },
   /** Everywhere else you could go. */
-  false: {
-    root: "bg-transparent text-muted hover:bg-muted/10 hover:text-foreground",
-  },
+  false: { root: "border-transparent bg-transparent text-ink-muted hover:bg-foreground/8 hover:text-foreground" },
 } as const;
 
 const DISABLED = {
@@ -30,13 +35,19 @@ const DISABLED = {
 
 export const navItem = tv({
   slots: {
-    root: "inline-flex w-full items-center gap-[var(--reddb-spatial-gap-md)] rounded-md px-[var(--reddb-spatial-inset-sm)] py-2 text-sm leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+    // Focus is the ink focus outline every DS control draws (ADR 0023).
+    root: "inline-flex w-full items-center gap-[var(--reddb-spatial-gap-md)] rounded-s-none rounded-e-md border-s-2 min-h-[var(--reddb-spatial-control-height-md)] px-[var(--reddb-spatial-inset-sm)] text-sm leading-tight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
     icon: "shrink-0",
     label: "truncate",
     trailing: "ms-auto shrink-0",
   },
-  variants: { active: ACTIVE, disabled: DISABLED },
-  defaultVariants: { active: false, disabled: false },
+  variants: {
+    current: CURRENT,
+    /** @deprecated Renamed `current` (ADR 0026); removed next release. */
+    active: { true: CURRENT.true, false: {} },
+    disabled: DISABLED,
+  },
+  defaultVariants: { current: false, disabled: false },
 });
 
 export type NavItemVariants = VariantProps<typeof navItem>;

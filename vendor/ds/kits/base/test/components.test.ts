@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { basename, join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { BASE_COMPONENTS } from "../src/index";
+import { BASE_COMPONENTS, BASE_COMPOSITES, BASE_PRIMITIVES } from "../src/index";
 import { KIT_MANIFEST, SRC_DIR, kitComponentFiles } from "../tools/paths";
 
 // What the Base Kit is, checked rather than described.
@@ -36,9 +36,7 @@ describe("the Base Kit's routing manifest", () => {
 
 describe("the Base Kit's public surface", () => {
   it("lists exactly the components on disk", () => {
-    const onDisk = kitComponentFiles()
-      .map((file) => basename(file, ".svelte"))
-      .sort();
+    const onDisk = kitComponentFiles().map((file) => basename(file, ".svelte")).sort();
 
     expect([...BASE_COMPONENTS]).toEqual(onDisk);
   });
@@ -49,5 +47,63 @@ describe("the Base Kit's public surface", () => {
     for (const component of BASE_COMPONENTS) {
       expect(index).toContain(`export { default as ${component} }`);
     }
+  });
+
+  it("classifies every canonical composition and partitions the public surface", () => {
+    expect(BASE_COMPOSITES).toEqual([
+      "Accordion",
+      "AlertDialog",
+      "AppearanceSwitch",
+      "Avatar",
+      "Breadcrumbs",
+      "BrowserMockup",
+      "BulletsSlide",
+      "Calendar",
+      "Card",
+      "Carousel",
+      "Checkbox",
+      "CodeBlock",
+      "Combobox",
+      "DateField",
+      "DatePicker",
+      "DateRangeField",
+      "DateRangePicker",
+      "Drawer",
+      "DropdownMenu",
+      "Disclosure",
+      "Field",
+      "FigureSlide",
+      "FileInput",
+      "GridList",
+      "ListContainer",
+      "Navbar",
+      "NavigationMenu",
+      "Notification",
+      "OneTimeCodeInput",
+      "Pagination",
+      "PhoneMockup",
+      "Popover",
+      "QuoteSlide",
+      "RadioGroup",
+      "RangeCalendar",
+      "Rating",
+      "SectionSlide",
+      "Slider",
+      "Statistic",
+      "Steps",
+      "Swap",
+      "Switch",
+      "Tabs",
+      "TimeField",
+      "TimeRangeField",
+      "Timeline",
+      "TitleSlide",
+      "ToggleButton",
+      "ToggleGroup",
+      "TwoColumnSlide",
+      "WindowMockup",
+    ]);
+    expect(new Set([...BASE_PRIMITIVES, ...BASE_COMPOSITES])).toEqual(new Set(BASE_COMPONENTS));
+    expect(BASE_PRIMITIVES.filter((name) => BASE_COMPOSITES.includes(name as never))).toEqual([]);
   });
 });

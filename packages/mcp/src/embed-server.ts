@@ -151,7 +151,7 @@ function contentType(filePath: string): string {
  */
 export function renderHostHtml(): string {
   return `<!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="application" data-color-scheme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

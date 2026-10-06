@@ -166,13 +166,15 @@ export function skinToCssVars(skin: Skin): Record<string, string> {
 /**
  * Apply a skin's derived custom properties to a DOM element as inline styles.
  * Inline styles win over the stylesheet's `:root` rules, so this overrides the
- * active theme tokens regardless of `data-theme`. The thin shell
+ * active theme tokens regardless of `data-color-scheme`. The thin shell
  * (`skins.svelte.ts`) wires this to mount + persistence.
  */
 export function applySkin(skin: Skin, target: HTMLElement) {
   const vars = skinToCssVars(skin);
   for (const [k, v] of Object.entries(vars)) target.style.setProperty(k, v);
-  // Skins are dark-only; pin data-theme so the shadcn semantic aliases that
-  // key off it stay consistent with the inline surface ramp.
-  target.dataset.theme = "dark";
+  // Skins are dark-only; pin the dark Color Scheme so the shadcn semantic
+  // aliases and the DS roles that key off it stay consistent with the inline
+  // surface ramp.
+  target.dataset.theme = "application";
+  target.dataset.colorScheme = "dark";
 }

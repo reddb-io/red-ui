@@ -61,9 +61,7 @@ export function parseMachineOutput(output: string): Diagnostic[] {
 }
 
 /** The `<n> ERRORS <n> WARNINGS` svelte-check itself counted, if it said so. */
-function reportedCounts(
-  output: string
-): { errors: number; warnings: number } | undefined {
+function reportedCounts(output: string): { errors: number; warnings: number } | undefined {
   const match = /COMPLETED \d+ FILES (\d+) ERRORS (\d+) WARNINGS/.exec(output);
   if (!match) return undefined;
   return { errors: Number(match[1]), warnings: Number(match[2]) };
@@ -76,53 +74,36 @@ function reportedCounts(
  * failing exit is a result and not an error — only a run that produced no
  * readable report at all is thrown.
  */
-export function consumerCheck(
-  tsconfig: string = CONSUMER_TSCONFIG
-): ConsumerCheckResult {
+export function consumerCheck(tsconfig: string = CONSUMER_TSCONFIG): ConsumerCheckResult {
   let raw: string;
   try {
-    raw = execFileSync(
-      SVELTE_CHECK,
-      ["--tsconfig", tsconfig, "--output", "machine"],
-      {
-        cwd: KIT_ROOT,
-        encoding: "utf8",
-        stdio: ["ignore", "pipe", "pipe"],
-      }
-    );
+    raw = execFileSync(SVELTE_CHECK, ["--tsconfig", tsconfig, "--output", "machine"], {
+      cwd: KIT_ROOT,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
   } catch (err) {
-    const failure = err as {
-      stdout?: string;
-      stderr?: string;
-      message: string;
-    };
+    const failure = err as { stdout?: string; stderr?: string; message: string };
     raw = failure.stdout ?? "";
     if (reportedCounts(raw) === undefined) {
       throw new Error(
-        `svelte-check did not complete against ${tsconfig}: ${failure.stderr || failure.message}`
+        `svelte-check did not complete against ${tsconfig}: ${failure.stderr || failure.message}`,
       );
     }
   }
 
   const diagnostics = parseMachineOutput(raw);
-  const errors = diagnostics.filter(
-    (diagnostic) => diagnostic.severity === "ERROR"
-  );
-  const warnings = diagnostics.filter(
-    (diagnostic) => diagnostic.severity === "WARNING"
-  );
+  const errors = diagnostics.filter((diagnostic) => diagnostic.severity === "ERROR");
+  const warnings = diagnostics.filter((diagnostic) => diagnostic.severity === "WARNING");
 
   // svelte-check counts what it found; this counts what it could read back. A
   // gap means a diagnostic went unparsed, and a check that loses diagnostics
   // passes for the wrong reason — the one failure mode worth being loud about.
   const reported = reportedCounts(raw);
-  if (
-    reported &&
-    (reported.errors !== errors.length || reported.warnings !== warnings.length)
-  ) {
+  if (reported && (reported.errors !== errors.length || reported.warnings !== warnings.length)) {
     throw new Error(
       `svelte-check reported ${reported.errors} error(s) and ${reported.warnings} warning(s) but ` +
-        `${errors.length} and ${warnings.length} could be parsed. Its machine output has changed shape:\n${raw}`
+        `${errors.length} and ${warnings.length} could be parsed. Its machine output has changed shape:\n${raw}`,
     );
   }
 

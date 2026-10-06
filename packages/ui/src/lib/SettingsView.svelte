@@ -587,7 +587,7 @@
           {@const PaneIcon = icons[pane.icon] ?? Settings2}
           <NavItem
             label={pane.label}
-            active={pane.id === activePane.id}
+            current={pane.id === activePane.id}
             onclick={() => (activePaneId = pane.id)}
           >
             {#snippet icon()}<PaneIcon class="size-3.5" />{/snippet}

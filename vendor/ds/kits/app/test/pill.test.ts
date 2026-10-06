@@ -7,11 +7,7 @@
 
 import { describe, expect, it, vi } from "vitest";
 import Pill from "../src/primitives/Pill.svelte";
-import {
-  PILL_SIZES,
-  PILL_VARIANTS,
-  pill,
-} from "../src/primitives/pill.variants";
+import { PILL_SIZES, PILL_VARIANTS, pill } from "../src/primitives/pill.variants";
 import { classes, classesOf, click, render, rendered, text } from "./mount";
 
 describe("Pill", () => {
@@ -30,10 +26,11 @@ describe("Pill", () => {
     }
   });
 
-  it("defaults to the neutral variant at the medium size", () => {
-    expect(classes(rendered(render(Pill, {})))).toEqual(
-      classesOf(pill({ variant: "neutral", size: "md" }))
-    );
+  it("defaults to the neutral tone, tinted, at the medium size", () => {
+    const element = rendered(render(Pill, {}));
+    expect(classes(element)).toEqual(classesOf(pill({ tone: "neutral", variant: "tinted", size: "md" })));
+    expect(element.dataset.tone).toBe("neutral");
+    expect(element.dataset.variant).toBe("tinted");
   });
 
   it("renders no dismiss affordance when there is nothing to dismiss to", () => {
@@ -41,10 +38,8 @@ describe("Pill", () => {
   });
 
   it("dismisses once per press, through a named control", () => {
-    const onDismiss = vi.fn();
-    const element = rendered(
-      render(Pill, { onDismiss, dismissLabel: "Remove svelte" })
-    );
+    const ondismiss = vi.fn();
+    const element = rendered(render(Pill, { ondismiss, dismissLabel: "Remove svelte" }));
     const dismiss = element.querySelector("button");
     expect(dismiss).not.toBeNull();
     expect(dismiss!.getAttribute("aria-label")).toBe("Remove svelte");
@@ -52,14 +47,12 @@ describe("Pill", () => {
     expect(dismiss!.getAttribute("type")).toBe("button");
 
     click(dismiss as HTMLElement);
-    expect(onDismiss).toHaveBeenCalledTimes(1);
+    expect(ondismiss).toHaveBeenCalledTimes(1);
   });
 
   it("names the dismiss affordance even when the caller forgets to", () => {
-    const element = rendered(render(Pill, { onDismiss: () => {} }));
-    expect(element.querySelector("button")!.getAttribute("aria-label")).toBe(
-      "Remove"
-    );
+    const element = rendered(render(Pill, { ondismiss: () => {} }));
+    expect(element.querySelector("button")!.getAttribute("aria-label")).toBe("Remove");
   });
 
   it("merges a caller's classes over its own", () => {

@@ -6,14 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#ffffff" />
     <script>
-      // Apply persisted theme before paint to avoid a flash of the wrong theme.
-      // Default is light; dark is opt-in via the topbar toggle / Cmd-K command.
+      // Apply the persisted Color Scheme before paint to avoid a flash of the
+      // wrong one. Default is light; dark is opt-in via the topbar toggle /
+      // Cmd-K command. The DS reads `data-theme` as its Theme direction
+      // (always "application" here) and `data-color-scheme` as light/dark.
       (function () {
+        var root = document.documentElement;
+        root.dataset.theme = "application";
         try {
-          var t = localStorage.getItem('red-ui-theme');
-          document.documentElement.dataset.theme = t === 'dark' ? 'dark' : 'light';
+          var t = localStorage.getItem("red-ui-theme");
+          root.dataset.colorScheme = t === "dark" ? "dark" : "light";
         } catch (_) {
-          document.documentElement.dataset.theme = 'light';
+          root.dataset.colorScheme = "light";
         }
       })();
     </script>

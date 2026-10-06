@@ -1,0 +1,8 @@
+{
+  "source": "reddb-io/design-system",
+  "version": "v2026.10",
+  "consumer": "red-ui",
+  "kits": ["app"],
+  "styles": ["application"],
+  "dest": "vendor/ds"
+}

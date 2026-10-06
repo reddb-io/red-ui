@@ -1,8 +1,10 @@
 @import "tailwindcss";
-/* DS 2026.08 (ds-sync pin): brand tokens + Theme Layer + vendored Kit sources. */
-@import "../../../vendor/ds/tokens/tokens.css";
-@import "../../../vendor/ds/tokens/density-comfortable.css";
-@import "../../../vendor/ds/theme/theme.css";
+/* DS v2026.10 (ds-sync pin): one entry carries the Brand fonts, Tokens, the
+   Base + Application Theme, both Color Schemes, print rules and every Density
+   stop. The DS reads its axes from <html data-theme="application"
+   data-color-scheme="light|dark"> (ADR 0008). vendor/ds sits outside this
+   package, so Tailwind is pointed at the vendored Kit sources explicitly. */
+@import "@reddb-io/design-system/styles.css";
 @source "../../../vendor/ds/kits";
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/jetbrains-mono";
@@ -11,8 +13,8 @@
    Design tokens. Linear/Vercel vibe — surgical accent, contemporary type.
 
    Two themes live here:
-     - default (`:root`, no data-theme or `data-theme="light"`): light, white-leaning.
-     - opt-in (`:root[data-theme="dark"]`): dark, near-black with green tint.
+     - default (`:root`, no data-color-scheme or `data-color-scheme="light"`): light, white-leaning.
+     - opt-in (`:root[data-color-scheme="dark"]`): dark, near-black with green tint.
 
    Light is default for both OSS and cloud first-load. Dark is opt-in via the
    topbar toggle / Cmd-K command. Selection is persisted in localStorage and
@@ -110,8 +112,9 @@
     0 16px 48px rgba(15, 23, 42, 0.14), 0 0 0 1px var(--color-line-2);
 }
 
-/* Dark theme — opt-in via `data-theme="dark"` on the document root. */
-:root[data-theme="dark"] {
+/* Dark scheme — opt-in via `data-color-scheme="dark"` on the document root
+   (the DS Color Scheme axis; `data-theme` names the DS Theme direction). */
+:root[data-color-scheme="dark"] {
   --color-bg-0: #050607;
   --color-bg-1: #0d0f13;
   --color-bg-2: #181b21;

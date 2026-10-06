@@ -36,10 +36,7 @@ export const SPLIT_STEP = 0.02;
 
 /** `bounds`, in the order the arithmetic needs them whichever way round they came. */
 function ordered(bounds: SplitBounds): SplitBounds {
-  return {
-    min: Math.min(bounds.min, bounds.max),
-    max: Math.max(bounds.min, bounds.max),
-  };
+  return { min: Math.min(bounds.min, bounds.max), max: Math.max(bounds.min, bounds.max) };
 }
 
 /**
@@ -49,10 +46,7 @@ function ordered(bounds: SplitBounds): SplitBounds {
  * the midpoint rather than propagating: `NaN` would reach the DOM as a style
  * the browser drops, leaving a split that is silently unsplit.
  */
-export function clampFraction(
-  fraction: number,
-  bounds: SplitBounds = SPLIT_BOUNDS
-): number {
+export function clampFraction(fraction: number, bounds: SplitBounds = SPLIT_BOUNDS): number {
   const { min, max } = ordered(bounds);
   if (!Number.isFinite(fraction)) return clampFraction(0.5, bounds);
   return Math.min(max, Math.max(min, fraction));
@@ -69,10 +63,9 @@ export function clampFraction(
 export function fractionAt(
   offset: number,
   size: number,
-  bounds: SplitBounds = SPLIT_BOUNDS
+  bounds: SplitBounds = SPLIT_BOUNDS,
 ): number | null {
-  if (!Number.isFinite(offset) || !Number.isFinite(size) || size <= 0)
-    return null;
+  if (!Number.isFinite(offset) || !Number.isFinite(size) || size <= 0) return null;
   return clampFraction(offset / size, bounds);
 }
 
@@ -89,7 +82,7 @@ export function fractionForKey(
   fraction: number,
   orientation: SplitOrientation,
   bounds: SplitBounds = SPLIT_BOUNDS,
-  step: number = SPLIT_STEP
+  step: number = SPLIT_STEP,
 ): number | null {
   const current = clampFraction(fraction, bounds);
   const { min, max } = ordered(bounds);
@@ -115,8 +108,6 @@ export function percentOf(fraction: number): string {
  * side by side are divided by a vertical rule. ARIA names the separator, not
  * the layout, so this is a translation and not a synonym.
  */
-export function separatorOrientation(
-  orientation: SplitOrientation
-): SplitOrientation {
+export function separatorOrientation(orientation: SplitOrientation): SplitOrientation {
   return orientation === "horizontal" ? "vertical" : "horizontal";
 }

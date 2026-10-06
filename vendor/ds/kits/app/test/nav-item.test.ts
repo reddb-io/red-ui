@@ -13,9 +13,7 @@ import { classes, classesOf, click, render, rendered, text } from "./mount";
 
 describe("NavItem", () => {
   it("renders an <a> when it goes somewhere", () => {
-    const element = rendered(
-      render(NavItem, { label: "Tokens", href: "/tokens" })
-    );
+    const element = rendered(render(NavItem, { label: "Tokens", href: "/tokens" }));
     expect(element.tagName).toBe("A");
     expect(element.getAttribute("href")).toBe("/tokens");
     expect(element.textContent?.trim()).toBe("Tokens");
@@ -32,33 +30,22 @@ describe("NavItem", () => {
   });
 
   it("says where you are, and says it only where you are", () => {
-    const active = rendered(
-      render(NavItem, { label: "Tokens", href: "/tokens", active: true })
-    );
-    expect(active.getAttribute("aria-current")).toBe("page");
+    const current = rendered(render(NavItem, { label: "Tokens", href: "/tokens", current: true }));
+    expect(current.getAttribute("aria-current")).toBe("page");
 
-    const inactive = rendered(
-      render(NavItem, { label: "Themes", href: "/themes" })
-    );
+    const inactive = rendered(render(NavItem, { label: "Themes", href: "/themes" }));
     expect(inactive.getAttribute("aria-current")).toBeNull();
   });
 
   it("takes the word for what it is current within", () => {
     const element = rendered(
-      render(NavItem, {
-        label: "Details",
-        href: "/step-2",
-        active: true,
-        current: "step",
-      })
+      render(NavItem, { label: "Details", href: "/step-2", current: "step" }),
     );
     expect(element.getAttribute("aria-current")).toBe("step");
   });
 
   it("keeps a disabled item out of reach of pointer and keyboard alike", () => {
-    const link = rendered(
-      render(NavItem, { label: "Soon", href: "/soon", disabled: true })
-    );
+    const link = rendered(render(NavItem, { label: "Soon", href: "/soon", disabled: true }));
     // A disabled link is not a thing the platform has: withholding the href is
     // what makes it unfocusable, and aria-disabled is what makes it explained.
     expect(link.getAttribute("href")).toBeNull();
@@ -66,38 +53,28 @@ describe("NavItem", () => {
     expect(link.getAttribute("aria-disabled")).toBe("true");
     expect(classes(link).has("pointer-events-none")).toBe(true);
 
-    const control = rendered(
-      render(NavItem, { label: "Soon", disabled: true })
-    );
+    const control = rendered(render(NavItem, { label: "Soon", disabled: true }));
     expect((control as HTMLButtonElement).disabled).toBe(true);
   });
 
   it("wears exactly the classes its variants module produces", () => {
-    for (const active of [true, false]) {
+    for (const current of [true, false]) {
       for (const disabled of [true, false]) {
-        const element = rendered(
-          render(NavItem, { label: "Tokens", active, disabled })
-        );
-        expect(classes(element)).toEqual(
-          classesOf(navItem({ active, disabled }).root())
-        );
+        const element = rendered(render(NavItem, { label: "Tokens", current, disabled }));
+        expect(classes(element)).toEqual(classesOf(navItem({ current, disabled }).root()));
       }
     }
   });
 
-  it("defaults to inactive and available", () => {
+  it("defaults to not current and available", () => {
     expect(classes(rendered(render(NavItem, { label: "Tokens" })))).toEqual(
-      classesOf(navItem({ active: false, disabled: false }).root())
+      classesOf(navItem({ current: false, disabled: false }).root()),
     );
   });
 
   it("hides a decorative icon and keeps the trailing rail addressable", () => {
     const element = rendered(
-      render(NavItem, {
-        label: "Search",
-        icon: text("⌕"),
-        trailing: text("Ctrl K"),
-      })
+      render(NavItem, { label: "Search", icon: text("⌕"), trailing: text("Ctrl K") }),
     );
     const icon = element.firstElementChild!;
     expect(classes(icon)).toEqual(classesOf(navItem().icon()));
@@ -110,25 +87,36 @@ describe("NavItem", () => {
   });
 
   it("lets a children snippet replace the label", () => {
-    const element = rendered(
-      render(NavItem, { label: "ignored", children: text("Custom") })
-    );
+    const element = rendered(render(NavItem, { label: "ignored", children: text("Custom") }));
     expect(element.textContent?.trim()).toBe("Custom");
     expect(element.textContent).not.toContain("ignored");
   });
 
   it("merges a caller's classes over the root slot's own", () => {
-    const element = rendered(
-      render(NavItem, { label: "Tokens", class: "w-48" })
-    );
+    const element = rendered(render(NavItem, { label: "Tokens", class: "w-48" }));
     expect(classes(element).has("w-48")).toBe(true);
-    expect(classes(element).has("rounded-md")).toBe(true);
+    expect(classes(element).has("rounded-e-md")).toBe(true);
   });
 
   it("passes native attributes straight through", () => {
-    const element = rendered(
-      render(NavItem, { label: "Tokens", id: "nav-tokens" })
-    );
+    const element = rendered(render(NavItem, { label: "Tokens", id: "nav-tokens" }));
     expect(element.id).toBe("nav-tokens");
+  });
+
+  it("marks the current item with a neutral surface and a start-edge Brand bar, never a red fill", () => {
+    const current = classes(rendered(render(NavItem, { label: "Tokens", href: "/tokens", current: true })));
+    const other = classes(rendered(render(NavItem, { label: "Kits", href: "/kit" })));
+
+    expect(current.has("bg-foreground/10")).toBe(true);
+    expect(current.has("font-medium")).toBe(true);
+    expect(current.has("text-foreground")).toBe(true);
+    expect(current.has("border-s-2")).toBe(true);
+    expect(current.has("border-primary")).toBe(true);
+    expect([...current].some((name) => /^bg-primary(?:\/|$)/.test(name))).toBe(false);
+
+    // Every item carries the edge, transparent until current: nothing shifts.
+    expect(other.has("border-s-2")).toBe(true);
+    expect(other.has("border-transparent")).toBe(true);
+    expect(other.has("border-primary")).toBe(false);
   });
 });

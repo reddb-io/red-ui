@@ -1,0 +1,38 @@
+{
+  "name": "@reddb-io/design-system",
+  "version": "0.0.0",
+  "description": "The reddb.io design system: the single application-facing gateway to the Brand.",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./app": {
+      "svelte": "./kits/app/src/index.ts",
+      "default": "./kits/app/src/index.ts"
+    },
+    "./base": {
+      "svelte": "./kits/base/src/index.ts",
+      "default": "./kits/base/src/index.ts"
+    },
+    "./styles.css": "./styles/all.css",
+    "./styles/all.css": "./styles/all.css",
+    "./styles/application.css": "./styles/application.css",
+    "./styles/base.css": "./styles/base.css"
+  },
+  "sideEffects": [
+    "./styles/**/*.css"
+  ],
+  "dependencies": {
+    "@internationalized/date": "^3.12.3",
+    "bits-ui": "^2.18.1",
+    "tailwind-variants": "^3.1.1"
+  },
+  "peerDependencies": {
+    "lucide-svelte": "^1.0.1",
+    "svelte": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "lucide-svelte": {
+      "optional": true
+    }
+  }
+}

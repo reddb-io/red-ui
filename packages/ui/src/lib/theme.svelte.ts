@@ -1,4 +1,22 @@
+// red-ui's light/dark choice is the DS Color Scheme axis (DS ADR 0008):
+// `data-color-scheme` carries it, while `data-theme` names the DS Theme
+// direction, which for red-ui is always "application".
 export type Theme = "light" | "dark";
+
+export const DS_THEME = "application";
+
+/** Put red-ui's appearance on an element in the DS's attribute vocabulary. */
+export function applyAppearance(el: HTMLElement, scheme: Theme) {
+  el.dataset.theme = DS_THEME;
+  el.dataset.colorScheme = scheme;
+}
+
+/** The Color Scheme an element (default: the document root) carries. */
+export function colorSchemeOf(el?: HTMLElement | null): Theme {
+  const target =
+    el ?? (typeof document !== "undefined" ? document.documentElement : null);
+  return target?.dataset.colorScheme === "dark" ? "dark" : "light";
+}
 
 const STORAGE_KEY = "red-ui-theme";
 const DEFAULT: Theme = "light";
@@ -14,7 +32,7 @@ function read(
   persist: boolean,
   initial?: Theme
 ): Theme {
-  const scoped = target?.dataset.theme;
+  const scoped = target?.dataset.colorScheme;
   if (scoped === "dark" || scoped === "light") return scoped;
   if (!persist) return initial ?? DEFAULT;
   if (typeof localStorage === "undefined") return initial ?? DEFAULT;
@@ -24,11 +42,11 @@ function read(
 
 function apply(t: Theme, target: HTMLElement | null) {
   if (target) {
-    target.dataset.theme = t;
+    applyAppearance(target, t);
     return;
   }
   if (typeof document !== "undefined")
-    document.documentElement.dataset.theme = t;
+    applyAppearance(document.documentElement, t);
 }
 
 function persist(t: Theme, enabled: boolean) {

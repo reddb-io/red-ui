@@ -12,7 +12,7 @@ const shadowHostCss = `
 }
 
 :host,
-:host([data-theme='dark']) {
+:host([data-color-scheme='dark']) {
   --color-bg-0: #050607;
   --color-bg-1: #0d0f13;
   --color-bg-2: #181b21;
@@ -62,7 +62,8 @@ export type ShadowDomSpikeMount = {
 };
 
 export function mountShadowDomSpike(host: HTMLElement): ShadowDomSpikeMount {
-  host.setAttribute("data-theme", "dark");
+  host.setAttribute("data-theme", "application");
+  host.setAttribute("data-color-scheme", "dark");
 
   const shadowRoot = host.shadowRoot ?? host.attachShadow({ mode: "open" });
   shadowRoot.textContent = "";
