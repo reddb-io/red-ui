@@ -456,6 +456,46 @@ export class RedClient {
     return data;
   }
 
+  /** Exchange credentials for a session token. Neither value is persisted. */
+  async login(username: string, password: string): Promise<string> {
+    const endpoint = new URL(this.baseUrl);
+    if (
+      endpoint.username ||
+      endpoint.password ||
+      endpoint.search ||
+      endpoint.hash ||
+      (endpoint.protocol !== "https:" &&
+        !(
+          endpoint.protocol === "http:" &&
+          ["localhost", "127.0.0.1", "[::1]"].includes(endpoint.hostname)
+        ))
+    ) {
+      throw new Error("Use HTTPS to sign in to a remote database.");
+    }
+    // Bypass query instrumentation: credentials and the session response must
+    // never enter the developer console, including an authentication failure.
+    const response = await this.fetcher(`${this.baseUrl}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "omit",
+      redirect: "error",
+      body: JSON.stringify({ username, password }),
+    });
+    if (!response.ok)
+      throw new Error(
+        "Database sign-in failed. Check your credentials and try again."
+      );
+    const session = await response.json();
+    if (
+      session.ok !== true ||
+      typeof session.token !== "string" ||
+      !session.token
+    ) {
+      throw new Error("The database did not return a session token.");
+    }
+    return session.token;
+  }
+
   async stats(): Promise<Stats> {
     return this.json<Stats>("/stats");
   }

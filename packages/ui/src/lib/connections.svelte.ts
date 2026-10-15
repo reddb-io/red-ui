@@ -445,7 +445,38 @@ class ConnectionStore {
     await this.tryConnect(preset);
   }
 
+  async login(
+    preset: ConnectionPreset,
+    username: string,
+    password: string
+  ): Promise<boolean> {
+    this.active = preset;
+    this.#client = null;
+    this.connected = false;
+    this.probe = { reachable: false };
+    try {
+      const targetProvider = getConnectionProvider();
+      if (!isHandoffTokenConsumer(targetProvider))
+        throw new Error("This connection is managed by its host.");
+      const token = await new RedClient(preset.url, {
+        fetch: desktopFetch,
+      }).login(username, password);
+      targetProvider.useHandoffToken(preset.url, token);
+      return await this.tryConnect(preset);
+    } catch (error) {
+      this.probe = {
+        reachable: false,
+        error:
+          error instanceof Error ? error.message : "Database sign-in failed.",
+      };
+      return false;
+    }
+  }
+
   async tryConnect(preset: ConnectionPreset): Promise<boolean> {
+    this.active = preset;
+    this.#client = null;
+    this.connected = false;
     // An explicit connect attempt means a target has been chosen — unblocks
     // automatic refresh from here on (#21).
     this.#targetResolved = true;

@@ -29,13 +29,15 @@
 
   let open = $state(false)
   let url = $state(pickDefaultUrl())
+  let username = $state('')
+  let password = $state('')
   let status = $state<'idle' | 'probing' | 'ok' | 'error'>('idle')
   let error = $state<string | null>(null)
   let rtt = $state<number | null>(null)
   let menuEl: HTMLDivElement | undefined = $state()
   let inputEl: HTMLInputElement | undefined = $state()
 
-  async function attempt(targetUrl: string) {
+  async function attempt(targetUrl: string, signIn = false) {
     const cleaned = targetUrl.trim().replace(/\/$/, '')
     if (!cleaned) return
     url = cleaned
@@ -54,7 +56,12 @@
     status = 'probing'
     error = null
     rtt = null
-    const ok = await connection.tryConnect(makeCustomConnection(cleaned))
+    const preset = makeCustomConnection(cleaned)
+    const secret = password
+    password = ''
+    const ok = signIn
+      ? await connection.login(preset, username.trim(), secret)
+      : await connection.tryConnect(preset)
     if (ok) {
       status = 'ok'
       rtt = connection.probe.rtt_ms ?? null
@@ -67,7 +74,7 @@
 
   function submit(e: Event) {
     e.preventDefault()
-    attempt(url)
+    attempt(url, Boolean(username.trim() && password))
   }
 
   // Desktop-only "Open database file…" flow (#123): the native OS picker feeds
@@ -116,6 +123,15 @@
     }
     window.addEventListener('red:open-connect', onOpen)
     return () => window.removeEventListener('red:open-connect', onOpen)
+  })
+
+  $effect(() => {
+    if (!connection.connected && connection.probe.error) {
+      url = connection.active.url
+      error = connection.probe.error
+      status = 'error'
+      open = true
+    }
   })
 
   const dotClass = $derived(
@@ -178,7 +194,7 @@
     <div class="fixed inset-0 z-40" onclick={() => (open = false)} role="presentation"></div>
     <div
       bind:this={menuEl}
-      class="absolute top-[calc(100%+6px)] left-0 z-50 w-[380px] bg-bg-1 border border-line-2 rounded-lg shadow-2xl p-4"
+      class="absolute top-[calc(100%+6px)] left-0 z-50 w-[380px] max-w-[calc(100vw-2rem)] bg-bg-1 border border-line-2 rounded-lg shadow-2xl p-4"
       role="dialog"
       aria-label="Connect to reddb"
     >
@@ -188,6 +204,8 @@
           id="connect-url"
           bind:this={inputEl}
           bind:value={url}
+          disabled={status === 'probing'}
+          oninput={() => { password = '' }}
           spellcheck="false"
           placeholder="red://localhost"
           class="w-full h-9 px-3 mb-1 bg-bg-0 border border-line-2 rounded-md font-mono text-[13px] text-fg-0 outline-none transition-colors focus:border-accent placeholder:text-fg-3"
@@ -195,9 +213,20 @@
 
         <div class="mb-2 text-[10px] font-mono text-fg-3">reachable here: {supportedHint}</div>
 
+        <details class="mb-3">
+          <summary class="cursor-pointer text-xs text-fg-2">Sign in to the database</summary>
+          <div class="grid gap-2 mt-2">
+            <label class="text-xs text-fg-2" for="connect-username">Username</label>
+            <input id="connect-username" autocomplete="username" bind:value={username} disabled={status === 'probing'} class="w-full h-9 px-3 bg-bg-0 border border-line-2 rounded-md text-fg-0 outline-none focus:border-accent" />
+            <label class="text-xs text-fg-2" for="connect-password">Password</label>
+            <input id="connect-password" type="password" autocomplete="current-password" bind:value={password} disabled={status === 'probing'} class="w-full h-9 px-3 bg-bg-0 border border-line-2 rounded-md text-fg-0 outline-none focus:border-accent" />
+            <p class="text-[11px] text-fg-3">Credentials go directly to this database. The session stays in this tab.</p>
+          </div>
+        </details>
+
         <button
           type="submit"
-          disabled={status === 'probing' || !url.trim()}
+          disabled={status === 'probing' || !url.trim() || Boolean(username.trim()) !== Boolean(password)}
           class="w-full h-9 bg-accent text-white font-medium rounded-md cursor-pointer transition-colors hover:bg-[#ff3868] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-[13px]"
         >
           {#if status === 'probing'}
@@ -209,13 +238,13 @@
           {/if}
         </button>
 
-        <div class="h-5 mt-2 flex items-center gap-1.5 text-[11px] font-mono">
+        <div aria-live="polite" class="min-h-5 mt-2 flex items-center gap-1.5 text-[11px] font-mono">
           {#if status === 'ok'}
             <CheckCircle2 class="size-3 text-ok" />
             <span class="text-ok">Connected{rtt !== null ? ` · ${rtt}ms` : ''}</span>
           {:else if status === 'error'}
             <AlertCircle class="size-3 text-danger" />
-            <span class="text-danger truncate">{error}</span>
+            <span class="text-danger break-words">{error}</span>
           {/if}
         </div>
       </form>

@@ -321,6 +321,31 @@ describe("boot-params pre-configuration (#36)", () => {
 });
 
 describe("Connection Bootstrap", () => {
+  it("keeps a failed boot endpoint for sign-in and clears the old authenticated client", async () => {
+    const client = fakeClient();
+    const failing = fakeClient();
+    vi.mocked(failing.ping).mockResolvedValue({
+      ok: false,
+      error: "401 Unauthorized",
+    });
+    setConnectionProvider(
+      new LocalUrlProvider({
+        clientFactory: (url) =>
+          url === "https://old.example" ? client : failing,
+      })
+    );
+    await connection.tryConnect(makeCustomConnection("https://old.example"));
+    expect(connection.client).toBe(client);
+    await connection.bootstrap(async () => ({
+      target: "https://chosen.example",
+      route: "/query",
+    }));
+    expect(connection.active.url).toBe("https://chosen.example");
+    expect(connection.connected).toBe(false);
+    expect(connection.client).toBeNull();
+    expect(connection.probe.error).toContain("401");
+  });
+
   it("connects to the resolved boot target and returns the resolved route", async () => {
     setConnectionProvider(
       new LocalUrlProvider({
@@ -479,7 +504,9 @@ describe("normalizeUrl — deep-link URL-to-connection-intent mapping (#124)", (
   });
 
   it("red+tls:// → https on port 5055", () => {
-    expect(normalizeUrl("red+tls://securehost")).toBe("https://securehost:5055");
+    expect(normalizeUrl("red+tls://securehost")).toBe(
+      "https://securehost:5055"
+    );
   });
 
   it("http:// and https:// pass through unchanged", () => {
