@@ -220,8 +220,12 @@
   // default it was never pointed at.
   $effect(() => {
     if (secureStore.locked || !connection.targetResolved) return
-    connection.refresh()
-    const id = setInterval(() => connection.refresh(), REFRESH_MS)
+    // Poll only an acquired client. Re-entering connect here races with the
+    // boot/login token exchange; tracking refresh reads also retriggers this
+    // effect whenever a probe changes instead of waiting for the interval.
+    const refresh = () => { if (connection.client) void connection.refresh() }
+    untrack(refresh)
+    const id = setInterval(refresh, REFRESH_MS)
     return () => clearInterval(id)
   })
 
