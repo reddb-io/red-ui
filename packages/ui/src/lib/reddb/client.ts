@@ -256,7 +256,12 @@ function isPermissionResource(value: unknown): value is PermissionResource {
 
 /** One NDJSON frame from `POST /query/stream`. Discriminated by its single key. */
 type NdjsonFrame =
-  | { descriptor: { columns: string[]; schema_fingerprint?: string } }
+  | {
+      descriptor: {
+        columns: Array<string | { name: string }>;
+        schema_fingerprint?: string;
+      };
+    }
   | { cursor: { token: string; snapshot_lsn?: number; resumable?: boolean } }
   | { row: Record<string, unknown> }
   | { end: { row_count?: number } }
@@ -359,7 +364,16 @@ export async function runQueryPreferStream(
       record_count: s.rowCount,
       result: {
         columns: s.columns,
-        records: s.rows.map((values) => ({ values })),
+        records: s.rows.map((row) =>
+          row.values &&
+          typeof row.values === "object" &&
+          ("nodes" in row ||
+            "edges" in row ||
+            "paths" in row ||
+            "vector_results" in row)
+            ? (row as unknown as QueryRow)
+            : { values: row }
+        ),
       },
       streamed: true,
       truncated: s.truncated,
@@ -756,7 +770,9 @@ export class RedClient {
 
     for await (const frame of parseNdjsonFrames(res.body)) {
       if ("descriptor" in frame) {
-        out.columns = frame.descriptor.columns ?? [];
+        out.columns = (frame.descriptor.columns ?? []).map((column) =>
+          typeof column === "string" ? column : column.name
+        );
         out.schemaFingerprint = frame.descriptor.schema_fingerprint;
       } else if ("cursor" in frame) {
         out.cursor = frame.cursor.token;

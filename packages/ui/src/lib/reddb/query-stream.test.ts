@@ -112,6 +112,34 @@ describe("queryStreamCollect", () => {
 });
 
 describe("runQueryPreferStream", () => {
+  it("renders the native 1.23+ typed descriptor and record envelope without double-wrapping values", async () => {
+    const row = {
+      values: { connected: 1 },
+      nodes: {},
+      edges: {},
+      paths: [],
+      vector_results: [],
+    };
+    const fetch = vi.fn(async () =>
+      ndjsonResponse([
+        JSON.stringify({
+          descriptor: {
+            columns: [{ name: "connected", nullable: false, type: "number" }],
+          },
+        }) + "\n",
+        JSON.stringify({ row }) + "\n",
+        JSON.stringify({ end: { row_count: 1 } }) + "\n",
+      ])
+    );
+    const result = await runQueryPreferStream(
+      new RedClient("https://bank.example", { fetch }),
+      "SELECT 1 AS connected"
+    );
+    expect(result.result.columns).toEqual(["connected"]);
+    expect(result.result.records).toEqual([row]);
+    expect(result.result.records[0].values.connected).toBe(1);
+  });
+
   it("streams a SELECT and assembles a QueryResult (streamed flag set)", async () => {
     const client = {
       query: vi.fn(),
