@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.3.4
+
+### Patch Changes
+
+- 0a3a5ad: Support direct database username/password sign-in in the universal web client. Keep session credentials in memory, reject insecure remote login targets and redirects, and preserve failed Open Contract endpoints for retry.
+  - @reddb-io/ui-kit@0.3.4
+  - @reddb-io/ui-mcp@0.3.4
+
 ## 0.3.3
 
 ### Patch Changes
