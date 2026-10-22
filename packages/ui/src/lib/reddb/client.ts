@@ -223,17 +223,10 @@ function isUnsupportedCollectionMetadataRoute(e: unknown): boolean {
   return message.includes("route not found: GET /collections/");
 }
 
-/**
- * Generalised "the server doesn't have this route" check (#22). `json()`
- * throws `<METHOD> <path> → <status> <body>`, so a 404 or a "route not found"
- * body both signal an unsupported route. Distinct from auth/5xx/network errors
- * — but capability negotiation treats *any* probe failure as unsupported
- * (fail safe), so this is only used to tell "route absent" from "signal
- * present" when reading the stable `/capabilities` endpoint.
- */
+/** Missing or unimplemented discovery routes may use compatibility probes. */
 function isUnsupportedRoute(e: unknown): boolean {
   const message = e instanceof Error ? e.message : String(e);
-  return / → 404\b/.test(message) || message.includes("route not found");
+  return / → (404|405|501)\b/.test(message);
 }
 
 function unsupportedCollectionMetadataError(baseUrl: string): Error {
@@ -586,17 +579,30 @@ export class RedClient {
 
   /**
    * Resolve the server's capability map (#22). Prefers the stable
-   * `/capabilities` signal; when that route is absent (older server), infers
-   * from lightweight, side-effect-free GET probes. Any non-404 failure
-   * (network, auth, 5xx) fails safe to the empty map, so the UI hides controls
+   * `/capabilities` signal; when that route is absent or returns structured
+   * discovery without UI feature flags, infers from lightweight, side-effect-free
+   * GET probes. Compatibility follows working APIs, not the server version.
+   * Other failures (network, authentication, unexpected HTTP status) fail safe
+   * to the empty map, so the UI hides controls
    * rather than showing ones the server can't honour.
    */
   async capabilities(): Promise<ServerCapabilities> {
     try {
       const raw = await this.json<RawCapabilities>("/capabilities");
-      return capabilitiesFromSignal(raw);
+      if (
+        !raw ||
+        typeof raw !== "object" ||
+        Array.isArray(raw) ||
+        raw.ok === false
+      )
+        return { ...EMPTY_SERVER_CAPABILITIES };
+      // A flat declaration is authoritative, including explicit false/empty
+      // flags. Structured discovery reports build/deployment state instead;
+      // prove optional UI routes with read-only probes before enabling them.
+      if ("features" in raw || "capabilities" in raw)
+        return capabilitiesFromSignal(raw);
     } catch (e) {
-      // Only an absent route falls through to inference; anything else (a
+      // Only an absent/unimplemented route falls through; anything else (a
       // flaky network, an auth wall, a 5xx) hides everything.
       if (!isUnsupportedRoute(e)) return { ...EMPTY_SERVER_CAPABILITIES };
     }
