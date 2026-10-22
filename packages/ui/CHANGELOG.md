@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.4.1
+
+### Patch Changes
+
+- f72c5fc: Adapt optional features to RedDB API capabilities independently of its version string. Support structured discovery and absent or unimplemented discovery routes through read-only probes while respecting explicit feature flags and authentication failures.
+  - @reddb-io/ui-kit@0.4.1
+  - @reddb-io/ui-mcp@0.4.1
+
 ## 0.4.0
 
 ### Minor Changes
