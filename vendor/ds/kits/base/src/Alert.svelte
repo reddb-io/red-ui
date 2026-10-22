@@ -10,6 +10,7 @@
   import type { HTMLAttributes } from "svelte/elements";
   import { alert, type AlertFeedbackRole } from "./alert.variants";
   import { warnDeprecated } from "./deprecation";
+  import { feedbackTone, feedbackAnnouncement } from "./core/feedback";
   import type { Tone } from "./tone";
 
   interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "class" | "role" | "title"> {
@@ -29,8 +30,8 @@
   }
 
   const { tone, feedback, title, class: className, children, ...rest }: Props = $props();
-  const resolvedTone = $derived<Tone>(tone ?? feedback ?? "neutral");
-  const announcementRole = $derived(resolvedTone === "danger" ? "alert" : "status");
+  const resolvedTone = $derived<Tone>(feedbackTone(tone, feedback));
+  const announcementRole = $derived(feedbackAnnouncement(resolvedTone));
 
   $effect(() => {
     if (feedback !== undefined) warnDeprecated("Alert", `feedback="${feedback}"`, `tone="${feedback}"`);

@@ -2,6 +2,7 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import type { HTMLAnchorAttributes, MouseEventHandler } from "svelte/elements";
+  import { focusSkipTarget } from "./core/skip-link";
   import { skipLink } from "./skip-link.variants";
 
   interface Props extends Omit<HTMLAnchorAttributes, "class"> {
@@ -23,10 +24,7 @@
 
   const handleClick: MouseEventHandler<HTMLAnchorElement> = (event) => {
     onclick?.(event);
-    if (event.defaultPrevented || !href.startsWith("#")) return;
-
-    const target = document.getElementById(decodeURIComponent(href.slice(1)));
-    target?.focus();
+    focusSkipTarget(event, href, event.currentTarget.ownerDocument);
   };
 </script>
 

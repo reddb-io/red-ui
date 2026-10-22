@@ -15,7 +15,7 @@ export const typeRoleMerge = {
   twMergeConfig: {
     extend: {
       classGroups: {
-        "font-size": [{ text: [...TYPE_ROLE_UTILITIES] }],
+        "font-size": [{ text: [...TYPE_ROLE_UTILITIES, "editable-sm", "editable-md", "editable-lg"] }],
       },
     },
   },

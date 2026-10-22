@@ -31,6 +31,15 @@ describe("the deliberately failing RangeCalendar fixture", () => {
 });
 
 describe("the Base RangeCalendar", () => {
+  it("renders no <header>, so a RangeCalendar in a popover adds no banner landmark (wave 5A)", () => {
+    const root = rendered(render(RangeCalendar, {
+      label: "Release window",
+      placeholder: new CalendarDate(2026, 6, 10),
+    }));
+    expect(root.querySelector("header")).toBeNull();
+    expect(root.querySelector("[data-range-calendar-header]")?.tagName).toBe("DIV");
+  });
+
   it("is available with the Calendar appearance seam through the Base consumer subpath", () => {
     expect(RangeCalendar).toBeDefined();
     expect(calendar).toBeTypeOf("function");

@@ -1,14 +1,12 @@
 <script module lang="ts">
-  export interface PaginationPage {
-    page: number;
-    href: string;
-    current?: boolean;
-  }
+  export type { PaginationPage } from "./core/pagination";
 </script>
 
 <script lang="ts">
+  import type { PaginationPage } from "./core/pagination";
   import Link from "./Link.svelte";
   import { pagination } from "./pagination.variants";
+  import { quietControl } from "./quiet-control.variants";
 
   interface Props {
     /**
@@ -34,7 +32,7 @@
           href={item.href}
           aria-label={item.current ? `Page ${item.page}, current page` : `Go to page ${item.page}`}
           aria-current={item.current ? "page" : undefined}
-          class={styles.page()}
+          class={quietControl({ ink: "foreground", class: styles.page() })}
         >{item.page}</Link>
       </li>
     {/each}

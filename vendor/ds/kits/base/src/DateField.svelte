@@ -1,32 +1,18 @@
 <!-- A segmented calendar value composed from the canonical Field and Input. -->
 <script lang="ts">
+  import { untrack } from "svelte";
+  import { possibleDate, segmentDigits } from "./core/date-segments";
+  import { afterFormReset } from "./core/native-controls";
+  import type { DateFieldContract } from "./core/contracts/datefield";
   import Field from "./Field.svelte";
   import Input from "./Input.svelte";
   import { dateField } from "./date-field.variants";
 
-  interface Props {
-    /** Visible label text owned by the caller. */
-    label: string;
-    /** Native form name receiving a complete, possible date. */
-    name?: string;
-    /** Complete ISO calendar date. */
-    value?: string;
+  interface Props extends DateFieldContract {
     /** Called with the new value whenever it changes (ADR 0026's value dialect). */
     onvaluechange?: (value: string) => void;
-    /** Supporting text associated with every segment. */
-    help?: string;
-    /** Current validation error associated with every segment. */
-    error?: string;
-    /** Applies native required validation to every segment. */
-    required?: boolean;
-    /** Disables every native segment. */
-    disabled?: boolean;
-    /** Explicit id for the year segment. */
-    id?: string;
     /** Extra classes merged onto the canonical Field root. */
     class?: string;
-    /** Extra classes merged onto every native segment. */
-    segmentClass?: string;
   }
 
   let {
@@ -43,21 +29,9 @@
     segmentClass,
   }: Props = $props();
 
-  function possibleDate(candidate: string): RegExpMatchArray | null {
-    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(candidate);
-    if (!match) return null;
 
-    const year = Number(match[1]);
-    const month = Number(match[2]);
-    const day = Number(match[3]);
-    if (year === 0 || month < 1 || month > 12) return null;
-
-    const leapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
-    const days = [31, leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    return day >= 1 && day <= days[month - 1]! ? match : null;
-  }
-
-  const initial = possibleDate(value);
+  const initialValue = untrack(() => value);
+  const initial = possibleDate(initialValue);
   let year = $state(initial?.[1] ?? "");
   let month = $state(initial?.[2] ?? "");
   let day = $state(initial?.[3] ?? "");
@@ -78,6 +52,11 @@
     publishedValue = value;
   });
 
+  $effect(() => afterFormReset(yearControl?.form, () => {
+    const reset = possibleDate(initialValue); year = reset?.[1] ?? ""; month = reset?.[2] ?? ""; day = reset?.[3] ?? "";
+    publishedValue = initialValue; value = initialValue;
+  }));
+
   type Segment = "year" | "month" | "day";
 
   function publish(): void {
@@ -90,14 +69,7 @@
   function handleInput(event: Event, segment: Segment): void {
     const input = event.currentTarget as HTMLInputElement;
     const length = segment === "year" ? 4 : 2;
-    const digits = input.value.replace(/\D/g, "").slice(0, length);
-    const numeric = Number(digits);
-    const invalidBound = digits.length === length && (
-      (segment === "year" && numeric === 0)
-      || (segment === "month" && (numeric < 1 || numeric > 12))
-      || (segment === "day" && (numeric < 1 || numeric > 31))
-    );
-    const next = invalidBound ? "" : digits;
+    const next = segmentDigits(input.value, segment);
 
     input.value = next;
     if (segment === "year") year = next;

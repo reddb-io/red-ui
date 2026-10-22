@@ -9,6 +9,7 @@
 import { tv, type VariantProps } from "tailwind-variants";
 
 const GAP = {
+  none: "gap-0",
   sm: "gap-[var(--reddb-spatial-gap-sm)]",
   md: "gap-[var(--reddb-spatial-gap-md)]",
   lg: "gap-[var(--reddb-spatial-gap-lg)]",
@@ -50,7 +51,7 @@ const WRAP = {
 export const stack = tv({
   base: "flex",
   variants: { direction: DIRECTION, gap: GAP, align: ALIGN, justify: JUSTIFY, wrap: WRAP },
-  defaultVariants: { direction: "column", gap: "md", align: "stretch", justify: "start", wrap: false },
+  defaultVariants: { direction: "column", gap: "layout-md", align: "stretch", justify: "start", wrap: false },
 });
 
 export type StackVariants = VariantProps<typeof stack>;

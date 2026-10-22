@@ -17,6 +17,7 @@
   split reads it, and one that does not can ignore it entirely.
 -->
 <script lang="ts">
+  import type { SplitViewContract } from "../core/contracts/splitview";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
   import {
@@ -30,19 +31,9 @@
   } from "./split-view.behavior";
   import { splitView } from "./split-view.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "class"> {
-    /** Axis the panes are laid out along. Defaults to `horizontal`. */
-    orientation?: SplitOrientation;
-    /** How much of the container the start pane takes, 0–1. Bindable. */
-    fraction?: number;
+  interface Props extends SplitViewContract, Omit<HTMLAttributes<HTMLDivElement>, "class"> {
     /** Called with the new fraction after each pointer or keyboard move. */
     onfractionchange?: (fraction: number) => void;
-    /** Smallest fraction the start pane may shrink to. */
-    min?: number;
-    /** Largest fraction it may grow to. */
-    max?: number;
-    /** Accessible name for the divider. */
-    label?: string;
     /** The leading pane: left, or top. */
     start?: Snippet;
     /** The trailing pane: right, or bottom. */

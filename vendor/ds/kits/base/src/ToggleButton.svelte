@@ -1,5 +1,7 @@
 <!-- A pressed-state control composed from the canonical native Button. -->
 <script lang="ts">
+  import { untrack } from "svelte";
+  import { nextPressed } from "./core/native-controls";
   import type { Snippet } from "svelte";
   import type { HTMLButtonAttributes } from "svelte/elements";
   import Button from "./Button.svelte";
@@ -10,13 +12,18 @@
     label: string;
     /** Current pressed state, bindable for controlled consumers. */
     pressed?: boolean;
+    /** Initial uncontrolled state; later changes do not replace the user's choice. */
+    defaultPressed?: boolean;
     /** Group composition can prohibit removing its sole selection. */
     allowUnpress?: boolean;
     /** Disables the button, so activation neither changes `pressed` nor reports a change. */
     disabled?: boolean;
     /** Extra classes merged onto the underlying Button, over the pressed-state styling. */
     class?: string;
-    /** Optional visual content; `label` remains the stable accessible name. */
+    /**
+     * Optional visual content; `label` remains the stable accessible name, so words it shows must
+     * appear, in order, in `label`, ideally first (WCAG 2.5.3, Label in Name).
+     */
     children?: Snippet;
     /**
      * Called with the click event after the pressed state has been updated; skipped while
@@ -29,7 +36,8 @@
 
   let {
     label,
-    pressed = $bindable(false),
+    pressed = $bindable(),
+    defaultPressed = false,
     allowUnpress = true,
     disabled = false,
     class: className,
@@ -39,11 +47,17 @@
     ...rest
   }: Props = $props();
 
+  const initial = untrack(() => defaultPressed);
+  let local = $state(initial);
+  const current = $derived(pressed ?? local);
+
   function activate(event: MouseEvent): void {
     if (disabled) return;
-    if (!pressed || allowUnpress) {
-      pressed = !pressed;
-      onpressedchange?.(pressed);
+    const next = nextPressed(current, allowUnpress);
+    if (next !== current) {
+      local = next;
+      pressed = next;
+      onpressedchange?.(next);
     }
     onclick?.(event as Parameters<NonNullable<HTMLButtonAttributes["onclick"]>>[0]);
   }
@@ -53,10 +67,10 @@
   {...rest}
   {disabled}
   variant="secondary"
-  class={toggleButton({ pressed, class: className })}
-  aria-pressed={pressed}
+  class={toggleButton({ pressed: current, class: className })}
+  aria-pressed={current}
   aria-label={children ? label : undefined}
-  data-state={pressed ? "on" : "off"}
+  data-state={current ? "on" : "off"}
   data-toggle-button
   onclick={activate}
 >

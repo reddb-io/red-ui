@@ -7,20 +7,15 @@
   own accessible name.
 -->
 <script lang="ts">
+  import { portalAppearance } from "./portal-appearance.svelte";
+  import type { TooltipContract } from "./core/contracts/tooltip";
   import type { Snippet } from "svelte";
   import type { HTMLButtonAttributes } from "svelte/elements";
   import { Tooltip as Bits } from "bits-ui";
   import { button } from "./button.variants";
   import { tooltip as tooltipAppearance } from "./tooltip.variants";
 
-  interface Props extends Omit<HTMLButtonAttributes, "aria-describedby" | "aria-label" | "class" | "type"> {
-    /**
-     * Accessible name of the DS-rendered trigger; it remains complete when the
-     * Tooltip is unavailable. Required unless `child` supplies the trigger.
-     */
-    label?: string;
-    /** Supplemental description shown by the Tooltip. */
-    content: string;
+  interface Props extends TooltipContract, Omit<HTMLButtonAttributes, keyof TooltipContract | "aria-describedby" | "aria-label" | "class" | "type"> {
     /** Trigger content. */
     children?: Snippet;
     /**
@@ -56,9 +51,10 @@
     onmouseleave?.(event as MouseEvent & { currentTarget: EventTarget & HTMLButtonElement });
     open = false;
   }
+  const portal = portalAppearance(() => open);
 </script>
 
-<span data-tooltip-root class="relative inline-flex">
+<span {...portal.anchor} data-tooltip-root class="relative inline-flex">
   <Bits.Provider delayDuration={0}>
     <Bits.Root bind:open delayDuration={0} disabled={Boolean(rest.disabled)}>
       <Bits.Trigger
@@ -85,7 +81,7 @@
       </Bits.Trigger>
 
       {#if open}
-        <Bits.Portal>
+        <Bits.Portal to={portal.container}>
           <Bits.Content
             id={tooltipId}
             side="top"
@@ -95,7 +91,7 @@
             collisionPadding={8}
           >
             {#snippet child({ props, wrapperProps })}
-              <div {...wrapperProps}>
+              <div {...wrapperProps} {...portal.attributes}>
                 <span
                   {...props}
                   id={tooltipId}

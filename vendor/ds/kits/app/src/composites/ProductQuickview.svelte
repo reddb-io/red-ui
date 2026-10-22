@@ -1,21 +1,17 @@
 <!-- Product detail inside the canonical Dialog focus and dismissal lifecycle. -->
 <script lang="ts">
+  import type { ProductQuickviewContract } from "../core/contracts/productquickview";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
   import { Dialog } from "@reddb-io/design-system/base";
   import { productQuickview } from "./product-quickview.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "class" | "title"> {
+  interface Props extends ProductQuickviewContract, Omit<HTMLAttributes<HTMLDivElement>, keyof ProductQuickviewContract | "children" | "class" | "title"> {
     /**
-     * Accessible name for the Button that opens the dialog, and its visible text when no `trigger`
-     * is given.
+     * Custom content for the opening Button; `triggerLabel` stays its accessible name, so words it
+     * shows must appear, in order, in `triggerLabel`, ideally first (WCAG 2.5.3, Label in Name):
+     * `Quick view` shown, `Quick view Field notes` named.
      */
-    triggerLabel: string;
-    /** Visible dialog title and the dialog's accessible name. */
-    title: string;
-    /** Supporting line under the title, associated with the dialog as its description. */
-    description?: string;
-    /** Custom content for the opening Button; `triggerLabel` stays its accessible name. */
     trigger?: Snippet;
     /** Caller-owned product imagery, including its own alternative text. */
     media?: Snippet;
@@ -25,8 +21,6 @@
     actions?: Snippet<[{ close: () => void }]>;
     /** Extra classes, merged over the root slot's own, onto the wrapper around the dialog. */
     class?: string;
-    /** Extra classes, merged over the dialog slot's own, onto the modal surface. */
-    dialogClass?: string;
   }
 
   const {

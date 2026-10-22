@@ -3,7 +3,12 @@
   import { connection } from '$lib/connections.svelte'
   import { activity } from '$lib/activity.svelte'
   import { pendingChanges } from '$lib/pending-changes.svelte'
-  import { Columns3, Filter, Loader2, Play, RotateCw, X } from 'lucide-svelte'
+  import Columns3 from '@lucide/svelte/icons/columns-3'
+  import Filter from '@lucide/svelte/icons/filter'
+  import Loader2 from '@lucide/svelte/icons/loader-2'
+  import Play from '@lucide/svelte/icons/play'
+  import RotateCw from '@lucide/svelte/icons/rotate-cw'
+  import X from '@lucide/svelte/icons/x'
   import {
     formatCell,
     identityKind,
@@ -191,7 +196,7 @@
           class={[
             'inline-flex items-center gap-1.5 h-6 px-2 rounded border transition-colors cursor-pointer',
             selectOpen
-              ? 'border-accent/40 bg-accent/10 text-accent'
+              ? 'border-accent/40 bg-accent/10 text-primary-text'
               : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
           ].join(' ')}
         >
@@ -229,14 +234,14 @@
         class={[
           'inline-flex items-center gap-1.5 h-6 px-2 rounded border transition-colors cursor-pointer',
           filtersOpen
-            ? 'border-accent/40 bg-accent/10 text-accent'
+            ? 'border-accent/40 bg-accent/10 text-primary-text'
             : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
         ].join(' ')}
       >
         <Filter class="size-3" />
         <span>filters</span>
         {#if activeFilterCount > 0}
-          <span class="text-[9px] px-1 rounded bg-accent text-white">{activeFilterCount}</span>
+          <span class="text-[9px] px-1 rounded bg-primary text-on-primary">{activeFilterCount}</span>
         {/if}
       </button>
       {#if activeFilterCount > 0}
@@ -297,7 +302,7 @@
             <label
               class={[
                 'inline-flex h-5 items-center gap-1 rounded border px-1.5 cursor-pointer',
-                selectedColumns[col] ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line-1 text-fg-3 hover:text-fg-1',
+                selectedColumns[col] ? 'border-accent/40 bg-accent/10 text-primary-text' : 'border-line-1 text-fg-3 hover:text-fg-1',
               ].join(' ')}
             >
               <input
@@ -339,7 +344,7 @@
               >
                 <span class={kind || sys ? 'font-semibold' : ''}>{c}</span>
                 {#if kind === 'rid'}
-                  <span class="ml-1 text-[9px] px-1 py-0.5 rounded bg-accent text-white uppercase tracking-wider font-semibold" title="System-assigned row id — reddb's canonical address">sys</span>
+                  <span class="ml-1 text-[9px] px-1 py-0.5 rounded bg-primary text-on-primary uppercase tracking-wider font-semibold" title="System-assigned row id — reddb's canonical address">sys</span>
                 {:else if sys}
                   <span class="ml-1 text-[9px] px-1 py-0.5 rounded border border-line-2 text-fg-3 uppercase tracking-wider" title="Reserved system field — written by reddb">sys</span>
                 {:else if kind === 'id'}
@@ -392,7 +397,7 @@
                   class={[
                     'px-2 py-1 max-w-[260px] truncate align-top',
                     kind === 'rid'
-                      ? 'bg-accent/5 text-accent font-semibold'
+                      ? 'bg-accent/5 text-primary-text font-semibold'
                       : sys
                         ? 'bg-bg-1 text-fg-2 font-mono'
                         : kind === 'id'

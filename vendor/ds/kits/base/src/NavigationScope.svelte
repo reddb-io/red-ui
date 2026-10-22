@@ -8,7 +8,9 @@
 -->
 <script lang="ts">
   import type { Snippet } from "svelte";
-  import { ownsSameOrigin, routableAnchor, setNavigation, type NavigationSeam } from "./navigation";
+  import { ownsSameOrigin, routableAnchor, setNavigation } from "./navigation";
+
+  import type { NavigationSeam } from "./core/navigation";
 
   interface Props extends NavigationSeam {
     /**

@@ -1,31 +1,13 @@
 <script lang="ts">
+  import type { ToolbarContract } from "../core/contracts/toolbar";
   import { Toolbar as Bits } from "bits-ui";
-  import { Button, Link } from "@reddb-io/design-system/base";
+  import { Button, Link, quietControl } from "@reddb-io/design-system/base";
   import type { ToolbarItem } from "./command-surfaces.behavior";
   import { toolbar, type ToolbarSize } from "./toolbar.variants";
 
   type Orientation = "horizontal" | "vertical";
 
-  interface Props {
-    /** Accessible name for the toolbar. */
-    label: string;
-    /**
-     * Actions and destinations in order; an enabled item with an `href` renders as a link, any
-     * other as a button that calls its `onselect`.
-     */
-    items?: readonly ToolbarItem[];
-    /**
-     * Layout direction and the arrow-key axis: `horizontal` or `vertical`. Defaults to
-     * `horizontal`.
-     */
-    orientation?: Orientation;
-    /** Size of the item controls: `sm`, `md` or `lg`. Defaults to `md`. */
-    size?: ToolbarSize;
-    /**
-     * Whether arrow-key focus wraps from the last item back to the first, and the reverse. Defaults
-     * to `true`.
-     */
-    loop?: boolean;
+  interface Props extends ToolbarContract {
     /** Extra classes, merged over the root slot's own, onto the toolbar element. */
     class?: string;
   }
@@ -60,7 +42,7 @@
                 {...linkProps}
                 data-toolbar-item
                 {href}
-                class={slots.item()}
+                class={quietControl({ class: slots.item({ class: "rounded-md no-underline" }) })}
               >{item.label}</Link>
             {/snippet}
           </Bits.Link>

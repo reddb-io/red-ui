@@ -59,7 +59,7 @@ describe("the Base Switch", () => {
     )!;
 
     expect(classes(element)).toEqual(classesOf(switchControl({ class: "shrink-0" })));
-    expect(classes(element).has("checked:before:translate-x-full")).toBe(true);
+    expect(classes(element).has("checked:before:translate-x-[calc(var(--reddb-spatial-switch-track-height)*0.75)]")).toBe(true);
     expect(classes(element).has("focus-visible:outline-focus")).toBe(true);
     expect(element.hasAttribute("data-theme")).toBe(false);
     expect(element.hasAttribute("data-color-scheme")).toBe(false);
@@ -84,6 +84,6 @@ describe("the Switch layout", () => {
     expect(classes(help).has("col-start-2")).toBe(true);
     expect(control.getAttribute("aria-describedby")).toBe(help.id);
     // A checked switch is an action state and keeps the Brand fill.
-    expect(classes(control).has("checked:bg-primary")).toBe(true);
+    expect(classes(control).has("checked:after:bg-primary")).toBe(true);
   });
 });

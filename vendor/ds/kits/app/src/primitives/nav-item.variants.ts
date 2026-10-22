@@ -3,11 +3,12 @@
 //
 // The active state wears the shared selection language (DESIGN.md,
 // "Interactive states"): a neutral surface, full-weight foreground ink, and a
-// 2px Brand-red bar on the start edge. The bar's colour is the `primary` role
-// the Themes reassign; its width is a plain border width, like every other
-// rule the Kits draw. Every item carries the same edge, transparent until it
-// is current, so moving the current page shifts nothing. The Brand red never
-// fills the item — it marks the primary action, and here it only points.
+// 2px ink bar on the start edge. Ink, not the Brand red (wave 6A): the red bar
+// on the selected surface measured 2.49-3.01:1 on the light grounds, under
+// WCAG 1.4.11's 3:1, so the whole selection language moved to ink. Its width
+// is a plain border width, like every other rule the Kits draw. Every item
+// carries the same edge, transparent until it is current, so moving the
+// current page shifts nothing.
 //
 // A horizontal rail of items (BottomNavigation) moves the bar to the edge it
 // sits against through its own slot class.
@@ -22,9 +23,11 @@ import { tv, type VariantProps } from "tailwind-variants";
 // links; `active` is its one-release alias, in the recipe as on the component.
 const CURRENT = {
   /** Where you are. */
-  true: { root: "border-primary bg-foreground/10 font-medium text-foreground" },
+  true: { root: "border-foreground bg-foreground/10 font-medium text-foreground" },
   /** Everywhere else you could go. */
-  false: { root: "border-transparent bg-transparent text-ink-muted hover:bg-foreground/8 hover:text-foreground" },
+  // Rest, hover, pressed and focus come from the quiet-control contract the
+  // component wraps this slot in (wave 6A).
+  false: { root: "border-transparent bg-transparent text-ink-muted" },
 } as const;
 
 const DISABLED = {
@@ -37,7 +40,7 @@ export const navItem = tv({
   slots: {
     // Focus is the ink focus outline every DS control draws (ADR 0023).
     root: "inline-flex w-full items-center gap-[var(--reddb-spatial-gap-md)] rounded-s-none rounded-e-md border-s-2 min-h-[var(--reddb-spatial-control-height-md)] px-[var(--reddb-spatial-inset-sm)] text-sm leading-tight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
-    icon: "shrink-0",
+    icon: "order-first shrink-0",
     label: "truncate",
     trailing: "ms-auto shrink-0",
   },

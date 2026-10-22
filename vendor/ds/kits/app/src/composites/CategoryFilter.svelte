@@ -1,32 +1,18 @@
 <!-- Multiple announced category filters, composed from canonical Base form contracts. -->
 <script lang="ts">
+  import type { CategoryFilterContract } from "../core/contracts/categoryfilter";
   import { untrack } from "svelte";
-  import { Checkbox, Fieldset } from "@reddb-io/design-system/base";
+  import { Checkbox, Fieldset, afterFormReset, associatedForm } from "@reddb-io/design-system/base";
   import { warnDeprecated } from "@reddb-io/design-system/base";
   import type { HTMLFieldsetAttributes } from "svelte/elements";
+  import { categoryValues } from "../core/category-filter";
   import { categoryFilter, type CategoryFilterOption } from "./category-filter.variants";
 
-  interface Props extends Omit<HTMLFieldsetAttributes, "children" | "class" | "name"> {
-    /** Visible name for the category choices. */
-    legend: string;
-    /** Caller-owned categories rendered as native checkbox choices. */
-    options: readonly CategoryFilterOption[];
-    /** Active category values: `bind:value` (ADR 0026). */
-    value?: string[];
+  interface Props extends CategoryFilterContract, Omit<HTMLFieldsetAttributes, keyof CategoryFilterContract | "children" | "class" | "name"> {
     /** @deprecated Renamed `value` (`bind:value`, ADR 0026); removed next release. */
     values?: string[];
-    /** Optional native form name shared by every category. */
-    name?: string;
-    /** Disables the whole fieldset and every category checkbox. Defaults to `false`. */
-    disabled?: boolean;
     /** Extra classes, merged over the root slot's own, onto the fieldset. */
     class?: string;
-    /**
-     * Extra classes, merged over the list slot's own, onto the element that wraps the checkboxes.
-     */
-    listClass?: string;
-    /** Extra classes, merged over the option slot's own, onto each checkbox's field wrapper. */
-    optionClass?: string;
     /** Called with the active category values after each change. */
     onvaluechange?: (value: string[]) => void;
     /** @deprecated Renamed `onvaluechange` (ADR 0026); removed next release. */
@@ -53,6 +39,11 @@
   // driving the filter through it for one release; `value` wins otherwise.
   const aliased = untrack(() => value === undefined && values !== undefined);
   const active = $derived((aliased ? values : value) ?? []);
+  let element = $state<HTMLFieldSetElement>();
+  const initial = untrack(() => [...active]);
+  $effect(() => afterFormReset(associatedForm(element, rest.form), () => {
+    if (aliased) values = [...initial]; else value = [...initial];
+  }));
 
   $effect(() => {
     if (aliased) warnDeprecated("CategoryFilter", "values", "value (bind:value)");
@@ -60,11 +51,7 @@
   });
 
   function change(option: string, checked: boolean): void {
-    const next = checked
-      ? active.includes(option)
-        ? active
-        : [...active, option]
-      : active.filter((candidate) => candidate !== option);
+    const next = categoryValues(active, option, checked);
     if (aliased) values = next;
     else value = next;
     onvaluechange?.([...next]);
@@ -73,6 +60,7 @@
 </script>
 
 <Fieldset
+  bind:ref={element}
   {...rest}
   {legend}
   {disabled}

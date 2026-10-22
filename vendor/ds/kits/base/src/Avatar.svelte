@@ -1,26 +1,16 @@
 <!-- A named image with an icon or required text fallback when media is absent or fails. -->
 <script lang="ts">
   import type { HTMLAttributes } from "svelte/elements";
+  import { untrack } from "svelte";
   import Icon, { type IconGlyph } from "./Icon.svelte";
-  import { avatar, type AvatarSize } from "./avatar.variants";
+  import { avatar } from "./avatar.variants";
+  import { avatarImageFailed, avatarImageVisible, type AvatarContract } from "./core/avatar";
 
-  interface SharedProps extends Omit<HTMLAttributes<HTMLSpanElement>, "children" | "class"> {
-    /** Optional image source. Omitting it renders the fallback immediately. */
-    src?: string;
-    /** Accessible name for the person or entity represented. */
-    name: string;
+  interface SharedProps extends AvatarContract, Omit<HTMLAttributes<HTMLSpanElement>, "children" | "class"> {
     /** Decorative content alternative used whenever the image is unavailable. */
     icon?: IconGlyph;
-    /** Visible text required when no icon alternative is supplied. */
-    fallback?: string;
-    /** Density-responsive avatar size. */
-    size?: AvatarSize;
     /** Extra classes merged onto the avatar root. */
     class?: string;
-    /** Extra classes merged onto the `img` shown once `src` loads. */
-    imageClass?: string;
-    /** Extra classes merged onto the fallback layer that holds the icon or text. */
-    fallbackClass?: string;
   }
 
   type Props = SharedProps & (
@@ -46,7 +36,11 @@
     ...rest
   }: Props = $props();
 
-  let imageFailed = $state(false);
+  let failedSrc = $state<string>();
+  let image = $state<HTMLImageElement>();
+  let requestedSrc = untrack(() => src);
+  $effect(() => { if (src !== requestedSrc) { requestedSrc = src; failedSrc = undefined; } });
+  $effect(() => { if (avatarImageFailed(image)) failedSrc = src; });
   const styles = $derived(avatar({ size }));
 </script>
 
@@ -64,14 +58,18 @@
       {fallback}
     {/if}
   </span>
-  {#if src && !imageFailed}
+  {#if avatarImageVisible(src, failedSrc)}
+    {#key src}
     <img
       data-avatar-image
+      bind:this={image}
       src={src}
       alt=""
       aria-hidden="true"
+      style="aspect-ratio: 1 / 1;"
       class={styles.image({ class: imageClass })}
-      onerror={() => (imageFailed = true)}
+      onerror={() => (failedSrc = src)}
     />
+    {/key}
   {/if}
 </span>

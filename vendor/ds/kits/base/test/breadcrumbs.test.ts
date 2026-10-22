@@ -15,8 +15,9 @@ describe("the deliberately failing Breadcrumbs fixture", () => {
     const scope = render(WayfindingConsumer).querySelector<HTMLElement>("[data-wayfinding-scope]")!;
     const root = scope.querySelector<HTMLElement>("[data-breadcrumbs]")!;
 
+    expect(classes(root).has("text-caption")).toBe(true);
     expect(classes(root)).toEqual(new Set(breadcrumbsAppearance().root().split(/\s+/)));
-    expect(classes(root.querySelector("ol")!).has("gap-[var(--reddb-spatial-gap-sm)]")).toBe(true);
+    expect(classes(root.querySelector("ol")!).has("gap-[var(--reddb-spatial-gap-lg)]")).toBe(true);
     expect(scope.getAttribute("data-density")).toBe("compact");
     expect(root.hasAttribute("data-theme")).toBe(false);
     expect(root.hasAttribute("data-color-scheme")).toBe(false);

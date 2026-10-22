@@ -1,17 +1,9 @@
 <script module lang="ts">
-  export interface TimelineItem {
-    id: string;
-    title: string;
-    /** Machine-readable date or time accepted by native `<time>`. */
-    datetime: string;
-    /** Caller-owned visible rendering of the date or time. */
-    time: string;
-    description?: string;
-    href?: string;
-  }
+  export type { TimelineItem } from "./core/timeline";
 </script>
 
 <script lang="ts">
+  import type { TimelineItem } from "./core/timeline";
   import type { HTMLAttributes } from "svelte/elements";
   import Link from "./Link.svelte";
   import { timeline } from "./timeline.variants";

@@ -7,59 +7,30 @@
   scroll containment. The trigger is optional — omit `triggerLabel` and drive
   `bind:open` from a menu item, a command or a route instead.
 -->
-<script module lang="ts">
-  /** Nested modals share one lock; the page scrolls again when the last one closes. */
-  let scrollLocks = 0;
-  let unlockedOverflow = "";
 
-  function lockScroll(): void {
-    if (scrollLocks++ === 0) {
-      unlockedOverflow = document.documentElement.style.overflow;
-      document.documentElement.style.overflow = "hidden";
-    }
-  }
-
-  function unlockScroll(): void {
-    if (scrollLocks > 0 && --scrollLocks === 0) {
-      document.documentElement.style.overflow = unlockedOverflow;
-    }
-  }
-</script>
 
 <script lang="ts">
-  import { onDestroy, untrack, type Snippet } from "svelte";
+  import { createModalController } from "./core/modal";
+  import type { DialogContract } from "./core/contracts/dialog";
+  import { untrack, type Snippet } from "svelte";
   import type { HTMLDialogAttributes } from "svelte/elements";
   import { button } from "./button.variants";
   import { dialog as dialogAppearance, dialogClose, type DialogSize } from "./dialog.variants";
 
-  interface Props extends Omit<HTMLDialogAttributes, "aria-describedby" | "aria-labelledby" | "class" | "open"> {
+  interface Props extends DialogContract, Omit<HTMLDialogAttributes, keyof DialogContract | "aria-describedby" | "aria-labelledby" | "class"> {
+    /** Replaces the visible title and default close control with a caller-owned header. The required title remains the accessible name; the header receives the canonical close operation. A custom header keeps the body in its own scrolling region. */
+    header?: Snippet<[{ close: () => void }]>;
     /**
-     * Accessible name for the DS-owned trigger. Omit it to render no trigger
-     * and open the Dialog through `bind:open` instead.
+     * Optional custom trigger content; `triggerLabel` remains its accessible name. Words it shows
+     * must appear, in order, in `triggerLabel`, ideally first (WCAG 2.5.3, Label in Name).
      */
-    triggerLabel?: string;
-    /** Visible Dialog title and its accessible name. */
-    title: string;
-    /** Optional visible detail associated with the Dialog. */
-    description?: string;
-    /** Optional custom trigger content; `triggerLabel` remains its accessible name. */
     trigger?: Snippet;
     /** Dialog body. */
     children?: Snippet;
     /** Optional action region with the canonical close operation. */
     actions?: Snippet<[{ close: () => void }]>;
-    /** Where focus enters when the Dialog opens. Defaults to its body. */
-    initialFocus?: "body" | "actions";
-    /** Whether to render the standard close control. Defaults to true. */
-    showClose?: boolean;
-    /** Whether the Dialog is open. Bindable; defaults to closed. */
-    open?: boolean;
     /** Called whenever the Dialog opens or closes, by any path. */
     onopenchange?: (open: boolean) => void;
-    /** Whether a click outside the surface dismisses it. Defaults to true. */
-    dismissible?: boolean;
-    /** Maximum inline size of the surface. Defaults to `md`. */
-    size?: DialogSize;
     /** Extra classes merged onto the modal surface. */
     class?: string;
   }
@@ -68,6 +39,7 @@
     triggerLabel,
     title,
     description,
+    header,
     trigger,
     children,
     actions,
@@ -86,50 +58,14 @@
   const descriptionId = `${uid}-description`;
 
   let dialog: HTMLDialogElement | undefined = $state();
-  let returnFocus: HTMLElement | null = null;
-  let locked = false;
-
-  const focusableSelector = [
-    "button:not([disabled])",
-    "a[href]",
-    "input:not([disabled])",
-    "select:not([disabled])",
-    "textarea:not([disabled])",
-    '[tabindex]:not([tabindex="-1"])',
-  ].join(",");
-
-  /** Bring the platform element to `next` — synchronous, and a no-op when already there. */
-  function apply(next: boolean): void {
+  let controller = $state<ReturnType<typeof createModalController>>();
+  $effect(() => {
     if (!dialog) return;
-    if (next && !dialog.open) {
-      returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      if (typeof dialog.showModal === "function") dialog.showModal();
-      else dialog.setAttribute("open", "");
-      if (!locked) {
-        lockScroll();
-        locked = true;
-      }
-      const preferredRegion = initialFocus === "actions" ? "[data-dialog-actions]" : "[data-dialog-body]";
-      (
-        dialog.querySelector<HTMLElement>(`${preferredRegion} ${focusableSelector}`) ??
-        dialog.querySelector<HTMLElement>(focusableSelector) ??
-        dialog
-      ).focus();
-    } else if (!next && dialog.open) {
-      if (typeof dialog.close === "function") dialog.close();
-      else dialog.removeAttribute("open");
-      release();
-      returnFocus?.focus();
-      returnFocus = null;
-    }
-  }
-
-  function release(): void {
-    if (locked) {
-      unlockScroll();
-      locked = false;
-    }
-  }
+    const next = createModalController(dialog, { initialFocus: () => initialFocus, dismissible: () => dismissible, requestOpen: setOpen });
+    controller = next;
+    return () => next.destroy();
+  });
+  function apply(next: boolean) { controller?.sync(next); }
 
   function setOpen(next: boolean): void {
     const changed = open !== next;
@@ -146,54 +82,10 @@
   // the DS's own trigger, close control and keys apply it synchronously above.
   $effect(() => {
     const wanted = open;
-    untrack(() => apply(wanted));
+    const lifecycle = controller;
+    untrack(() => lifecycle?.sync(wanted));
   });
 
-  onDestroy(release);
-
-  function handleKeydown(event: KeyboardEvent): void {
-    if (event.key === "Escape") {
-      event.preventDefault();
-      close();
-      return;
-    }
-    if (event.key !== "Tab" || !dialog) return;
-
-    const focusable = [...dialog.querySelectorAll<HTMLElement>(focusableSelector)];
-    const first = focusable[0];
-    const last = focusable.at(-1);
-    if (!first || !last) {
-      event.preventDefault();
-      dialog.focus();
-    } else if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
-  }
-
-  /** Light dismiss: only a click that lands outside the surface's own box. */
-  function handleClick(event: MouseEvent): void {
-    if (!dismissible || !dialog || event.target !== dialog) return;
-    const box = dialog.getBoundingClientRect();
-    const outside =
-      event.clientX < box.left ||
-      event.clientX > box.right ||
-      event.clientY < box.top ||
-      event.clientY > box.bottom;
-    if (outside) close();
-  }
-
-  /** The platform can close the element itself (a `method="dialog"` form); keep `open` true to it. */
-  function handleClose(): void {
-    if (open) {
-      open = false;
-      release();
-      onopenchange?.(false);
-    }
-  }
 </script>
 
 {#if triggerLabel}
@@ -216,26 +108,24 @@
   aria-modal="true"
   aria-labelledby={titleId}
   aria-describedby={description ? descriptionId : undefined}
-  class={dialogAppearance({ size, class: className })}
+  class={dialogAppearance({ size, class: [header ? "open:flex open:flex-col overflow-hidden" : "", className].filter(Boolean).join(" ") })}
   tabindex="-1"
-  onkeydown={handleKeydown}
-  onclick={handleClick}
-  onclose={handleClose}
 >
   <h2
     id={titleId}
     data-dialog-title
     class={[
-      "text-heading",
+      header ? "sr-only" : "text-heading",
       showClose && "pr-[var(--reddb-spatial-control-height-md)]",
     ]}
   >{title}</h2>
+  {#if header}<div data-dialog-header class="shrink-0">{@render header({ close })}</div>{/if}
   {#if description}
     <p id={descriptionId} data-dialog-description class="mt-[var(--reddb-spatial-gap-sm)] text-ink-muted">
       {description}
     </p>
   {/if}
-  {#if showClose}
+  {#if showClose && !header}
     <button
       type="button"
       data-dialog-close
@@ -245,7 +135,7 @@
     >
   {/if}
   {#if children}
-    <div data-dialog-body class="mt-[var(--reddb-spatial-gap-lg)]">{@render children()}</div>
+    <div data-dialog-body class={header ? "min-h-0 flex-1 overflow-y-auto" : "mt-[var(--reddb-spatial-gap-lg)]"}>{@render children()}</div>
   {/if}
   {#if actions}
     <div data-dialog-actions>{@render actions({ close })}</div>

@@ -1,5 +1,6 @@
 <!-- One caller-authored value proposition over canonical media and heading contracts. -->
 <script lang="ts">
+  import type { IncentiveContract } from "../core/contracts/incentive";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
   import {
@@ -9,13 +10,7 @@
   } from "@reddb-io/design-system/base";
   import { incentive } from "./incentive.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "class" | "title"> {
-    /** Heading text for the proposition; it is also the region's accessible name. */
-    title: string;
-    /** Supporting line under the title. Nothing is rendered when omitted. */
-    description?: string;
-    /** Outline depth of the heading, `1` to `6`. Defaults to `2`. */
-    level?: SectionHeadingLevel;
+  interface Props extends IncentiveContract, Omit<HTMLAttributes<HTMLDivElement>, keyof IncentiveContract | "children" | "class" | "title"> {
     /** Decorative caller-owned artwork; the visible title carries the proposition's meaning. */
     icon: Snippet;
     /** Optional links or controls rendered at the end of the heading row. */

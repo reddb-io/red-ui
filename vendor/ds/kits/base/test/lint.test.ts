@@ -11,7 +11,14 @@
 
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
-import { lintKitFiles, readTypeLedger, readVocabulary, settleTypeLedger } from "@reddb-io/kit-lint";
+import {
+  lintKitFiles,
+  readInteractionAllowlist,
+  readTypeLedger,
+  readVocabulary,
+  settleInteractionAllowlist,
+  settleTypeLedger,
+} from "@reddb-io/kit-lint";
 import { describe, expect, it } from "vitest";
 import { KIT_ROOT, kitSourceFiles } from "../tools/paths";
 
@@ -22,8 +29,12 @@ describe("anti-hardcode lint", () => {
     // Type debt the Kit carried when the type rule arrived is deferred by its
     // ledger (ADR 0025); nothing else is, and no ledger entry may outlive its debt.
     const outcome = settleTypeLedger(lintKitFiles(files, readVocabulary()), KIT_ROOT, readTypeLedger(KIT_ROOT), files);
-    expect(outcome.violations).toEqual([]);
+    // Rule 8 (wave 6A): an interactive element that draws its own states is
+    // justified in the Kit's interaction allowlist, which may not outlive it.
+    const interaction = settleInteractionAllowlist(outcome.violations, KIT_ROOT, readInteractionAllowlist(KIT_ROOT), files);
+    expect(interaction.violations).toEqual([]);
     expect(outcome.stale).toEqual([]);
+    expect(interaction.stale).toEqual([]);
   });
 
   it("reads the Kit's components and modules, and not the Marks", () => {

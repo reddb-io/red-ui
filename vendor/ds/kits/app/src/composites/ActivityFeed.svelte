@@ -6,15 +6,12 @@
 </script>
 
 <script lang="ts">
+  import type { ActivityFeedContract } from "../core/contracts/activityfeed";
   import { Timeline } from "@reddb-io/design-system/base";
   import type { HTMLAttributes } from "svelte/elements";
   import { activityFeed } from "./activity-feed.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLOListElement>, "class"> {
-    /** Caller-owned activity in chronological display order. */
-    items: readonly ActivityFeedItem[];
-    /** Accessible name for this activity stream. */
-    label?: string;
+  interface Props extends ActivityFeedContract, Omit<HTMLAttributes<HTMLOListElement>, keyof ActivityFeedContract | "class"> {
     /** Extra classes, merged over the root slot's own, onto the Timeline list. */
     class?: string;
   }

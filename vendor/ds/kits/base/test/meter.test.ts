@@ -4,6 +4,13 @@ import ProgressFeedbackConsumer from "./fixtures/ProgressFeedbackConsumer.svelte
 import { classes, classesOf, render, rendered } from "./mount";
 
 describe("the Base Meter", () => {
+  it("keeps its accessible name and reading when a table hides the repeated label", () => {
+    const element = rendered(render(Meter, { value: 65.3, label: "Node 07 memory", layout: "inline", labelHidden: true, formatValue: (value: number) => `${value.toFixed(1)}%` }));
+    expect(element.getAttribute("aria-label")).toBe("Node 07 memory");
+    expect(element.getAttribute("aria-valuetext")).toBe("65.3%");
+    expect(element.querySelector("[data-meter-summary] span")?.classList.contains("sr-only")).toBe(true);
+    expect(element.querySelector<HTMLElement>("[data-meter-indicator]")!.style.width).toBe("65.3%");
+  });
   it("conveys its value through semantics, text, and fill length", () => {
     const element = rendered(render(Meter, { value: 3, max: 5, label: "Cluster capacity" }));
     const indicator = element.querySelector<HTMLElement>("[data-meter-indicator]")!;

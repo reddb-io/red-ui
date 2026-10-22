@@ -9,6 +9,8 @@
     label: string;
     /** Which native overflow directions this boundary contains. */
     orientation?: ScrollAreaOrientation;
+    /** Surface treatment: `outline` keeps the standalone frame and Density inset; `plain` embeds native scrolling in an existing panel. Defaults to `outline`. */
+    variant?: "outline" | "plain";
     /** Extra classes, including the consumer-owned size constraint. */
     class?: string;
     /** Content that scrolls inside the region. */
@@ -18,6 +20,7 @@
   const {
     label,
     orientation = "vertical",
+    variant = "outline",
     class: className,
     children,
     ...rest
@@ -31,7 +34,7 @@
   role="region"
   aria-label={label}
   tabindex="0"
-  class={scrollArea({ orientation, class: className })}
+  class={scrollArea({ orientation, variant, class: className })}
 >
   {@render children?.()}
 </div>

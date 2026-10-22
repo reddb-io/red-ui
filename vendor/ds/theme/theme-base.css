@@ -3,6 +3,8 @@
 /* Direction: the neutral foundation every direction inherits — never a product direction of its own. */
 /* Materials only (ADR 0008): colour the Color Scheme chooses between, and type (ADR 0025); Density is untouched. */
 :where(:root, :host) {
+  --reddb-theme-accent-active-dark: var(--reddb-color-red-400);
+  --reddb-theme-accent-active-light: var(--reddb-color-red-400);
   --reddb-theme-accent-dark: var(--reddb-color-brand-primary);
   --reddb-theme-accent-light: var(--reddb-color-brand-primary);
   --reddb-theme-accent-text-dark: var(--reddb-color-neutral-50);
@@ -43,6 +45,8 @@
   --reddb-theme-elevation-sunken-surface-light: var(--reddb-color-neutral-50);
   --reddb-theme-feedback-danger-border-dark: var(--reddb-color-red-400);
   --reddb-theme-feedback-danger-border-light: var(--reddb-color-red-600);
+  --reddb-theme-feedback-danger-fill-active-dark: var(--reddb-color-red-700);
+  --reddb-theme-feedback-danger-fill-active-light: var(--reddb-color-red-600);
   --reddb-theme-feedback-danger-fill-dark: var(--reddb-color-red-600);
   --reddb-theme-feedback-danger-fill-light: var(--reddb-color-red-700);
   --reddb-theme-feedback-danger-foreground-dark: var(--reddb-color-feedback-danger-on-dark);
@@ -53,6 +57,8 @@
   --reddb-theme-feedback-danger-surface-light: var(--reddb-color-red-100);
   --reddb-theme-feedback-info-border-dark: var(--reddb-color-blue-400);
   --reddb-theme-feedback-info-border-light: var(--reddb-color-blue-600);
+  --reddb-theme-feedback-info-fill-active-dark: var(--reddb-color-blue-400);
+  --reddb-theme-feedback-info-fill-active-light: var(--reddb-color-blue-400);
   --reddb-theme-feedback-info-fill-dark: var(--reddb-color-blue-600);
   --reddb-theme-feedback-info-fill-light: var(--reddb-color-blue-600);
   --reddb-theme-feedback-info-foreground-dark: var(--reddb-color-feedback-info-on-dark);
@@ -63,6 +69,8 @@
   --reddb-theme-feedback-info-surface-light: var(--reddb-color-blue-100);
   --reddb-theme-feedback-success-border-dark: var(--reddb-color-green-400);
   --reddb-theme-feedback-success-border-light: var(--reddb-color-green-600);
+  --reddb-theme-feedback-success-fill-active-dark: var(--reddb-color-green-400);
+  --reddb-theme-feedback-success-fill-active-light: var(--reddb-color-green-400);
   --reddb-theme-feedback-success-fill-dark: var(--reddb-color-green-600);
   --reddb-theme-feedback-success-fill-light: var(--reddb-color-green-600);
   --reddb-theme-feedback-success-foreground-dark: var(--reddb-color-feedback-success-on-dark);
@@ -73,6 +81,8 @@
   --reddb-theme-feedback-success-surface-light: var(--reddb-color-green-100);
   --reddb-theme-feedback-warning-border-dark: var(--reddb-color-amber-400);
   --reddb-theme-feedback-warning-border-light: var(--reddb-color-amber-600);
+  --reddb-theme-feedback-warning-fill-active-dark: var(--reddb-color-amber-400);
+  --reddb-theme-feedback-warning-fill-active-light: var(--reddb-color-amber-400);
   --reddb-theme-feedback-warning-fill-dark: var(--reddb-color-amber-600);
   --reddb-theme-feedback-warning-fill-light: var(--reddb-color-amber-600);
   --reddb-theme-feedback-warning-foreground-dark: var(--reddb-color-feedback-warning-on-dark);
@@ -89,6 +99,8 @@
   --reddb-theme-ink-muted-light: var(--reddb-color-neutral-500);
   --reddb-theme-muted-dark: color-mix(in srgb, var(--reddb-color-neutral-50) 8%, transparent);
   --reddb-theme-muted-light: color-mix(in srgb, var(--reddb-color-ink) 8%, transparent);
+  --reddb-theme-navigation-surface-dark: color-mix(in srgb, var(--reddb-color-neutral-50) 6%, var(--reddb-color-neutral-950));
+  --reddb-theme-navigation-surface-light: color-mix(in srgb, var(--reddb-color-ink) 3%, var(--reddb-color-neutral-0));
   --reddb-theme-on-accent-dark: var(--reddb-color-brand-on-primary);
   --reddb-theme-on-accent-light: var(--reddb-color-brand-on-primary);
   --reddb-theme-on-feedback-dark: var(--reddb-color-neutral-950);

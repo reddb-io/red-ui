@@ -4,14 +4,14 @@ export const reveal = tv({
   base: [
     "opacity-0 will-change-[opacity,transform]",
     "[transform:translate3d(var(--reveal-x),var(--reveal-y),0)]",
-    "motion-reduce:!opacity-100 motion-reduce:!transform-none",
+    "motion-reduce:!opacity-100 motion-reduce:!transform-none motion-reduce:transition-none",
   ],
   variants: {
     direction: {
-      up: "[--reveal-x:0px] [--reveal-y:1.5rem]",
-      down: "[--reveal-x:0px] [--reveal-y:-1.5rem]",
-      left: "[--reveal-x:-1.5rem] [--reveal-y:0px]",
-      right: "[--reveal-x:1.5rem] [--reveal-y:0px]",
+      up: "[--reveal-x:0px] [--reveal-y:var(--reddb-spatial-inset-lg)]",
+      down: "[--reveal-x:0px] [--reveal-y:calc(-1*var(--reddb-spatial-inset-lg))]",
+      left: "[--reveal-x:calc(-1*var(--reddb-spatial-inset-lg))] [--reveal-y:0px]",
+      right: "[--reveal-x:var(--reddb-spatial-inset-lg)] [--reveal-y:0px]",
       none: "[--reveal-x:0px] [--reveal-y:0px]",
     },
     path: {

@@ -9,12 +9,17 @@ const ORIENTATION = {
 
 export const scrollArea = tv({
   base: [
-    "relative rounded-md border border-muted bg-background text-foreground",
-    "p-[var(--reddb-spatial-inset-sm)]",
+    "relative text-foreground",
     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
   ].join(" "),
-  variants: { orientation: ORIENTATION },
-  defaultVariants: { orientation: "vertical" },
+  variants: {
+    orientation: ORIENTATION,
+    variant: {
+      outline: "rounded-md border border-muted bg-background p-[var(--reddb-spatial-inset-sm)]",
+      plain: "p-0 focus-visible:-outline-offset-2",
+    },
+  },
+  defaultVariants: { orientation: "vertical", variant: "outline" },
 });
 
 export type ScrollAreaVariants = VariantProps<typeof scrollArea>;

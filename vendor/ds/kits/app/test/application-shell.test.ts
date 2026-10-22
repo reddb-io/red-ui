@@ -126,6 +126,10 @@ describe("ApplicationShell", () => {
       expect(classes(container as HTMLElement).has("max-w-none")).toBe(true);
       expect(classes(container as HTMLElement).has("px-0")).toBe(true);
     }
+    const header = shell.querySelector<HTMLElement>("header")!;
+    expect(classes(header).has("bg-navigation-surface")).toBe(true);
+    expect(classes(header).has("shadow-elevation-sunken")).toBe(false);
+    expect(classes(header.querySelector<HTMLElement>("[data-container]")!).has("py-0")).toBe(true);
   });
 
   it("compiles as a public consumer inside nested appearance scopes", () => {

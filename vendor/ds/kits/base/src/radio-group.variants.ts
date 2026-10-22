@@ -14,6 +14,8 @@ export interface RadioGroupOption {
   value: string;
   /** Caller-owned visible label. */
   label: string;
+  /** Supporting text, including the reason an unavailable choice cannot be selected. */
+  description?: string;
   /** Removes only this option from interaction and submission. */
   disabled?: boolean;
 }
@@ -36,7 +38,22 @@ export const radioGroup = tv({
       "size-[calc(var(--reddb-spatial-icon-size-md)*0.4)] rounded-full bg-on-primary",
       "forced-colors:hidden",
     ].join(" "),
+    content: "grid min-w-0 gap-[var(--reddb-spatial-gap-sm)]",
+    label: "",
+    description: "text-caption text-ink-muted",
   },
+  variants: {
+    variant: {
+      list: {},
+      cards: {
+        root: "@container/radio-cards",
+        list: "grid-cols-1 @lg/radio-cards:grid-cols-2",
+        option: "items-start rounded-md border border-control-edge p-[var(--reddb-spatial-inset-md)] has-checked:bg-foreground/10 has-checked:border-foreground has-disabled:cursor-not-allowed has-disabled:opacity-50 hover:bg-foreground/8 has-checked:hover:bg-foreground/10 active:bg-foreground/12",
+        label: "text-body font-medium",
+      },
+    },
+  },
+  defaultVariants: { variant: "list" },
 });
 
 export type RadioGroupVariants = VariantProps<typeof radioGroup>;

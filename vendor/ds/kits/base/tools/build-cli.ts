@@ -17,6 +17,7 @@ rmSync(DIST_DIR, { recursive: true, force: true });
 mkdirSync(DIST_DIR, { recursive: true });
 
 cpSync(SRC_DIR, join(DIST_DIR, "src"), { recursive: true });
+cpSync(join(KIT_ROOT, "react"), join(DIST_DIR, "react"), { recursive: true });
 for (const file of [KIT_MANIFEST, join(KIT_ROOT, "README.md")]) {
   cpSync(file, join(DIST_DIR, basename(file)));
 }

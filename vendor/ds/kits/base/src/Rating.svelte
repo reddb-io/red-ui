@@ -1,5 +1,7 @@
 <!-- One native radio value composed from the canonical Fieldset and Label. -->
 <script lang="ts">
+  import { untrack } from "svelte";
+  import { afterFormReset, ratingStops } from "./core/native-controls";
   import type { HTMLFieldsetAttributes } from "svelte/elements";
   import Fieldset from "./Fieldset.svelte";
   import Label from "./Label.svelte";
@@ -12,9 +14,13 @@
     name: string;
     /** Current rating; zero means no option is selected. */
     value?: number;
+    /** Initial uncontrolled rating, restored by native form reset. */
+    defaultValue?: number;
+    /** The native fieldset for imperative focus or inspection. */
+    ref?: HTMLFieldSetElement;
     /** Called with the newly chosen value (ADR 0026's value dialect). */
     onvaluechange?: (value: number) => void;
-    /** Number of rating stops. */
+    /** Number of stops, floored to at least one; non-finite values use five. */
     max?: number;
     /**
      * Marks every rating radio as required, so the native form refuses a submit while none is
@@ -46,7 +52,9 @@
   let {
     legend,
     name,
-    value = $bindable(0),
+    value = $bindable(),
+    defaultValue = 0,
+    ref = $bindable(),
     onvaluechange,
     max = 5,
     required = false,
@@ -61,11 +69,31 @@
     ...rest
   }: Props = $props();
   const styles = rating();
-  const stops = $derived(Array.from({ length: Math.max(1, Math.floor(max)) }, (_, index) => index + 1));
+  let element = $state<HTMLFieldSetElement>();
+  let readout = $state<HTMLOutputElement>();
+  const initial = untrack(() => value ?? defaultValue);
+  let local = $state(initial);
+  const selected = $derived(value ?? local);
+  const stops = $derived(ratingStops(max));
   const idPrefix = $derived(id ?? `${generatedId}-rating`);
+  $effect(() => { if (ref !== element) ref = element; });
+  // Native output reset replaces its text nodes. Keep its live DOM value in sync.
+  $effect(() => { if (readout) readout.value = `${selected} of ${stops.length}`; });
+
+  $effect(() => {
+    // Changing the native form target must move the reset listener too.
+    rest.form;
+    return afterFormReset(element?.form, () => {
+      local = initial;
+      value = initial;
+      element?.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach(input => {
+        input.checked = Number(input.value) === initial;
+      });
+    });
+  });
 </script>
 
-<Fieldset {...rest} {legend} {help} {error} class={styles.root({ class: className })} data-rating>
+<Fieldset {...rest} bind:ref={element} {legend} {help} {error} class={styles.root({ class: className })} data-rating>
   {#snippet children(control)}
     <div class={styles.list()} data-rating-list>
       {#each stops as stop}
@@ -77,20 +105,22 @@
             type="radio"
             {name}
             value={stop}
-            bind:group={value}
-            onchange={(event) => onvaluechange?.(Number(event.currentTarget.value))}
+            defaultChecked={initial === stop}
+            checked={selected === stop}
+            form={rest.form}
+            onchange={(event) => { local = Number(event.currentTarget.value); value = local; onvaluechange?.(value); }}
             {required}
             class={styles.control({ class: controlClass })}
           />
           <span class={styles.mark({ class: markClass })} data-rating-mark aria-hidden="true">
-            {stop <= value ? "★" : "☆"}
+            {stop <= selected ? "★" : "☆"}
           </span>
           <span class="sr-only">{stop} of {stops.length}</span>
         </Label>
       {/each}
     </div>
-    <output class={styles.output({ class: outputClass })} aria-live="polite">
-      {value} of {stops.length}
+    <output bind:this={readout} class={styles.output({ class: outputClass })} aria-live="polite">
+      {untrack(() => `${selected} of ${stops.length}`)}
     </output>
   {/snippet}
 </Fieldset>

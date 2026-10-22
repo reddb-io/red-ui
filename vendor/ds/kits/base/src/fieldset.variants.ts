@@ -3,18 +3,7 @@
 import { tv, type VariantProps } from "tailwind-variants";
 import { field } from "./field.variants";
 
-/**
- * What a group's help and error mean for each control inside it — Field's
- * association contract without the id, which every control keeps for itself.
- */
-export interface FieldsetControlProps {
-  /** Space-separated group help and error ids. */
-  "aria-describedby"?: string;
-  /** Present only while the group has an error. */
-  "aria-invalid"?: "true";
-  /** The group's current error id. */
-  "aria-errormessage"?: string;
-}
+export type { FieldsetControlProps } from "./core/fieldset";
 
 // The group owns its rhythm from the Density layout tier (ADR 0024): the
 // legend sits `layout-gap-sm` above the first field, and fields sit

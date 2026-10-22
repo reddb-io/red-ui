@@ -209,3 +209,41 @@ It resolves the matching release from `github.com/reddb-io/red-ui/releases`, cac
 ## License
 
 Apache-2.0
+
+## Design System adoption
+
+The Core vendors `reddb-io/design-system` through its official `ds-sync`
+producer. `design-system.manifest.json` pins **v2026.10.29**, selects the native
+Svelte flavor and the Application Kit (which inherits Base). The generated
+`vendor/ds/design-system.receipt.json` records the revision and file hashes.
+
+```sh
+pnpm ds:sync   # requires the sibling ../design-system checkout and GitHub access
+pnpm ds:check  # verifies the pin and every received file; also runs in CI
+```
+
+The Sync launcher runs the producer from the pinned release in a disposable
+Design System worktree. It preserves the sibling checkout's branch and local
+changes. Set `DESIGN_SYSTEM_PATH` to use a different checkout.
+
+New shared controls import `@reddb-io/design-system/base` or `/app`.
+`@reddb-io/ui-kit` remains a public compatibility facade: legacy tone names,
+`Card.floating`, settings-row hint/wide/below slots, and heading icon/meta
+slots delegate to DS primitives. The old NodeBadge role label composes a DS
+Badge; it never invents reachability to match the DS NodeBadge status API.
+The product EmptyState also delegates to the DS.
+
+The Core declares `data-theme="application"`, a separate light/dark
+`data-color-scheme`, and compact Density by default. The embed host may choose
+its own Density. Both standalone and Shadow DOM consume the same DS CSS;
+legacy layout color names reference DS roles instead of a second palette.
+Brand fonts come from the vendored DS. Nocturne remains an explicit local
+appearance extension; returning to Reddb restores the canonical DS cascade.
+Database renderers, topology behavior, and connection/auth ownership remain
+product-specific compositions.
+
+Public npm source exports also carry their received DS files and assets. The
+`prepack` step stages portable source imports and public runtime dependencies;
+the private `@reddb-io/design-system` workspace package is never an npm
+registry dependency. Standalone ui-kit consumers import
+`@reddb-io/ui-kit/styles.css` from their Tailwind 4 entry stylesheet.

@@ -1,8 +1,9 @@
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { defineConfig } from "vite";
+import { componentFlavorResolution } from "../../scripts/flavor-resolution.ts";
 
 export default defineConfig({
-  plugins: [svelte()],
+  plugins: [componentFlavorResolution(new URL("../..", import.meta.url).pathname), svelte()],
   // The Kit's tests mount components the way a browser does — `mount()` into a
   // real element, then click it — so they need the browser build of Svelte and
   // a document to mount into. That is the difference between a component test
@@ -14,10 +15,7 @@ export default defineConfig({
     // private workspace package and pnpm does not link it to its parent root
     // package. Point the specifier at the root package's exact Base export
     // target while keeping every test import at the consumer-facing seam.
-    alias: {
-      "@reddb-io/design-system/app": new URL("./src/index.ts", import.meta.url).pathname,
-      "@reddb-io/design-system/base": new URL("../base/src/index.ts", import.meta.url).pathname,
-    },
+
   },
   test: {
     include: ["test/**/*.test.ts"],

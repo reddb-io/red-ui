@@ -14,7 +14,7 @@ const warned = new Set<string>();
  * `instead` the canonical spelling (`tone="danger"`).
  */
 export function warnDeprecated(component: string, used: string, instead: string): void {
-  if (!import.meta.env?.DEV) return;
+  if (!(import.meta as ImportMeta & { readonly env?: { readonly DEV?: boolean } }).env?.DEV) return;
   const key = `${component}\u0000${used}`;
   if (warned.has(key)) return;
   warned.add(key);

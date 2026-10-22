@@ -17,6 +17,7 @@ function setFiles(input: HTMLInputElement, names: string[]): void {
   const files = names.map((name) => new File([name], name, { type: "text/plain" }));
   Object.defineProperty(input, "files", {
     configurable: true,
+    writable: true,
     value: Object.assign(files, { item: (index: number) => files[index] ?? null }),
   });
 }

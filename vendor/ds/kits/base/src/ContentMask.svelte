@@ -18,14 +18,14 @@
     class?: string;
   }
 
-  const { shape, children, class: className, ...rest }: Props = $props();
+  const { shape, children, class: className, style, ...rest }: Props = $props();
 </script>
 
 <div
   {...rest}
   data-content-mask
   data-shape={shape}
-  style:clip-path={CONTENT_MASK_CLIP_PATHS[shape]}
+  style={`${style ?? ""}; clip-path: ${CONTENT_MASK_CLIP_PATHS[shape]}`}
   class={contentMask({ class: className })}
 >
   {@render children()}

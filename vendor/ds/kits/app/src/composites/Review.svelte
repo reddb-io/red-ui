@@ -1,28 +1,12 @@
 <!-- A scored authored review composed from canonical Base surface and media contracts. -->
 <script lang="ts">
+  import type { ReviewContract } from "../core/contracts/review";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
   import { Avatar, Card, MediaObject, Rating } from "@reddb-io/design-system/base";
   import { review } from "./review.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLElement>, "children" | "class"> {
-    /** Visible and accessible reviewer name. */
-    author: string;
-    /**
-     * Image source for the reviewer's avatar. When omitted or unloadable, `avatarFallback` is shown
-     * instead.
-     */
-    avatarSrc?: string;
-    /** Visible fallback when the reviewer's image is unavailable. */
-    avatarFallback: string;
-    /** Read-only score shown through native state, symbols, and text. */
-    rating: number;
-    /** Highest possible score, which sets how many rating stops are drawn. Defaults to `5`. */
-    maxRating?: number;
-    /** Optional machine-readable review date or time. */
-    datetime?: string;
-    /** Caller-owned visible rendering of the review date or time. */
-    time?: string;
+  interface Props extends ReviewContract, Omit<HTMLAttributes<HTMLElement>, keyof ReviewContract | "children" | "class"> {
     /** Caller-owned review body. */
     children: Snippet;
     /** Optional caller-owned destinations and controls. */

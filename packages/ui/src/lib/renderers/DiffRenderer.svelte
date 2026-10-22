@@ -1,6 +1,9 @@
 <script lang="ts">
   import type { QueryResult } from '#reddb'
-  import { Braces, GitCompareArrows, Search, X } from 'lucide-svelte'
+  import Braces from '@lucide/svelte/icons/braces'
+  import GitCompareArrows from '@lucide/svelte/icons/git-compare-arrows'
+  import Search from '@lucide/svelte/icons/search'
+  import X from '@lucide/svelte/icons/x'
   import { diffEntryFields, extractDiffEntries, formatDiffValue, summarizeDiff, type DiffEntry } from './diff-render'
 
   interface Props {
@@ -36,7 +39,7 @@
   function statusClass(status: string): string {
     if (status === 'added') return 'text-ok'
     if (status === 'removed') return 'text-danger'
-    if (status === 'modified') return 'text-accent'
+    if (status === 'modified') return 'text-primary-text'
     return 'text-fg-3'
   }
 </script>
@@ -51,7 +54,7 @@
       <div class="inline-flex border border-line-2 rounded overflow-hidden">
         <button
           type="button"
-          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors', mode === 'summary' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors', mode === 'summary' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
           onclick={() => (mode = 'summary')}
           aria-pressed={mode === 'summary'}
         >
@@ -60,7 +63,7 @@
         </button>
         <button
           type="button"
-          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'raw' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'raw' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
           onclick={() => (mode = 'raw')}
           aria-pressed={mode === 'raw'}
         >
@@ -101,7 +104,7 @@
               class={['w-full text-left px-3 py-2 border-b border-line-1/60 hover:bg-bg-1/50 cursor-pointer', active === entry ? 'bg-bg-1 text-fg-0' : 'text-fg-2'].join(' ')}
             >
               <div class="flex items-center gap-2">
-                <span class="text-accent">{entry.change}</span>
+                <span class="text-primary-text">{entry.change}</span>
                 <span class="text-fg-3 truncate">{entry.entityId ?? entry.id}</span>
                 {#if entry.collection}<span class="ml-auto text-fg-3">{entry.collection}</span>{/if}
               </div>
@@ -115,7 +118,7 @@
         <div class="overflow-auto p-3 text-[12px] font-mono">
           {#if active}
             <div class="mb-3 grid grid-cols-[100px_1fr] gap-x-3 gap-y-1">
-              <span class="text-fg-3">change</span><span class="text-accent">{active.change}</span>
+              <span class="text-fg-3">change</span><span class="text-primary-text">{active.change}</span>
               <span class="text-fg-3">entity</span><span class="text-fg-0">{active.entityId ?? active.id}</span>
               <span class="text-fg-3">collection</span><span class="text-fg-0">{active.collection ?? '-'}</span>
               {#if active.note}

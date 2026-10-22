@@ -1,18 +1,15 @@
 <!-- A named product collection composed from canonical GridList and Card surfaces. -->
 <script lang="ts">
+  import type { ProductListContract } from "../core/contracts/productlist";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
-  import { Card, GridList, Heading, type GridListColumn } from "@reddb-io/design-system/base";
+  import { Card, GridList, Heading, Link, type GridListColumn } from "@reddb-io/design-system/base";
   import type { ProductListItem } from "./product-list.behavior";
   import { productList } from "./product-list.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLUListElement>, "children" | "class"> {
-    /** Required accessible name for the product collection. */
-    label: string;
-    /** Product content remains consumer-owned and is rendered in the given order. */
+  interface Props extends ProductListContract, Omit<HTMLAttributes<HTMLUListElement>, keyof ProductListContract | "children" | "class"> {
+    /** Caller-owned product entries with native content snippets. */
     items: readonly ProductListItem[];
-    /** Number of grid columns for the products: `1`, `2`, `3` or `4`. Defaults to `2`. */
-    columns?: GridListColumn;
     /** Caller-owned empty state, rendered as the collection's only item. */
     empty?: Snippet;
     /** Extra classes, merged over the root slot's own, onto the GridList. */
@@ -25,6 +22,7 @@
     items,
     columns = 2,
     empty,
+    headingLevel = 3,
     class: className,
     ...rest
   }: Props = $props();
@@ -52,8 +50,8 @@
       >
         {#snippet header()}
           <div class={slots.identity()}>
-            <Heading level={3} role="heading" id={titleId} data-product-list-name class={slots.name()}>
-              {#if item.href}<a href={item.href}>{item.name}</a>{:else}{item.name}{/if}
+            <Heading level={headingLevel} role="heading" id={titleId} data-product-list-name class={slots.name()}>
+              {#if item.href}<Link href={item.href}>{item.name}</Link>{:else}{item.name}{/if}
             </Heading>
             {#if item.price}<p data-product-list-price class={slots.price()}>{item.price}</p>{/if}
           </div>

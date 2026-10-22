@@ -35,6 +35,15 @@ describe("the Base Calendar", () => {
     expect(calendar).toBeTypeOf("function");
   });
 
+  it("renders no <header>, so a Calendar in a popover adds no banner landmark (wave 5A)", () => {
+    const root = rendered(render(Calendar, {
+      label: "Deployment date",
+      placeholder: new CalendarDate(2026, 6, 10),
+    }));
+    expect(root.querySelector("header")).toBeNull();
+    expect(root.querySelector("[data-calendar-header]")?.tagName).toBe("DIV");
+  });
+
   it("provides a roving date tab stop and arrow-key focus navigation", async () => {
     const root = rendered(render(Calendar, {
       label: "Deployment date",

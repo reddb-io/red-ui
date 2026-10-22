@@ -1,32 +1,18 @@
 <!-- A segmented clock value composed from the canonical Field and Input. -->
 <script lang="ts">
+  import { untrack } from "svelte";
+  import { possibleTime, segmentDigits } from "./core/date-segments";
+  import { afterFormReset } from "./core/native-controls";
+  import type { TimeFieldContract } from "./core/contracts/timefield";
   import Field from "./Field.svelte";
   import Input from "./Input.svelte";
   import { timeField } from "./time-field.variants";
 
-  interface Props {
-    /** Visible label text owned by the caller. */
-    label: string;
-    /** Native form name receiving a complete, possible time. */
-    name?: string;
-    /** Complete 24-hour clock value. */
-    value?: string;
+  interface Props extends TimeFieldContract {
     /** Called with the new value whenever it changes (ADR 0026's value dialect). */
     onvaluechange?: (value: string) => void;
-    /** Supporting text associated with both segments. */
-    help?: string;
-    /** Current validation error associated with both segments. */
-    error?: string;
-    /** Applies native required validation to both segments. */
-    required?: boolean;
-    /** Disables both native segments. */
-    disabled?: boolean;
-    /** Explicit id for the hour segment. */
-    id?: string;
     /** Extra classes merged onto the canonical Field root. */
     class?: string;
-    /** Extra classes merged onto both native segments. */
-    segmentClass?: string;
   }
 
   let {
@@ -43,25 +29,34 @@
     segmentClass,
   }: Props = $props();
 
-  const initial = /^(?:([01]\d|2[0-3])):([0-5]\d)$/.exec(value);
+  const initialValue = untrack(() => value);
+  const initial = possibleTime(initialValue);
+  let publishedValue = initialValue;
   let hour = $state(initial?.[1] ?? "");
   let minute = $state(initial?.[2] ?? "");
   let hourControl = $state<HTMLInputElement>();
   let minuteControl = $state<HTMLInputElement>();
-  const complete = $derived(/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(`${hour}:${minute}`));
+  const complete = $derived(possibleTime(`${hour}:${minute}`) !== null);
   const styles = timeField();
+
+  $effect(() => {
+    if (value === publishedValue) return;
+    const next = possibleTime(value); hour = next?.[1] ?? ""; minute = next?.[2] ?? ""; publishedValue = value;
+  });
+  $effect(() => afterFormReset(hourControl?.form, () => {
+    const next = possibleTime(initialValue); hour = next?.[1] ?? ""; minute = next?.[2] ?? ""; publishedValue = initialValue; value = initialValue;
+  }));
 
   function publish(): void {
     const before = value;
-    value = complete ? `${hour}:${minute}` : "";
+    publishedValue = complete ? `${hour}:${minute}` : "";
+    value = publishedValue;
     if (value !== before) onvaluechange?.(value);
   }
 
   function handleInput(event: Event, segment: "hour" | "minute"): void {
     const input = event.currentTarget as HTMLInputElement;
-    const maximum = segment === "hour" ? 23 : 59;
-    const digits = input.value.replace(/\D/g, "").slice(0, 2);
-    const next = digits.length === 2 && Number(digits) > maximum ? "" : digits;
+    const next = segmentDigits(input.value, segment);
 
     input.value = next;
     if (segment === "hour") hour = next;

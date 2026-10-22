@@ -1,29 +1,13 @@
 <!-- One announced active filter, composed from the canonical Base ToggleGroup. -->
 <script lang="ts">
+  import type { FilterContract } from "../core/contracts/filter";
   import { ToggleGroup } from "@reddb-io/design-system/base";
   import type { HTMLFieldsetAttributes } from "svelte/elements";
   import { filter, type FilterOption } from "./filter.variants";
 
-  interface Props extends Omit<HTMLFieldsetAttributes, "children" | "class" | "name"> {
-    /** Visible name for the related filter choices. */
-    legend: string;
-    /** Caller-owned choices; exactly one is announced as pressed. */
-    options: readonly FilterOption[];
-    /** Active value; an absent value selects the first enabled option. */
-    value?: string;
-    /** Optional native form name for the active value. */
-    name?: string;
-    /** Disables the whole group and every option. Defaults to `false`. */
-    disabled?: boolean;
+  interface Props extends FilterContract, Omit<HTMLFieldsetAttributes, keyof FilterContract | "children" | "class" | "name"> {
     /** Extra classes, merged over the root slot's own, onto the ToggleGroup's fieldset. */
     class?: string;
-    /**
-     * Extra classes, merged over the list slot's own, onto the element that wraps the option
-     * buttons.
-     */
-    listClass?: string;
-    /** Extra classes merged onto each option button. */
-    optionClass?: string;
     /** Called with the chosen option's value whenever the active filter changes. */
     onvaluechange?: (value: string) => void;
   }

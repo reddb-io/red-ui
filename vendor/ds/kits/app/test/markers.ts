@@ -35,7 +35,7 @@ export function kebab(name: string): string {
 export function componentOf(file: string): string {
   const stem = basename(file)
     .replace(/\.(svelte|ts)$/, "")
-    .replace(/\.(variants|behavior)$/, "");
+    .replace(/\.(variants|behavior|appearance)$/, "");
   return kebab(stem);
 }
 

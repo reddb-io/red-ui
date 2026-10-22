@@ -29,9 +29,9 @@ export const sidebarLayout = tv({
     // `3xl` step, one line in proportion from it.
     sidebar: "min-w-0 basis-full @3xl/sidebar-layout:grow-[1] @3xl/sidebar-layout:basis-0",
     content: "min-w-0 basis-full @3xl/sidebar-layout:grow-[3] @3xl/sidebar-layout:basis-0",
-    railRegion: "relative z-30 min-h-dvh min-w-0",
+    railRegion: "relative z-30 min-h-dvh w-max min-w-0",
     panel: "min-w-0 border-e border-elevation-sunken-border bg-elevation-sunken-surface shadow-elevation-sunken",
-    main: "min-w-0",
+    main: "min-w-0 break-words",
   },
   variants: {
     side: SIDE,
@@ -46,7 +46,7 @@ export const sidebarLayout = tv({
           "transition-[grid-template-columns] motion-reduce:transition-none",
         ].join(" "),
         panel: [
-          "max-md:fixed max-md:inset-y-0 max-md:z-40 max-md:w-[min(20rem,calc(100vw-var(--reddb-spatial-control-height-md)-2*var(--reddb-spatial-inset-sm)))]",
+          "max-md:fixed max-md:inset-y-0 max-md:z-40 max-md:w-[min(20rem,calc(100vw_-_var(--_reddb-sidebar-rail-width,calc(var(--reddb-spatial-control-height-md)+2*var(--reddb-spatial-inset-sm)))))]",
           "max-md:overflow-y-auto max-md:p-[var(--reddb-spatial-inset-sm)]",
           "max-md:transition-transform motion-reduce:transition-none",
         ].join(" "),
@@ -72,9 +72,9 @@ export const sidebarLayout = tv({
       railOpen: true,
       class: {
         root: [
-          "grid-cols-[calc(var(--reddb-spatial-control-height-md)+2*var(--reddb-spatial-inset-sm))_minmax(0,1fr)]",
+          "grid-cols-[auto_minmax(0,1fr)]",
         ].join(" "),
-        panel: "max-md:start-[calc(var(--reddb-spatial-control-height-md)+2*var(--reddb-spatial-inset-sm))]",
+        panel: "max-md:start-[var(--_reddb-sidebar-rail-width,calc(var(--reddb-spatial-control-height-md)+2*var(--reddb-spatial-inset-sm)))]",
         main: "max-md:col-start-2",
       },
     },
@@ -84,9 +84,9 @@ export const sidebarLayout = tv({
       railOpen: true,
       class: {
         root: [
-          "grid-cols-[minmax(0,1fr)_calc(var(--reddb-spatial-control-height-md)+2*var(--reddb-spatial-inset-sm))]",
+          "grid-cols-[minmax(0,1fr)_auto]",
         ].join(" "),
-        panel: "max-md:end-[calc(var(--reddb-spatial-control-height-md)+2*var(--reddb-spatial-inset-sm))]",
+        panel: "max-md:end-[var(--_reddb-sidebar-rail-width,calc(var(--reddb-spatial-control-height-md)+2*var(--reddb-spatial-inset-sm)))]",
         main: "max-md:col-start-1",
       },
     },
@@ -116,7 +116,7 @@ export const sidebarLayout = tv({
       railOpen: true,
       panelOpen: false,
       class: {
-        root: "md:grid-cols-[calc(var(--reddb-spatial-control-height-md)+2*var(--reddb-spatial-inset-sm))_0_minmax(0,1fr)]",
+        root: "md:grid-cols-[auto_0_minmax(0,1fr)]",
         panel: "max-md:-translate-x-full",
       },
     },
@@ -126,7 +126,7 @@ export const sidebarLayout = tv({
       railOpen: true,
       panelOpen: true,
       class: {
-        root: "md:grid-cols-[calc(var(--reddb-spatial-control-height-md)+2*var(--reddb-spatial-inset-sm))_minmax(12rem,1fr)_minmax(0,3fr)]",
+        root: "md:grid-cols-[auto_minmax(12rem,1fr)_minmax(0,3fr)]",
       },
     },
     {
@@ -135,7 +135,7 @@ export const sidebarLayout = tv({
       railOpen: true,
       panelOpen: false,
       class: {
-        root: "md:grid-cols-[minmax(0,1fr)_0_calc(var(--reddb-spatial-control-height-md)+2*var(--reddb-spatial-inset-sm))]",
+        root: "md:grid-cols-[minmax(0,1fr)_0_auto]",
         panel: "max-md:translate-x-full",
       },
     },
@@ -145,7 +145,7 @@ export const sidebarLayout = tv({
       railOpen: true,
       panelOpen: true,
       class: {
-        root: "md:grid-cols-[minmax(0,3fr)_minmax(12rem,1fr)_calc(var(--reddb-spatial-control-height-md)+2*var(--reddb-spatial-inset-sm))]",
+        root: "md:grid-cols-[minmax(0,3fr)_minmax(12rem,1fr)_auto]",
       },
     },
     {
@@ -183,3 +183,29 @@ export const sidebarLayout = tv({
 export type SidebarLayoutVariants = VariantProps<typeof sidebarLayout>;
 export type SidebarSide = NonNullable<SidebarLayoutVariants["side"]>;
 export const SIDEBAR_SIDES = Object.keys(SIDE) as readonly SidebarSide[];
+
+/** Page navigation uses one item model for a desktop rail and a mobile bottom bar. */
+export const responsiveNavigationLayout = tv({
+  slots: {
+    root: "grid min-h-dvh min-w-0 grid-cols-[minmax(0,1fr)] pb-[var(--reddb-spatial-control-height-lg)] md:grid-cols-[auto_minmax(0,1fr)] md:pb-0",
+    header: "sticky top-0 z-20 col-span-full min-w-0",
+    rail: "sticky top-[var(--_reddb-navigation-header-height,0px)] hidden h-dvh min-h-0 md:block",
+    panel: "sticky top-[var(--_reddb-navigation-header-height,0px)] hidden h-dvh min-h-0 min-w-0 overflow-y-auto border-e border-muted bg-elevation-sunken-surface md:block",
+    main: "min-w-0 p-[var(--reddb-spatial-inset-md)] [&_a]:scroll-mb-[var(--_reddb-navigation-bottom-height,0px)] [&_button]:scroll-mb-[var(--_reddb-navigation-bottom-height,0px)] [&_input]:scroll-mb-[var(--_reddb-navigation-bottom-height,0px)]",
+    bottom: "fixed inset-x-0 bottom-0 z-30 md:hidden",
+    more: "grid gap-[var(--reddb-spatial-gap-sm)]",
+    drawer: "max-w-[min(42ch,calc(100vw_-_var(--reddb-spatial-inset-lg)))] pb-[max(var(--reddb-spatial-inset-md),env(safe-area-inset-bottom))]",
+    menu: "min-h-0 min-w-0",
+  },
+  variants: {
+    header: {true:{root:"grid-rows-[auto_minmax(0,1fr)]"},false:{root:"grid-rows-[minmax(0,1fr)]"}},
+    dockable: {true:{},false:{root:"grid-cols-[auto_minmax(0,1fr)] pb-0",rail:"block"}},
+    panel: { true: {root: "md:grid-cols-[auto_minmax(14rem,20rem)_minmax(0,1fr)]"}, false: {} },
+    side: {start: {}, end: {}},
+  },
+  compoundVariants: [
+    {side:"end",panel:false,class:{root:"md:grid-cols-[minmax(0,1fr)_auto]",rail:"md:order-3",main:"md:order-1"}},
+    {side:"end",panel:true,class:{root:"md:grid-cols-[minmax(0,1fr)_minmax(14rem,20rem)_auto]",rail:"md:order-3",panel:"md:order-2",main:"md:order-1"}},
+  ],
+  defaultVariants: {panel:false,side:"start",dockable:true,header:false},
+});

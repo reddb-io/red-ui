@@ -1,15 +1,9 @@
 <script module lang="ts">
-  export type StepState = "complete" | "current" | "upcoming";
-
-  export interface StepItem {
-    id: string;
-    label: string;
-    href?: string;
-    state: StepState;
-  }
+  export type { StepItem, StepState } from "./core/steps";
 </script>
 
 <script lang="ts">
+  import type { StepItem, StepState } from "./core/steps";
   import Link from "./Link.svelte";
   import { steps } from "./steps.variants";
 

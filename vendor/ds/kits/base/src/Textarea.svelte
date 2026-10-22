@@ -5,6 +5,7 @@
   form submission, events and focus all stay under the platform contract.
 -->
 <script lang="ts">
+  import { checkFieldName, getFieldContext } from "./a11y";
   import { untrack } from "svelte";
   import type { HTMLTextareaAttributes } from "svelte/elements";
   import { textarea } from "./textarea.variants";
@@ -43,6 +44,13 @@
     const next = value;
     if (!ref || next === undefined || next === null) return;
     if (String(next) !== ref.value) ref.value = String(next);
+  });
+
+  // Wave 5A's accessible-name contract: inside a Field the label owns the
+  // name; anywhere else a mounted control with no name warns in development.
+  const insideField = getFieldContext() !== undefined;
+  $effect(() => {
+    if (!insideField) checkFieldName("Textarea", ref);
   });
 </script>
 

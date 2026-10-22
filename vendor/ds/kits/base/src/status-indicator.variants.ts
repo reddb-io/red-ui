@@ -35,9 +35,9 @@ const TONE: Record<Tone, { mark: string }> = {
 
 export const statusIndicator = tv({
   slots: {
-    root: "inline-flex items-center gap-[var(--reddb-spatial-gap-sm)] text-sm text-foreground",
+    root: "inline-flex min-w-0 max-w-full items-center gap-[var(--reddb-spatial-gap-sm)] text-sm text-foreground",
     mark: "size-2 shrink-0 rounded-full border",
-    label: "",
+    label: "min-w-0 [overflow-wrap:anywhere]",
   },
   variants: {
     tone: TONE,

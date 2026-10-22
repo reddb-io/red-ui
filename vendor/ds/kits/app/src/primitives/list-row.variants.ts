@@ -43,7 +43,9 @@ export const DEPRECATED_LIST_ROW_DENSITIES = {
 
 const INTERACTIVE = {
   true: {
-    root: "cursor-pointer hover:bg-foreground/8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
+    // Hover, pressed, focus and disabled are the quiet-control contract the
+    // component wraps an interactive row in (wave 6A).
+    root: "cursor-pointer",
   },
   false: { root: "" },
 } as const;

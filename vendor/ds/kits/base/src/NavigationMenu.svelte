@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { NavigationMenuContract } from "./core/contracts/navigationmenu";
   import { NavigationMenu as Bits } from "bits-ui";
   import Button from "./Button.svelte";
   import {
@@ -12,39 +13,11 @@
     type NavigationMenuSize,
   } from "./navigation-menu.variants";
   import { popover as popoverAppearance } from "./popover.variants";
+  import { quietControl } from "./quiet-control.variants";
 
-  interface Props {
-    /** Accessible name of the navigation landmark. */
-    label: string;
-    /**
-     * The top-level entries: a link with an `href` renders a direct destination, one with `links`
-     * renders a trigger that opens a surface of links. Defaults to none.
-     */
-    items?: readonly NavigationMenuEntry[];
-    /** The `id` of the section whose links are open, or an empty string when none is; bindable. */
-    value?: string;
+  interface Props extends NavigationMenuContract {
     /** Called with the open item's id ("" when none) after it changes (ADR 0026's value dialect). */
     onvaluechange?: (value: string) => void;
-    /**
-     * Direction the entries run: `horizontal` in a row, `vertical` in a column. Defaults to
-     * `horizontal`.
-     */
-    orientation?: NavigationMenuOrientation;
-    /**
-     * Size of the top-level controls, following the Density control heights: `sm`, `md` or `lg`.
-     * Defaults to `md`.
-     */
-    size?: NavigationMenuSize;
-    /**
-     * Milliseconds from the pointer entering a trigger until its content opens, as Bits UI
-     * defines it; defaults to `200`.
-     */
-    delayDuration?: number;
-    /**
-     * Milliseconds in which moving to another trigger skips the open delay again, as Bits UI
-     * defines it; defaults to `300`.
-     */
-    skipDelayDuration?: number;
     /** Extra classes, merged onto each section's anchored surface, not the landmark. */
     class?: string;
   }
@@ -102,7 +75,7 @@
                     <li>
                       <Bits.Link active={link.active} onSelect={() => choose(link)}>
                         {#snippet child({ props })}
-                          <a {...props} href={link.href} class={slots.link()}>
+                          <a {...props} href={link.href} class={quietControl({ ink: "foreground", class: slots.link() })}>
                             <span>{link.label}</span>
                             {#if link.description !== undefined}
                               <span class={slots.description()}>{link.description}</span>
@@ -114,6 +87,22 @@
                   {/each}
                 </ul>
               </Bits.Content>
+              {#if value !== item.id}
+                <!-- Bits UI mounts a section's surface only while it is open, so a closed
+                     section's destinations would exist only after a click. They stay in the
+                     served document as a `hidden` list: crawlers and no-script readers find every
+                     link, while `hidden` keeps them out of the tab order and the accessibility
+                     tree until the real surface takes over on open. -->
+                <ul hidden data-navigation-menu-closed-links={item.id}>
+                  {#each item.links as link (link.id)}
+                    <li>
+                      <a href={link.href} aria-current={link.active ? "page" : undefined}>
+                        {link.label}{#if link.description !== undefined}<span> — {link.description}</span>{/if}
+                      </a>
+                    </li>
+                  {/each}
+                </ul>
+              {/if}
             {:else}
               <Bits.Link active={item.active} onSelect={() => choose(item)}>
                 {#snippet child({ props })}
@@ -122,7 +111,7 @@
                     href={item.href}
                     data-navigation-menu-control
                     aria-current={item.active ? "page" : undefined}
-                    class={slots.control()}
+                    class={quietControl({ ink: "foreground", class: slots.control() })}
                   >{item.label}</a>
                 {/snippet}
               </Bits.Link>

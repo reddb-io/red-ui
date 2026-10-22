@@ -5,19 +5,9 @@
 // named local control without either implementation reaching into the other.
 
 import { tv, type VariantProps } from "tailwind-variants";
+import type { FieldLayout } from "./core/field";
 
-export interface FieldControlProps {
-  /** The id the label targets. */
-  id: string;
-  /** Native required semantics, when the Field declares them. */
-  required?: true;
-  /** Space-separated help and error ids. */
-  "aria-describedby"?: string;
-  /** Present only while the Field has an error. */
-  "aria-invalid"?: "true";
-  /** The Field's current error id. */
-  "aria-errormessage"?: string;
-}
+export { FIELD_LAYOUTS, type FieldLayout, type FieldControlProps } from "./core/field";
 
 // `layout` decides where the label sits relative to its control. A text-like
 // control reads label-first, stacked above it. A binary choice — a checkbox or
@@ -33,7 +23,7 @@ const LAYOUT = {
     help: "col-start-2",
     error: "col-start-2",
   },
-} as const;
+} as const satisfies Record<FieldLayout, Record<string, string>>;
 
 // A disabled control takes its label down with it: the label steps to
 // secondary ink (still AA, WCAG 1.4.3) so a dimmed control never sits beside a
@@ -47,7 +37,7 @@ const LAYOUT = {
 // carries the meaning (WCAG 1.4.1).
 export const field = tv({
   slots: {
-    root: "group/field grid gap-[var(--reddb-spatial-gap-sm)]",
+    root: "group/field grid content-start gap-[var(--reddb-spatial-gap-sm)]",
     label: [
       "text-sm font-medium text-foreground",
       "group-has-[:is(input,select,textarea,button):disabled]/field:cursor-not-allowed",
@@ -60,8 +50,5 @@ export const field = tv({
   variants: { layout: LAYOUT },
   defaultVariants: { layout: "stacked" },
 });
-
-export type FieldLayout = keyof typeof LAYOUT;
-export const FIELD_LAYOUTS = Object.keys(LAYOUT) as readonly FieldLayout[];
 
 export type FieldVariants = VariantProps<typeof field>;

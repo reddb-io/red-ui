@@ -1,8 +1,9 @@
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { defineConfig } from "vite";
+import { componentFlavorResolution } from "../../scripts/flavor-resolution.ts";
 
 export default defineConfig({
-  plugins: [svelte()],
+  plugins: [componentFlavorResolution(new URL("../..", import.meta.url).pathname), svelte()],
   // The Kit's tests mount the Logo the way a browser does — `mount()` into a
   // real element — so they need the browser build of Svelte and a document to
   // mount into. The document is not incidental here: `on` defaults from the
@@ -15,9 +16,7 @@ export default defineConfig({
     // published boundary, but pnpm does not link a workspace package to its
     // own parent package; this alias points at the exact export target declared
     // by the root package.json rather than bypassing the Base entry point.
-    alias: {
-      "@reddb-io/design-system/base": new URL("./src/index.ts", import.meta.url).pathname,
-    },
+
   },
   test: {
     include: ["test/**/*.test.ts"],

@@ -1,5 +1,33 @@
 # Application Kit
 
+## Task lifecycles
+
+`TaskList` presents caller-owned tasks in caller order. Each `TaskListItem` needs
+a stable unique `id`, `title` and `state` (`queued`, `running`, `paused`, `blocked`,
+`succeeded`, `failed`, `cancelled`). Optional `stateLabel` localizes the status;
+`tone` overrides its default Feedback Role. Numeric `progress` draws canonical
+Progress, null draws indeterminate progress, and omission hides the track.
+`worker`, `estimate`, `description` and `reason` are already formatted by the
+application; a reason stays visible beside a blocker or failure.
+
+`actions(item)` receives the current task and composes application-owned controls.
+The component does not execute or schedule tasks, calculate estimates, run timers,
+fetch data or announce every progress tick. Applications own those lifecycles and
+may add a concise status announcement after a user action. Empty lists use
+EmptyState (`emptyLabel`, `emptyDescription`) or a caller-supplied `empty` snippet.
+
+The Showcase's Resource collection, Operations inbox and Project onboarding
+examples compose these contracts into complete illustrative workflows. Selection,
+filtering, message read/archive state, configuration drafts and retries remain
+local to those examples, outside the distributed Kits.
+
+SidebarRail and SidebarNavigation destinations accept `badge`, `badgeLabel`,
+`badgeTone` and `status: { label, tone? }`. Counts and presence are independent
+of the selected destination, share its focus target, and remain in its
+accessible name. Numeric rail counts above 99 display `99+` while the full
+count stays accessible. SidebarPanel accepts the same markers in its heading;
+rich avatar rows compose Base Indicator and StatusIndicator in ListRow's slots.
+
 The Kit every public Product Application receives (`kit.json` routes it to
 `"*"`). It is the landing place for the Harvest: components brought in from the
 applications, re-based on the DS Layers, and organized here
@@ -18,7 +46,7 @@ batches (issues #7 and #8):
 | `NodeBadge`      | A reddb node and whether the cluster can reach it.           |
 | `SplitView`      | Two panes and a divider movable by pointer or by arrow key.  |
 
-…and thirty-one **Composites**, including the canonical application frame and column
+…and **Composites** including the canonical application frame and column
 arrangements, command surfaces, titling surfaces, refinement controls, social surfaces,
 commerce surfaces, commerce catalogue contracts, comparison, and merchandising contracts:
 
@@ -28,6 +56,7 @@ commerce surfaces, commerce catalogue contracts, comparison, and merchandising c
 | `CommandPalette` | Global caller-owned command search composing canonical Popover and Combobox focus. |
 | `Menubar`      | Top-level application commands with roving focus and menus.     |
 | `SidebarNavigation` | A vertical destination list with exactly one announced current item. |
+| `SidebarPanel` | Contextual toolbar, heading actions, controls, scrolling links or rich rows, and an optional footer. |
 | `SidebarRail`  | A compact workspace rail of Tooltip-labelled controls with roving focus and a caller-owned selection. |
 | `BottomNavigation` | A compact, keyboard-reachable destination bar with consumer-owned placement. |
 | `StoreNavigation` | A store masthead composing the canonical Base Navbar around caller-owned regions. |
@@ -447,3 +476,126 @@ pnpm --filter kit-app check   # consumer svelte-check over the Kit's source, str
 pnpm --filter kit-app lint    # anti-hardcode lint over the Kit's source: colour, radius, spatial
 pnpm --filter kit-app build   # stage the vendorable source into dist/ for the release bundle
 ```
+
+## Contextual sidebar panels
+
+SidebarPanel owns the rhythm of a contextual toolbar, title with `actions`,
+`controls` such as search and filters, a named native scrolling body and optional
+`footer`. Its children may be SidebarNavigation links or grouped ListRows with
+Avatar leading content, supporting text, timestamps and counts. Use SectionHeading
+for labelled groups and native Buttons or DropdownMenu for panel actions.
+
+`backHref` and `ondismiss` are opt-in. Supplying `toolbar` replaces the complete
+contextual row, so custom actions never duplicate built-in Back or Close controls.
+SidebarNavigation also accepts a toolbar for a simpler destination-only panel.
+The `/kit/sidebar-panel` specimen exercises both forms and a rich grouped list.
+
+SidebarRail keeps its compact icon column free of native scrollbars; wheel, touch
+and roving keyboard focus continue to scroll its collection. Content panels keep
+their ordinary native scrollbar. This prevents a narrow horizontal scrollbar
+from appearing when the vertical rail overflows.
+
+### Rail groups and visible labels
+
+`SidebarRail showLabels` places each destination label below its icon or
+initials. An item with `separatorBefore: true` begins a new group with a
+Divider, without adding a tab stop. Notification counts and presence remain
+independent of selection. SidebarLayout follows the supplied rail width,
+including label presentation and Density changes, without a second size prop.
+
+### Coordinated primary navigation
+
+`SidebarLayout` can own the application navigation frame from one primary item list:
+
+```svelte
+<SidebarLayout navigation={sections} currentId={currentSection} dockable>
+  {#snippet header()}
+    <Navbar links={products} {brand} {actions} />
+  {/snippet}
+  {#snippet sidebar({ item, close })}
+    <!-- Render this section's menu; its native links dismiss the mobile drawer. -->
+  {/snippet}
+  <!-- Current page -->
+</SidebarLayout>
+```
+
+The Navbar's global product links collapse into its menu at the top. The primary rail becomes a bottom dock on mobile, with up to five entries and automatic More overflow. `href` items navigate; items without `href` open a contextual sidebar. Opening a menu does not change `currentId`; the application updates that when the route changes. `dockable={false}` keeps the primary rail vertical. The docking configuration belongs to the layout so the header, rail, drawer and content spacing stay coordinated.
+
+Use the existing `rail` snippet for organization/workspace switchers. Those keep their existing presentation rather than automatically becoming page navigation. See `/examples/responsive-navigation` for the complete composition and append `?dock=false` to review the opt-out.
+
+## Compact operational components
+
+`TaskCard` accepts a shared `TaskListItem` and optional caller actions. TaskList
+composes the same content. `TelemetryRow` separates the resource measurement from
+operational status and an independent condition. `PropertyPanel` displays named
+read-only properties with optional header actions.
+
+`PhaseSummary` takes explicit named gates (`pending`, `running`, `passed`,
+`failed`); neither 100% progress nor delivery count approves a result.
+`PlaybackControls` reports play, seek, speed and step requests. Its `playing`,
+`position`, `duration` and `speed` are caller-owned: no clock or scheduling
+runs in the component. Missing callbacks disable the corresponding controls.
+
+All visual recipes and portable contracts are shared by the native Svelte and
+React adapters. The four `/examples/labs-*` references compose these capabilities
+with Data visualizations; App itself imports no Data components.
+
+### SettingsRow: field names and actions
+
+SettingsRow places a setting name and description beside a native control or
+independently named actions. `children` receives the field's native id,
+requirement and help/error association. Help is rendered outside the label.
+`actions` receives no naming overrides: an Install app action keeps that name
+instead of inheriting the setting title. A self-labelled Switch also fits here.
+Both flavors share the same association logic and Density-responsive recipe.
+
+```svelte
+<SettingsRow label="Signing secret" description="Use at least 16 characters.">
+  {#snippet children(control)}<Input {...control} type="password" />{/snippet}
+</SettingsRow>
+<SettingsRow label="HTTPS and mobile access" description="Connect another device.">
+  {#snippet actions()}<Button onclick={configureHttps}>Configure HTTPS</Button>{/snippet}
+</SettingsRow>
+```
+
+```tsx
+<SettingsRow label="Signing secret" description="Use at least 16 characters.">
+  {control => <Input {...control} type="password" />}
+</SettingsRow>
+<SettingsRow label="HTTPS and mobile access" description="Connect another device."
+  actions={<Button onClick={configureHttps}>Configure HTTPS</Button>} />
+```
+
+`/examples/settings-composition` exercises full native React and Svelte panels,
+including saved API values, async save rejection/retry, named scroll regions and
+Escape/focus restoration across nested menus and dialogs. Layout constraints
+remain owned by the Product Surface. Do not loosen accessible-name assertions
+to hide a naming regression.
+
+## Linked entity inspection
+
+`EntityInspector` composes a named detail region with previous/next navigation,
+a position readout, optional context, heading and dismissal. Supply `items` in
+navigation order, the caller-controlled `selected` id, and `onselectedchange`.
+Unknown or removed selections show `emptyLabel` and suppress stale details.
+Navigation stops at collection boundaries. Omitting `ondismiss` removes Close;
+the component installs no global keyboard handlers and never steals focus.
+Applications own selection restoration and return focus when embedding it in
+an overlay. Localize `previousLabel`, `nextLabel`, `closeLabel` and `emptyLabel`.
+
+Project caller-owned details through `children` and optional `actions` (Svelte
+snippets or React content). Compose `TaskList` or `PropertyPanel` for details;
+keep scheduling and domain logic in the application. Shared ids coordinate this
+panel with Data views, as shown in `/examples/operational-planning`.
+
+### Entity journey
+
+`EntityJourney` shows an ordered operational trail with caller-observed `state`
+(`complete`, `current`, `upcoming`, `blocked`, `failed`, `skipped`), optional
+`description` and caller-formatted `elapsed`. Set `stateLabel` for localized copy.
+`selected` and `onselectedchange` inspect a stage without changing its execution
+state. Without a callback the trail is read-only. It wraps by its own container;
+long labels stay readable and interactive stages keep native button semantics.
+
+Use the same ids with `EntityInspector` and `SceneViewport` annotations. See
+`/examples/entity-follow` for the linked APM composition in both native flavors.

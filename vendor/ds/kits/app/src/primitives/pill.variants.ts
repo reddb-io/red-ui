@@ -14,7 +14,7 @@
 // `tone="warning"` Badge are one Feedback Role. No tone fills with the Brand
 // red: red on a status is danger (ADR 0023).
 
-import { TONES, type Tone } from "@reddb-io/design-system/base";
+import { TONES, type Tone } from "@reddb-io/design-system/base/recipes";
 import { tv, type VariantProps } from "tailwind-variants";
 
 /** How strongly a Pill's tone is drawn — its emphasis axis. */
@@ -100,14 +100,14 @@ export const pill = tv({
 /**
  * The dismiss affordance, styled to inherit the Pill's own colour. The glyph
  * stays small, but its hit area is a control-height-sm square centred on it,
- * so the target never drops below 24px (WCAG 2.2 SC 2.5.8). Focus is the ink
- * focus outline every DS control draws (ADR 0023).
+ * so the target never drops below 24px (WCAG 2.2 SC 2.5.8). Its rest, hover,
+ * pressed and focus states are the quiet-control contract the component wraps
+ * it in (wave 6A).
  */
 export const pillDismiss = tv({
   base: [
     "relative -me-1 inline-flex items-center justify-center rounded-full border border-transparent bg-transparent p-0.5 leading-tight",
     "before:absolute before:left-1/2 before:top-1/2 before:size-[var(--reddb-spatial-control-height-sm)] before:-translate-x-1/2 before:-translate-y-1/2 before:content-['']",
-    "hover:bg-foreground/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
   ].join(" "),
 });
 

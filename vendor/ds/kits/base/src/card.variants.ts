@@ -20,7 +20,7 @@ const RAISED = {
 // on every other component, and a grey Card is `neutral`.
 const TONE = {
   neutral: {
-    root: "bg-background text-foreground",
+    root: "bg-elevation-raised-surface text-foreground",
     header: "text-foreground",
     title: "text-foreground",
     description: "text-ink-muted",
@@ -150,7 +150,9 @@ export const card = tv({
     icon: "shrink-0",
     title: "text-base font-medium leading-tight",
     description: "max-w-prose text-sm",
-    body: "flex-1",
+    // Keep native inline flow (text + emphasis is still one sentence) while
+    // spacing direct body blocks. A flex column would split inline content.
+    body: "flow-root flex-1 space-y-[var(--reddb-spatial-layout-gap-sm)]",
     footer: "flex flex-wrap items-center gap-[var(--reddb-spatial-gap-md)] border-t",
   },
   variants: {
@@ -286,3 +288,6 @@ export const CARD_MEDIA_POSITIONS = Object.keys(
 ) as readonly CardMediaPosition[];
 export const CARD_MEDIA_RATIOS = Object.keys(MEDIA_RATIO) as readonly CardMediaRatio[];
 export const CARD_MEDIA_SPANS = Object.keys(MEDIA_SPAN) as readonly CardMediaSpan[];
+
+/** Numeric image ratios shared by native Card adapters. */
+export const CARD_RATIO_VALUES = { "16/9": 16 / 9, "4/3": 4 / 3, "1/1": 1 } as const;

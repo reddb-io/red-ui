@@ -15,7 +15,7 @@
 // 1.4.11): the role's text-grade stop ringed by its edge stop, and neutral in
 // the control edge around secondary ink.
 
-import type { Tone } from "@reddb-io/design-system/base";
+import type { Tone } from "@reddb-io/design-system/base/recipes";
 import { tv, type VariantProps } from "tailwind-variants";
 
 /** What each reachability reading means, as a tone (ADR 0026). */

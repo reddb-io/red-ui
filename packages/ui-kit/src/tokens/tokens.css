@@ -1,90 +1,69 @@
-@import url('https://rsms.me/inter/inter.css');
-
-:root {
-  /* Surfaces — near-black with cool tint, Linear/Vercel territory */
-  --bg-0: #07080a;
-  --bg-1: #0c0e11;
-  --bg-2: #14171c;
-  --bg-3: #1c2027;
-
-  /* Foreground */
-  --fg-0: #f4f5f7;
-  --fg-1: #c8ccd4;
-  --fg-2: #7a8088;
-  --fg-3: #4a4f57;
-
-  /* Borders */
-  --line-1: #1a1d22;
-  --line-2: #262a31;
-  --line-3: #353a42;
-
-  /* Surgical accent — red of reddb, used sparingly */
-  --accent: #ff2056;
-  --accent-soft: rgba(255, 32, 86, 0.12);
-  --accent-glow: rgba(255, 32, 86, 0.45);
-
-  /* Semantic */
-  --ok: #4ade80;
-  --warn: #fbbf24;
-  --danger: #ff5470;
-  --info: #60a5fa;
-
-  /* Node roles */
-  --role-primary: #ff2056;
-  --role-replica: #60a5fa;
-  --role-embedded: #4ade80;
-
-  /* Geometry */
-  --r-sm: 4px;
-  --r-md: 6px;
-  --r-lg: 10px;
-  --r-xl: 14px;
-
-  /* Typography */
-  --font-sans: 'Inter Tight', 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Berkeley Mono', ui-monospace, monospace;
-
-  /* Motion */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-snap: cubic-bezier(0.25, 1, 0.5, 1);
-
-  /* Shadows */
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--line-2);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--line-2);
+/* Compatibility names for product layouts; all materials belong to the DS. */
+:root,
+:host {
+  --color-bg-0: var(--reddb-color-background);
+  --color-bg-1: var(--reddb-color-elevation-base-surface);
+  --color-bg-2: var(--reddb-color-muted);
+  --color-bg-3: var(--reddb-color-elevation-raised-surface);
+  --color-fg-0: var(--reddb-color-foreground);
+  --color-fg-1: var(--reddb-color-foreground);
+  --color-fg-2: var(--reddb-color-ink-muted);
+  --color-fg-3: var(--reddb-color-ink-muted);
+  --color-line-1: var(--reddb-color-border-subtle);
+  --color-line-2: var(--reddb-color-control-edge);
+  --color-line-3: var(--reddb-color-border-strong);
+  --color-accent: var(--reddb-color-primary);
+  --color-ok: var(--reddb-color-feedback-success-foreground);
+  --color-warn: var(--reddb-color-feedback-warning-foreground);
+  --color-danger: var(--reddb-color-feedback-danger-foreground);
+  --color-info: var(--reddb-color-feedback-info-foreground);
+  --color-role-primary: var(--reddb-color-primary-text);
+  --color-role-replica: var(--reddb-color-feedback-info-foreground);
+  --color-role-embedded: var(--reddb-color-feedback-success-foreground);
+  --color-accent-soft: color-mix(
+    in srgb,
+    var(--reddb-color-primary) 12%,
+    transparent
+  );
+  --color-accent-glow: color-mix(
+    in srgb,
+    var(--reddb-color-primary) 30%,
+    transparent
+  );
+  --color-ambient-glow: color-mix(
+    in srgb,
+    var(--reddb-color-primary) 4%,
+    transparent
+  );
+  --font-sans: var(--reddb-font-family-sans);
+  --font-mono: var(--reddb-font-family-mono);
+  --ease-out: var(--reddb-easing-entrance);
+  --ease-snap: var(--reddb-easing-entrance);
+  --shadow-md: var(--reddb-shadow-elevation-base);
+  --shadow-lg: var(--reddb-shadow-elevation-raised);
+  --radius-sm: var(--reddb-radius-sm);
+  --radius-md: var(--reddb-radius-md);
+  --radius-lg: var(--reddb-radius-lg);
+  --radius-xl: var(--reddb-radius-xl);
+  --bg-0: var(--color-bg-0);
+  --bg-1: var(--color-bg-1);
+  --bg-2: var(--color-bg-2);
+  --bg-3: var(--color-bg-3);
+  --fg-0: var(--color-fg-0);
+  --fg-1: var(--color-fg-1);
+  --fg-2: var(--color-fg-2);
+  --fg-3: var(--color-fg-3);
+  --line-1: var(--color-line-1);
+  --line-2: var(--color-line-2);
+  --line-3: var(--color-line-3);
+  --accent: var(--color-accent);
+  --ok: var(--color-ok);
+  --warn: var(--color-warn);
+  --danger: var(--color-danger);
+  --info: var(--color-info);
+  --role-primary: var(--color-role-primary);
+  --role-replica: var(--color-role-replica);
+  --role-embedded: var(--color-role-embedded);
+  --accent-soft: var(--color-accent-soft);
+  --accent-glow: var(--color-accent-glow);
 }
-
-@supports (font-variation-settings: normal) {
-  :root { --font-sans: 'InterVariable', 'Inter Tight', 'Inter', system-ui, sans-serif; }
-}
-
-* { box-sizing: border-box; }
-
-html, body {
-  background: var(--bg-0);
-  color: var(--fg-0);
-  font-family: var(--font-sans);
-  font-feature-settings: 'cv11', 'ss01', 'ss03';
-  letter-spacing: -0.005em;
-  margin: 0;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-/* Subtle ambient grid — Linear-style background texture */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 50% 0%, rgba(255, 32, 86, 0.04), transparent 60%),
-    linear-gradient(var(--line-1) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line-1) 1px, transparent 1px);
-  background-size: 100% 100%, 32px 32px, 32px 32px;
-  opacity: 0.6;
-  pointer-events: none;
-  z-index: 0;
-}
-
-button, input, select { font-family: inherit; color: inherit; }
-
-::selection { background: var(--accent-soft); color: var(--fg-0); }

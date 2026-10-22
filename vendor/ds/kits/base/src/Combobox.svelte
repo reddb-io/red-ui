@@ -1,44 +1,16 @@
 <!-- A Field-bound typeahead whose input retains focus while Bits UI owns listbox semantics. -->
 <script lang="ts">
+  import { portalAppearance } from "./portal-appearance.svelte";
+  import type { ComboboxContract } from "./core/contracts/combobox";
   import { Combobox as Bits } from "bits-ui";
   import Field from "./Field.svelte";
   import { input } from "./input.variants";
   import { combobox, type ComboboxOption, type ComboboxSize } from "./combobox.variants";
   import { popover } from "./popover.variants";
 
-  interface Props {
-    /** Visible Field label for the typeahead input. */
-    label: string;
-    /** Caller-owned selectable values and their searchable labels. */
-    options: readonly ComboboxOption[];
-    /** Native form name applied to the selected value. */
-    name?: string;
-    /** Selected option value. */
-    value?: string;
-    /** Current text in the typeahead input. */
-    inputValue?: string;
-    /** Supporting text announced with the input. */
-    help?: string;
-    /** Current validation error announced with the input. */
-    error?: string;
-    /** Marks the input as required: the label shows it and the native control enforces it. */
-    required?: boolean;
-    /** Disables the input and the listbox, so nothing can be typed or chosen. */
-    disabled?: boolean;
-    /** Hint text shown in the input while it is empty. */
-    placeholder?: string;
-    /** Whether the anchored listbox is open. */
-    open?: boolean;
+  interface Props extends ComboboxContract {
     /** Extra classes merged onto the Field root that wraps the label, input and messages. */
     class?: string;
-    /** The control height step, matching Button's `size` (default `md`). */
-    controlSize?: ComboboxSize;
-    /** Extra classes merged onto the typeahead input. */
-    inputClass?: string;
-    /** Extra classes merged onto the anchored listbox surface. */
-    contentClass?: string;
-    /** Extra classes merged onto every option row. */
-    itemClass?: string;
     /** Called with the option's `value` when the user selects an option. */
     onvaluechange?: (value: string) => void;
     /**
@@ -90,6 +62,7 @@
     onvaluechange?.(nextValue);
     oninputvaluechange?.(inputValue);
   }
+  const portal = portalAppearance(() => open);
 </script>
 
 <Field {label} {help} {error} {required} class={styles.root({ class: className })}>
@@ -108,6 +81,7 @@
     >
       <div class={styles.control()} data-combobox>
         <Bits.Input
+          {...portal.anchor}
           {...control}
           {placeholder}
           oninput={handleInput}
@@ -115,10 +89,12 @@
         />
       </div>
 
-      <Bits.Portal>
+      <Bits.Portal to={portal.container}>
         <Bits.Content
           sideOffset={8}
           collisionPadding={8}
+          avoidCollisions={true}
+          {...portal.attributes}
           data-combobox-surface
           data-avoid-collisions="true"
           class={popover({ class: styles.content({ class: contentClass }) })}
@@ -131,7 +107,7 @@
                 disabled={option.disabled}
                 class={styles.item({ class: itemClass })}
               >
-                <span>{option.label}</span>
+                <span class="min-w-0 break-words">{option.label}</span>
                 {#if option.value === value}
                   <span class={styles.indicator()} aria-hidden="true">✓</span>
                   <span class="sr-only">Selected</span>

@@ -1,27 +1,13 @@
 <!-- Accessible tab selection and keyboard navigation over caller-owned panel content. -->
 <script lang="ts">
+  import type { TabsContract } from "./core/contracts/tabs";
   import { tick, type Snippet } from "svelte";
   import { Tabs as Bits } from "bits-ui";
   import Button from "./Button.svelte";
   import { warnDeprecated } from "./deprecation";
   import { tabs, type TabItem } from "./tabs.variants";
 
-  interface Props {
-    /** Accessible name for the tablist. */
-    label: string;
-    /** Stable values and visible labels; panel content remains caller-owned. */
-    items: readonly TabItem[];
-    /** Selected tab value; defaults to the first enabled tab. */
-    value?: string;
-    /**
-     * Axis of the tablist, which sets `aria-orientation` and the arrow keys that move between
-     * tabs. Defaults to `horizontal`.
-     */
-    orientation?: "horizontal" | "vertical";
-    /** Disables every tab, so none can be selected. */
-    disabled?: boolean;
-    /** Select the panel containing a same-page fragment target. */
-    followHash?: boolean;
+  interface Props extends TabsContract {
     /** Called with the newly selected value (ADR 0026's value dialect). */
     onvaluechange?: (value: string) => void;
     /** @deprecated Renamed `onvaluechange` (ADR 0026); removed next release. */
@@ -33,12 +19,6 @@
     children?: Snippet<[{ value: string }]>;
     /** Extra classes, merged over the root slot's own. */
     class?: string;
-    /** Extra classes merged onto the tablist. */
-    listClass?: string;
-    /** Extra classes merged onto every tab trigger Button. */
-    triggerClass?: string;
-    /** Extra classes merged onto every tab panel. */
-    contentClass?: string;
   }
 
   let {

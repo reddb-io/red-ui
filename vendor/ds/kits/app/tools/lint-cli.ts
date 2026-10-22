@@ -10,9 +10,10 @@
 // The rule itself is @reddb-io/kit-lint's, shared with every other Kit: what
 // is this Kit's own is only which files to read.
 
+import { join } from "node:path";
 import { runLint } from "@reddb-io/kit-lint";
 import { KIT_ROOT, kitSourceFiles } from "./paths";
 
 const args = process.argv.slice(2);
 
-process.exit(runLint(KIT_ROOT, args.length > 0 ? args : kitSourceFiles()));
+process.exit(runLint(KIT_ROOT, args.length > 0 ? args : [...kitSourceFiles(), ...kitSourceFiles(join(KIT_ROOT, "react/src"))]));

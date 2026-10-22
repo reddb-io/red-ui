@@ -95,4 +95,24 @@ describe("the Base NavigationMenu", () => {
     expect(classes(root.querySelector("[data-navigation-menu-control]")!).has("h-[var(--reddb-spatial-control-height-lg)]")).toBe(true);
     expect(content.querySelectorAll("a")).toHaveLength(2);
   });
+
+  it("keeps a closed section's destinations in the document without a second tab stop", async () => {
+    const root = render(NavigationMenu, { label: "Primary", items: ITEMS, delayDuration: 0 });
+    const closed = root.querySelector<HTMLElement>('[data-navigation-menu-closed-links="resources"]')!;
+
+    // Crawlers and no-script readers find every destination while the section is closed …
+    expect(closed).not.toBeNull();
+    expect(closed.hidden).toBe(true);
+    expect([...closed.querySelectorAll("a")].map((link) => link.getAttribute("href")))
+      .toEqual(["/docs", "/support"]);
+    expect(closed.textContent).toContain("Read the guides");
+    expect(document.querySelector("[data-navigation-menu-surface]")).toBeNull();
+
+    // … and the real surface takes over on open, so no link is ever duplicated.
+    root.querySelector<HTMLButtonElement>("[data-navigation-menu-trigger]")!.click();
+    await settle();
+    expect(document.querySelector("[data-navigation-menu-surface]")).not.toBeNull();
+    expect(root.querySelector("[data-navigation-menu-closed-links]")).toBeNull();
+    expect(document.querySelectorAll('a[href="/docs"]')).toHaveLength(1);
+  });
 });

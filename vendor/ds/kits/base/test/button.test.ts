@@ -91,9 +91,9 @@ describe("the Base Button", () => {
     }
   });
 
-  it("defaults to the primary variant at the medium size", () => {
+  it("defaults to the secondary variant at the medium size", () => {
     const element = rendered(render(Button, {}));
-    expect(classes(element)).toEqual(classesOf(button({ variant: "primary", size: "md" })));
+    expect(classes(element)).toEqual(classesOf(button({ variant: "secondary", size: "md" })));
   });
 
   it("composes every tone with every emphasis using only its token family", () => {
@@ -115,7 +115,9 @@ describe("the Base Button", () => {
     });
     const contracts = {
       neutral: {
-        primary: ["bg-primary", "text-on-primary", ...FOCUS],
+        // Hover, press and an open popup fill with the opaque primary-active
+        // role the contrast contract pairs with on-primary (wave 5A).
+        primary: ["bg-primary", "text-on-primary", "hover:bg-primary-active", "aria-expanded:bg-primary-active", ...FOCUS],
         secondary: ["border-control-edge", "bg-transparent", "text-foreground", ...FOCUS],
         ghost: ["bg-transparent", "text-ink-muted", ...FOCUS],
       },
@@ -209,7 +211,7 @@ describe("the Base Button", () => {
   it("merges a caller's classes over its own", () => {
     const element = rendered(render(Button, { class: "w-full" }));
     expect(classes(element).has("w-full")).toBe(true);
-    expect(classes(element).has("bg-primary")).toBe(true);
+    expect(classes(element).has("border-control-edge")).toBe(true);
   });
 
   it("passes native attributes and handlers straight through", () => {
@@ -253,6 +255,13 @@ describe("the Base Button as an anchor", () => {
     );
     expect(element.getAttribute("target")).toBe("_blank");
     expect(element.getAttribute("rel")).toBe("noreferrer");
+  });
+
+  it("preserves an explicit roving tab stop on native links", () => {
+    const link=rendered(render(Button,{href:"/docs",tabindex:-1}));
+    expect(link.tabIndex).toBe(-1);
+    const disabled=rendered(render(Button,{href:"/docs",tabindex:0,disabled:true}));
+    expect(disabled.tabIndex).toBe(-1);
   });
 
   it("withholds the destination while disabled", () => {

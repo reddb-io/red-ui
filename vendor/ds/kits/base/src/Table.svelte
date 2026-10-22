@@ -1,25 +1,10 @@
 <!-- Native tabular relationships over caller-owned labels and data. -->
 <script module lang="ts">
-  export type TableCellValue = string | number | null | undefined;
-
-  export interface TableColumn {
-    /** Stable key used to read this column from each row. */
-    key: string;
-    /** Visible column heading. */
-    header: string;
-  }
-
-  export type TableRow = Readonly<Record<string, TableCellValue>>;
-
-  export interface TableCellContext {
-    column: TableColumn;
-    row: TableRow;
-    value: TableCellValue;
-    rowIndex: number;
-  }
+  export type { TableCellValue, TableColumn, TableRow, TableCellContext } from "./core/table";
 </script>
 
 <script lang="ts">
+  import type { TableCellValue, TableColumn, TableRow, TableCellContext } from "./core/table";
   import type { Snippet } from "svelte";
   import type { HTMLTableAttributes } from "svelte/elements";
   import { table as tableAppearance } from "./table.variants";

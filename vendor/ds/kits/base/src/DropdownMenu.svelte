@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { portalAppearance } from "./portal-appearance.svelte";
   import type { Snippet } from "svelte";
   import { DropdownMenu as Bits } from "bits-ui";
   import Button from "./Button.svelte";
@@ -49,7 +50,11 @@
     sideOffset?: number;
     /** Safe distance in pixels kept between the menu and the viewport edges. Defaults to `8`. */
     collisionPadding?: number;
-    /** Custom content inside the trigger Button, replacing the `triggerLabel` text. */
+    /**
+     * Custom content inside the trigger Button, replacing the `triggerLabel` text; `triggerLabel`
+     * stays its accessible name, so words it shows must appear, in order, in `triggerLabel`,
+     * ideally first (WCAG 2.5.3, Label in Name).
+     */
     trigger?: Snippet;
     /** Extra classes merged onto the menu surface, not the trigger Button. */
     class?: string;
@@ -80,6 +85,7 @@
   function choose(item: DropdownMenuItem): void {
     item.onselect?.();
   }
+  const portal = portalAppearance(() => open);
 </script>
 
 {#snippet row(item: DropdownMenuItem)}
@@ -99,6 +105,7 @@
     {#snippet child({ props })}
       <Button
         {...props}
+        {...portal.anchor}
         data-dropdown-menu-trigger
         aria-label={triggerLabel}
         {variant}
@@ -109,7 +116,7 @@
     {/snippet}
   </Bits.Trigger>
 
-  <Bits.Portal>
+  <Bits.Portal to={portal.container}>
     <Bits.Content
       id={contentId}
       {side}
@@ -120,7 +127,7 @@
       loop={true}
     >
       {#snippet child({ props, wrapperProps })}
-        <div {...wrapperProps}>
+        <div {...wrapperProps} {...portal.attributes}>
           <div
             {...props}
             id={contentId}

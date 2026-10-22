@@ -30,15 +30,16 @@
 
   // `ink` wins; the deprecated `tone` is honoured for one release.
   const resolvedInk = $derived(ink ?? tone ?? defaultTextInk(role));
+  const classes = $derived(text({ role, ink: resolvedInk, class: className }));
   $effect(() => {
     if (tone !== undefined) warnDeprecated("Text", `tone="${tone}"`, `ink="${tone}"`);
   });
 </script>
 
-<svelte:element
-  this={as}
-  {...rest}
-  data-text
-  data-type-role={role}
-  class={text({ role, ink: resolvedInk, class: className })}
->{@render children()}</svelte:element>
+<!-- Static elements, never `<svelte:element>`: see Heading — a dynamic element
+     is re-inserted while it hydrates (before Svelte 5.57.2), repainting a lede
+     that is the page's Largest Contentful Paint. -->
+{#if as === "span"}<span {...rest} data-text data-type-role={role} class={classes}>{@render children()}</span>
+{:else if as === "div"}<div {...rest} data-text data-type-role={role} class={classes}>{@render children()}</div>
+{:else if as === "small"}<small {...rest} data-text data-type-role={role} class={classes}>{@render children()}</small>
+{:else}<p {...rest} data-text data-type-role={role} class={classes}>{@render children()}</p>{/if}

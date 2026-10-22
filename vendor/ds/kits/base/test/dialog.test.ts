@@ -8,6 +8,17 @@ function text(content: string): Snippet {
 }
 
 describe("the Base Dialog", () => {
+  it("replaces the default close control with a custom header while retaining its accessible title", () => {
+    const root = render(Dialog, { title: "Contact information", triggerLabel: "Open contact", header: text("Custom contact toolbar"), children: text("Contact details") });
+    root.querySelector<HTMLButtonElement>("[data-dialog-trigger]")!.click();
+    const dialog = root.querySelector<HTMLDialogElement>("dialog")!;
+    const title = dialog.querySelector("[data-dialog-title]")!;
+    expect(title.className).toContain("sr-only");
+    expect(dialog.getAttribute("aria-labelledby")).toBe(title.id);
+    expect(dialog.querySelector("[data-dialog-header]")?.textContent).toBe("Custom contact toolbar");
+    expect(dialog.querySelector("[data-dialog-close]")).toBeNull();
+    expect(dialog.querySelector("[data-dialog-body]")?.className).toContain("overflow-y-auto");
+  });
   it("labels the modal from its visible title and description", () => {
     const root = render(Dialog, {
       triggerLabel: "Edit deployment",

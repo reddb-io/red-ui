@@ -6,146 +6,46 @@
    package, so Tailwind is pointed at the vendored Kit sources explicitly. */
 @import "@reddb-io/design-system/styles.css";
 @source "../../../vendor/ds/kits";
-@import "@fontsource-variable/inter";
-@import "@fontsource-variable/jetbrains-mono";
+@import "@reddb-io/ui-kit/tokens.css";
 
-/* ============================================================================
-   Design tokens. Linear/Vercel vibe — surgical accent, contemporary type.
-
-   Two themes live here:
-     - default (`:root`, no data-color-scheme or `data-color-scheme="light"`): light, white-leaning.
-     - opt-in (`:root[data-color-scheme="dark"]`): dark, near-black with green tint.
-
-   Light is default for both OSS and cloud first-load. Dark is opt-in via the
-   topbar toggle / Cmd-K command. Selection is persisted in localStorage and
-   applied before paint by an inline script in app.html.
-
-   Hierarchy of layers (lowest to highest in z):
-     bg-0  — page background (the deepest base)
-     bg-1  — primary surfaces (cards, panels, topbar)
-     bg-2  — interactive surfaces (buttons, inputs, hover)
-     bg-3  — elevated / active surfaces
-
-   Text ramp (most readable to least):
-     fg-0  — primary text, h1/h2, important values
-     fg-1  — body text, secondary headings
-     fg-2  — labels, meta, captions, muted UI text
-     fg-3  — disabled, "tertiary noise" (e.g. helper hints)
-   ============================================================================ */
-
-@theme {
-  /* Surfaces — light, white-leaning ramp.
-     bg-0 white, surfaces step up in grey via the zinc family. */
-  --color-bg-0: #ffffff;
-  --color-bg-1: #fafafa;
-  --color-bg-2: #f4f4f5;
-  --color-bg-3: #e7e7ea;
-
-  /* Foreground ramp — every level is WCAG AA on bg-0/bg-1.
-     fg-3 floor is ~4.8:1 on white; below that is decorative only. */
-  --color-fg-0: #0a0a0b;
-  --color-fg-1: #3f3f46;
-  --color-fg-2: #52525b;
-  --color-fg-3: #71717a;
-
-  /* Lines */
-  --color-line-1: #ececef;
-  --color-line-2: #d4d4d8;
-  --color-line-3: #a1a1aa;
-
-  /* Surgical accent — rose 600. #ff2056 vibrates on white and fails AA when
-     paired with white text on accent fills; the slightly darker chroma
-     (#e11d48) keeps the same reddb identity while clearing 4.5:1 against
-     white surfaces and against white button labels. */
-  --color-accent: #e11d48;
-  --color-accent-soft: rgba(225, 29, 72, 0.1);
-  --color-accent-glow: rgba(225, 29, 72, 0.3);
-
-  /* Semantic — darker variants so they stay AA on white surfaces */
-  --color-ok: #16a34a;
-  --color-warn: #b45309;
-  --color-danger: #dc2626;
-  --color-info: #2563eb;
-
-  /* Node roles */
-  --color-role-primary: #e11d48;
-  --color-role-replica: #2563eb;
-  --color-role-embedded: #16a34a;
-
-  /* Ambient glow — soft red wash at top of viewport, scaled per theme */
-  --color-ambient-glow: rgba(225, 29, 72, 0.04);
-
-  /* Geometry */
-  --radius-sm: 3px;
-  --radius-md: 5px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-
-  /* Typography — base text is 13px (Linear scale) */
-  --text-xs: 11px;
-  --text-xs--line-height: 1.45;
-  --text-sm: 12px;
-  --text-sm--line-height: 1.5;
-  --text-base: 13px;
-  --text-base--line-height: 1.5;
-  --text-md: 14px;
-  --text-md--line-height: 1.5;
-  --text-lg: 18px;
-  --text-lg--line-height: 1.3;
-  --text-xl: 22px;
-  --text-xl--line-height: 1.2;
-  --text-2xl: 28px;
-  --text-2xl--line-height: 1.15;
-
-  --font-sans: "Inter Variable", "Inter", system-ui, -apple-system, sans-serif;
-  --font-mono:
-    "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "SF Mono",
-    "Menlo", monospace;
-
-  /* ease-out-expo for ambient transitions, ease-out-quart for snappier UI */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-snap: cubic-bezier(0.25, 1, 0.5, 1);
-
-  /* Shadows — light variant: smaller alpha, slate tint */
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 0 0 1px var(--color-line-2);
-  --shadow-lg:
-    0 16px 48px rgba(15, 23, 42, 0.14), 0 0 0 1px var(--color-line-2);
-}
-
-/* Dark scheme — opt-in via `data-color-scheme="dark"` on the document root
-   (the DS Color Scheme axis; `data-theme` names the DS Theme direction). */
-:root[data-color-scheme="dark"] {
-  --color-bg-0: #050607;
-  --color-bg-1: #0d0f13;
-  --color-bg-2: #181b21;
-  --color-bg-3: #232730;
-
-  --color-fg-0: #f7f8fa;
-  --color-fg-1: #c8ccd4;
-  --color-fg-2: #9ca1a9;
-  --color-fg-3: #7a7f87;
-
-  --color-line-1: #181b21;
-  --color-line-2: #2a2e36;
-  --color-line-3: #3d424b;
-
-  --color-accent: #ff2056;
-  --color-accent-soft: rgba(255, 32, 86, 0.12);
-  --color-accent-glow: rgba(255, 32, 86, 0.45);
-
-  --color-ok: #4ade80;
-  --color-warn: #fbbf24;
-  --color-danger: #ff5470;
-  --color-info: #60a5fa;
-
-  --color-role-primary: #ff2056;
-  --color-role-replica: #60a5fa;
-  --color-role-embedded: #4ade80;
-
-  --color-ambient-glow: rgba(255, 32, 86, 0.06);
-
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--color-line-2);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--color-line-2);
+@theme inline {
+  --color-bg-0: var(--reddb-color-background);
+  --color-bg-1: var(--reddb-color-elevation-base-surface);
+  --color-bg-2: var(--reddb-color-muted);
+  --color-bg-3: var(--reddb-color-elevation-raised-surface);
+  --color-fg-0: var(--reddb-color-foreground);
+  --color-fg-1: var(--reddb-color-foreground);
+  --color-fg-2: var(--reddb-color-ink-muted);
+  --color-fg-3: var(--reddb-color-ink-muted);
+  --color-line-1: var(--reddb-color-border-subtle);
+  --color-line-2: var(--reddb-color-control-edge);
+  --color-line-3: var(--reddb-color-border-strong);
+  --color-accent: var(--reddb-color-primary);
+  --color-ok: var(--reddb-color-feedback-success-foreground);
+  --color-warn: var(--reddb-color-feedback-warning-foreground);
+  --color-danger: var(--reddb-color-feedback-danger-foreground);
+  --color-info: var(--reddb-color-feedback-info-foreground);
+  --color-role-primary: var(--reddb-color-primary-text);
+  --color-role-replica: var(--reddb-color-feedback-info-foreground);
+  --color-role-embedded: var(--reddb-color-feedback-success-foreground);
+  --color-accent-soft: color-mix(
+    in srgb,
+    var(--reddb-color-primary) 12%,
+    transparent
+  );
+  --color-accent-glow: color-mix(
+    in srgb,
+    var(--reddb-color-primary) 30%,
+    transparent
+  );
+  --color-ambient-glow: color-mix(
+    in srgb,
+    var(--reddb-color-primary) 4%,
+    transparent
+  );
+  --text-md: var(--reddb-font-size-base);
+  --ease-out: var(--reddb-easing-entrance);
+  --ease-snap: var(--reddb-easing-entrance);
 }
 
 /* shadcn-svelte semantic aliases — driven by the active theme's tokens */
@@ -158,7 +58,7 @@
     --popover: var(--color-bg-1);
     --popover-foreground: var(--color-fg-0);
     --primary: var(--color-accent);
-    --primary-foreground: #ffffff;
+    --primary-foreground: var(--reddb-color-on-primary);
     --secondary: var(--color-bg-2);
     --secondary-foreground: var(--color-fg-1);
     --muted: var(--color-bg-2);
@@ -166,7 +66,7 @@
     --accent: var(--color-bg-3);
     --accent-foreground: var(--color-fg-0);
     --destructive: var(--color-danger);
-    --destructive-foreground: #ffffff;
+    --destructive-foreground: var(--reddb-color-feedback-danger-on-fill);
     --border: var(--color-line-2);
     --input: var(--color-line-2);
     --ring: var(--color-accent);
@@ -182,8 +82,8 @@
     background: var(--color-bg-0);
     color: var(--color-fg-0);
     font-family: var(--font-sans);
-    font-size: 13px;
-    line-height: 1.5;
+    font-size: var(--reddb-type-body-font-size);
+    line-height: var(--reddb-type-body-line-height);
     font-feature-settings: "cv11", "ss01", "ss03";
     letter-spacing: -0.005em;
     margin: 0;

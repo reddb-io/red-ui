@@ -4,6 +4,7 @@ import ProductQuickview from "../src/composites/ProductQuickview.svelte";
 import { productQuickview } from "../src/composites/product-quickview.variants";
 import ProductCatalogueConsumer from "./fixtures/ProductCatalogueConsumer.svelte";
 import ProductCatalogueContractFailures from "./fixtures/ProductCatalogueContractFailures.svelte";
+import { labelInName } from "./label-in-name";
 import { expectLayoutReadiness } from "./layout-readiness";
 import { classes, classesOf, click, render, rendered } from "./mount";
 
@@ -47,6 +48,31 @@ describe("ProductQuickview", () => {
     dialog.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
     expect(dialog.open).toBe(false);
     expect(document.activeElement).toBe(trigger);
+  });
+
+  it("names a custom trigger with a label that starts with the words it shows (WCAG 2.5.3)", () => {
+    const shown = (text: string) => createRawSnippet(() => ({ render: () => `<span>${text}</span>` }));
+    const named = render(ProductQuickview, {
+      triggerLabel: "Quick view Field notes",
+      title: "Field notes",
+      trigger: shown("Quick view"),
+    }).querySelector<HTMLButtonElement>("[data-dialog-trigger]")!;
+    const plain = render(ProductQuickview, {
+      triggerLabel: "Quick view Field notes",
+      title: "Field notes",
+    }).querySelector<HTMLButtonElement>("[data-dialog-trigger]")!;
+    const mismatched = render(ProductQuickview, {
+      triggerLabel: "Quick view Field notes",
+      title: "Field notes",
+      trigger: shown("Preview Field notes"),
+    }).querySelector<HTMLButtonElement>("[data-dialog-trigger]")!;
+
+    expect(named.getAttribute("aria-label")).toBe("Quick view Field notes");
+    expect(labelInName(named)).toBe(true);
+    expect(plain.textContent?.trim()).toBe("Quick view Field notes");
+    expect(labelInName(plain)).toBe(true);
+    // The shape wave 6B removed from the showcase: the visible words are not in the name.
+    expect(labelInName(mismatched)).toBe(false);
   });
 
   it("contains Tab navigation within the quickview", () => {

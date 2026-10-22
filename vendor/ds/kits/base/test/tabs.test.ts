@@ -107,7 +107,7 @@ describe("the Tabs selection language", () => {
   const redFill = (names: Set<string>): boolean =>
     [...names].some((name) => /(?:^|:)bg-primary(?:\/|$)/.test(name) || /(?:^|:)text-on-primary$/.test(name));
   
-  it("marks the active tab with a neutral surface and a 2px Brand underline, never a red fill or outline", () => {
+  it("marks the active tab with a neutral surface and a 2px ink underline, never a red fill, outline or edge (wave 6A)", () => {
     const root = rendered(render(Tabs, { label: "Deployment", items: ITEMS, value: "summary" }));
     const triggers = [...root.querySelectorAll<HTMLElement>('[role="tab"]')];
     const active = triggers.find((trigger) => trigger.getAttribute("aria-selected") === "true")!;
@@ -118,7 +118,8 @@ describe("the Tabs selection language", () => {
       expect(names.has("border-b-2")).toBe(true);
       expect(names.has("border-transparent")).toBe(true);
       expect(names.has("border")).toBe(false);
-      expect(names.has("data-[state=active]:border-primary")).toBe(true);
+      expect(names.has("data-[state=active]:border-foreground")).toBe(true);
+      expect([...names].some((name) => /border(?:-[bstexy])?-primary/.test(name))).toBe(false);
       expect(names.has("data-[state=active]:bg-foreground/10")).toBe(true);
       expect(names.has("data-[state=active]:font-medium")).toBe(true);
       expect(names.has("data-[state=active]:text-foreground")).toBe(true);

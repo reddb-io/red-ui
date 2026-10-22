@@ -19,10 +19,11 @@
     type ButtonTone,
     type ButtonVariant,
   } from "./button.variants";
+  import { checkButtonName } from "./a11y";
   import { warnDeprecated } from "./deprecation";
 
   interface Common {
-    /** Emphasis. Defaults to `primary`. */
+    /** Emphasis. Defaults to `secondary`; choose `primary` for the leading action. */
     variant?: ButtonVariant;
     /** What the action means: the shared tone vocabulary (ADR 0026). Defaults to `neutral`. */
     tone?: ButtonTone;
@@ -54,7 +55,7 @@
   type Props = ButtonMode | AnchorMode;
 
   const {
-    variant = "primary",
+    variant = "secondary",
     tone,
     intent,
     size = "md",
@@ -65,6 +66,7 @@
     // A native button defaults to `button` so placing this control in a form
     // cannot submit by accident. An anchor receives no invented MIME hint.
     type,
+    tabindex,
     class: className,
     children,
     ...rest
@@ -76,6 +78,13 @@
     if (intent !== undefined) warnDeprecated("Button", `intent="${intent}"`, `tone="${intent}"`);
   });
 
+  // Wave 5A: an icon-only Button (no text) needs `aria-label` to be announced
+  // as anything but "button". Checked once after mount, in development only.
+  let element = $state<HTMLElement>();
+  $effect(() => {
+    checkButtonName("Button", element);
+  });
+
   const tag = $derived(href !== undefined ? "a" : "button");
   const inert = $derived(disabled || loading);
   const spinner = $derived(buttonSpinner({ size }));
@@ -84,8 +93,8 @@
   // destination and tab stop and declares the state accessibly.
   const native = $derived(
     tag === "a"
-      ? { href: inert ? undefined : href, type, tabindex: inert ? -1 : undefined }
-      : { type: type ?? "button", disabled: inert },
+      ? { href: inert ? undefined : href, type, tabindex: inert ? -1 : tabindex }
+      : { type: type ?? "button", disabled: inert, tabindex },
   );
 </script>
 
@@ -96,6 +105,7 @@
 -->
 <svelte:element
   this={tag}
+  bind:this={element}
   {...(rest as Record<string, unknown>)}
   {...native}
   class={button({ variant, tone: resolvedTone, size, block, class: className })}

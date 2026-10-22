@@ -1,4 +1,4 @@
-import { card } from "@reddb-io/design-system/base";
+import { card } from "@reddb-io/design-system/base/recipes";
 import { tv, type VariantProps } from "tailwind-variants";
 
 const ROOT = card({ variant: "plain", padding: "none" }).root({

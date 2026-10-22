@@ -18,7 +18,7 @@
 // directory is judged the moment it exists.
 
 import { readFileSync } from "node:fs";
-import { basename, relative } from "node:path";
+import { basename, dirname, relative, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { BASE_COMPONENTS } from "@reddb-io/design-system/base";
 import { COMPONENTS, COMPOSITES, PRIMITIVES } from "../src/index";
@@ -112,13 +112,13 @@ describe("every component under src/composites is a Composite", () => {
       expect(componentImports(file).length).toBeGreaterThan(0);
     });
 
-    it(`${name} composes them from local primitives or inherited Base`, () => {
+    it(`${name} composes explicit local components or inherited Base`, () => {
       // Local composition stays relative; canonical inherited components use
       // Base's explicit public subpath. Neither route reaches back through the
       // Application barrel.
       for (const specifier of componentImports(file)) {
         expect(
-          specifier.startsWith("../primitives/") ||
+          components.includes(resolve(dirname(file),specifier)) ||
             specifier.startsWith("@reddb-io/design-system/base#"),
           `${name} imports ${specifier}`,
         ).toBe(true);
@@ -129,4 +129,21 @@ describe("every component under src/composites is a Composite", () => {
       expect(barrel).toEqual([]);
     });
   }
+});
+
+
+describe("local Composite composition", () => {
+  it("keeps the local component import graph free of cycles", () => {
+    const finished=new Set<string>();
+    function visit(file:string, parents:readonly string[]):void {
+      expect(parents.includes(file),`component import cycle: ${[...parents,file].map(item=>relative(KIT_ROOT,item)).join(" -> ")}`).toBe(false);
+      if(finished.has(file)) return;
+      for(const specifier of componentImports(file)) {
+        const dependency=resolve(dirname(file),specifier);
+        if(components.includes(dependency)) visit(dependency,[...parents,file]);
+      }
+      finished.add(file);
+    }
+    for(const file of components) visit(file,[]);
+  });
 });

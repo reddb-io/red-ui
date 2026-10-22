@@ -1,4 +1,4 @@
-import { gridList, list, type GridListColumn } from "@reddb-io/design-system/base";
+import { gridList, list, type GridListColumn } from "@reddb-io/design-system/base/recipes";
 import { tv, type VariantProps } from "tailwind-variants";
 
 const ROOT = list({

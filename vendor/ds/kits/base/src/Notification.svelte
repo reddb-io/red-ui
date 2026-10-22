@@ -11,6 +11,7 @@
   import type { AlertFeedbackRole } from "./alert.variants";
   import { warnDeprecated } from "./deprecation";
   import { notification } from "./notification.variants";
+  import { feedbackTone } from "./core/feedback";
   import type { Tone } from "./tone";
 
   interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "class" | "title"> {
@@ -43,7 +44,7 @@
 
   let visible = $state(true);
   const slots = $derived(notification());
-  const resolvedTone = $derived<Tone>(tone ?? feedback ?? "neutral");
+  const resolvedTone = $derived<Tone>(feedbackTone(tone, feedback));
 
   $effect(() => {
     if (feedback !== undefined) warnDeprecated("Notification", `feedback="${feedback}"`, `tone="${feedback}"`);
@@ -61,7 +62,7 @@
     data-notification
     class={slots.root({ class: className })}
   >
-    <Alert tone={resolvedTone} {title} class={slots.announcement()}>{#if children}{@render children()}{/if}</Alert>
+    <Alert tone={resolvedTone} {title} {children} class={slots.announcement()} />
     <Button
       variant="ghost"
       size="sm"

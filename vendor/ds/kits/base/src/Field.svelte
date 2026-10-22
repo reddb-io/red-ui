@@ -9,26 +9,12 @@
 -->
 <script lang="ts">
   import type { Snippet } from "svelte";
-  import { field, type FieldControlProps, type FieldLayout } from "./field.variants";
+  import { field, type FieldControlProps } from "./field.variants";
+  import { fieldAssociation, type FieldContractProps } from "./core/field";
   import Label from "./Label.svelte";
+  import { setFieldContext, warnA11y } from "./a11y";
 
-  interface Props {
-    /** Visible label text. */
-    label: string;
-    /** Supporting text announced with the control. */
-    help?: string;
-    /** Current validation error, announced and associated with the control. */
-    error?: string;
-    /** Makes the requirement visible and native. */
-    required?: boolean;
-    /** Explicit control id; otherwise Svelte supplies a stable generated one. */
-    id?: string;
-    /**
-     * Where the label sits. `stacked` (the default) puts it above the control;
-     * `inline` puts the control first with the label beside it — the binary
-     * choices' layout — and aligns help and error text with the label.
-     */
-    layout?: FieldLayout;
+  interface Props extends FieldContractProps {
     /** Extra classes on the Field root. */
     class?: string;
     /** The canonical Input or a consumer-owned control. */
@@ -48,17 +34,22 @@
   }: Props = $props();
 
   const controlId = $derived(id ?? `${generatedId}-control`);
-  const helpId = $derived(`${controlId}-help`);
-  const errorId = $derived(`${controlId}-error`);
-  const describedBy = $derived([help ? helpId : undefined, error ? errorId : undefined].filter(Boolean).join(" ") || undefined);
-  const control = $derived<FieldControlProps>({
-    id: controlId,
-    required: required ? true : undefined,
-    "aria-describedby": describedBy,
-    "aria-invalid": error ? "true" : undefined,
-    "aria-errormessage": error ? errorId : undefined,
-  });
+  const association = $derived(fieldAssociation({ id: controlId, help, error, required }));
+  const helpId = $derived(association.helpId);
+  const errorId = $derived(association.errorId);
+  const control = $derived(association.control);
   const styles = $derived(field({ layout }));
+
+  // The control inside reads this to know its name is owned here, through the
+  // label's `for` (wave 5A's accessible-name contract).
+  setFieldContext({
+    get label() {
+      return label;
+    },
+  });
+  $effect(() => {
+    if (!label?.trim()) warnA11y("Field", "has an empty `label`, so its control has no accessible name", "Give the Field a visible `label`.");
+  });
 </script>
 
 <div

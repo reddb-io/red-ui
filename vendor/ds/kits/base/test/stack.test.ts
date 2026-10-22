@@ -13,6 +13,7 @@ import LayoutConsumer from "./fixtures/LayoutConsumer.svelte";
 import { classes, classesOf, render, rendered } from "./mount";
 
 const GAP_CLASS: Record<StackGap, string> = {
+  none: "gap-0",
   sm: "gap-[var(--reddb-spatial-gap-sm)]",
   md: "gap-[var(--reddb-spatial-gap-md)]",
   lg: "gap-[var(--reddb-spatial-gap-lg)]",
@@ -25,7 +26,7 @@ const GAP_CLASS: Record<StackGap, string> = {
 describe("the Base Stack", () => {
   it("offers exactly the token-backed flow gaps", () => {
     // Component, layout and section tiers (ADR 0024).
-    expect(STACK_GAPS).toEqual(["sm", "md", "lg", "layout-sm", "layout-md", "layout-lg", "section"]);
+    expect(STACK_GAPS).toEqual(["none", "sm", "md", "lg", "layout-sm", "layout-md", "layout-lg", "section"]);
     for (const gap of STACK_GAPS) {
       const element = rendered(render(Stack, { gap }));
       expect(classes(element)).toEqual(classesOf(stackAppearance({ gap })));
@@ -33,7 +34,7 @@ describe("the Base Stack", () => {
     }
   });
 
-  it("defaults to the medium gap and preserves child order", () => {
+  it("defaults to the medium layout gap and preserves child order", () => {
     const element = rendered(
       render(Stack, {
         "aria-label": "Ordered steps",
@@ -46,7 +47,7 @@ describe("the Base Stack", () => {
 
     expect(element.getAttribute("aria-label")).toBe("Ordered steps");
     expect(classes(element)).toEqual(
-      classesOf(stackAppearance({ gap: "md", class: "min-w-0" })),
+      classesOf(stackAppearance({ gap: "layout-md", class: "min-w-0" })),
     );
     expect(
       [...(element.firstElementChild?.children ?? [])].map((child) => child.textContent),
@@ -70,7 +71,7 @@ describe("the Base Stack", () => {
     expect(STACK_JUSTIFICATIONS).toEqual(["start", "center", "end", "between"]);
 
     const column = rendered(render(Stack, {}));
-    expect(classes(column)).toEqual(classesOf("flex flex-col gap-[var(--reddb-spatial-gap-md)]"));
+    expect(classes(column)).toEqual(classesOf("flex flex-col gap-[var(--reddb-spatial-layout-gap-md)]"));
     expect(column.dataset.stackDirection).toBe("column");
 
     const row = rendered(

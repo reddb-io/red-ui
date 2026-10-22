@@ -4,7 +4,10 @@ import { tv, type VariantProps } from "tailwind-variants";
 export const table = tv({
   slots: {
     root: [
-      "max-w-full overflow-x-auto rounded-md",
+      // A wide native table must not enlarge an ancestor grid/flex item's
+      // automatic minimum width. Isolate its inline intrinsic size while
+      // retaining native block sizing, sticky headers and scroll behavior.
+      "min-w-0 max-w-full overflow-x-auto rounded-md [contain:inline-size]",
       "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
     ].join(" "),
     table: "w-full min-w-max text-left text-sm text-foreground",

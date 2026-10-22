@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { Kbd } from '@reddb-io/ui-kit'
+  import { Kbd } from '@reddb-io/design-system/base'
   import { shortcuts, shortcutContexts, type ShortcutContext } from './shortcuts'
 
   let open = $state(false)

@@ -6,17 +6,18 @@ export const navigationMenu = tv({
     list: "flex list-none items-center gap-[var(--reddb-spatial-gap-sm)]",
     control: [
       "inline-flex items-center rounded-md text-foreground",
-      "hover:bg-foreground/8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
+      // Rest, hover, pressed and focus: the quiet-control contract (wave 6A),
+      // through the ghost Button for a trigger and quietControl() for a link.
       "data-[state=open]:bg-foreground/10",
       // The current destination wears the shared selection language: neutral
-      // surface, full-weight ink, and a 2px Brand-red edge — on the bottom of a
+      // surface, full-weight ink, and a 2px ink edge — on the bottom of a
       // horizontal menu, the start of a vertical one (see `orientation`).
-      "border-transparent aria-[current=page]:border-primary aria-[current=page]:bg-foreground/10",
+      "border-transparent aria-[current=page]:border-foreground aria-[current=page]:bg-foreground/10",
       "aria-[current=page]:font-medium aria-[current=page]:text-foreground",
     ].join(" "),
     content: "min-w-64",
     links: "grid list-none gap-[var(--reddb-spatial-gap-sm)]",
-    link: "block rounded-md p-[var(--reddb-spatial-inset-sm)] text-foreground hover:bg-foreground/8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
+    link: "block rounded-md p-[var(--reddb-spatial-inset-sm)] text-foreground",
     description: "mt-1 block text-sm text-ink-muted",
   },
   variants: {

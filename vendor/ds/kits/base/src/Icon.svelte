@@ -1,41 +1,26 @@
 <!-- The only sanctioned seam between a Kit component and a lucide glyph. -->
 <script lang="ts" module>
-  import type { IconProps as LucideIconProps } from "lucide-svelte";
+  import type { LucideProps } from "@lucide/svelte";
   import type { Component } from "svelte";
 
-  export const ICON_SIZES = ["sm", "md", "lg"] as const;
-  export type IconSize = (typeof ICON_SIZES)[number];
+  /*! @license Built-in menu geometry: Copyright (c) 2026 Lucide Icons and Contributors.
+   * Permission to use, copy, modify, and/or distribute this software for any
+   * purpose with or without fee is hereby granted, provided that the above
+   * copyright notice and this permission notice appear in all copies.
+   * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+   * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+   * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+   * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+   * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+   * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+   * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   */
 
-  export const ICON_COLORS = [
-    "current",
-    "foreground",
-    "ink-muted",
-    "primary",
-    "on-primary",
-    "feedback-danger-foreground",
-    "feedback-success-foreground",
-    "feedback-warning-foreground",
-    "feedback-info-foreground",
-  ] as const;
-  export type IconColor = (typeof ICON_COLORS)[number];
+  export { ICON_SIZES, ICON_COLORS, type IconSize, type IconColor } from "./core/icon";
+  import { iconColor, iconDimension, type IconColor, type IconSize, type DeprecatedIconColor } from "./core/icon";
+  import { warnDeprecated } from "./deprecation";
 
-  // Colours the Icon still accepts for one release, and the role each draws in
-  // instead. `muted` is a surface role — ink at 8% since ADR 0019, 1.19:1 on
-  // white — so a glyph drawn in it was all but invisible. It now draws in
-  // `ink-muted` and warns in development; the next release removes it.
-  const DEPRECATED_ICON_COLORS = { muted: "ink-muted" } as const satisfies Record<
-    string,
-    IconColor
-  >;
-  /** @deprecated Draws in `ink-muted`; pass `color="ink-muted"`. Removed next release. */
-  type DeprecatedIconColor = keyof typeof DEPRECATED_ICON_COLORS;
-  const warnedDeprecatedColors = new Set<DeprecatedIconColor>();
-
-  function isDeprecatedColor(color: string): color is DeprecatedIconColor {
-    return Object.hasOwn(DEPRECATED_ICON_COLORS, color);
-  }
-
-  export type IconGlyphProps = LucideIconProps;
+  export type IconGlyphProps = LucideProps;
   export type IconGlyph = Component<IconGlyphProps>;
 </script>
 
@@ -47,8 +32,8 @@
       SVGAttributes<SVGSVGElement>,
       "color" | "height" | "stroke" | "stroke-width" | "width"
     > {
-    /** A lucide-svelte glyph imported by the consumer. */
-    icon: IconGlyph;
+    /** A consumer-supplied Lucide glyph, or the built-in menu glyph used by navigation without loading the optional icon package. */
+    icon: IconGlyph | "menu";
     /** Density-responsive DS size. */
     size?: IconSize;
     /**
@@ -68,36 +53,23 @@
     ...rest
   }: Props = $props();
 
-  const dimension = $derived(`var(--reddb-spatial-icon-size-${size})`);
-  const role = $derived<IconColor>(
-    isDeprecatedColor(color) ? DEPRECATED_ICON_COLORS[color] : color,
-  );
-  const resolvedColor = $derived(
-    role === "current" ? "currentColor" : `var(--reddb-color-${role})`,
-  );
+  const dimension = $derived(iconDimension(size));
+  const resolvedColor = $derived(iconColor(color));
   // Keep the public seam exact (`IconGlyph` is Lucide's own props) while
   // preventing Svelte's template checker from expanding the complete SVG
   // attribute union at this dynamic component boundary.
   const RenderGlyph = $derived(Glyph as Component<Record<string, unknown>>);
 
-  // Warn once per session, and only in a development build (the consumer's
-  // bundler sets `import.meta.env.DEV`); production keeps the alias silently.
   $effect(() => {
-    if (!import.meta.env?.DEV || !isDeprecatedColor(color)) return;
-    if (warnedDeprecatedColors.has(color)) return;
-    warnedDeprecatedColors.add(color);
-    console.warn(
-      `[reddb Icon] color="${color}" is deprecated: it draws in "${DEPRECATED_ICON_COLORS[color]}" ` +
-        `and is removed in the next release. Pass color="${DEPRECATED_ICON_COLORS[color]}".`,
-    );
+    if (color === "muted") warnDeprecated("Icon", 'color="muted"', 'color="ink-muted"');
   });
 </script>
 
-<RenderGlyph
-  {...rest}
-  data-icon
-  size={dimension}
-  color={resolvedColor}
-  strokeWidth={2}
-  class={className}
-/>
+{#if Glyph === "menu"}
+  <!-- Geometry: Lucide menu, @lucide/svelte 1.52.0 (ISC). -->
+  <svg {...rest} data-icon width={dimension} height={dimension} viewBox="0 0 24 24" fill="none" stroke={resolvedColor} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
+    <path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" />
+  </svg>
+{:else}
+  <RenderGlyph {...rest} data-icon size={dimension} color={resolvedColor} strokeWidth={2} class={className} />
+{/if}

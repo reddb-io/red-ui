@@ -8,10 +8,11 @@
   that decision honest rather than aesthetic.
 -->
 <script lang="ts">
+  import type { PillContract } from "../core/contracts/pill";
   import type { Tone } from "@reddb-io/design-system/base";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
-  import { warnDeprecated } from "@reddb-io/design-system/base";
+  import { quietControl, warnDeprecated } from "@reddb-io/design-system/base";
   import {
     pill,
     pillDismiss,
@@ -20,16 +21,7 @@
     type PillVariant,
   } from "./pill.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLSpanElement>, "class"> {
-    /** What the Pill means: the shared tone vocabulary (ADR 0026). Defaults to `neutral`. */
-    tone?: Tone;
-    /**
-     * How strongly the tone is drawn: `tinted` (default), `filled` or
-     * `outline`. `neutral` and `primary` are deprecated for one release.
-     */
-    variant?: PillVariant | DeprecatedPillVariant;
-    /** Defaults to `md`. */
-    size?: PillSize;
+  interface Props extends PillContract, Omit<HTMLAttributes<HTMLSpanElement>, keyof PillContract | "class"> {
     /**
      * When given, the Pill renders a dismiss affordance and calls this. Absent,
      * it renders none — a Pill nobody can remove should not pretend otherwise.
@@ -37,8 +29,6 @@
     ondismiss?: () => void;
     /** @deprecated Renamed `ondismiss` (ADR 0026); removed next release. */
     onDismiss?: () => void;
-    /** Accessible name for the dismiss affordance. */
-    dismissLabel?: string;
     /** Extra classes, merged over the variant's own. */
     class?: string;
     /** The Pill's label content, rendered before the dismiss affordance. */
@@ -81,7 +71,7 @@
 >
   {@render children?.()}
   {#if dismiss}
-    <button type="button" data-pill-dismiss class={pillDismiss()} aria-label={dismissLabel} onclick={() => dismiss()}>
+    <button type="button" data-pill-dismiss class={quietControl({ ink: "inherit", class: pillDismiss() })} aria-label={dismissLabel} onclick={() => dismiss()}>
       <!-- A glyph, not an icon dependency: the Kit ships no icon set yet, and
            inventing one inside a Primitive would be a second decision hiding
            inside this slice. -->

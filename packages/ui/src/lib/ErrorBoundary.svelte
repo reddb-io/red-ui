@@ -10,7 +10,8 @@
   // Styling stays on the dark tokens and keeps a single accent (the primary
   // Retry action), per the one-accent discipline.
   import type { Snippet } from 'svelte'
-  import { RotateCw, RefreshCw } from 'lucide-svelte'
+  import RotateCw from '@lucide/svelte/icons/rotate-cw'
+  import RefreshCw from '@lucide/svelte/icons/refresh-cw'
 
   let { children }: { children: Snippet } = $props()
 
@@ -45,7 +46,7 @@
         </p>
       </div>
 
-      <p class="m-0 max-w-lg break-words font-mono text-[12px] text-accent">
+      <p class="m-0 max-w-lg break-words font-mono text-[12px] text-primary-text">
         {messageOf(error)}
       </p>
 

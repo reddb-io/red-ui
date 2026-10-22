@@ -93,7 +93,9 @@ describe("the Base Reveal Motion Primitive", () => {
     const disconnect = vi.fn();
     vi.stubGlobal(
       "IntersectionObserver",
-      vi.fn((callback: (entries: IntersectionObserverEntry[]) => void) => {
+      // A constructor mock: Vitest only lets `new` call a `function` or class
+      // implementation, never an arrow function.
+      vi.fn(function (callback: (entries: IntersectionObserverEntry[]) => void) {
         enter = callback;
         return { observe, disconnect };
       }),

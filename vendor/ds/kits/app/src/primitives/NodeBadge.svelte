@@ -19,16 +19,11 @@
   who cannot tell the two dots apart.
 -->
 <script lang="ts">
+  import type { NodeBadgeContract } from "../core/contracts/nodebadge";
   import type { HTMLAttributes } from "svelte/elements";
   import { NODE_STATUS_TONES, nodeBadge, type NodeStatus } from "./node-badge.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLSpanElement>, "class"> {
-    /** The node's name, as the cluster knows it. */
-    name: string;
-    /** Reachability. Defaults to `unknown` — no reading is not a good reading. */
-    status?: NodeStatus;
-    /** Draw the status word beside the name. Defaults to true. */
-    showStatus?: boolean;
+  interface Props extends NodeBadgeContract, Omit<HTMLAttributes<HTMLSpanElement>, keyof NodeBadgeContract | "class"> {
     /** Extra classes, merged over the root slot's own. */
     class?: string;
   }

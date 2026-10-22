@@ -62,7 +62,7 @@ describe("the Base ToggleButton", () => {
     const element = form.querySelector<HTMLElement>("[data-appearance-scope] [data-toggle-button]")!;
 
     expect(classes(element).has("aria-pressed:bg-foreground/10")).toBe(true);
-    expect(classes(element).has("aria-pressed:border-b-primary")).toBe(true);
+    expect(classes(element).has("aria-pressed:border-b-foreground")).toBe(true);
     expect(element.hasAttribute("data-theme")).toBe(false);
     expect(element.hasAttribute("data-color-scheme")).toBe(false);
     expect(element.hasAttribute("data-density")).toBe(false);

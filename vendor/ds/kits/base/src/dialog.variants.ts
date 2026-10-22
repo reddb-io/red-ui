@@ -14,6 +14,7 @@ export const dialog = tv({
       sm: "max-w-sm",
       md: "max-w-lg",
       lg: "max-w-2xl",
+      xl: "max-w-[var(--reddb-container-wide)]",
     },
   },
   defaultVariants: { size: "md" },
@@ -26,4 +27,4 @@ export const dialogClose = tv({
 
 export type DialogVariants = VariantProps<typeof dialog>;
 export type DialogSize = NonNullable<DialogVariants["size"]>;
-export const DIALOG_SIZES = ["sm", "md", "lg"] as const satisfies readonly DialogSize[];
+export const DIALOG_SIZES = ["sm", "md", "lg", "xl"] as const satisfies readonly DialogSize[];

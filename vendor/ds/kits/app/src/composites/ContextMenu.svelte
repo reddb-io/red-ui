@@ -1,7 +1,9 @@
 <script lang="ts">
+  import type { ContextMenuContract } from "../core/contracts/contextmenu";
   import type { Snippet } from "svelte";
   import { ContextMenu as Bits } from "bits-ui";
   import {
+    portalAppearance,
     Button,
     Icon,
     dropdownMenuGroups,
@@ -11,37 +13,17 @@
   import type { ContextMenuEntry } from "./command-surfaces.behavior";
   import { contextMenu, type ContextMenuSize } from "./context-menu.variants";
 
-  interface Props {
-    /**
-     * Accessible name for the trigger Button, and its visible text when no `children` are given.
-     */
-    triggerLabel: string;
-    /** Accessible name for the opened menu surface. */
-    contentLabel: string;
-    /**
-     * Menu rows and groups in display order; a group's `heading` names it and groups are divided by
-     * a separator.
-     */
-    items?: readonly ContextMenuEntry[];
-    /** Whether the menu is open: `bind:open` (ADR 0026). */
-    open?: boolean;
+  interface Props extends ContextMenuContract {
     /** Called with the new open state whenever the menu opens or closes. */
     onopenchange?: (open: boolean) => void;
     /**
-     * Disables the trigger, so the menu cannot be opened by pointer or keyboard. Defaults to
-     * `false`.
+     * Custom content for the trigger Button; `triggerLabel` is shown when omitted and stays its
+     * accessible name, so words it shows must appear, in order, in `triggerLabel`, ideally first
+     * (WCAG 2.5.3, Label in Name).
      */
-    disabled?: boolean;
-    /** Size of the trigger and of the menu rows: `sm`, `md` or `lg`. Defaults to `md`. */
-    size?: ContextMenuSize;
-    /** Safe distance, in pixels, kept between the menu and the viewport edges. Defaults to `8`. */
-    collisionPadding?: number;
-    /** Custom content for the trigger Button; `triggerLabel` is shown when omitted. */
     children?: Snippet;
     /** Extra classes, merged over the content slot's own, onto the menu surface. */
     class?: string;
-    /** Extra classes merged onto the trigger Button, the element that opens the menu. */
-    targetClass?: string;
   }
 
   let {
@@ -79,6 +61,7 @@
       clientY: rect.bottom,
     }));
   }
+  const portal = portalAppearance(() => open);
 </script>
 
 {#snippet row(item: DropdownMenuItem)}
@@ -95,6 +78,7 @@
     {#snippet child({ props })}
       <Button
         {...props}
+        {...portal.anchor}
         data-context-menu-trigger
         tabindex={disabled ? -1 : 0}
         aria-label={triggerLabel}
@@ -112,10 +96,10 @@
     {/snippet}
   </Bits.Trigger>
 
-  <Bits.Portal>
+  <Bits.Portal to={portal.container}>
     <Bits.Content id={contentId} avoidCollisions={true} {collisionPadding} loop={true}>
       {#snippet child({ props, wrapperProps })}
-        <div {...wrapperProps}>
+        <div {...wrapperProps} {...portal.attributes}>
           <div
             {...props}
             id={contentId}

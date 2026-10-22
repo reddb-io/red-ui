@@ -1,6 +1,9 @@
 <script lang="ts">
   import type { QueryResult } from '#reddb'
-  import { Activity, BarChart3, LineChart, X } from 'lucide-svelte'
+  import Activity from '@lucide/svelte/icons/activity'
+  import BarChart3 from '@lucide/svelte/icons/bar-chart-3'
+  import LineChart from '@lucide/svelte/icons/line-chart'
+  import X from '@lucide/svelte/icons/x'
   import {
     ALL_METRICS,
     bucketGeometry,
@@ -101,7 +104,7 @@
           type="button"
           class={[
             'inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors',
-            chartMode === 'rate' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0',
+            chartMode === 'rate' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0',
           ].join(' ')}
           onclick={() => (chartMode = 'rate')}
           aria-pressed={chartMode === 'rate'}
@@ -113,7 +116,7 @@
           type="button"
           class={[
             'inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2',
-            chartMode === 'line' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0',
+            chartMode === 'line' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0',
           ].join(' ')}
           onclick={() => (chartMode = 'line')}
           aria-pressed={chartMode === 'line'}
@@ -209,7 +212,7 @@
       {:else if lineGeom}
         <svg
           viewBox={`0 0 ${lineGeom.width} ${lineGeom.height}`}
-          class="block w-full h-[180px] text-accent"
+          class="block w-full h-[180px] text-primary-text"
           aria-label="Timeseries chart"
         >
           <path d={lineGeom.path} fill="none" stroke="currentColor" stroke-width="1.5" />
@@ -237,7 +240,7 @@
               {#if series.metricNameColumn}
                 <td class="px-2 py-1 text-fg-2">{String(p.raw[series.metricNameColumn] ?? '')}</td>
               {/if}
-              <td class="px-2 py-1 text-right text-accent">{p.v}</td>
+              <td class="px-2 py-1 text-right text-primary-text">{p.v}</td>
               <td class="px-2 py-1 text-fg-2">{logPayload(p)}</td>
             </tr>
           {/each}

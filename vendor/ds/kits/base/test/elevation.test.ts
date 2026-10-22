@@ -61,9 +61,9 @@ describe("Base elevation", () => {
     expect(brandedPlain.has("shadow-elevation-raised")).toBe(true);
   });
 
-  it("bands the Navbar and table header with the complete chrome material", () => {
+  it("keeps the table header on chrome and the Navbar on its own Theme surface", () => {
+    expect(classesOf(navbar().root()).has("bg-navigation-surface")).toBe(true);
     const surfaces = {
-      Navbar: navbar().root(),
       TableHeader: table().header(),
     };
 

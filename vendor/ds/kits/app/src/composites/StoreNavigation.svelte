@@ -1,25 +1,12 @@
 <script lang="ts">
+  import type { StoreNavigationContract } from "../core/contracts/storenavigation";
   import { Navbar, type NavbarCollapse, type NavbarLink } from "@reddb-io/design-system/base";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
   import { navigationItems, type ApplicationNavigationItem } from "./navigation.behavior";
   import { storeNavigation } from "./store-navigation.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLElement>, "class"> {
-    /** Accessible name for the navbar's `nav` landmark. */
-    label: string;
-    /** Destinations, one link per entry in the given order; each `id` must be unique. */
-    items: readonly ApplicationNavigationItem[];
-    /**
-     * The `id` of the item for the current page. It must match exactly one entry in `items`, or the
-     * component throws.
-     */
-    currentId: string;
-    /**
-     * How the links fold into a menu: `responsive` (by the navbar's own width), `expanded` or
-     * `collapsed`. Defaults to `responsive`.
-     */
-    collapse?: NavbarCollapse;
+  interface Props extends StoreNavigationContract, Omit<HTMLAttributes<HTMLElement>, keyof StoreNavigationContract | "class"> {
     /** Optional banner rendered above the navbar, such as a promotion or shipping notice. */
     announcement?: Snippet;
     /** Optional content at the start of the bar, usually the store's logo or name. */

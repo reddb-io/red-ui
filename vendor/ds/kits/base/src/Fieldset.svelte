@@ -10,6 +10,7 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import type { HTMLFieldsetAttributes } from "svelte/elements";
+  import { fieldsetAssociation } from "./core/fieldset";
   import { fieldset, type FieldsetControlProps } from "./fieldset.variants";
 
   interface Props extends Omit<HTMLFieldsetAttributes, "children" | "class"> {
@@ -43,14 +44,11 @@
   const styles = fieldset();
 
   const baseId = $derived(rest.id ?? `${generatedId}-group`);
-  const helpId = $derived(`${baseId}-help`);
-  const errorId = $derived(`${baseId}-error`);
-  const control = $derived<FieldsetControlProps>({
-    "aria-describedby":
-      [help ? helpId : undefined, error ? errorId : undefined].filter(Boolean).join(" ") || undefined,
-    "aria-invalid": error ? "true" : undefined,
-    "aria-errormessage": error ? errorId : undefined,
-  });
+  const association = $derived(fieldsetAssociation({ id: baseId, help, error }));
+  const helpId = $derived(association.helpId);
+  const errorId = $derived(association.errorId);
+  const control = $derived<FieldsetControlProps>(association.control);
+
 </script>
 
 <fieldset

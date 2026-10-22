@@ -75,3 +75,18 @@ describe("ProductOverview", () => {
     expectLayoutReadiness("product-overview", "ProductOverview");
   });
 });
+
+describe("ProductOverview image", () => {
+  it("renders the product image through the Base Image, with its priority", () => {
+    const overview = rendered(
+      render(ProductOverview, {
+        title: "Field notes",
+        image: { src: "/notes.webp", alt: "Field-notes book", width: 800, height: 800 },
+        priority: true,
+      }),
+    );
+    const element = overview.querySelector("[data-product-overview-media] img")!;
+    expect(element.getAttribute("width")).toBe("800");
+    expect(element.getAttribute("fetchpriority")).toBe("high");
+  });
+});

@@ -1,4 +1,4 @@
-import { dropdownMenu, popover, type DropdownMenuSize } from "@reddb-io/design-system/base";
+import { dropdownMenu, popover, type DropdownMenuSize } from "@reddb-io/design-system/base/recipes";
 import { tv, type VariantProps } from "tailwind-variants";
 
 // Rows, headings, separators, icons and their three sizes are the Base

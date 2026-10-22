@@ -1,10 +1,13 @@
 <!-- A native range input composed through the canonical Field relationship. -->
 <script lang="ts">
+  import { untrack } from "svelte";
   import type { HTMLInputAttributes } from "svelte/elements";
   import Field from "./Field.svelte";
   import { slider } from "./slider.variants";
+  import { rangeValue } from "./core/slider";
+  import { afterFormReset, associatedForm } from "./core/native-controls";
 
-  interface Props extends Omit<HTMLInputAttributes, "children" | "class" | "id" | "max" | "min" | "step" | "type" | "value"> {
+  interface Props extends Omit<HTMLInputAttributes, "children" | "class" | "id" | "max" | "min" | "step" | "type" | "value" | "defaultValue"> {
     /** Required visible name supplied through Field. */
     label: string;
     /** Supporting text announced with the slider. */
@@ -17,6 +20,8 @@
     id?: string;
     /** Current native numeric value. */
     value?: number;
+    /** Initial uncontrolled value, restored by native form reset. Defaults to 0. */
+    defaultValue?: number;
     /** Called with the newly chosen value (ADR 0026's value dialect). */
     onvaluechange?: (value: number) => void;
     /** Lowest selectable value; defaults to `0`. */
@@ -43,7 +48,8 @@
     error,
     required = false,
     id,
-    value = $bindable(0),
+    value = $bindable(),
+    defaultValue = 0,
     onvaluechange,
     min = 0,
     max = 100,
@@ -56,8 +62,20 @@
     oninput,
     ...rest
   }: Props = $props();
+  let input = $state<HTMLInputElement>();
+  $effect(() => { if (ref !== input) ref = input; });
+  const initial = untrack(() => rangeValue(value ?? defaultValue, min, max, step));
+  let local = $state(initial);
+  const current = $derived(rangeValue(value ?? local, min, max, step));
   const styles = slider();
-  const formatted = $derived(formatValue ? formatValue(value) : String(value));
+  const formatted = $derived(formatValue ? formatValue(current) : String(current));
+  $effect(() => { if (input && input.valueAsNumber !== current) input.value = String(current); });
+  $effect(() => {
+    return afterFormReset(associatedForm(input, rest.form), () => {
+      local = initial; value = initial;
+      if (input) input.value = String(rangeValue(initial, min, max, step));
+    });
+  });
 </script>
 
 <div class={styles.root()} data-slider>
@@ -66,11 +84,13 @@
       <input
         {...rest}
         {...control}
-        bind:this={ref}
-        bind:value
+        bind:this={input}
+        value={initial}
         oninput={(event) => {
+          const next = event.currentTarget.valueAsNumber;
+          local = next; value = next;
           oninput?.(event);
-          onvaluechange?.(event.currentTarget.valueAsNumber);
+          onvaluechange?.(next);
         }}
         type="range"
         {min}

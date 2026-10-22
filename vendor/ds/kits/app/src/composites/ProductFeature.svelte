@@ -1,5 +1,6 @@
 <!-- A reusable product feature relationship; page sequence and product copy stay local. -->
 <script lang="ts">
+  import type { ProductFeatureContract } from "../core/contracts/productfeature";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
   import {
@@ -13,15 +14,7 @@
     type ProductFeatureMediaSide,
   } from "./product-feature.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "class" | "title"> {
-    /** Heading text for the feature; it is also the region's accessible name. */
-    title: string;
-    /** Supporting line under the title. Nothing is rendered when omitted. */
-    description?: string;
-    /** Outline depth of the heading, `1` to `6`. Defaults to `2`. */
-    level?: SectionHeadingLevel;
-    /** Which side of the content the media sits on: `start` or `end`. Defaults to `start`. */
-    mediaSide?: ProductFeatureMediaSide;
+  interface Props extends ProductFeatureContract, Omit<HTMLAttributes<HTMLDivElement>, keyof ProductFeatureContract | "children" | "class" | "title"> {
     /** Caller-owned product imagery, including its own alternative text. */
     media: Snippet;
     /** Optional body of the feature, rendered under the heading. */

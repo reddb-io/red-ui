@@ -1,15 +1,12 @@
 <!-- The one title at the root of an application page's document outline. -->
 <script lang="ts">
+  import type { PageHeadingContract } from "../core/contracts/pageheading";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
   import { Heading, Stack } from "@reddb-io/design-system/base";
   import { pageHeading } from "./page-heading.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "class" | "title"> {
-    /** The page's title, rendered as the page's one level-1 heading. */
-    title: string;
-    /** Supporting line under the title. Nothing is rendered when omitted. */
-    description?: string;
+  interface Props extends PageHeadingContract, Omit<HTMLAttributes<HTMLDivElement>, keyof PageHeadingContract | "class" | "title"> {
     /** Caller-owned context such as canonical Breadcrumbs. */
     context?: Snippet;
     /** Caller-owned canonical links and controls, kept in document order. */

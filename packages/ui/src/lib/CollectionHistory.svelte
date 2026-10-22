@@ -1,6 +1,11 @@
 <script lang="ts">
   import type { CollectionVcsState, QueryResult, RedClient, VcsCommit, VcsDiff } from '#reddb'
-  import { GitCommitHorizontal, GitCompareArrows, LoaderCircle, RadioTower, RefreshCw, ShieldCheck } from 'lucide-svelte'
+  import GitCommitHorizontal from '@lucide/svelte/icons/git-commit-horizontal'
+  import GitCompareArrows from '@lucide/svelte/icons/git-compare-arrows'
+  import LoaderCircle from '@lucide/svelte/icons/loader-circle'
+  import RadioTower from '@lucide/svelte/icons/radio-tower'
+  import RefreshCw from '@lucide/svelte/icons/refresh-cw'
+  import ShieldCheck from '@lucide/svelte/icons/shield-check'
   import DiffRenderer from '$lib/renderers/DiffRenderer.svelte'
   import LiveChanges from '$lib/LiveChanges.svelte'
 
@@ -125,7 +130,7 @@
     <div class="inline-flex overflow-hidden rounded border border-line-2">
       <button
         type="button"
-        class={['inline-flex h-7 items-center gap-1 px-2', mode === 'commits' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+        class={['inline-flex h-7 items-center gap-1 px-2', mode === 'commits' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
         onclick={() => (mode = 'commits')}
       >
         <GitCommitHorizontal class="size-3" />
@@ -133,7 +138,7 @@
       </button>
       <button
         type="button"
-        class={['inline-flex h-7 items-center gap-1 border-l border-line-2 px-2', mode === 'diff' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+        class={['inline-flex h-7 items-center gap-1 border-l border-line-2 px-2', mode === 'diff' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
         onclick={() => (mode = 'diff')}
       >
         <GitCompareArrows class="size-3" />
@@ -141,7 +146,7 @@
       </button>
       <button
         type="button"
-        class={['inline-flex h-7 items-center gap-1 border-l border-line-2 px-2', mode === 'live' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+        class={['inline-flex h-7 items-center gap-1 border-l border-line-2 px-2', mode === 'live' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
         onclick={() => (mode = 'live')}
       >
         <RadioTower class="size-3" />
@@ -252,7 +257,7 @@
           <tbody>
             {#each commits as commit (commit.hash)}
               <tr class="border-b border-line-1/60 hover:bg-bg-1/50">
-                <td class="px-3 py-1.5 text-accent">{shortHash(commit.hash)}</td>
+                <td class="px-3 py-1.5 text-primary-text">{shortHash(commit.hash)}</td>
                 <td class="px-3 py-1.5 text-fg-1">{commit.message}</td>
                 <td class="px-3 py-1.5 text-fg-3">{commit.author?.name ?? '-'}</td>
                 <td class="px-3 py-1.5 text-fg-3">{formatTime(commit.timestamp_ms)}</td>

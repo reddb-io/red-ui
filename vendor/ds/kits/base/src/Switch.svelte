@@ -1,5 +1,6 @@
 <!-- A visibly named native binary input exposed with switch semantics. -->
 <script lang="ts">
+  import { afterFormReset } from "./core/native-controls";
   import { untrack } from "svelte";
   import type { HTMLInputAttributes } from "svelte/elements";
   import Field from "./Field.svelte";
@@ -48,13 +49,14 @@
 
   // The element owns its checked state; `checked` follows every toggle and is
   // written back only when a caller supplies one (see Input).
-  const initial = untrack(() => checked);
+  const initial = untrack(() => checked ?? rest.defaultChecked);
   let element: HTMLInputElement | undefined = $state();
 
   function handleChange(event: Event & { currentTarget: EventTarget & HTMLInputElement }): void {
-    checked = event.currentTarget.checked;
+    const next = event.currentTarget.checked;
+    checked = next;
     onchange?.(event);
-    oncheckedchange?.(event.currentTarget.checked);
+    oncheckedchange?.(next);
   }
 
   $effect(() => {
@@ -64,7 +66,11 @@
   });
 
   $effect(() => {
-    ref = element;
+    if (ref !== element) ref = element;
+  });
+  $effect(() => {
+    rest.form;
+    return afterFormReset(element?.form, () => { if (element) checked = element.checked; });
   });
 </script>
 
@@ -73,6 +79,7 @@
     <input
       {...rest}
       {...control}
+      defaultChecked={initial}
       checked={initial}
       bind:this={element}
       onchange={handleChange}

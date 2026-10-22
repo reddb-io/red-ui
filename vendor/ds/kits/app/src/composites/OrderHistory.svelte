@@ -1,5 +1,6 @@
 <!-- Order facts composed into canonical heading and native table relationships. -->
 <script lang="ts">
+  import type { OrderHistoryContract } from "../core/contracts/orderhistory";
   import {
     SectionHeading,
     Table,
@@ -16,26 +17,7 @@
     type OrderHistoryLabels,
   } from "./order-history.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLElement>, "class" | "title"> {
-    /**
-     * Heading text for the history; it is also the section's accessible name unless `aria-label` is
-     * given.
-     */
-    title: string;
-    /** Outline depth of the heading, `1` to `6`. Defaults to `2`. */
-    level?: SectionHeadingLevel;
-    /** Caption of the order table, shown above it and used as the table's accessible name. */
-    caption: string;
-    /**
-     * Caller-owned orders in display order, one row each: `id`, `placed`, `placedAt`, `status` and
-     * `total`.
-     */
-    orders: readonly OrderHistoryEntry[];
-    /**
-     * Overrides for the column headers (`order`, `placed`, `status`, `total`); omitted keys keep
-     * their defaults.
-     */
-    labels?: Partial<OrderHistoryLabels>;
+  interface Props extends OrderHistoryContract, Omit<HTMLAttributes<HTMLElement>, keyof OrderHistoryContract | "class" | "title"> {
     /** Extra classes, merged over the root slot's own, onto the `section` element. */
     class?: string;
   }

@@ -1,20 +1,21 @@
+<script module lang="ts">
+  import type { PrimaryNavigationItem } from "./navigation.behavior";
+  export interface BottomNavigationItem extends PrimaryNavigationItem {
+    /** Whether this destination's contextual menu is open, independent from currentId. */
+    expanded?: boolean;
+    /** Id of the contextual menu controlled by this item. */
+    controls?: string;
+  }
+</script>
 <script lang="ts">
+  import type { BottomNavigationContract } from "../core/contracts/bottomnavigation";
   import type { HTMLAttributes } from "svelte/elements";
-  import { Icon } from "@reddb-io/design-system/base";
+  import { Badge, Icon, Indicator, StatusIndicator } from "@reddb-io/design-system/base";
   import NavItem from "../primitives/NavItem.svelte";
   import { bottomNavigation } from "./bottom-navigation.variants";
-  import { navigationItems, type ApplicationNavigationItem } from "./navigation.behavior";
+  import { navigationBadge, navigationItems, navigationMarkerLabel } from "./navigation.behavior";
 
-  interface Props extends Omit<HTMLAttributes<HTMLElement>, "class"> {
-    /** Accessible name for the `nav` landmark. */
-    label: string;
-    /** Destinations, one link per entry in the given order; each `id` must be unique. */
-    items: readonly ApplicationNavigationItem[];
-    /**
-     * The `id` of the item for the current page. It must match exactly one entry in `items`, or the
-     * component throws.
-     */
-    currentId: string;
+  interface Props extends BottomNavigationContract, Omit<HTMLAttributes<HTMLElement>, keyof BottomNavigationContract | "class"> {
     /** Extra classes, merged over the root slot's own, onto the `nav` element. */
     class?: string;
   }
@@ -33,25 +34,33 @@
   <ul class={styles.list()}>
     {#each resolvedItems as item (item.id)}
       <li class={styles.entry()}>
+        {#snippet face()}
+          {#if item.icon}<Icon icon={item.icon} size="md" color={item.current ? "foreground" : "ink-muted"} aria-hidden="true" />
+          {:else if item.fallback}<span aria-hidden="true">{item.fallback}</span>{/if}
+        {/snippet}
         {#snippet glyph()}
-          {#if item.icon}
-            <Icon
-              icon={item.icon}
-              size="md"
-              color={item.current ? "foreground" : "ink-muted"}
-              aria-hidden="true"
-            />
-          {/if}
+          <span class={styles.face()}>
+            <Indicator class="size-full items-center justify-center">
+              {#snippet marker()}{#if item.badge !== undefined}<Badge tone={item.badgeTone ?? "neutral"} variant="filled" class={styles.badge()} aria-hidden="true">{navigationBadge(item.badge)}</Badge>{/if}{/snippet}
+              <Indicator position="bottom-end" class="size-full items-center justify-center">
+                {#snippet marker()}{#if item.status}<StatusIndicator label={item.status.label} tone={item.status.tone} showLabel={false} aria-hidden="true" />{/if}{/snippet}
+                {@render face()}
+              </Indicator>
+            </Indicator>
+          </span>
         {/snippet}
         <NavItem
           label={item.label}
+          aria-label={navigationMarkerLabel(item, item.label)}
+          aria-expanded={item.expanded}
+          aria-controls={item.controls}
           href={item.href}
           current={item.current}
           disabled={item.disabled}
           data-navigation-item={item.id}
           class={styles.item()}
           onclick={item.onselect}
-          icon={item.icon ? glyph : undefined}
+          icon={item.icon || item.fallback || item.badge !== undefined || item.status ? glyph : undefined}
         />
       </li>
     {/each}

@@ -1,5 +1,6 @@
 <!-- One expandable region, composed from Bits UI Collapsible and the canonical Button. -->
 <script lang="ts">
+  import type { DisclosureContract } from "./core/contracts/disclosure";
   import type { Snippet } from "svelte";
   import { Collapsible as Bits } from "bits-ui";
   import Button from "./Button.svelte";
@@ -7,13 +8,7 @@
   import { sanitizeCollapsibleStyle } from "./collapsible.style";
   import { disclosure } from "./disclosure.variants";
 
-  interface Props {
-    /** Visible text of the trigger Button that toggles the region. */
-    label: string;
-    /** Whether the region is expanded, bindable. Defaults to closed. */
-    open?: boolean;
-    /** Disables the trigger, so the region cannot be toggled. */
-    disabled?: boolean;
+  interface Props extends DisclosureContract {
     /** Called with the next open state (ADR 0026's open dialect). */
     onopenchange?: (open: boolean) => void;
     /** @deprecated Renamed `onopenchange` (ADR 0026); removed next release. */
@@ -22,10 +17,6 @@
     children?: Snippet;
     /** Extra classes merged onto the disclosure root. */
     class?: string;
-    /** Extra classes merged onto the trigger Button. */
-    triggerClass?: string;
-    /** Extra classes merged onto the expandable region. */
-    contentClass?: string;
   }
 
   let {

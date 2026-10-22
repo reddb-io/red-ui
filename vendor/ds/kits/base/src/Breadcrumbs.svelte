@@ -1,15 +1,12 @@
 <script module lang="ts">
-  export interface BreadcrumbItem {
-    id: string;
-    label: string;
-    href?: string;
-    current?: boolean;
-  }
+  export type { BreadcrumbItem } from "./core/breadcrumbs";
 </script>
 
 <script lang="ts">
+  import type { BreadcrumbItem } from "./core/breadcrumbs";
   import Link from "./Link.svelte";
   import { breadcrumbs } from "./breadcrumbs.variants";
+  import { breadcrumbList, jsonLdScript } from "./structured-data";
 
   interface Props {
     /**
@@ -19,12 +16,26 @@
     items: readonly BreadcrumbItem[];
     /** Accessible name of the navigation landmark. Defaults to `Breadcrumbs`. */
     label?: string;
+    /**
+     * Opt in to emitting the trail as a schema.org `BreadcrumbList` JSON-LD block (ADR 0028).
+     * `true` keeps each `href` as written; `{ origin }` resolves root-relative hrefs to absolute
+     * URLs, which search engines expect. Defaults to `false`, so a page that already emits the
+     * trail elsewhere never emits it twice.
+     */
+    structuredData?: boolean | { origin: string };
     /** Extra classes merged onto the `nav` root. */
     class?: string;
   }
 
-  let { items, label = "Breadcrumbs", class: className }: Props = $props();
+  let { items, label = "Breadcrumbs", structuredData = false, class: className }: Props = $props();
   const styles = breadcrumbs();
+  const jsonLd = $derived(
+    structuredData === false
+      ? undefined
+      : jsonLdScript(
+          breadcrumbList(items, structuredData === true ? {} : { origin: structuredData.origin }),
+        ),
+  );
 </script>
 
 <nav aria-label={label} data-breadcrumbs class={styles.root({ class: className })}>
@@ -34,7 +45,7 @@
         {#if item.current}
           <span aria-current="page" class={styles.current()}>{item.label}</span>
         {:else if item.href !== undefined}
-          <Link href={item.href}>{item.label}</Link>
+          <Link href={item.href} class={styles.link()}>{item.label}</Link>
         {:else}
           <span>{item.label}</span>
         {/if}
@@ -42,4 +53,5 @@
       </li>
     {/each}
   </ol>
+  {#if jsonLd}{@html jsonLd}{/if}
 </nav>

@@ -1,5 +1,6 @@
 <!-- A named order total composed from canonical Card and DescriptionList. -->
 <script lang="ts">
+  import type { OrderSummaryContract } from "../core/contracts/ordersummary";
   import {
     Card,
     DescriptionList,
@@ -10,20 +11,7 @@
   import type { HTMLAttributes } from "svelte/elements";
   import { orderSummary, type OrderSummaryLine } from "./order-summary.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "class" | "title"> {
-    /**
-     * Heading text for the summary; it is also the region's accessible name unless `aria-label` is
-     * given.
-     */
-    title: string;
-    /** Outline depth of the heading, `1` to `6`. Defaults to `2`. */
-    level?: SectionHeadingLevel;
-    /** Caller-owned amounts or facts shown as label and value pairs above the total, in order. */
-    lines: readonly OrderSummaryLine[];
-    /** Visible label of the total row. */
-    totalLabel: string;
-    /** Caller-formatted total amount, announced politely whenever it changes. */
-    total: string;
+  interface Props extends OrderSummaryContract, Omit<HTMLAttributes<HTMLDivElement>, keyof OrderSummaryContract | "class" | "title"> {
     /** Optional controls rendered in the footer, such as a checkout link or button. */
     actions?: Snippet;
     /** Extra classes, merged over the root slot's own, onto the underlying Card. */

@@ -3,9 +3,11 @@
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
   import Icon, { type IconGlyph } from "./Icon.svelte";
+  import Image, { type ImageAsset } from "./Image.svelte";
   import LoadingIndicator from "./LoadingIndicator.svelte";
   import {
     card,
+    CARD_RATIO_VALUES,
     type CardActionsAlign,
     type CardMediaFit,
     type CardMediaPosition,
@@ -60,6 +62,13 @@
     header?: Snippet;
     /** Caller-owned media rendered as a vertical band, horizontal lead, or background. */
     media?: Snippet;
+    /**
+     * The media as an image the app's pipeline produced, rendered through the Base Image inside the
+     * media region with the Card's `fit` and `position`; ignored when a `media` snippet is given.
+     */
+    image?: ImageAsset;
+    /** The `image` is the page's Largest Contentful Paint: fetched eagerly at high priority. */
+    priority?: boolean;
     /** Caller-owned actions or content rendered after the body. */
     footer?: Snippet;
     /** Extra classes merged onto the canonical surface. */
@@ -87,6 +96,8 @@
     description,
     header,
     media,
+    image,
+    priority = false,
     footer,
     class: className,
     children,
@@ -96,6 +107,8 @@
   const slots = $derived(
     card({ variant, raised, tone, padding, actionsAlign, orientation, fit, position, ratio, span }),
   );
+  // The media region's ratio as a number, so an `image` reserves the same box.
+  const hasMedia = $derived(Boolean(media ?? image));
   const hasHeader = $derived(Boolean(header ?? icon ?? title ?? description));
 
   $effect(() => {
@@ -155,7 +168,18 @@
     data-card-media-span={span}
     class={slots.media()}
   >
-    {@render media?.()}
+    {#if media}
+      {@render media()}
+    {:else if image}
+      <Image
+        {...image}
+        ratio={image.ratio ?? (ratio === "auto" ? undefined : CARD_RATIO_VALUES[ratio])}
+        {fit}
+        {position}
+        {priority}
+        class="size-full"
+      />
+    {/if}
     {#if span === "background"}
       <span
         data-background-media-scrim="strong"
@@ -175,10 +199,10 @@
   aria-busy={busy || undefined}
   class={slots.root({ class: className })}
 >
-  {#if media && span === "background"}
+  {#if hasMedia && span === "background"}
     {@render mediaRegion()}
     <div data-card-content class={slots.content()}>{@render sections()}</div>
-  {:else if media}
+  {:else if hasMedia}
     <div data-card-layout class={slots.layout()}>
       {@render mediaRegion()}
       <div data-card-content class={slots.content()}>{@render sections()}</div>

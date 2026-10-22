@@ -1,7 +1,8 @@
 <script lang="ts">
   import { SvelteFlow, Background, BackgroundVariant, Controls, type Node, type Edge } from '@xyflow/svelte'
   import '@xyflow/svelte/dist/style.css'
-  import { Badge, Card, NodeBadge } from '@reddb-io/ui-kit'
+  import { Badge, Card } from '@reddb-io/design-system/base'
+  import { NodeBadge } from '@reddb-io/ui-kit'
   import EmptyState from '$lib/EmptyState.svelte'
   import ClusterNode from '$lib/ClusterNode.svelte'
   import { PRESETS, connection } from '$lib/connections.svelte'
@@ -23,7 +24,8 @@
     maxReplicaLagSeconds,
     unavailableFields,
   } from '#reddb'
-  import { Lock, ServerCrash } from 'lucide-svelte'
+  import Lock from '@lucide/svelte/icons/lock'
+  import ServerCrash from '@lucide/svelte/icons/server-crash'
 
   interface KnownNode {
     id: string
@@ -273,7 +275,7 @@
     }
   })
 
-  type Tone = 'neutral' | 'ok' | 'info' | 'warn' | 'danger' | 'accent'
+  type Tone = 'neutral' | 'success' | 'info' | 'warning' | 'danger'
 
   function deploymentLabel(node: KnownNode): string {
     const shape = measured(node.cluster?.deployment?.shape)
@@ -297,9 +299,9 @@
   function deploymentTone(node: KnownNode): Tone {
     switch (topology(node)) {
       case 'replicated':
-        return 'accent'
+        return 'neutral'
       case 'embedded':
-        return 'ok'
+        return 'success'
       case 'serverless':
         return 'info'
       default:
@@ -349,7 +351,7 @@
         return {
           label: 'replication lag',
           value: worst === 0 ? '✓ in sync' : fmtLagSeconds(worst),
-          tone: worst === 0 ? 'ok' : worst < 5 ? 'warn' : 'danger',
+          tone: worst === 0 ? 'success' : worst < 5 ? 'warning' : 'danger',
           sub: `${replicas.length} replica${replicas.length === 1 ? '' : 's'} · worst case`,
         }
       }
@@ -357,7 +359,7 @@
       return {
         label: 'replica lag',
         value: lag === null ? 'not exposed' : lag === 0 ? '✓ in sync' : `${lag.toLocaleString()} lsn`,
-        tone: lag === null ? 'neutral' : lag === 0 ? 'ok' : 'warn',
+        tone: lag === null ? 'neutral' : lag === 0 ? 'success' : 'warning',
         sub: node.replication?.state,
       }
     }
@@ -366,7 +368,7 @@
       return {
         label: 'boot time',
         value: fmtDuration(boot),
-        tone: boot === null ? 'neutral' : boot < 1000 ? 'ok' : boot < 5000 ? 'info' : 'warn',
+        tone: boot === null ? 'neutral' : boot < 1000 ? 'success' : boot < 5000 ? 'info' : 'warning',
         sub: node.cluster?.phase ? `phase · ${node.cluster.phase}` : undefined,
       }
     }
@@ -375,7 +377,7 @@
       return {
         label: 'on-disk size',
         value: size === undefined ? 'not exposed' : fmtBytes(size),
-        tone: size === undefined ? 'neutral' : 'ok',
+        tone: size === undefined ? 'neutral' : 'success',
         sub: `${(node.stats?.store.total_entities ?? 0).toLocaleString()} entities`,
       }
     }
@@ -383,7 +385,7 @@
     return {
       label: 'entities',
       value: (node.stats?.store.total_entities ?? 0).toLocaleString(),
-      tone: 'accent',
+      tone: 'neutral',
       sub: size === undefined ? undefined : `${fmtBytes(size)} on disk`,
     }
   }
@@ -533,7 +535,7 @@
         </div>
         <div>
           <div class="type-label">entities</div>
-          <div class="font-mono text-accent text-[18px] font-semibold mt-0.5">{totalEntities.toLocaleString()}</div>
+          <div class="font-mono text-primary-text text-[18px] font-semibold mt-0.5">{totalEntities.toLocaleString()}</div>
         </div>
       </div>
 
@@ -561,14 +563,14 @@
   <!-- Floating inspector (top-right) -->
   {#if selected}
     <div class="absolute top-4 right-4 z-10 w-[420px] max-h-[calc(100vh-96px)] overflow-auto">
-      <Card title="node · {selected.id}" floating>
+      <Card title="node · {selected.id}" raised>
         <div class="grid gap-2 font-mono text-[11px]">
           {#if selectedHero}
             <div class="mb-1 rounded border border-line-1 bg-bg-2 p-3">
               <div class="type-label">{selectedHero.label}</div>
               <div class={[
                 'font-mono text-[22px] font-semibold mt-0.5 leading-none',
-                selectedHero.tone === 'ok' ? 'text-role-replica' : selectedHero.tone === 'warn' ? 'text-amber-400' : selectedHero.tone === 'danger' ? 'text-accent' : selectedHero.tone === 'accent' ? 'text-accent' : 'text-fg-0',
+                selectedHero.tone === 'success' ? 'text-feedback-success-foreground' : selectedHero.tone === 'warning' ? 'text-feedback-warning-foreground' : selectedHero.tone === 'danger' ? 'text-feedback-danger-foreground' : 'text-fg-0',
               ].join(' ')}>{selectedHero.value}</div>
               {#if selectedHero.sub}<div class="text-[10px] text-fg-3 mt-1">{selectedHero.sub}</div>{/if}
             </div>
@@ -633,7 +635,7 @@
             </div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
               <span class="text-fg-3">entities</span>
-              <span class="text-accent">{selected.stats.store.total_entities.toLocaleString()}</span>
+              <span class="text-primary-text">{selected.stats.store.total_entities.toLocaleString()}</span>
             </div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
               <span class="text-fg-3">cross refs</span>
@@ -743,7 +745,7 @@
                 <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
                   <span class="text-fg-3">lag</span>
                   <span>
-                    {#if lag === 0}<Badge tone="ok">in sync</Badge>{:else}<Badge tone="warn">{lag.toLocaleString()} lsn</Badge>{/if}
+                    {#if lag === 0}<Badge tone="success">in sync</Badge>{:else}<Badge tone="warning">{lag.toLocaleString()} lsn</Badge>{/if}
                     {#if selected.replication.state}<span class="text-fg-3 ml-1">{selected.replication.state}</span>{/if}
                   </span>
                 </div>
@@ -751,7 +753,7 @@
               {#if selected.replication.last_error}
                 <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
                   <span class="text-fg-3">last error</span>
-                  <span class="text-accent break-all">{selected.replication.last_error}</span>
+                  <span class="text-primary-text break-all">{selected.replication.last_error}</span>
                 </div>
               {/if}
             {/if}
@@ -761,7 +763,7 @@
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
               <span class="text-fg-3">metalanguage</span>
               <span class="text-fg-0">
-                {#if meta?.username}you are <span class="text-accent">{meta.username}</span> <span class="text-fg-3">· {meta.role}</span>{:else if meta?.error}<span class="text-fg-3">{meta.error}</span>{:else}<span class="text-fg-3">…</span>{/if}
+                {#if meta?.username}you are <span class="text-primary-text">{meta.username}</span> <span class="text-fg-3">· {meta.role}</span>{:else if meta?.error}<span class="text-fg-3">{meta.error}</span>{:else}<span class="text-fg-3">…</span>{/if}
               </span>
             </div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-start">

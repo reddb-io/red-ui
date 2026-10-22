@@ -7,6 +7,7 @@
 // since an item list where everything claims to be the page is no better.
 
 import { describe, expect, it, vi } from "vitest";
+import { quietControl } from "@reddb-io/design-system/base";
 import NavItem from "../src/primitives/NavItem.svelte";
 import { navItem } from "../src/primitives/nav-item.variants";
 import { classes, classesOf, click, render, rendered, text } from "./mount";
@@ -61,14 +62,15 @@ describe("NavItem", () => {
     for (const current of [true, false]) {
       for (const disabled of [true, false]) {
         const element = rendered(render(NavItem, { label: "Tokens", current, disabled }));
-        expect(classes(element)).toEqual(classesOf(navItem({ current, disabled }).root()));
+        // The quiet-control contract wraps the slot (wave 6A).
+        expect(classes(element)).toEqual(classesOf(quietControl({ selected: current, class: navItem({ current, disabled }).root() })));
       }
     }
   });
 
   it("defaults to not current and available", () => {
     expect(classes(rendered(render(NavItem, { label: "Tokens" })))).toEqual(
-      classesOf(navItem({ current: false, disabled: false }).root()),
+      classesOf(quietControl({ class: navItem({ current: false, disabled: false }).root() })),
     );
   });
 
@@ -76,7 +78,7 @@ describe("NavItem", () => {
     const element = rendered(
       render(NavItem, { label: "Search", icon: text("⌕"), trailing: text("Ctrl K") }),
     );
-    const icon = element.firstElementChild!;
+    const icon = element.querySelector('[aria-hidden="true"]')!;
     expect(classes(icon)).toEqual(classesOf(navItem().icon()));
     expect(icon.getAttribute("aria-hidden")).toBe("true");
 
@@ -111,12 +113,13 @@ describe("NavItem", () => {
     expect(current.has("font-medium")).toBe(true);
     expect(current.has("text-foreground")).toBe(true);
     expect(current.has("border-s-2")).toBe(true);
-    expect(current.has("border-primary")).toBe(true);
+    expect(current.has("border-foreground")).toBe(true);
+    expect(current.has("border-primary")).toBe(false);
     expect([...current].some((name) => /^bg-primary(?:\/|$)/.test(name))).toBe(false);
 
     // Every item carries the edge, transparent until current: nothing shifts.
     expect(other.has("border-s-2")).toBe(true);
     expect(other.has("border-transparent")).toBe(true);
-    expect(other.has("border-primary")).toBe(false);
+    expect(other.has("border-foreground")).toBe(false);
   });
 });

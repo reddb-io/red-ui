@@ -34,7 +34,7 @@
   >
     <div class="flex items-center gap-2">
       <div class="w-2 h-2 rounded-full bg-accent shadow-[0_0_12px_var(--color-accent-glow)]"></div>
-      <span class="font-mono font-semibold text-fg-0 text-[15px] tracking-tight">red<span class="text-accent mx-px">·</span>ui</span>
+      <span class="font-mono font-semibold text-fg-0 text-[15px] tracking-tight">red<span class="text-primary-text mx-px">·</span>ui</span>
     </div>
   </div>
 {/if}

@@ -1,4 +1,4 @@
-import { mediaObject } from "@reddb-io/design-system/base";
+import { mediaObject } from "@reddb-io/design-system/base/recipes";
 import { tv, type VariantProps } from "tailwind-variants";
 
 // Container-first (ADR 0021): the feature is a named size container, and its

@@ -2,7 +2,11 @@
   import { onDestroy } from 'svelte'
   import { CDCStreamClient, type ChangeEvent, type Subscription } from '#reddb'
   import { connection } from '$lib/connections.svelte'
-  import { Pause, Play, Activity, Filter, X } from 'lucide-svelte'
+  import Pause from '@lucide/svelte/icons/pause'
+  import Play from '@lucide/svelte/icons/play'
+  import Activity from '@lucide/svelte/icons/activity'
+  import Filter from '@lucide/svelte/icons/filter'
+  import X from '@lucide/svelte/icons/x'
 
   interface Props {
     collection?: string
@@ -151,7 +155,7 @@
   <div class="flex-1 overflow-auto">
     {#if error}
       <div class="p-6 text-[12px] font-mono text-fg-3">
-        <span class="text-accent">error:</span> {error}
+        <span class="text-primary-text">error:</span> {error}
       </div>
     {:else if !connection.connected}
       <div class="p-6 text-[12px] font-mono text-fg-3">
@@ -174,7 +178,7 @@
                 'inline-block w-14 text-center text-[10px] uppercase rounded px-1 py-0.5 shrink-0 border',
                 e.operation === 'insert' && 'border-ok/40 text-ok',
                 e.operation === 'update' && 'border-warn/40 text-warn',
-                e.operation === 'delete' && 'border-accent/40 text-accent',
+                e.operation === 'delete' && 'border-accent/40 text-primary-text',
               ]
                 .filter(Boolean)
                 .join(' ')}

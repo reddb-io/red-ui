@@ -6,15 +6,21 @@
 // this module owns no appearance-axis selection or raw value.
 
 import { tv, type VariantProps } from "tailwind-variants";
+import { QUIET_HOVER, QUIET_OPEN, QUIET_PRESSED } from "./quiet-control.variants";
 import type { Tone } from "./tone";
+import { typeRoleMerge } from "./type-roles";
 
 const VARIANT = {
   /** The affirmative action of a view — at most one per view. */
-  primary: "bg-primary text-on-primary hover:opacity-90",
+  primary: "bg-primary text-on-primary",
   /** Everything else that is still an action: outlined, not filled. */
   secondary: "border-control-edge bg-transparent text-foreground hover:border-foreground",
-  /** An action that should not compete for attention. */
-  ghost: "bg-transparent text-ink-muted hover:text-foreground",
+  /**
+   * An action that should not compete for attention. It is the quiet-control
+   * contract (quiet-control.variants.ts, wave 6A): transparent at rest, the
+   * quiet fill on hover, the stronger one pressed or holding a popup open.
+   */
+  ghost: `bg-transparent text-ink-muted hover:text-foreground ${QUIET_HOVER} ${QUIET_PRESSED} ${QUIET_OPEN}`,
 } as const;
 
 // What the action means (ADR 0026): the shared tone vocabulary, resolved by
@@ -45,7 +51,8 @@ export const button = tv({
     "inline-flex items-center justify-center gap-[var(--reddb-spatial-gap-md)]",
     "rounded-md border border-transparent",
     "font-medium leading-tight whitespace-nowrap",
-    "transition-opacity",
+    // No colour transition (quiet-control.variants.ts): states and a Color
+    // Scheme switch land at full contrast at once.
     // One ink focus ring for every variant and tone (ADR 0023): 2px, offset
     // 2px, so the pixels around it are the ground and never the Button's fill.
     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
@@ -58,11 +65,30 @@ export const button = tv({
   // border, ghost carries only the role's ink. A danger primary is therefore a
   // filled destructive action, deeper than the accent in both Color Schemes
   // and distinct from its secondary and ghost forms (ADR 0009, ADR 0023).
+  //
+  // A tone ghost keeps its role's tinted surface as its quiet fill, hovered and
+  // pressed (wave 6A): the role's copy on the neutral ink fill drops to
+  // 3.66:1 (danger) and 3.71:1 (info) on the dark overlay, where a danger
+  // ghost sits in a Dialog, while the contract holds it on its own surface.
+  //
+  // A filled Button never hovers with an opacity (wave 6A): every filled
+  // emphasis swaps to its opaque active material — `primary-active` for the
+  // accent, `feedback-<tone>-fill-active` for a tone — which the contrast
+  // contract pairs with the label, so the ground never shows through.
   compoundVariants: [
+    {
+      // Hovered, pressed or holding a popup open, the accent fills with the
+      // opaque `primary-active` role, which the contrast contract pairs with
+      // `on-primary` (wave 5A). The old opacity hover let the ground show
+      // through: a SpeedDial trigger held open on Marketing dark fell to 4.44:1.
+      tone: "neutral",
+      variant: "primary",
+      class: "hover:bg-primary-active active:bg-primary-active aria-expanded:bg-primary-active",
+    },
     {
       tone: "danger",
       variant: "primary",
-      class: "bg-feedback-danger-fill text-feedback-danger-on-fill",
+      class: "bg-feedback-danger-fill text-feedback-danger-on-fill hover:bg-feedback-danger-fill-active active:bg-feedback-danger-fill-active aria-expanded:bg-feedback-danger-fill-active",
     },
     {
       tone: "danger",
@@ -72,12 +98,12 @@ export const button = tv({
     {
       tone: "danger",
       variant: "ghost",
-      class: "text-feedback-danger-foreground hover:text-feedback-danger-foreground hover:bg-feedback-danger-surface",
+      class: "text-feedback-danger-foreground hover:text-feedback-danger-foreground hover:bg-feedback-danger-surface active:bg-feedback-danger-surface",
     },
     {
       tone: "success",
       variant: "primary",
-      class: "bg-feedback-success-fill text-feedback-success-on-fill",
+      class: "bg-feedback-success-fill text-feedback-success-on-fill hover:bg-feedback-success-fill-active active:bg-feedback-success-fill-active aria-expanded:bg-feedback-success-fill-active",
     },
     {
       tone: "success",
@@ -87,12 +113,12 @@ export const button = tv({
     {
       tone: "success",
       variant: "ghost",
-      class: "text-feedback-success-foreground hover:text-feedback-success-foreground hover:bg-feedback-success-surface",
+      class: "text-feedback-success-foreground hover:text-feedback-success-foreground hover:bg-feedback-success-surface active:bg-feedback-success-surface",
     },
     {
       tone: "warning",
       variant: "primary",
-      class: "bg-feedback-warning-fill text-feedback-warning-on-fill",
+      class: "bg-feedback-warning-fill text-feedback-warning-on-fill hover:bg-feedback-warning-fill-active active:bg-feedback-warning-fill-active aria-expanded:bg-feedback-warning-fill-active",
     },
     {
       tone: "warning",
@@ -102,12 +128,12 @@ export const button = tv({
     {
       tone: "warning",
       variant: "ghost",
-      class: "text-feedback-warning-foreground hover:text-feedback-warning-foreground hover:bg-feedback-warning-surface",
+      class: "text-feedback-warning-foreground hover:text-feedback-warning-foreground hover:bg-feedback-warning-surface active:bg-feedback-warning-surface",
     },
     {
       tone: "info",
       variant: "primary",
-      class: "bg-feedback-info-fill text-feedback-info-on-fill",
+      class: "bg-feedback-info-fill text-feedback-info-on-fill hover:bg-feedback-info-fill-active active:bg-feedback-info-fill-active aria-expanded:bg-feedback-info-fill-active",
     },
     {
       tone: "info",
@@ -117,11 +143,11 @@ export const button = tv({
     {
       tone: "info",
       variant: "ghost",
-      class: "text-feedback-info-foreground hover:text-feedback-info-foreground hover:bg-feedback-info-surface",
+      class: "text-feedback-info-foreground hover:text-feedback-info-foreground hover:bg-feedback-info-surface active:bg-feedback-info-surface",
     },
   ],
-  defaultVariants: { variant: "primary", tone: "neutral", size: "md", block: false },
-});
+  defaultVariants: { variant: "secondary", tone: "neutral", size: "md", block: false },
+}, typeRoleMerge);
 
 /**
  * The loading indicator, inheriting the Button variant's current colour. It

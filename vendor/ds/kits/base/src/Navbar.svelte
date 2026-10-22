@@ -1,68 +1,22 @@
 <script module lang="ts">
-  export type NavbarCollapse = "responsive" | "expanded" | "collapsed";
-  export type NavbarAlign = "start" | "center";
-  export const NAVBAR_ALIGNMENTS = ["start", "center"] as const satisfies readonly NavbarAlign[];
-  export const NAVBAR_COLLAPSE = [
-    "responsive",
-    "expanded",
-    "collapsed",
-  ] as const satisfies readonly NavbarCollapse[];
-
-  export interface NavbarArrangements {
-    rail: boolean;
-    compact: boolean;
-  }
-
-  /** Decide which arrangements exist without consulting viewport state in JavaScript. */
-  export function arrangements(collapse: NavbarCollapse): NavbarArrangements {
-    return { rail: collapse !== "collapsed", compact: collapse !== "expanded" };
-  }
-
-  export interface NavbarLink {
-    id: string;
-    label: string;
-    href?: string;
-    current?: boolean | "page" | "step" | "location" | "date" | "time" | "true";
-    active?: boolean;
-    disabled?: boolean;
-    onselect?: () => void;
-  }
+  import { arrangements } from "./core/navbar";
+  import type { NavbarLink, NavbarCollapse, NavbarAlign } from "./core/navbar";
+  export { arrangements, NAVBAR_ALIGNMENTS, NAVBAR_COLLAPSE, type NavbarLink, type NavbarCollapse, type NavbarAlign, type NavbarArrangements } from "./core/navbar";
 </script>
 
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  import type { NavbarContract } from "./core/contracts/navbar";
+  import { onDestroy, untrack, type Snippet } from "svelte";
+  import { navigationDisclosure } from "./navigation";
   import Button from "./Button.svelte";
+  import Icon from "./Icon.svelte";
   import Link from "./Link.svelte";
   import { navbar } from "./navbar.variants";
+  import { quietControl } from "./quiet-control.variants";
 
-  interface Props {
-    /**
-     * The destinations, in order; shown in the rail and repeated in the compact menu panel. Each
-     * entry with an `href` renders a link, one without renders a ghost Button that calls its
-     * `onselect`.
-     */
-    links?: readonly NavbarLink[];
-    /**
-     * How the bar arranges itself: `responsive` follows the bar's own width, `expanded` always
-     * shows the rail, `collapsed` always shows the compact menu. Defaults to `responsive`.
-     */
-    collapse?: NavbarCollapse;
-    /**
-     * Where the links sit between the brand and the actions: `start` keeps them beside the brand,
-     * `center` centers them. Defaults to `start`.
-     */
-    align?: NavbarAlign;
-    /**
-     * Whether the compact menu panel is open; bindable. Escape closes it and returns focus to the
-     * menu button.
-     */
-    open?: boolean;
+  interface Props extends NavbarContract {
     /** Called with the next open state (ADR 0026's open dialect). */
     onopenchange?: (open: boolean) => void;
-    /** Accessible name of the navigation landmark; defaults to `Main`. */
-    label?: string;
-    /** Text and accessible name of the button that opens the compact menu; defaults to `Menu`. */
-    menuLabel?: string;
     /** Leading identity slot, rendered in both arrangements: typically a Logo or product name. */
     brand?: Snippet;
     /**
@@ -92,6 +46,10 @@
   let root: HTMLElement | undefined = $state();
   const styles = $derived(navbar({ collapse, align, open }));
   const shown = $derived(arrangements(collapse));
+
+  const disclosure = navigationDisclosure(() => setOpen(false));
+  onDestroy(() => disclosure?.destroy());
+  $effect(() => { if (open) untrack(() => disclosure?.open()); });
 
   function currentValue(link: NavbarLink): NavbarLink["current"] | undefined {
     if (link.current === true || link.active) return "page";
@@ -135,21 +93,22 @@
       {#if links.length > 0}
         <ul data-navbar-region="links" class={styles.links()}>
           {#each links as link (link.id)}
-            <li>
+            <li class={styles.item()}>
               {#if link.disabled && link.href !== undefined}
-                <a aria-disabled="true" data-navbar-link={link.id} class={styles.link()}>{link.label}</a>
+                <a aria-disabled="true" data-navbar-link={link.id} class={quietControl({ class: styles.link() })}>{link.label}</a>
               {:else if link.href !== undefined}
                 <Link
                   href={link.href}
                   aria-current={currentValue(link)}
                   data-navbar-link={link.id}
-                  class={styles.link()}
+                  class={quietControl({ class: styles.link() })}
                   onclick={link.onselect}
                 >{link.label}</Link>
               {:else}
                 <Button
                   variant="ghost"
                   disabled={link.disabled}
+                  aria-current={currentValue(link)}
                   data-navbar-link={link.id}
                   class={styles.link()}
                   onclick={link.onselect}
@@ -174,7 +133,7 @@
         aria-expanded={open}
         aria-controls={panelId}
         onclick={() => setOpen(!open)}
-      >{menuLabel}</Button>
+      ><Icon icon="menu" size="sm" aria-hidden="true" />{menuLabel}</Button>
     </div>
     <div id={panelId} data-navbar-panel hidden={!open} class={styles.panel()}>
       {#if links.length > 0}
@@ -182,13 +141,13 @@
           {#each links as link (link.id)}
             <li>
               {#if link.disabled && link.href !== undefined}
-                <a aria-disabled="true" data-navbar-link={link.id} class={styles.panelLink()}>{link.label}</a>
+                <a aria-disabled="true" data-navbar-link={link.id} class={quietControl({ class: styles.panelLink() })}>{link.label}</a>
               {:else if link.href !== undefined}
                 <Link
                   href={link.href}
                   aria-current={currentValue(link)}
                   data-navbar-link={link.id}
-                  class={styles.panelLink()}
+                  class={quietControl({ class: styles.panelLink() })}
                   onclick={() => {
                     link.onselect?.();
                     setOpen(false);
@@ -198,6 +157,7 @@
                 <Button
                   variant="ghost"
                   disabled={link.disabled}
+                  aria-current={currentValue(link)}
                   data-navbar-link={link.id}
                   class={styles.panelLink()}
                   onclick={() => {

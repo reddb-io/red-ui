@@ -2,7 +2,14 @@
   import type { QueryResult } from '#reddb'
   import { connection } from '$lib/connections.svelte'
   import { activity } from '$lib/activity.svelte'
-  import { Braces, ClipboardList, Loader2, Plus, Radio, Search, Send, X } from 'lucide-svelte'
+  import Braces from '@lucide/svelte/icons/braces'
+  import ClipboardList from '@lucide/svelte/icons/clipboard-list'
+  import Loader2 from '@lucide/svelte/icons/loader-2'
+  import Plus from '@lucide/svelte/icons/plus'
+  import Radio from '@lucide/svelte/icons/radio'
+  import Search from '@lucide/svelte/icons/search'
+  import Send from '@lucide/svelte/icons/send'
+  import X from '@lucide/svelte/icons/x'
   import {
     extractQueueEvents,
     extractQueueMessages,
@@ -91,7 +98,7 @@
     <div class="inline-flex border border-line-2 rounded overflow-hidden">
       <button
         type="button"
-        class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors', mode === 'events' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+        class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors', mode === 'events' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
         onclick={() => (mode = 'events')}
         aria-pressed={mode === 'events'}
       >
@@ -100,7 +107,7 @@
       </button>
       <button
         type="button"
-        class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'messages' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+        class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'messages' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
         onclick={() => (mode = 'messages')}
         aria-pressed={mode === 'messages'}
       >
@@ -109,7 +116,7 @@
       </button>
       <button
         type="button"
-        class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'commands' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+        class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'commands' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
         onclick={() => (mode = 'commands')}
         aria-pressed={mode === 'commands'}
       >
@@ -118,7 +125,7 @@
       </button>
       <button
         type="button"
-        class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'json' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+        class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'json' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
         onclick={() => (mode = 'json')}
         aria-pressed={mode === 'json'}
       >
@@ -131,7 +138,7 @@
       type="button"
       onclick={() => (composerOpen = !composerOpen)}
       disabled={!collection}
-      class={['inline-flex items-center gap-1 h-6 px-2 rounded border cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed', composerOpen ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2'].join(' ')}
+      class={['inline-flex items-center gap-1 h-6 px-2 rounded border cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed', composerOpen ? 'border-accent/40 bg-accent/10 text-primary-text' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2'].join(' ')}
       aria-pressed={composerOpen}
       title={collection ? 'Insert a queue message' : 'Open this as a collection to insert messages'}
     >
@@ -207,7 +214,7 @@
               <tr class="border-b border-line-1/60 hover:bg-bg-1/40">
                 <td class="px-2 py-1 text-fg-2">{fmtTs(event.ts)}</td>
                 <td class="px-2 py-1 text-fg-0">{event.collection}</td>
-                <td class="px-2 py-1"><span class="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-accent">{event.op}</span></td>
+                <td class="px-2 py-1"><span class="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-primary-text">{event.op}</span></td>
                 <td class="px-2 py-1 text-fg-1">{event.entityId}</td>
                 <td class="px-2 py-1 text-right text-fg-3">{event.lsn ?? '-'}</td>
                 <td class="px-2 py-1 text-fg-2 truncate max-w-[520px]">{display(event.after)}</td>
@@ -247,7 +254,7 @@
               class={['w-full text-left px-3 py-2 border-b border-line-1/60 hover:bg-bg-1/50 cursor-pointer', selected === msg ? 'bg-bg-1 text-fg-0' : 'text-fg-2'].join(' ')}
             >
               <div class="flex items-center gap-2">
-                <span class="text-accent">{msg.id}</span>
+                <span class="text-primary-text">{msg.id}</span>
                 <span class="rounded border border-line-1 px-1 py-0.5 text-[10px] text-fg-3">{msg.state}</span>
                 {#if msg.consumer}<span class="ml-auto text-fg-3">{msg.consumer}</span>{/if}
               </div>

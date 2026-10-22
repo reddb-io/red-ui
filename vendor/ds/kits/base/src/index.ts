@@ -52,7 +52,10 @@ export { default as Form } from "./Form.svelte";
 export { default as GridList } from "./GridList.svelte";
 export { default as Heading } from "./Heading.svelte";
 export { default as Icon } from "./Icon.svelte";
+export { default as Image } from "./Image.svelte";
 export { default as Indicator } from "./Indicator.svelte";
+export { default as InlineEdit } from "./InlineEdit.svelte";
+export { inlineEdit } from "./inline-edit.variants";
 export { default as Input } from "./Input.svelte";
 export { default as Kbd } from "./Kbd.svelte";
 export { default as Label } from "./Label.svelte";
@@ -67,6 +70,11 @@ export { default as Meter } from "./Meter.svelte";
 export { default as Navbar } from "./Navbar.svelte";
 export { default as NavigationMenu } from "./NavigationMenu.svelte";
 export { default as NavigationScope } from "./NavigationScope.svelte";
+export { default as PhoneInput } from "./PhoneInput.svelte";
+export type { PhoneCountry } from "./core/contracts/phoneinput";
+export { phoneInput } from "./phone-input.variants";
+export { default as NumberField } from "./NumberField.svelte";
+export { numberField, type NumberFieldVariants } from "./number-field.variants";
 export { default as Notification } from "./Notification.svelte";
 export { default as OneTimeCodeInput } from "./OneTimeCodeInput.svelte";
 export { default as Pagination } from "./Pagination.svelte";
@@ -83,6 +91,12 @@ export { default as Reveal } from "./Reveal.svelte";
 export { default as ScrollArea } from "./ScrollArea.svelte";
 export { default as SectionHeading } from "./SectionHeading.svelte";
 export { default as SectionSlide } from "./SectionSlide.svelte";
+export { default as SearchSelect } from "./SearchSelect.svelte";
+export {
+  searchSelect,
+  searchSelectOptions,
+  type SearchSelectOption,
+} from "./search-select.variants";
 export { default as Select } from "./Select.svelte";
 export type { SelectOption } from "./Select.svelte";
 export { default as Skeleton } from "./Skeleton.svelte";
@@ -120,7 +134,25 @@ export {
 // The deprecation window and the type-role merger, for child Kits that wear
 // them too (ADR 0025, 0026): one copy, reached through the public barrel.
 export { warnDeprecated } from "./deprecation";
+// Its sibling for the accessible-name contract (wave 5A): one dev-only warning
+// per broken contract, the same voice, reachable by every child Kit.
+export { warnA11y } from "./a11y";
 export { TYPE_ROLE_UTILITIES, typeRoleMerge } from "./type-roles";
+// Structured Data (ADR 0028): the safe JSON-LD serializer and the
+// BreadcrumbList builder Breadcrumbs emits through. The Marketing Kit builds
+// every other schema.org entity on the same serializer.
+export {
+  SCHEMA_ORG,
+  absoluteUrl,
+  breadcrumbList,
+  isAbsoluteUrl,
+  jsonLdScript,
+  serializeJsonLd,
+  type BreadcrumbListInput,
+  type BreadcrumbListOptions,
+  type JsonLdDocument,
+  type JsonLdNode,
+} from "./structured-data";
 
 export {
   REDUCED_MOTION_QUERY,
@@ -186,7 +218,9 @@ export const BASE_COMPONENTS = [
   "GridList",
   "Heading",
   "Icon",
+  "Image",
   "Indicator",
+  "InlineEdit",
   "Input",
   "Kbd",
   "Label",
@@ -202,8 +236,10 @@ export const BASE_COMPONENTS = [
   "NavigationMenu",
   "NavigationScope",
   "Notification",
+  "NumberField",
   "OneTimeCodeInput",
   "Pagination",
+  "PhoneInput",
   "PhoneMockup",
   "Popover",
   "Progress",
@@ -215,6 +251,7 @@ export const BASE_COMPONENTS = [
   "Rating",
   "Reveal",
   "ScrollArea",
+  "SearchSelect",
   "SectionHeading",
   "SectionSlide",
   "Select",
@@ -239,6 +276,7 @@ export const BASE_COMPONENTS = [
   "ToggleButton",
   "ToggleGroup",
   "Tooltip",
+  "Transfer",
   "TwoColumnSlide",
   "WindowMockup",
 ] as const;
@@ -261,12 +299,18 @@ export type PurposeCategory = (typeof PURPOSE_CATEGORIES)[number];
 /** Reader intent for each purpose group, used when placing new components. */
 export const PURPOSE_GROUP_MEANINGS = {
   Actions: "Controls that initiate or confirm operations and decisions.",
-  "Data input": "Components that collect, edit, select, or validate user-provided values.",
-  "Data display": "Components that present, summarize, compare, or organize information.",
-  Navigation: "Components that move readers among destinations or orient them within a structure.",
-  Feedback: "Components that communicate status, progress, outcomes, or required attention.",
-  Layout: "Components that arrange page regions, content, and related elements.",
-  Mockup: "Components that frame illustrative content inside recognizable device or code contexts.",
+  "Data input":
+    "Components that collect, edit, select, or validate user-provided values.",
+  "Data display":
+    "Components that present, summarize, compare, or organize information.",
+  Navigation:
+    "Components that move readers among destinations or orient them within a structure.",
+  Feedback:
+    "Components that communicate status, progress, outcomes, or required attention.",
+  Layout:
+    "Components that arrange page regions, content, and related elements.",
+  Mockup:
+    "Components that frame illustrative content inside recognizable device or code contexts.",
 } as const satisfies Record<PurposeCategory, string>;
 
 /**
@@ -277,6 +321,7 @@ export const PURPOSE_GROUP_MEANINGS = {
  * here, at the Kit boundary, so consumers never need a parallel category map.
  */
 export const BASE_COMPONENT_PURPOSES = {
+  Transfer: "Layout",
   Accordion: "Data display",
   Alert: "Feedback",
   AlertDialog: "Actions",
@@ -319,7 +364,9 @@ export const BASE_COMPONENT_PURPOSES = {
   GridList: "Data display",
   Heading: "Data display",
   Icon: "Data display",
+  Image: "Data display",
   Indicator: "Layout",
+  InlineEdit: "Data input",
   Input: "Data input",
   Kbd: "Data display",
   Label: "Data input",
@@ -335,6 +382,8 @@ export const BASE_COMPONENT_PURPOSES = {
   NavigationMenu: "Navigation",
   NavigationScope: "Navigation",
   Notification: "Feedback",
+  NumberField: "Data input",
+  PhoneInput: "Data input",
   OneTimeCodeInput: "Data input",
   Pagination: "Navigation",
   PhoneMockup: "Mockup",
@@ -350,6 +399,7 @@ export const BASE_COMPONENT_PURPOSES = {
   ScrollArea: "Layout",
   SectionHeading: "Data display",
   SectionSlide: "Layout",
+  SearchSelect: "Data input",
   Select: "Data input",
   Skeleton: "Feedback",
   SkipLink: "Navigation",
@@ -402,8 +452,13 @@ export {
 } from "./window-mockup.variants";
 export type { StepItem, StepState } from "./Steps.svelte";
 export { steps, type StepsVariants } from "./steps.variants";
-export type { CarouselSlide } from "./Carousel.svelte";
-export type { TableCellContext, TableCellValue, TableColumn, TableRow } from "./Table.svelte";
+export type { CarouselSlide, CarouselViewportContext } from "./Carousel.svelte";
+export type {
+  TableCellContext,
+  TableCellValue,
+  TableColumn,
+  TableRow,
+} from "./Table.svelte";
 
 /** Components that compose another canonical Base component. */
 export const BASE_COMPOSITES = [
@@ -431,18 +486,22 @@ export const BASE_COMPOSITES = [
   "FigureSlide",
   "FileInput",
   "GridList",
+  "InlineEdit",
   "ListContainer",
   "Navbar",
   "NavigationMenu",
   "Notification",
+  "NumberField",
   "OneTimeCodeInput",
   "Pagination",
+  "PhoneInput",
   "PhoneMockup",
   "Popover",
   "QuoteSlide",
   "RadioGroup",
   "RangeCalendar",
   "Rating",
+  "SearchSelect",
   "SectionSlide",
   "Slider",
   "Statistic",
@@ -583,7 +642,12 @@ export {
   type StackVariants,
 } from "./stack.variants";
 
-export { LIST_GAPS, list, type ListGap, type ListVariants } from "./list.variants";
+export {
+  LIST_GAPS,
+  list,
+  type ListGap,
+  type ListVariants,
+} from "./list.variants";
 
 export {
   GRID_LIST_COLUMNS,
@@ -614,6 +678,18 @@ export {
   type NormalizedRange,
 } from "./progress.behavior";
 export { progress, type ProgressVariants } from "./progress.variants";
+export {
+  IMAGE_FITS,
+  IMAGE_POSITIONS,
+  assertImageContract,
+  image,
+  imageRatio,
+  type ImageAsset,
+  type ImageFit,
+  type ImagePosition,
+  type ImageSource,
+  type ImageVariants,
+} from "./image.variants";
 export {
   PROSE_ELEMENTS,
   PROSE_MEASURES,
@@ -686,15 +762,46 @@ export {
   type ButtonVariants,
 } from "./button.variants";
 
+// The interaction-state contract every quiet control draws (wave 6A): rest,
+// hover, pressed, open, focus, disabled and selected in one recipe. Button's
+// ghost variant is built on it; a child Kit wraps a raw control's classes in
+// it so its states never drift from Button's.
+export {
+  QUIET_CONTROL_FOCUS,
+  QUIET_CONTROL_INKS,
+  QUIET_DISABLED,
+  QUIET_FOCUS,
+  QUIET_HOVER,
+  QUIET_OPEN,
+  QUIET_PRESSED,
+  quietControl,
+  type QuietControlFocus,
+  type QuietControlInk,
+  type QuietControlVariants,
+} from "./quiet-control.variants";
+
 export { checkbox, type CheckboxVariants } from "./checkbox.variants";
-export { codeBlock, type CodeBlockVariants } from "./code-block.variants";
+export {
+  CODE_TOKEN_CLASSES,
+  codeBlock,
+  codeTokens,
+  type CodeBlockVariants,
+  type CodeToken,
+  type CodeTokenizer,
+} from "./code-block.variants";
 export {
   combobox,
   type ComboboxOption,
   type ComboboxVariants,
 } from "./combobox.variants";
 
-export { DIALOG_SIZES, dialog, dialogClose, type DialogSize, type DialogVariants } from "./dialog.variants";
+export {
+  DIALOG_SIZES,
+  dialog,
+  dialogClose,
+  type DialogSize,
+  type DialogVariants,
+} from "./dialog.variants";
 export {
   DESCRIPTION_LIST_GAPS,
   descriptionList,
@@ -730,7 +837,10 @@ export {
   type NavigationMenuLink,
   type NavigationMenuSection,
 } from "./navigation-menu.behavior";
-export { notification, type NotificationVariants } from "./notification.variants";
+export {
+  notification,
+  type NotificationVariants,
+} from "./notification.variants";
 export { popover, type PopoverVariants } from "./popover.variants";
 export {
   APPEARANCE_AXES,
@@ -770,7 +880,11 @@ export {
   type FieldLayout,
   type FieldVariants,
 } from "./field.variants";
-export { fieldset, type FieldsetControlProps, type FieldsetVariants } from "./fieldset.variants";
+export {
+  fieldset,
+  type FieldsetControlProps,
+  type FieldsetVariants,
+} from "./fieldset.variants";
 export { fileInput, type FileInputVariants } from "./file-input.variants";
 export { form, type FormVariants } from "./form.variants";
 export { input, type InputVariants } from "./input.variants";
@@ -823,7 +937,10 @@ export {
   timeRangeField,
   type TimeRangeFieldVariants,
 } from "./time-range-field.variants";
-export { toggleButton, type ToggleButtonVariants } from "./toggle-button.variants";
+export {
+  toggleButton,
+  type ToggleButtonVariants,
+} from "./toggle-button.variants";
 export { swap, type SwapVariants } from "./swap.variants";
 export {
   toggleGroup,
@@ -893,7 +1010,12 @@ export {
   type TextTone,
   type TextVariants,
 } from "./text.variants";
-export { EYEBROW_ELEMENTS, eyebrow, type EyebrowElement, type EyebrowVariants } from "./eyebrow.variants";
+export {
+  EYEBROW_ELEMENTS,
+  eyebrow,
+  type EyebrowElement,
+  type EyebrowVariants,
+} from "./eyebrow.variants";
 
 export {
   SLIDE_CANVAS_WIDTH_REM,
@@ -904,3 +1026,14 @@ export {
 } from "./slide-frame.variants";
 export { slideLayout, type SlideLayoutVariants } from "./slide-layout.variants";
 export { deck, type DeckVariants } from "./deck.variants";
+
+export {
+  provideNavigationDisclosures,
+  navigationDisclosure,
+} from "./navigation";
+export { portalAppearance } from "./portal-appearance.svelte";
+
+export { afterFormReset, associatedForm } from "./core/native-controls";
+
+export { default as Transfer } from "./Transfer.svelte";
+export { observeActivity } from "./core/operational-motion";

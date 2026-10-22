@@ -1,5 +1,6 @@
 <!-- A destructive-confirmation overlay composed from the canonical Dialog. -->
 <script lang="ts">
+  import { createConfirmationSession } from "./core/confirmation";
   import type { ComponentProps } from "svelte";
   import { alertDialog, alertDialogActions } from "./alert-dialog.variants";
   import Button from "./Button.svelte";
@@ -29,27 +30,18 @@
     cancelLabel = "Cancel",
     onconfirm,
     open = $bindable(false),
+    onopenchange,
     class: className,
     ...dialogProps
   }: Props = $props();
 
   let pending = $state(false);
 
-  async function confirm(event: MouseEvent, close: () => void): Promise<void> {
-    const outcome = onconfirm?.(event);
-    if (!(outcome instanceof Promise)) {
-      close();
-      return;
-    }
-    pending = true;
-    try {
-      await outcome;
-      close();
-    } catch {
-      // Stay open: the caller owns reporting why the action failed.
-    } finally {
-      pending = false;
-    }
+  const session = createConfirmationSession(next => (pending = next));
+  $effect(() => { open; session.reset(); return () => session.reset(); });
+  function changeOpen(next: boolean) { session.reset(); onopenchange?.(next); }
+  function confirm(event: MouseEvent, close: () => void) {
+    return session.confirm(() => onconfirm?.(event), close);
   }
 </script>
 
@@ -74,6 +66,7 @@
 <Dialog
   {...dialogProps}
   bind:open
+  onopenchange={changeOpen}
   role="alertdialog"
   data-alert-dialog=""
   class={alertDialog({ class: className })}

@@ -11,7 +11,7 @@ const orientations = ["vertical", "horizontal"] as const;
 
 const contracts = {
   neutral: {
-    surface: "bg-background",
+    surface: "bg-elevation-raised-surface",
     border: "border-muted",
     foreground: "text-foreground",
     description: "text-ink-muted",

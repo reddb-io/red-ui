@@ -1,6 +1,8 @@
 <script lang="ts">
+  import type { MenubarContract } from "../core/contracts/menubar";
   import { Menubar as Bits } from "bits-ui";
   import {
+    portalAppearance,
     Button,
     Icon,
     dropdownMenuGroups,
@@ -10,31 +12,9 @@
   import type { MenubarMenu } from "./command-surfaces.behavior";
   import { menubar, type MenubarSize } from "./menubar.variants";
 
-  interface Props {
-    /** Accessible name for the menubar. */
-    label: string;
-    /**
-     * Top-level menus in order; each has an `id`, a trigger `label` and its `items`, and may be
-     * `disabled`.
-     */
-    menus?: readonly MenubarMenu[];
-    /** The open menu's id, `""` when none is open: `bind:value` (ADR 0026). */
-    value?: string;
+  interface Props extends MenubarContract {
     /** Called with the open menu's id whenever a menu opens, closes or changes. */
     onvaluechange?: (value: string) => void;
-    /** Size of the trigger buttons and the menu rows: `sm`, `md` or `lg`. Defaults to `md`. */
-    size?: MenubarSize;
-    /**
-     * Whether arrow-key focus wraps from the last menu back to the first, and the reverse. Defaults
-     * to `true`.
-     */
-    loop?: boolean;
-    /** Distance, in pixels, between an open menu and its trigger. Defaults to `8`. */
-    sideOffset?: number;
-    /**
-     * Safe distance, in pixels, kept between an open menu and the viewport edges. Defaults to `8`.
-     */
-    collisionPadding?: number;
     /** Extra classes, merged over the root slot's own, onto the menubar element. */
     class?: string;
   }
@@ -57,6 +37,7 @@
   function choose(item: DropdownMenuItem): void {
     item.onselect?.();
   }
+  const portal = portalAppearance(() => value !== "");
 </script>
 
 {#snippet row(item: DropdownMenuItem, hasIcons: boolean)}
@@ -70,7 +51,7 @@
 
 <Bits.Root bind:value onValueChange={onvaluechange} {loop}>
   {#snippet child({ props })}
-    <div {...props} data-command-menubar aria-label={label} class={slots.root({ class: className })}>
+    <div {...props} {...portal.anchor} data-command-menubar aria-label={label} class={slots.root({ class: className })}>
       {#each menus as menu (menu.id)}
         {@const contentId = `${uid}-${menu.id}-menu`}
         {@const groups = dropdownMenuGroups(menu.items)}
@@ -84,7 +65,7 @@
             {/snippet}
           </Bits.Trigger>
 
-          <Bits.Portal>
+          <Bits.Portal to={portal.container}>
             <Bits.Content
               id={contentId}
               {sideOffset}
@@ -93,7 +74,7 @@
               loop={true}
             >
               {#snippet child({ props: contentProps, wrapperProps })}
-                <div {...wrapperProps}>
+                <div {...wrapperProps} {...portal.attributes}>
                   <div
                     {...contentProps}
                     id={contentId}

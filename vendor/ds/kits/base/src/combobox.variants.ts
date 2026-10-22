@@ -22,7 +22,7 @@ export const combobox = tv({
       "disabled:cursor-not-allowed disabled:opacity-50",
     ].join(" "),
     content: [
-      "max-h-64 w-[var(--bits-combobox-anchor-width)] overflow-y-auto",
+      "max-h-[min(70dvh,var(--bits-combobox-content-available-height))] w-[var(--bits-combobox-anchor-width)] overflow-y-auto",
       "p-[var(--reddb-spatial-inset-sm)]",
     ].join(" "),
     item: [

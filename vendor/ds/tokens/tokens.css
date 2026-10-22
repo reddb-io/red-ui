@@ -95,8 +95,8 @@
   --reddb-easing-entrance: cubic-bezier(0, 0, 0.2, 1);
   --reddb-easing-exit: cubic-bezier(0.4, 0, 1, 1);
   --reddb-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
-  --reddb-font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-  --reddb-font-family-sans: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --reddb-font-family-mono: 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --reddb-font-family-sans: 'Space Grotesk', 'Space Grotesk Fallback', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --reddb-font-size-2xl: 1.5rem;
   --reddb-font-size-3xl: 1.875rem;
   --reddb-font-size-4xl: 2.25rem;

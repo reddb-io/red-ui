@@ -1,42 +1,15 @@
 <!-- An ordered pair of canonical DateFields under one native Fieldset. -->
 <script lang="ts">
+  import type { DateRangeFieldContract } from "./core/contracts/daterangefield";
   import DateField from "./DateField.svelte";
   import Fieldset from "./Fieldset.svelte";
   import { dateRangeField } from "./date-range-field.variants";
 
-  interface Props {
-    /** Visible legend naming the related bounds. */
-    label: string;
-    /** Visible label for the first DateField. */
-    startLabel: string;
-    /** Visible label for the second DateField. */
-    endLabel: string;
-    /** Native form name receiving the ordered start value. */
-    startName?: string;
-    /** Native form name receiving the ordered end value. */
-    endName?: string;
-    /** Complete start calendar date. */
-    startValue?: string;
-    /** Complete end calendar date. */
-    endValue?: string;
+  interface Props extends DateRangeFieldContract {
     /** Called with both bounds whenever either changes (ADR 0026's value dialect). */
     onvaluechange?: (value: { start: string; end: string }) => void;
-    /** Supporting text associated with the complete range. */
-    help?: string;
-    /** Caller-owned message used when the end precedes the start. */
-    rangeError?: string;
-    /** Applies native required validation to every segment. */
-    required?: boolean;
-    /** Disables the native group and both composed fields. */
-    disabled?: boolean;
-    /** Explicit id prefix for group associations and both fields. */
-    id?: string;
     /** Extra classes merged onto the canonical Fieldset root. */
     class?: string;
-    /** Extra classes merged onto each DateField root. */
-    fieldClass?: string;
-    /** Extra classes merged onto all six date segments. */
-    segmentClass?: string;
   }
 
   const generatedId = $props.id();

@@ -24,6 +24,16 @@ export const meter = tv({
     indicator: "h-full rounded-full transition-[width] motion-reduce:transition-none",
   },
   variants: {
+    layout: {
+      stacked: {},
+      inline: {
+        root: "flex-row items-center gap-[var(--reddb-spatial-gap-md)]",
+        summary: "order-last shrink-0",
+        value: "min-w-[5ch] text-end",
+        track: "min-w-0 flex-1",
+      },
+    },
+    labelHidden: { true: { label: "sr-only" } },
     tone: {
       neutral: { indicator: MEASURE_TONE_FILL.neutral },
       info: { indicator: MEASURE_TONE_FILL.info },
@@ -34,7 +44,7 @@ export const meter = tv({
       primary: { indicator: "bg-primary" },
     },
   },
-  defaultVariants: { tone: "neutral" },
+  defaultVariants: { tone: "neutral", layout: "stacked", labelHidden: false },
 });
 
 export type MeterVariants = VariantProps<typeof meter>;

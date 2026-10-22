@@ -1,25 +1,23 @@
 <!-- Product identity and caller-owned purchase content in one reusable overview. -->
 <script lang="ts">
+  import type { ProductOverviewContract } from "../core/contracts/productoverview";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
   import {
+    Image,
     SectionHeading,
     Stack,
+    type ImageAsset,
     type SectionHeadingLevel,
   } from "@reddb-io/design-system/base";
   import { productOverview } from "./product-overview.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLElement>, "children" | "class" | "title"> {
-    /** Heading text for the product; it is also the section's accessible name. */
-    title: string;
-    /** Supporting line under the title. Nothing is rendered when omitted. */
-    description?: string;
-    /** Caller-formatted price, shown under the heading. Nothing is rendered when omitted. */
-    price?: string;
-    /** Outline depth of the heading, `1` to `6`. Defaults to `2`. */
-    level?: SectionHeadingLevel;
-    /** Caller-owned product imagery, including its own alternative text. */
-    media: Snippet;
+  interface Props extends ProductOverviewContract, Omit<HTMLAttributes<HTMLElement>, keyof ProductOverviewContract | "children" | "class" | "title"> {
+    /**
+     * Caller-owned product imagery, including its own alternative text. Optional when `image` is
+     * given; one of the two is required.
+     */
+    media?: Snippet;
     /** Caller-owned product detail, options, or fulfilment information. */
     children?: Snippet;
     /** Caller-owned canonical purchase controls. */
@@ -36,6 +34,8 @@
     price,
     level = 2,
     media,
+    image,
+    priority = false,
     children,
     actions,
     class: className,
@@ -50,7 +50,13 @@
   aria-labelledby={headingId}
   class={slots.root({ class: className })}
 >
-  <div data-product-overview-media class={slots.media()}>{@render media()}</div>
+  <div data-product-overview-media class={slots.media()}>
+    {#if media}
+      {@render media()}
+    {:else if image}
+      <Image {...image} {priority} class="w-full" />
+    {/if}
+  </div>
   <Stack gap="layout-sm" class={slots.content()}>
     <SectionHeading
       {title}

@@ -1,32 +1,16 @@
 <!-- Change rows whose meaning survives when feedback colours do not. -->
 <script module lang="ts">
-  /** One aligned comparison row. The consumer owns diff computation. */
-  export interface DiffRow {
-    /** The line before the change; omit it for a pure addition. */
-    before?: string;
-    /** The line after the change; omit it for a pure removal. */
-    after?: string;
-  }
+  import type { DiffRow } from "../core/diff";
+  export type { DiffRow } from "../core/diff";
 </script>
 
 <script lang="ts">
+  import type { DiffContract } from "../core/contracts/diff";
   import type { HTMLAttributes } from "svelte/elements";
   import SplitView from "../primitives/SplitView.svelte";
   import { diff, type DiffMode } from "./diff.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "class" | "role"> {
-    /** Accessible name for this comparison. */
-    label?: string;
-    /** Caller-computed lines in display order. */
-    rows: readonly DiffRow[];
-    /** Unified reading order or aligned resizable panes. */
-    mode?: DiffMode;
-    /** Visible and accessible name for the old side. */
-    beforeLabel?: string;
-    /** Visible and accessible name for the new side. */
-    afterLabel?: string;
-    /** Accessible name for the side-by-side resize control. */
-    separatorLabel?: string;
+  interface Props extends DiffContract, Omit<HTMLAttributes<HTMLDivElement>, "class" | "role"> {
     /** Extra classes merged over the comparison surface. */
     class?: string;
   }

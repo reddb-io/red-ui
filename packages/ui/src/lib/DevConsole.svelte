@@ -10,7 +10,10 @@
   // panel chrome uses the neutral surface ramp, so the one-accent-per-screen
   // rule (design principle #6) holds even while the console is open.
   import { devConsole as defaultStore, type ConsoleEntry } from '#reddb'
-  import { X, Copy, Trash2, Check } from 'lucide-svelte'
+  import X from '@lucide/svelte/icons/x'
+  import Copy from '@lucide/svelte/icons/copy'
+  import Trash2 from '@lucide/svelte/icons/trash-2'
+  import Check from '@lucide/svelte/icons/check'
 
   let {
     store = defaultStore,

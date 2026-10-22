@@ -113,10 +113,12 @@ describe("SKINS registry", () => {
     expect(new Set(names).size).toBe(names.length);
   });
 
-  it("default skin preserves the #ff2056 accent", () => {
+  it("default skin resolves its accent through the DS", () => {
     expect(DEFAULT_SKIN.name).toBe("reddb");
-    expect(DEFAULT_SKIN.colors.accent).toBe("#ff2056");
-    expect(skinToCssVars(DEFAULT_SKIN)["--color-accent"]).toBe("#ff2056");
+    expect(DEFAULT_SKIN.colors.accent).toBe("var(--reddb-color-primary)");
+    expect(skinToCssVars(DEFAULT_SKIN)["--color-accent"]).toBe(
+      "var(--reddb-color-primary)"
+    );
   });
 
   it("every skin produces a complete, valid var set", () => {

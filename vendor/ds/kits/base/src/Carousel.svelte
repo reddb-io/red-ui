@@ -1,56 +1,66 @@
 <!-- A named slide set with canonical controls and opt-in pausable rotation. -->
 <script module lang="ts">
   import type { Snippet } from "svelte";
+  import type { CarouselSlideContract } from "./core/carousel";
+  import type { ImageAsset } from "./image.variants";
 
-  export interface CarouselSlide {
+  export interface CarouselSlide extends CarouselSlideContract {
     /** Visible meaning included in the slide's accessible position label. */
     label: string;
-    /** Caller-owned slide content. */
-    content: Snippet;
+    /** Caller-owned slide content. Omitted, the slide renders its `image`. */
+    content?: Snippet;
+    /**
+     * The slide as an image the app's pipeline produced, rendered through the Base Image (lazy
+     * unless it opens the Carousel with `priority`); ignored when `content` is given.
+     */
+    image?: ImageAsset;
+  }
+
+  export interface CarouselViewportContext {
+    /** Slides in caller-owned document order. */
+    slides: readonly CarouselSlide[];
+    /** Current zero-based index; zero for an empty carousel. */
+    active: number;
+    /** Whether automatic rotation is running. */
+    playing: boolean;
+    /** Initial slide index, used to prioritize its image. */
+    firstIndex: number;
   }
 </script>
 
 <script lang="ts">
+  import type { CarouselContract } from "./core/contracts/carousel";
   import { untrack } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
   import Button from "./Button.svelte";
+  import Image from "./Image.svelte";
   import { warnDeprecated } from "./deprecation";
   import { carousel } from "./carousel.variants";
   import { useReducedMotion } from "./reduced-motion.svelte";
 
-  interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "class" | "onchange"> {
-    /** Accessible name for the carousel region. */
-    label: string;
+  interface Props extends CarouselContract, Omit<HTMLAttributes<HTMLDivElement>, "children" | "class" | "onchange"> {
     /** Caller-owned slides in stable document order. */
     slides: readonly CarouselSlide[];
-    /** Initially selected zero-based slide index. */
-    initialIndex?: number;
-    /** Opt-in automatic rotation, suspended under reduced motion. A pause/resume control is always rendered when enabled. */
-    autoplay?: boolean;
-    /** Milliseconds between automatic selections. */
-    interval?: number;
+    /** Replaces the default slide drawing while keeping canonical navigation and rotation. The renderer owns slide semantics, inactive content exclusion and image priority. */
+    viewport?: Snippet<[CarouselViewportContext]>;
     /** Called with the selected zero-based index after a user or timer selects a slide. */
     onvaluechange?: (index: number) => void;
     /** @deprecated Renamed `onvaluechange` (ADR 0026); removed next release. */
     onchange?: (index: number) => void;
     /** Extra classes merged onto the carousel region. */
     class?: string;
-    /** Extra classes merged onto the viewport that wraps the slides. */
-    viewportClass?: string;
-    /** Extra classes merged onto each slide's group element. */
-    slideClass?: string;
-    /** Extra classes merged onto the row holding the previous, next and rotation controls. */
-    controlsClass?: string;
   }
 
   let {
     label,
     slides,
+    viewport,
     initialIndex = 0,
     autoplay = false,
     interval = 5_000,
     onvaluechange,
     onchange,
+    priority = false,
     class: className,
     viewportClass,
     slideClass,
@@ -59,16 +69,18 @@
   }: Props = $props();
 
   const reducedMotion = useReducedMotion();
-  let active = $state(untrack(() => Math.max(0, Math.min(initialIndex, slides.length - 1))));
+  let requestedIndex = $state(untrack(() => Math.max(0, Math.trunc(initialIndex) || 0)));
+  const active = $derived(Math.max(0, Math.min(requestedIndex, slides.length - 1)));
+  const firstIndex = untrack(() => active);
   let rotationRequested = $state(untrack(() => autoplay && slides.length > 1));
   const isPlaying = $derived(rotationRequested && !reducedMotion.current);
   const styles = carousel();
 
   function select(index: number): void {
     if (slides.length < 1) return;
-    active = (index + slides.length) % slides.length;
-    onvaluechange?.(active);
-    onchange?.(active);
+    requestedIndex = (index + slides.length) % slides.length;
+    onvaluechange?.(requestedIndex);
+    onchange?.(requestedIndex);
   }
 
   $effect(() => {
@@ -104,6 +116,9 @@
     aria-live={isPlaying ? "off" : "polite"}
     class={styles.viewport({ class: viewportClass })}
   >
+    {#if viewport}
+      {@render viewport({slides, active, playing: isPlaying, firstIndex})}
+    {:else}
     {#each slides as slide, index (slide)}
       <div
         data-carousel-slide
@@ -113,9 +128,14 @@
         hidden={index !== active}
         class={styles.slide({ class: slideClass })}
       >
-        {@render slide.content()}
+        {#if slide.content}
+          {@render slide.content()}
+        {:else if slide.image}
+          <Image {...slide.image} priority={priority && index === firstIndex} class="w-full" />
+        {/if}
       </div>
     {/each}
+    {/if}
   </div>
 
   <div data-carousel-controls class={styles.controls({ class: controlsClass })}>

@@ -9,6 +9,7 @@ import {
   type NavbarLink,
 } from "@reddb-io/design-system/base";
 import NavbarMasthead from "./fixtures/NavbarMasthead.svelte";
+import { labelInName } from "./label-in-name";
 import { classes, render, rendered } from "./mount";
 
 function raw(html: string): Snippet {
@@ -299,6 +300,9 @@ describe("menus composed into Base Navbar actions", () => {
       expect(trigger.getAttribute("aria-expanded")).toBe("false");
     }
     expect(nav.querySelector("[data-avatar]")).not.toBeNull();
+    // The avatar's initials lead its name, so speech input can say what it shows (WCAG 2.5.3).
+    expect(triggers[1]!.getAttribute("aria-label")).toBe("RD account");
+    for (const trigger of triggers) expect(labelInName(trigger)).toBe(true);
   });
 
   it("opens, walks, and closes an expanded masthead menu from the keyboard", async () => {
@@ -360,17 +364,17 @@ describe("menus composed into Base Navbar actions", () => {
 });
 
 describe("the Base Navbar appearance", () => {
-  it("wears the complete chrome elevation material", () => {
+  it("wears the Theme masthead surface with a quiet boundary", () => {
     const worn = classes(mountNavbar());
-    expect(worn.has("bg-elevation-sunken-surface")).toBe(true);
-    expect(worn.has("border-elevation-sunken-border")).toBe(true);
-    expect(worn.has("shadow-elevation-sunken")).toBe(true);
+    expect(worn.has("bg-navigation-surface")).toBe(true);
+    expect(worn.has("border-muted")).toBe(true);
+    expect(worn.has("font-sans")).toBe(true);
   });
 
   it("uses Density axis insets and gaps", () => {
     const worn = classes(rail(mountNavbar())!);
-    expect(worn.has("h-[var(--reddb-spatial-control-height-md)]")).toBe(true);
-    expect(worn.has("px-[var(--reddb-spatial-inset-sm)]")).toBe(true);
+    expect(worn.has("min-h-[var(--reddb-spatial-control-height-lg)]")).toBe(true);
+    expect(worn.has("px-[var(--reddb-spatial-inset-md)]")).toBe(true);
     expect(worn.has("gap-[var(--reddb-spatial-gap-lg)]")).toBe(true);
   });
 
@@ -404,7 +408,8 @@ describe("the Navbar current link", () => {
       const names = classes(element);
       expect(names.has(edge)).toBe(true);
       expect(names.has("border-transparent")).toBe(true);
-      expect(names.has("aria-[current]:border-primary")).toBe(true);
+      expect(names.has("aria-[current]:border-foreground")).toBe(true);
+      expect([...names].some((name) => /border(?:-[bstexy])?-primary/.test(name))).toBe(false);
       expect(names.has("aria-[current]:bg-foreground/10")).toBe(true);
       expect(names.has("aria-[current]:font-medium")).toBe(true);
       expect(names.has("aria-[current]:text-foreground")).toBe(true);

@@ -18,7 +18,7 @@
     /**
      * Space between children. Each value names a Density-owned role: the
      * component tier (`sm`, `md`, `lg`), the layout tier (`layout-sm`,
-     * `layout-md`, `layout-lg`) or the section tier (`section`). Defaults to `md`.
+     * `layout-md`, `layout-lg`) or the section tier (`section`), or `none` for contiguous children. Defaults to `layout-md`.
      */
     gap?: StackGap;
     /** The main axis: `column` (the default) or `row`. */
@@ -36,7 +36,7 @@
   }
 
   const {
-    gap = "md",
+    gap = "layout-md",
     direction = "column",
     align = "stretch",
     justify = "start",

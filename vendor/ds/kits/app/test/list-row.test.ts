@@ -8,6 +8,7 @@
 // look pressable forever.
 
 import { describe, expect, it, vi } from "vitest";
+import { quietControl } from "@reddb-io/design-system/base";
 import ListRow from "../src/primitives/ListRow.svelte";
 import { LIST_ROW_SIZES, listRow } from "../src/primitives/list-row.variants";
 import { classes, classesOf, click, render, rendered, text } from "./mount";
@@ -43,7 +44,8 @@ describe("ListRow", () => {
 
     for (const props of [{ href: "/nodes" }, { onclick: () => {} }]) {
       const live = rendered(render(ListRow, { title: "reddb-01", ...props }));
-      expect(classes(live)).toEqual(classesOf(listRow({ interactive: true }).root()));
+      // An interactive row wears the quiet-control contract around its slot (wave 6A).
+      expect(classes(live)).toEqual(classesOf(quietControl({ ink: "inherit", class: listRow({ interactive: true }).root() })));
     }
   });
 

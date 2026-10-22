@@ -1,4 +1,4 @@
-import { popover } from "@reddb-io/design-system/base";
+import { popover } from "@reddb-io/design-system/base/recipes";
 import { tv, type VariantProps } from "tailwind-variants";
 
 export const speedDial = tv({

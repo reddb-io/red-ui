@@ -1,39 +1,20 @@
 <!-- A compact, externally selected application/workspace rail with roving focus. -->
-<script lang="ts" module>
-  import type { IconGlyph } from "@reddb-io/design-system/base";
-
-  export interface SidebarRailItem {
-    /** Stable identity emitted when this item is chosen. */
-    id: string;
-    /** Accessible name and Tooltip content for the visually compact control. */
-    label: string;
-    /** Optional glyph rendered only through the Base Icon contract. */
-    icon?: IconGlyph;
-    /** Initials or a short affordance such as "+" when no glyph is supplied. */
-    fallback?: string;
-    /** Present but unavailable and omitted from the rail's roving focus order. */
-    disabled?: boolean;
-    /** Disclosure state when the selected rail item toggles an adjacent panel. */
-    expanded?: boolean;
-    /** Id of the adjacent panel controlled by this disclosure item. */
-    controls?: string;
-  }
+<script module lang="ts">
+  import { face, nameOf } from "../core/sidebar-rail";
+  import type { SidebarRailItem } from "../core/sidebar-rail";
+  export type { SidebarRailItem } from "../core/sidebar-rail";
 </script>
 
 <script lang="ts">
+  import type { SidebarRailContract } from "../core/contracts/sidebarrail";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
-  import { Icon, Tooltip } from "@reddb-io/design-system/base";
+  import { Badge, Button, Divider, Icon, Indicator, StatusIndicator, Tooltip } from "@reddb-io/design-system/base";
+  import { navigationBadge, navigationMarkerLabel } from "./navigation.behavior";
   import { warnDeprecated } from "@reddb-io/design-system/base";
   import { sidebarRail } from "./sidebar-rail.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLElement>, "class" | "onselect"> {
-    /** Accessible name for this navigation landmark. */
-    label: string;
-    /** Caller-owned actions, organizations, and optional add affordance. */
-    items: readonly SidebarRailItem[];
-    /** Caller-owned current identity (ADR 0026); SidebarRail never changes it. */
-    currentId?: string;
+  interface Props extends SidebarRailContract, Omit<HTMLAttributes<HTMLElement>, "class" | "onselect"> {
     /** @deprecated Renamed `currentId` (ADR 0026); removed next release. */
     selectedId?: string;
     /** Emits the chosen identity without retaining organization state. */
@@ -54,6 +35,7 @@
     onselect,
     top,
     bottom,
+    showLabels = false,
     class: className,
     ...rest
   }: Props = $props();
@@ -72,19 +54,19 @@
   }
 
   let focusIndex = $state(initialFocusIndex());
-  const styles = $derived(sidebarRail());
+  const styles = $derived(sidebarRail({ labelled: showLabels }));
 
   $effect(() => {
     if (items[focusIndex] && !items[focusIndex]?.disabled) return;
     focusIndex = initialFocusIndex();
   });
 
-  function controls(rail: HTMLElement): HTMLButtonElement[] {
-    return [...rail.querySelectorAll<HTMLButtonElement>("[data-sidebar-rail-item]:not(:disabled)")];
+  function controls(rail: HTMLElement): HTMLElement[] {
+    return [...rail.querySelectorAll<HTMLElement>('[data-sidebar-rail-item]:not(:disabled):not([aria-disabled="true"])')];
   }
 
   function focusControl(event: KeyboardEvent): void {
-    if (!(event.target instanceof HTMLButtonElement) || !event.target.dataset.sidebarRailItem) {
+    if (!(event.target instanceof HTMLElement) || !event.target.dataset.sidebarRailItem) {
       return;
     }
 
@@ -106,7 +88,7 @@
   }
 
   function rememberFocusedControl(event: FocusEvent): void {
-    if (!(event.target instanceof HTMLButtonElement) || !event.target.dataset.sidebarRailItem) {
+    if (!(event.target instanceof HTMLElement) || !event.target.dataset.sidebarRailItem) {
       return;
     }
     focusIndex = Number(event.target.dataset.sidebarRailIndex);
@@ -117,6 +99,7 @@
   {...rest}
   aria-label={label}
   data-sidebar-rail
+  data-sidebar-rail-labels={showLabels ? "" : undefined}
   class={styles.root({ class: className })}
   onkeydown={focusControl}
   onfocusin={rememberFocusedControl}
@@ -128,27 +111,45 @@
   <div data-sidebar-rail-region="middle" class={styles.region({ class: styles.middle() })}>
     <ul data-sidebar-rail-items class={styles.list()}>
       {#each items as item, index (item.id)}
-        <li>
-          <Tooltip
-            label={item.label}
-            content={item.label}
-            disabled={item.disabled}
-            tabindex={!item.disabled && index === focusIndex ? 0 : -1}
-            aria-pressed={item.id === currentId}
-            aria-expanded={item.expanded}
-            aria-controls={item.controls}
-            data-sidebar-rail-item={item.id}
-            data-sidebar-rail-index={index}
-            class={styles.item()}
-            onclick={() => onselect?.(item.id)}
-          >
-            {#if item.icon}
-              <Icon icon={item.icon} size="md" aria-hidden="true" />
-            {:else}
-              <span aria-hidden="true" class={styles.fallback()}>
-                {item.fallback ?? item.label.slice(0, 2).toUpperCase()}
-              </span>
-            {/if}
+        <li class="w-full">
+          {#if item.separatorBefore && index > 0}<Divider data-sidebar-rail-divider class={styles.divider()} />{/if}
+          {#snippet itemFace()}
+            {#if item.icon}<Icon icon={item.icon} size="md" aria-hidden="true" data-sidebar-rail-glyph />
+            {:else}<span aria-hidden="true" data-sidebar-rail-glyph class={styles.fallback()}>{face(item)}</span>{/if}
+          {/snippet}
+          <Tooltip content={navigationMarkerLabel(item, item.label)} disabled={item.disabled}>
+            {#snippet child({ props })}
+              <Button
+                {...props}
+                variant="ghost"
+                href={item.href}
+                aria-label={navigationMarkerLabel(item, nameOf(item, showLabels))}
+                disabled={item.disabled}
+                tabindex={!item.disabled && index === focusIndex ? 0 : -1}
+                aria-pressed={item.href ? undefined : item.id === currentId}
+                aria-current={item.href && item.id === currentId ? "page" : undefined}
+                aria-expanded={item.expanded}
+                aria-controls={item.controls}
+                data-sidebar-rail-item={item.id}
+                data-sidebar-rail-index={index}
+                class={styles.item()}
+                onclick={() => onselect?.(item.id)}
+              >
+            <!-- Read the destination before its decorative face and notification. -->
+            {#if showLabels}<span data-sidebar-rail-label class={styles.label()}>{item.label}</span>{/if}
+            <span data-sidebar-rail-face class={styles.face()}>
+            {#if item.badge !== undefined || item.status}
+              <Indicator class={styles.badgeAnchor()}>
+                {#snippet marker()}{#if item.badge !== undefined}<Badge tone={item.badgeTone ?? "neutral"} variant="filled" class={styles.badge()} aria-hidden="true">{navigationBadge(item.badge)}</Badge>{/if}{/snippet}
+                <Indicator position="bottom-end" class={styles.statusAnchor()}>
+                  {#snippet marker()}{#if item.status}<StatusIndicator label={item.status.label} tone={item.status.tone} showLabel={false} aria-hidden="true" />{/if}{/snippet}
+                  {@render itemFace()}
+                </Indicator>
+              </Indicator>
+            {:else}{@render itemFace()}{/if}
+            </span>
+              </Button>
+            {/snippet}
           </Tooltip>
         </li>
       {/each}

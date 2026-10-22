@@ -3,6 +3,7 @@
 // extends the canonical appearance without copying that behavior.
 
 import { tv, type VariantProps } from "tailwind-variants";
+import { typeRoleMerge } from "./type-roles";
 
 export const input = tv({
   base: [
@@ -19,13 +20,13 @@ export const input = tv({
     // share one control height at every Density stop. Named `controlSize` on
     // the component: the native `size` attribute is still spread through.
     size: {
-      sm: "h-[var(--reddb-spatial-control-height-sm)] px-[var(--reddb-spatial-inset-sm)] text-sm",
-      md: "h-[var(--reddb-spatial-control-height-md)] px-[var(--reddb-spatial-inset-md)] text-sm",
-      lg: "h-[var(--reddb-spatial-control-height-lg)] px-[var(--reddb-spatial-inset-lg)] text-base",
+      sm: "h-[var(--reddb-spatial-control-height-sm)] px-[var(--reddb-spatial-inset-sm)] text-editable-sm",
+      md: "h-[var(--reddb-spatial-control-height-md)] px-[var(--reddb-spatial-inset-md)] text-editable-md",
+      lg: "h-[var(--reddb-spatial-control-height-lg)] px-[var(--reddb-spatial-inset-lg)] text-editable-lg",
     },
   },
   defaultVariants: { size: "md" },
-});
+}, typeRoleMerge);
 
 export type InputVariants = VariantProps<typeof input>;
 export type InputSize = NonNullable<InputVariants["size"]>;

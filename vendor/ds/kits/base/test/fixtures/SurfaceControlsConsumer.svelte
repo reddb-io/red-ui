@@ -20,9 +20,9 @@
     <p>Preview</p>
   </ScrollArea>
 
-  <Swap label="Show deployment detail">
-    {#snippet off()}Summary{/snippet}
-    {#snippet on()}Detail{/snippet}
+  <Swap label="Details for this deployment">
+    {#snippet off()}▸ Details{/snippet}
+    {#snippet on()}▾ Details{/snippet}
   </Swap>
 
   <AppearanceSwitch

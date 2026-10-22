@@ -1,24 +1,12 @@
 <!-- One authored message composed from canonical Avatar and MediaObject contracts. -->
 <script lang="ts">
+  import type { ChatMessageContract } from "../core/contracts/chatmessage";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
   import { Avatar, MediaObject } from "@reddb-io/design-system/base";
   import { chatMessage } from "./chat-message.variants";
 
-  interface Props extends Omit<HTMLAttributes<HTMLElement>, "children" | "class"> {
-    /** Visible and accessible author name. */
-    author: string;
-    /**
-     * Image source for the author's avatar. When omitted or unloadable, `avatarFallback` is shown
-     * instead.
-     */
-    avatarSrc?: string;
-    /** Visible fallback when the author's image is unavailable. */
-    avatarFallback: string;
-    /** Machine-readable message timestamp. */
-    datetime: string;
-    /** Caller-owned visible timestamp. */
-    time: string;
+  interface Props extends ChatMessageContract, Omit<HTMLAttributes<HTMLElement>, keyof ChatMessageContract | "children" | "class"> {
     /** Caller-owned message body. */
     children: Snippet;
     /** Optional caller-owned destinations and controls after the body. */

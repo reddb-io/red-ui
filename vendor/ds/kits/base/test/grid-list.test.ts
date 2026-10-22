@@ -14,6 +14,20 @@ describe("the Base GridList", () => {
     expect(GridList).toBeDefined();
   });
 
+  it("renders a plain div grid without list semantics when list is false (wave 5A)", () => {
+    const element = rendered(render(GridList, {
+      columns: 2,
+      gap: "lg",
+      list: false,
+      children: createRawSnippet(() => ({ render: () => "<article>KPI</article>" })),
+    }));
+
+    expect(element.tagName).toBe("DIV");
+    expect(element.hasAttribute("role")).toBe(false);
+    expect(element.hasAttribute("data-grid-list")).toBe(true);
+    expect(classes(element)).toEqual(classesOf(list({ gap: "lg", class: gridList({ columns: 2 }) })));
+  });
+
   it("composes List semantics with a caller-selected responsive grid", () => {
     expect(GRID_LIST_COLUMNS).toEqual([1, 2, 3, 4]);
     const element = rendered(render(GridList, {

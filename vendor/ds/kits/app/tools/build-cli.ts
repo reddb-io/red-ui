@@ -14,7 +14,7 @@
 // file list printed keeps the same commit producing the same bundle, which is
 // what the release reproducibility check depends on.
 
-import { cpSync, mkdirSync, rmSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import { basename, join, relative } from "node:path";
 import { DIST_DIR, KIT_MANIFEST, KIT_ROOT, SRC_DIR, filesUnder } from "./paths";
 
@@ -22,6 +22,7 @@ rmSync(DIST_DIR, { recursive: true, force: true });
 mkdirSync(DIST_DIR, { recursive: true });
 
 cpSync(SRC_DIR, join(DIST_DIR, "src"), { recursive: true });
+if (existsSync(join(KIT_ROOT, "react"))) cpSync(join(KIT_ROOT, "react"), join(DIST_DIR, "react"), { recursive: true });
 for (const file of [KIT_MANIFEST, join(KIT_ROOT, "README.md")]) {
   cpSync(file, join(DIST_DIR, basename(file)));
 }

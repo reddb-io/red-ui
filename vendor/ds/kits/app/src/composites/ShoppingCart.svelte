@@ -1,5 +1,6 @@
 <!-- Editable cart rows and an announced total composed inside canonical Form. -->
 <script lang="ts">
+  import type { ShoppingCartContract } from "../core/contracts/shoppingcart";
   import {
     Button,
     Field,
@@ -13,36 +14,15 @@
   import type { HTMLFormAttributes } from "svelte/elements";
   import { shoppingCart, type ShoppingCartItem } from "./shopping-cart.variants";
 
-  interface Props extends Omit<HTMLFormAttributes, "children" | "class" | "title"> {
-    /**
-     * Heading text for the cart; it is also the form's accessible name unless `aria-label` is
-     * given.
-     */
-    title: string;
-    /**
-     * Outline depth of the cart heading, `1` to `6`; item names sit one level lower. Defaults to
-     * `2`.
-     */
-    level?: SectionHeadingLevel;
-    /**
-     * Caller-owned cart rows in display order, each with name, price, quantity and optional media.
-     * When empty, `empty` is shown.
-     */
+  interface Props extends ShoppingCartContract, Omit<HTMLFormAttributes, keyof ShoppingCartContract | "children" | "class" | "title"> {
+    /** Caller-owned cart rows with native media, detail and action snippets. */
     items: readonly ShoppingCartItem[];
-    /** Visible label of the total row. */
-    totalLabel: string;
-    /** Caller-formatted total amount, announced politely whenever it changes. */
-    total: string;
     /** Caller-owned recovery content rendered when the cart has no items. */
     empty?: Snippet;
     /** Optional controls, such as checkout, rendered after the total while the cart has items. */
     actions?: Snippet;
     /** Extra classes, merged over the root slot's own, onto the form. */
     class?: string;
-    /** Extra classes, merged over the item slot's own, onto each cart row. */
-    itemClass?: string;
-    /** Extra classes, merged over the quantity slot's own, onto each row's quantity input. */
-    quantityClass?: string;
     /**
      * Called with the row's `id` and the typed quantity on each input; the quantity is `NaN` when
      * the field is cleared.

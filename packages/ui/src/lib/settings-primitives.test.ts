@@ -105,13 +105,13 @@ describe("SectionHeading", () => {
 });
 
 describe("Pill", () => {
-  it("defaults to the muted tone and switches to accent", () => {
+  it("maps legacy emphasis to a neutral DS tone", () => {
     const muted = render(Pill, { props: { children: marker("3") } }).body;
     const accent = render(Pill, {
       props: { tone: "accent", children: marker("Live") },
     }).body;
-    expect(muted).toContain("text-fg-2");
-    expect(accent).toContain("text-accent");
+    expect(muted).toContain('data-tone="neutral"');
+    expect(accent).toContain('data-tone="neutral"');
     expect(accent).toContain("Live");
   });
 });

@@ -2,6 +2,7 @@
 // only the segmented clock arrangement is new.
 
 import { tv, type VariantProps } from "tailwind-variants";
+import { typeRoleMerge } from "./type-roles";
 import { field } from "./field.variants";
 import { input } from "./input.variants";
 
@@ -15,6 +16,6 @@ export const timeField = tv({
     ].join(" "),
     separator: "text-foreground",
   },
-});
+}, typeRoleMerge);
 
 export type TimeFieldVariants = VariantProps<typeof timeField>;

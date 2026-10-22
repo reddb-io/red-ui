@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { QueryResult } from '#reddb'
-  import { Gauge, List, Table2 } from 'lucide-svelte'
+  import Gauge from '@lucide/svelte/icons/gauge'
+  import List from '@lucide/svelte/icons/list'
+  import Table2 from '@lucide/svelte/icons/table-2'
   import { extractStats, formatMetric } from './stats-render'
 
   interface Props {
@@ -30,7 +32,7 @@
       <div class="inline-flex border border-line-2 rounded overflow-hidden">
         <button
           type="button"
-          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors', mode === 'kpi' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors', mode === 'kpi' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
           onclick={() => (mode = 'kpi')}
           aria-pressed={mode === 'kpi'}
         >
@@ -39,7 +41,7 @@
         </button>
         <button
           type="button"
-          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'gauge' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'gauge' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
           onclick={() => (mode = 'gauge')}
           aria-pressed={mode === 'gauge'}
         >
@@ -48,7 +50,7 @@
         </button>
         <button
           type="button"
-          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'table' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'table' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
           onclick={() => (mode = 'table')}
           aria-pressed={mode === 'table'}
         >
@@ -111,7 +113,7 @@
             {#each metrics as metric, i (`${metric.key}-${i}`)}
               <tr class="border-b border-line-1/60 hover:bg-bg-1/40">
                 <td class="px-2 py-1 text-fg-0">{metric.label}</td>
-                <td class="px-2 py-1 text-right text-accent">{metric.value.toLocaleString()}</td>
+                <td class="px-2 py-1 text-right text-primary-text">{metric.value.toLocaleString()}</td>
                 <td class="px-2 py-1 text-fg-3">{metric.unit || '-'}</td>
               </tr>
             {/each}

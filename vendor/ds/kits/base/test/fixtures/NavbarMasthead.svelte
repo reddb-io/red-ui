@@ -48,7 +48,7 @@
       contentLabel="Notifications"
       items={notifications}
     />
-    <DropdownMenu triggerLabel="Account" contentLabel="Account" items={account} variant="ghost">
+    <DropdownMenu triggerLabel="RD account" contentLabel="Account" items={account} variant="ghost">
       {#snippet trigger()}<span data-avatar>RD</span>{/snippet}
     </DropdownMenu>
   {/snippet}

@@ -21,6 +21,8 @@
   --reddb-spatial-layout-gap-sm: var(--reddb-spacing-6);
   --reddb-spatial-section-gap: var(--reddb-spacing-24);
   --reddb-spatial-section-inset: var(--reddb-spacing-20);
+  --reddb-spatial-switch-thumb-size: var(--reddb-spacing-5);
+  --reddb-spatial-switch-track-height: var(--reddb-spacing-8);
   --reddb-spatial-target-min: var(--reddb-spacing-6);
 }
 /* Touch floor (ADR 0022): under a coarse primary pointer every pointer target is at least 44px. */

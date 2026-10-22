@@ -1,5 +1,8 @@
 <!-- A collision-aware, non-modal anchored dialog with a canonical Button trigger. -->
 <script lang="ts">
+  import { trapScopeTab } from "./core/focus-scope";
+  import { portalAppearance } from "./portal-appearance.svelte";
+  import type { PopoverContract } from "./core/contracts/popover";
   import type { Snippet } from "svelte";
   import { Popover as Bits } from "bits-ui";
   import Button from "./Button.svelte";
@@ -9,35 +12,16 @@
   type Side = "top" | "right" | "bottom" | "left";
   type Align = "start" | "center" | "end";
 
-  interface Props {
-    /** Accessible name for the Button that opens the Popover. */
-    triggerLabel: string;
-    /** Accessible name for the opened non-modal dialog. */
-    contentLabel: string;
-    /** Whether the Popover is open. Bindable for controlled consumers. */
-    open?: boolean;
-    /** Disables the canonical trigger Button. */
-    disabled?: boolean;
-    /** Button emphasis for the trigger. */
-    variant?: ButtonVariant;
-    /** Button size for the trigger. */
-    size?: ButtonSize;
-    /** Preferred side of the trigger; collision handling may flip it. */
-    side?: Side;
-    /** Preferred alignment along the selected side. */
-    align?: Align;
-    /** Distance from the trigger in pixels. */
-    sideOffset?: number;
-    /** Safe distance from viewport collision edges in pixels. */
-    collisionPadding?: number;
-    /** Optional custom Button content. */
+  interface Props extends PopoverContract {
+    /**
+     * Optional custom Button content; `triggerLabel` stays its accessible name, so words it shows
+     * must appear, in order, in `triggerLabel`, ideally first (WCAG 2.5.3, Label in Name).
+     */
     trigger?: Snippet;
     /** Caller-owned Popover content. */
     children?: Snippet;
     /** Extra classes merged onto the anchored surface. */
     class?: string;
-    /** Extra classes merged onto the canonical trigger Button. */
-    triggerClass?: string;
     /** Called with the next open state whenever the Popover opens or closes. */
     onopenchange?: (open: boolean) => void;
   }
@@ -77,6 +61,7 @@
     event.preventDefault();
     (surface.querySelector<HTMLElement>(focusableSelector) ?? surface).focus();
   }
+  const portal = portalAppearance(() => open);
 </script>
 
 <Bits.Root bind:open onOpenChange={onopenchange}>
@@ -84,6 +69,7 @@
     {#snippet child({ props })}
       <Button
         {...props}
+        {...portal.anchor}
         data-popover-trigger
         aria-label={triggerLabel}
         {disabled}
@@ -96,7 +82,7 @@
     {/snippet}
   </Bits.Trigger>
 
-  <Bits.Portal>
+  <Bits.Portal to={portal.container}>
     <Bits.Content
       id={contentId}
       {side}
@@ -108,12 +94,13 @@
       onOpenAutoFocus={handleOpenAutoFocus}
     >
       {#snippet child({ props, wrapperProps })}
-        <div {...wrapperProps}>
+        <div {...wrapperProps} {...portal.attributes}>
           <div
             bind:this={surface}
+            {@attach trapScopeTab}
             {...props}
             id={contentId}
-            data-popover-surface
+            data-popover-surface data-ds-focus-scope
             data-avoid-collisions="true"
             data-collision-padding={collisionPadding}
             role="dialog"

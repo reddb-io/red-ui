@@ -16,6 +16,7 @@
   const {
     ratio = DEFAULT_ASPECT_RATIO,
     class: className,
+    style,
     children,
     ...rest
   }: Props = $props();
@@ -24,7 +25,7 @@
 <div
   {...(rest as Record<string, unknown>)}
   data-aspect-ratio
-  style:aspect-ratio={String(ratio)}
+  style={`${style ?? ""}; aspect-ratio: ${ratio}`}
   class={aspectRatio({ class: className })}
 >
   {@render children?.()}

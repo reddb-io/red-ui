@@ -46,6 +46,8 @@ export { default as OrderHistory } from "./composites/OrderHistory.svelte";
 export { default as OrderSummary } from "./composites/OrderSummary.svelte";
 export { default as ShoppingCart } from "./composites/ShoppingCart.svelte";
 export { default as SidebarNavigation } from "./composites/SidebarNavigation.svelte";
+export { default as SidebarPanel } from "./composites/SidebarPanel.svelte";
+export { sidebarPanel } from "./composites/sidebar-panel.variants";
 export { default as SidebarRail } from "./composites/SidebarRail.svelte";
 export { default as StoreNavigation } from "./composites/StoreNavigation.svelte";
 export { default as PageHeading } from "./composites/PageHeading.svelte";
@@ -56,6 +58,18 @@ export { default as ProductOverview } from "./composites/ProductOverview.svelte"
 export { default as ProductQuickview } from "./composites/ProductQuickview.svelte";
 export { default as SidebarLayout } from "./composites/SidebarLayout.svelte";
 export { default as SpeedDial } from "./composites/SpeedDial.svelte";
+export { default as TaskList } from "./composites/TaskList.svelte";
+export {
+  taskList,
+  type TaskListVariants,
+} from "./composites/task-list.variants";
+export {
+  TASK_STATES,
+  TASK_STATE_LABELS,
+  TASK_STATE_TONES,
+  type TaskState,
+  type TaskListItem,
+} from "./composites/task-list.behavior";
 export { default as Toolbar } from "./composites/Toolbar.svelte";
 
 export {
@@ -152,7 +166,10 @@ export {
   type FilterOption,
   type FilterVariants,
 } from "./composites/filter.variants";
-export { incentive, type IncentiveVariants } from "./composites/incentive.variants";
+export {
+  incentive,
+  type IncentiveVariants,
+} from "./composites/incentive.variants";
 export {
   pageHeading,
   type PageHeadingVariants,
@@ -164,7 +181,10 @@ export {
   type ProductFeatureMediaSide,
   type ProductFeatureVariants,
 } from "./composites/product-feature.variants";
-export { productList, type ProductListVariants } from "./composites/product-list.variants";
+export {
+  productList,
+  type ProductListVariants,
+} from "./composites/product-list.variants";
 export {
   productOverview,
   type ProductOverviewVariants,
@@ -182,13 +202,21 @@ export {
   type ContextMenuSize,
   type ContextMenuVariants,
 } from "./composites/context-menu.variants";
-export { menubar, type MenubarSize, type MenubarVariants } from "./composites/menubar.variants";
+export {
+  menubar,
+  type MenubarSize,
+  type MenubarVariants,
+} from "./composites/menubar.variants";
 export {
   speedDial,
   type SpeedDialSize,
   type SpeedDialVariants,
 } from "./composites/speed-dial.variants";
-export { toolbar, type ToolbarSize, type ToolbarVariants } from "./composites/toolbar.variants";
+export {
+  toolbar,
+  type ToolbarSize,
+  type ToolbarVariants,
+} from "./composites/toolbar.variants";
 export {
   sidebarNavigation,
   type SidebarNavigationVariants,
@@ -202,7 +230,12 @@ export {
   storeNavigation,
   type StoreNavigationVariants,
 } from "./composites/store-navigation.variants";
-export type { ApplicationNavigationItem } from "./composites/navigation.behavior";
+export type {
+  ApplicationNavigationItem,
+  PrimaryNavigationItem,
+  NavigationMarkers,
+  NavigationStatus,
+} from "./composites/navigation.behavior";
 export {
   applicationShell,
   type ApplicationShellVariants,
@@ -272,6 +305,15 @@ export type PrimitiveName = (typeof PRIMITIVES)[number];
  * the Taxonomy's other half, kept for the same reason.
  */
 export const COMPOSITES = [
+  "EntityInspector",
+  "EntityJourney",
+  "SettingsRow",
+  "TaskCard",
+  "TelemetryRow",
+  "PropertyPanel",
+  "PhaseSummary",
+  "PlaybackControls",
+
   "ActionPanel",
   "ActivityFeed",
   "ApplicationShell",
@@ -298,10 +340,12 @@ export const COMPOSITES = [
   "ProductQuickview",
   "SidebarLayout",
   "SidebarNavigation",
+  "SidebarPanel",
   "SidebarRail",
   "ShoppingCart",
   "SpeedDial",
   "StoreNavigation",
+  "TaskList",
   "Toolbar",
 ] as const;
 
@@ -318,6 +362,15 @@ export type ComponentName = PrimitiveName | CompositeName;
  * capabilities use the same shared purpose vocabulary.
  */
 export const COMPONENT_PURPOSES = {
+  EntityInspector: "Data display",
+  EntityJourney: "Data display",
+  SettingsRow: "Data input",
+  TaskCard: "Data display",
+  TelemetryRow: "Data display",
+  PropertyPanel: "Data display",
+  PhaseSummary: "Data display",
+  PlaybackControls: "Actions",
+
   ListRow: "Data display",
   NavItem: "Navigation",
   NodeBadge: "Data display",
@@ -349,9 +402,28 @@ export const COMPONENT_PURPOSES = {
   ProductQuickview: "Data display",
   SidebarLayout: "Layout",
   SidebarNavigation: "Navigation",
+  SidebarPanel: "Navigation",
   SidebarRail: "Navigation",
   ShoppingCart: "Data input",
   SpeedDial: "Actions",
   StoreNavigation: "Navigation",
+  TaskList: "Data display",
   Toolbar: "Actions",
 } as const satisfies Record<ComponentName, PurposeCategory>;
+
+export type { BottomNavigationItem } from "./composites/BottomNavigation.svelte";
+
+export { default as TaskCard } from "./composites/TaskCard.svelte";
+export { default as TelemetryRow } from "./composites/TelemetryRow.svelte";
+export { default as PropertyPanel } from "./composites/PropertyPanel.svelte";
+export { default as PhaseSummary } from "./composites/PhaseSummary.svelte";
+export { default as PlaybackControls } from "./composites/PlaybackControls.svelte";
+export type { PropertyItem, PhaseGate } from "./core/operational";
+
+export { default as SettingsRow } from "./composites/SettingsRow.svelte";
+
+export { default as EntityInspector } from "./composites/EntityInspector.svelte";
+export type { InspectorEntity } from "./core/entity-inspector";
+
+export { default as EntityJourney } from "./composites/EntityJourney.svelte";
+export type { JourneyStage, JourneyState } from "./core/entity-journey";

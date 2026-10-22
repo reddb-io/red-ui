@@ -8,6 +8,7 @@ export const DS_THEME = "application";
 /** Put red-ui's appearance on an element in the DS's attribute vocabulary. */
 export function applyAppearance(el: HTMLElement, scheme: Theme) {
   el.dataset.theme = DS_THEME;
+  el.dataset.density ||= "compact";
   el.dataset.colorScheme = scheme;
 }
 

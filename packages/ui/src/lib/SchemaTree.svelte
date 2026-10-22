@@ -10,7 +10,11 @@
   } from './capability'
   import { defaultSubpage } from './collection-pages'
   import { useRouter } from './router.svelte'
-  import { Plug, Database, Lock, Search, X } from 'lucide-svelte'
+  import Plug from '@lucide/svelte/icons/plug'
+  import Database from '@lucide/svelte/icons/database'
+  import Lock from '@lucide/svelte/icons/lock'
+  import Search from '@lucide/svelte/icons/search'
+  import X from '@lucide/svelte/icons/x'
 
   const router = useRouter()
 
@@ -99,7 +103,7 @@
 
 {#if secureStore.locked}
   <div class="p-3 flex flex-col items-start gap-2 text-[12px] text-fg-3 font-mono leading-relaxed">
-    <Lock class="size-4 text-accent" />
+    <Lock class="size-4 text-primary-text" />
     <span class="text-fg-1">Locked.</span>
     <span>Enter your master password to load the schema.</span>
   </div>
@@ -167,7 +171,7 @@
         onclick={() => (capabilityFilter = 'all')}
         class={[
           'h-5 rounded border px-1.5 font-mono text-[10px] cursor-pointer transition-colors',
-          capabilityFilter === 'all' ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+          capabilityFilter === 'all' ? 'border-accent/40 bg-accent/10 text-primary-text' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
         ].join(' ')}
       >
         all {items.length}
@@ -180,7 +184,7 @@
           title={g.label}
           class={[
             'h-5 rounded border px-1.5 font-mono text-[10px] cursor-pointer transition-colors',
-            capabilityFilter === cap ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+            capabilityFilter === cap ? 'border-accent/40 bg-accent/10 text-primary-text' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
           ].join(' ')}
         >
           {g.glyph} {count}

@@ -66,6 +66,7 @@
   --color-elevation-sunken-surface: var(--reddb-color-elevation-sunken-surface);
   --color-feedback-danger-border: var(--reddb-color-feedback-danger-border);
   --color-feedback-danger-fill: var(--reddb-color-feedback-danger-fill);
+  --color-feedback-danger-fill-active: var(--reddb-color-feedback-danger-fill-active);
   --color-feedback-danger-foreground: var(--reddb-color-feedback-danger-foreground);
   --color-feedback-danger-on-dark: var(--reddb-color-feedback-danger-on-dark);
   --color-feedback-danger-on-fill: var(--reddb-color-feedback-danger-on-fill);
@@ -73,6 +74,7 @@
   --color-feedback-danger-surface: var(--reddb-color-feedback-danger-surface);
   --color-feedback-info-border: var(--reddb-color-feedback-info-border);
   --color-feedback-info-fill: var(--reddb-color-feedback-info-fill);
+  --color-feedback-info-fill-active: var(--reddb-color-feedback-info-fill-active);
   --color-feedback-info-foreground: var(--reddb-color-feedback-info-foreground);
   --color-feedback-info-on-dark: var(--reddb-color-feedback-info-on-dark);
   --color-feedback-info-on-fill: var(--reddb-color-feedback-info-on-fill);
@@ -80,6 +82,7 @@
   --color-feedback-info-surface: var(--reddb-color-feedback-info-surface);
   --color-feedback-success-border: var(--reddb-color-feedback-success-border);
   --color-feedback-success-fill: var(--reddb-color-feedback-success-fill);
+  --color-feedback-success-fill-active: var(--reddb-color-feedback-success-fill-active);
   --color-feedback-success-foreground: var(--reddb-color-feedback-success-foreground);
   --color-feedback-success-on-dark: var(--reddb-color-feedback-success-on-dark);
   --color-feedback-success-on-fill: var(--reddb-color-feedback-success-on-fill);
@@ -87,6 +90,7 @@
   --color-feedback-success-surface: var(--reddb-color-feedback-success-surface);
   --color-feedback-warning-border: var(--reddb-color-feedback-warning-border);
   --color-feedback-warning-fill: var(--reddb-color-feedback-warning-fill);
+  --color-feedback-warning-fill-active: var(--reddb-color-feedback-warning-fill-active);
   --color-feedback-warning-foreground: var(--reddb-color-feedback-warning-foreground);
   --color-feedback-warning-on-dark: var(--reddb-color-feedback-warning-on-dark);
   --color-feedback-warning-on-fill: var(--reddb-color-feedback-warning-on-fill);
@@ -108,6 +112,7 @@
   --color-magenta-400: var(--reddb-color-magenta-400);
   --color-magenta-600: var(--reddb-color-magenta-600);
   --color-muted: var(--reddb-color-muted);
+  --color-navigation-surface: var(--reddb-color-navigation-surface);
   --color-neutral-0: var(--reddb-color-neutral-0);
   --color-neutral-100: var(--reddb-color-neutral-100);
   --color-neutral-200: var(--reddb-color-neutral-200);
@@ -127,6 +132,7 @@
   --color-orange-600: var(--reddb-color-orange-600);
   --color-paper: var(--reddb-color-paper);
   --color-primary: var(--reddb-color-primary);
+  --color-primary-active: var(--reddb-color-primary-active);
   --color-primary-text: var(--reddb-color-primary-text);
   --color-red-100: var(--reddb-color-red-100);
   --color-red-300: var(--reddb-color-red-300);

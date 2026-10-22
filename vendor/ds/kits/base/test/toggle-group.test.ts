@@ -156,7 +156,7 @@ describe("the deliberately failing ToggleGroup fixture", () => {
 });
 
 describe("the ToggleGroup pressed language", () => {
-  it("draws the pressed option neutral with a 2px Brand bottom indicator, never a red fill", () => {
+  it("draws the pressed option neutral with a 2px ink bottom indicator, never a red fill", () => {
     const root = rendered(render(ToggleGroup, { legend: "Alignment", options: OPTIONS, value: "center" }));
     const buttons = [...root.querySelectorAll<HTMLButtonElement>("button[aria-pressed]")];
     const pressed = buttons.find((button) => button.getAttribute("aria-pressed") === "true")!;
@@ -167,7 +167,7 @@ describe("the ToggleGroup pressed language", () => {
       const names = classes(button);
       expect(names.has("aria-pressed:bg-foreground/10")).toBe(true);
       expect(names.has("aria-pressed:text-foreground")).toBe(true);
-      expect(names.has("aria-pressed:border-b-primary")).toBe(true);
+      expect(names.has("aria-pressed:border-b-foreground")).toBe(true);
       // The edge is reserved on every option, transparent until pressed.
       expect(names.has("border-b-2")).toBe(true);
       expect(names.has("border-transparent")).toBe(true);

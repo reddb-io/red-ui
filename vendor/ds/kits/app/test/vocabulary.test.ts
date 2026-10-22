@@ -11,6 +11,7 @@
 
 import { badge, TONES } from "@reddb-io/design-system/base";
 import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
+import { quietControl } from "@reddb-io/design-system/base";
 import {
   DEPRECATED_LIST_ROW_DENSITIES,
   DEPRECATED_PILL_VARIANTS,
@@ -112,7 +113,7 @@ describe("the size scale and the current destination", () => {
   it("marks NavItem's current destination with current", () => {
     const element = rendered(render(NavItem, { label: "Tokens", href: "/tokens", current: true }));
     expect(element.getAttribute("aria-current")).toBe("page");
-    expect(classes(element)).toEqual(classesOf(navItem({ current: true }).root()));
+    expect(classes(element)).toEqual(classesOf(quietControl({ selected: true, class: navItem({ current: true }).root() })));
   });
 
   it("marks SidebarRail's current item with currentId", () => {

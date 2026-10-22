@@ -19,7 +19,8 @@ export const calendar = tv({
     day: [
       "relative inline-flex size-[var(--reddb-spatial-control-height-sm)] items-center justify-center rounded-md",
       "text-sm tabular-nums",
-      "hover:bg-foreground/8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
+      // Rest, hover, pressed and focus are the quiet-control contract the
+      // component wraps this slot in (wave 6A); a chosen day keeps the accent.
       "data-[selected]:bg-primary data-[selected]:font-medium data-[selected]:text-on-primary",
       "data-[range-start]:rounded-e-none data-[range-end]:rounded-s-none",
       "data-[range-middle]:rounded-none data-[range-middle]:border-y data-[range-middle]:border-primary",

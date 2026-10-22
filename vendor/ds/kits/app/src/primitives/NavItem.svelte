@@ -11,29 +11,18 @@
   off an item without this component importing either.
 -->
 <script lang="ts">
+  import type { NavItemContract } from "../core/contracts/navitem";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
-  import { warnDeprecated } from "@reddb-io/design-system/base";
+  import { quietControl, warnDeprecated } from "@reddb-io/design-system/base";
   import { navItem } from "./nav-item.variants";
 
   /** What `aria-current` says: `page` for a route, `step` in a wizard, `location` in a trail. */
   type CurrentToken = "page" | "step" | "location" | "date" | "time" | "true";
 
-  interface Props extends Omit<HTMLAttributes<HTMLElement>, "class"> {
-    /** The item's text. Ignored when a `children` snippet is given. */
-    label?: string;
-    /** Where the item goes. Absent, the item is a <button>. */
-    href?: string;
-    /**
-     * Is this the current destination (ADR 0026)? `true` announces it as the
-     * current `page`; a token names what it is current within — `step`
-     * inside a wizard, `location` inside a breadcrumb trail. Defaults to false.
-     */
-    current?: boolean | CurrentToken;
+  interface Props extends NavItemContract, Omit<HTMLAttributes<HTMLElement>, keyof NavItemContract | "class"> {
     /** @deprecated Renamed `current` (ADR 0026): `active` is `current`, `active current="step"` is `current="step"`. Removed next release. */
     active?: boolean;
-    /** Unavailable for now: dimmed, and out of the tab order. */
-    disabled?: boolean;
     /** Before the label. */
     icon?: Snippet;
     /** After the label, pushed to the end of the item. */
@@ -82,17 +71,17 @@
   {...rest}
   {...native}
   data-nav-item
-  class={navItem({ current: isCurrent, disabled }).root({ class: className })}
+  class={quietControl({ selected: isCurrent, class: navItem({ current: isCurrent, disabled }).root({ class: className }) })}
   aria-current={isCurrent ? token : undefined}
   aria-disabled={disabled ? "true" : undefined}
 >
-  {#if icon}
-    <span class={navItem().icon()} aria-hidden="true">{@render icon()}</span>
-  {/if}
-
   <span class={navItem().label()}>
     {#if children}{@render children()}{:else}{label ?? ""}{/if}
   </span>
+
+  {#if icon}
+    <span class={navItem().icon()} aria-hidden="true">{@render icon()}</span>
+  {/if}
 
   {#if trailing}<span class={navItem().trailing()}>{@render trailing()}</span>{/if}
 </svelte:element>

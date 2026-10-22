@@ -8,9 +8,9 @@ export const pagination = tv({
       "inline-flex h-[var(--reddb-spatial-control-height-sm)] min-w-[var(--reddb-spatial-control-height-sm)]",
       "items-center justify-center rounded-md border border-control-edge px-[var(--reddb-spatial-inset-sm)]",
       // The current page wears the shared selection language: a neutral
-      // surface, full-weight ink, and a 2px Brand-red underline — not a red
+      // surface, full-weight ink, and a 2px ink underline — not a red
       // outline (DESIGN.md, "Interactive states").
-      "aria-[current=page]:border-b-2 aria-[current=page]:border-b-primary aria-[current=page]:bg-foreground/10",
+      "aria-[current=page]:border-b-2 aria-[current=page]:border-b-foreground aria-[current=page]:bg-foreground/10",
       "aria-[current=page]:font-medium aria-[current=page]:text-foreground",
     ].join(" "),
   },

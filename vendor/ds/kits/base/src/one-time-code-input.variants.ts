@@ -2,6 +2,7 @@
 // Input skins; segment size and group flow are the only added arrangement.
 
 import { tv, type VariantProps } from "tailwind-variants";
+import { typeRoleMerge } from "./type-roles";
 import { fieldset } from "./fieldset.variants";
 import { input } from "./input.variants";
 
@@ -11,11 +12,12 @@ export const oneTimeCodeInput = tv({
     list: "flex flex-wrap gap-[var(--reddb-spatial-gap-sm)]",
     segment: [
       input(),
-      "w-[var(--reddb-spatial-control-height-md)] text-center",
+      // A centered single character needs the whole square, without text-field insets.
+      "w-[var(--reddb-spatial-control-height-md)] px-0 text-center",
     ].join(" "),
     help: fieldset().help(),
     error: fieldset().error(),
   },
-});
+}, typeRoleMerge);
 
 export type OneTimeCodeInputVariants = VariantProps<typeof oneTimeCodeInput>;

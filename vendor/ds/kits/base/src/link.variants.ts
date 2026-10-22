@@ -1,4 +1,5 @@
 import { tv, type VariantProps } from "tailwind-variants";
+import { typeRoleMerge } from "./type-roles";
 
 /**
  * Native-link appearance with a persistent non-colour affordance.
@@ -14,6 +15,6 @@ export const link = tv({
     "hover:decoration-2",
     "focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
   ].join(" "),
-});
+}, typeRoleMerge);
 
 export type LinkVariants = VariantProps<typeof link>;

@@ -2,6 +2,7 @@
 // only the segmented calendar arrangement is new.
 
 import { tv, type VariantProps } from "tailwind-variants";
+import { typeRoleMerge } from "./type-roles";
 import { field } from "./field.variants";
 import { input } from "./input.variants";
 
@@ -18,6 +19,6 @@ export const dateField = tv({
     segment,
     separator: "text-foreground",
   },
-});
+}, typeRoleMerge);
 
 export type DateFieldVariants = VariantProps<typeof dateField>;

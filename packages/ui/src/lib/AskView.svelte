@@ -4,13 +4,16 @@
   // columns: the conversation (squeezed left) and the visualization of what
   // the answer was grounded on (right). Citation chips in the answer link a
   // claim to the exact source that supports it — "the logic it took".
-  import { Badge } from '@reddb-io/ui-kit'
+  import { Badge } from '@reddb-io/design-system/base'
   import EmptyState from '$lib/EmptyState.svelte'
   import { activity } from '$lib/activity.svelte'
   import { connection } from '$lib/connections.svelte'
   import { secureStore } from '$lib/secureStore.svelte'
   import { parseAnswerSegments, parseUrn, type AskResponse } from '#reddb'
-  import { Sparkles, Lock, CornerDownLeft, AlertTriangle } from 'lucide-svelte'
+  import Sparkles from '@lucide/svelte/icons/sparkles'
+  import Lock from '@lucide/svelte/icons/lock'
+  import CornerDownLeft from '@lucide/svelte/icons/corner-down-left'
+  import AlertTriangle from '@lucide/svelte/icons/alert-triangle'
 
   interface ChatMessage {
     id: number
@@ -100,12 +103,12 @@
     return usd < 0.01 ? `$${usd.toFixed(4)}` : `$${usd.toFixed(2)}`
   }
 
-  const SOURCE_TONE: Record<string, 'info' | 'ok' | 'accent' | 'warn' | 'neutral'> = {
+  const SOURCE_TONE: Record<string, 'info' | 'success' | 'neutral' | 'warning'> = {
     table: 'info',
-    document: 'ok',
-    vector: 'accent',
-    graph_node: 'warn',
-    graph_edge: 'warn',
+    document: 'success',
+    vector: 'neutral',
+    graph_node: 'warning',
+    graph_edge: 'warning',
     kv: 'neutral',
   }
 </script>
@@ -117,7 +120,7 @@
         {#if messages.length === 0}
           <div class="flex flex-col items-center gap-4 py-16 text-center">
             <div class="flex size-12 items-center justify-center rounded-full border border-line-2 bg-bg-1">
-              <Sparkles class="size-5 text-accent" />
+              <Sparkles class="size-5 text-primary-text" />
             </div>
             <div>
               <div class="font-mono text-[15px] text-fg-0">Ask your database</div>
@@ -144,10 +147,10 @@
           {:else}
             <div class="flex flex-col gap-1.5">
               {#if m.pending}
-                <div class="flex items-center gap-2 text-[12px] text-fg-3"><Sparkles class="size-3.5 animate-pulse text-accent" /> thinking…</div>
+                <div class="flex items-center gap-2 text-[12px] text-fg-3"><Sparkles class="size-3.5 animate-pulse text-primary-text" /> thinking…</div>
               {:else if m.error}
                 <div class="flex items-start gap-2 rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 text-[12px] text-fg-1">
-                  <AlertTriangle class="mt-0.5 size-3.5 shrink-0 text-accent" />
+                  <AlertTriangle class="mt-0.5 size-3.5 shrink-0 text-primary-text" />
                   <span>{m.error.includes('404') || m.error.includes('route not found') ? 'This reddb has no AI endpoint (/ai/ask). Configure a provider to enable Ask.' : m.error}</span>
                 </div>
               {:else if m.response}
@@ -157,13 +160,13 @@
                       type="button"
                       onclick={() => focusSource(i, seg.marker)}
                       title="Jump to source {seg.marker}"
-                      class="mx-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded bg-accent/15 px-1 align-super text-[9px] font-semibold text-accent hover:bg-accent/25"
+                      class="mx-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded bg-accent/15 px-1 align-super text-[9px] font-semibold text-primary-text hover:bg-accent/25"
                     >{seg.marker}</button>{/if}
                   {/each}
                 </div>
                 <div class="flex flex-wrap items-center gap-1.5 text-[10px] text-fg-3">
                   {#if m.response.validation && !m.response.validation.ok}
-                    <Badge tone="warn">unverified citations</Badge>
+                    <Badge tone="warning">unverified citations</Badge>
                   {/if}
                   {#if m.response.sources_flat?.length}
                     <button type="button" class="rounded border border-line-1 px-1.5 py-0.5 hover:border-line-3 hover:text-fg-1" onclick={() => { activeArtifact = i; highlightMarker = null }}>
@@ -223,7 +226,7 @@
               highlightMarker === si + 1 ? 'border-accent' : 'border-line-1',
             ].join(' ')}>
               <div class="mb-1.5 flex items-center gap-2">
-                <span class="inline-flex size-4 items-center justify-center rounded bg-accent/15 text-[9px] font-semibold text-accent">{si + 1}</span>
+                <span class="inline-flex size-4 items-center justify-center rounded bg-accent/15 text-[9px] font-semibold text-primary-text">{si + 1}</span>
                 <Badge tone={SOURCE_TONE[src.kind] ?? 'neutral'}>{src.kind}</Badge>
                 {#if ref}<span class="font-mono text-[10px] text-fg-2">{ref.collection}<span class="text-fg-3">/{ref.id}</span></span>{/if}
                 {#if src.score !== undefined}<span class="ml-auto font-mono text-[10px] text-fg-3">score {src.score.toFixed(2)}</span>{/if}
