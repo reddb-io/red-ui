@@ -1,9 +1,11 @@
+import { parseConnectionString } from "./connection-string";
 import { parseOpenContract } from "./boot-params";
 
 export const DEFAULT_PERSISTED_CONNECTION_KEY = "red-ui:connection";
 
 export interface ConnectionBootstrap {
   target: string | null;
+  error?: string;
   token?: string;
   route?: string;
 }
@@ -11,6 +13,7 @@ export interface ConnectionBootstrap {
 export type ConnectionBootstrapPayload =
   | {
       target?: unknown;
+      error?: unknown;
       token?: unknown;
       route?: unknown;
     }
@@ -70,11 +73,13 @@ function normalizeBootstrap(
   const target = clean(payload.target);
   const token = clean(payload.token);
   const route = clean(payload.route);
+  const error = clean(payload.error);
 
-  if (!target && !token && !route) return null;
+  if (!target && !token && !route && !error) return null;
 
   return {
     target: target ?? null,
+    ...(error ? { error } : {}),
     ...(token ? { token } : {}),
     ...(route ? { route } : {}),
   };
@@ -170,25 +175,58 @@ function liveUrlBootstrapOptions(): UrlBootstrapReadOptions {
   };
 }
 
-function stripTokenFromHistory(options: UrlBootstrapReadOptions): void {
+function stripSecretsFromHistory(options: UrlBootstrapReadOptions): void {
   if (!options.consume || !options.location || !options.history) return;
-  const hash = options.location.hash;
-  if (!hash) return;
-
-  const params = new URLSearchParams(
-    hash.startsWith("#") ? hash.slice(1) : hash
-  );
-  if (!params.has("token")) return;
-  params.delete("token");
-
-  const nextHash = params.toString();
-  const nextUrl = `${options.location.pathname}${options.location.search}${
-    nextHash ? `#${nextHash}` : ""
-  }`;
+  const { pathname, search, hash } = options.location;
+  const query = new URLSearchParams(search);
+  const fragment = new URLSearchParams(hash.replace(/^#/, ""));
+  let queryChanged = false;
+  let hashChanged = false;
+  for (const [params, isHash] of [
+    [query, false],
+    [fragment, true],
+  ] as const) {
+    for (const key of [...params.keys()]) {
+      if (
+        /token|secret|password|passwd|auth|credential|api[-_]?key|bearer/i.test(
+          key
+        )
+      ) {
+        params.delete(key);
+        if (isHash) hashChanged = true;
+        else queryChanged = true;
+      }
+    }
+    for (const key of ["cs", "endpoint", "connection", "red_url", "red"]) {
+      const value = params.get(key);
+      if (value === null) continue;
+      let safe: string | undefined;
+      try {
+        if (key === "cs") parseOpenContract(`?cs=${encodeURIComponent(value)}`);
+        safe = parseConnectionString(value).url;
+      } catch {
+        /* Remove invalid input. */
+      }
+      // Fragment connections are single-use; query connections retain only their endpoint.
+      if (isHash || safe !== value) {
+        params.delete(key);
+        if (!isHash && safe) params.set(key, safe);
+        if (isHash) hashChanged = true;
+        else queryChanged = true;
+      }
+    }
+  }
+  if (!queryChanged && !hashChanged) return;
+  const q = queryChanged ? (query.size ? `?${query}` : "") : search;
+  const h = hashChanged ? (fragment.size ? `#${fragment}` : "") : hash;
   try {
-    options.history.replaceState(options.history.state, "", nextUrl);
+    options.history.replaceState(
+      options.history.state,
+      "",
+      `${pathname}${q}${h}`
+    );
   } catch {
-    /* best-effort URL cleanup */
+    /* Best-effort cleanup in restricted embedding contexts. */
   }
 }
 
@@ -199,7 +237,7 @@ export function readUrlOpenContractBootstrap(
 ): ConnectionBootstrapPayload {
   try {
     const contract = parseOpenContract(search, hash);
-    if (contract.token) stripTokenFromHistory(options);
+
     if (!contract.cs && !contract.to && !contract.token) return null;
     return {
       target: contract.cs,
@@ -207,7 +245,12 @@ export function readUrlOpenContractBootstrap(
       route: contract.to,
     };
   } catch {
-    return null;
+    // An explicit invalid contract must not silently fall through to an old database.
+    return {
+      error: "Enter a valid HTTP connection string or its Base64 encoding.",
+    };
+  } finally {
+    stripSecretsFromHistory(options);
   }
 }
 

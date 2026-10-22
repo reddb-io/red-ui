@@ -37,7 +37,7 @@
   let inputEl: HTMLInputElement | undefined = $state()
 
   async function attempt(targetUrl: string, signIn = false) {
-    const cleaned = targetUrl.trim().replace(/\/$/, '')
+    const cleaned = targetUrl.trim()
     if (!cleaned) return
     let parsed: ReturnType<typeof parseConnectionInput>
     const secret = password
@@ -211,7 +211,7 @@
       aria-label="Connect to reddb"
     >
       <form onsubmit={submit}>
-        <label for="connect-url" class="type-label block mb-1.5">Instance URL</label>
+        <label for="connect-url" class="type-label block mb-1.5">Connection string</label>
         <input
           id="connect-url"
           bind:this={inputEl}
@@ -219,11 +219,11 @@
           disabled={status === 'probing'}
           oninput={() => { username = ''; password = '' }}
           spellcheck="false"
-          placeholder="red://localhost"
+          placeholder="https://user:password@host or Base64"
           class="w-full h-9 px-3 mb-1 bg-bg-0 border border-line-2 rounded-md font-mono text-[13px] text-fg-0 outline-none transition-colors focus:border-accent placeholder:text-fg-3"
         />
 
-        <div class="mb-2 text-[10px] font-mono text-fg-3">reachable here: {supportedHint}</div>
+        <div class="mb-2 text-[10px] font-mono text-fg-3">URL or Base64-encoded URL · reachable here: {supportedHint}</div>
 
         <details class="mb-3">
           <summary class="cursor-pointer text-xs text-fg-2">Sign in to the database</summary>

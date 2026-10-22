@@ -54,7 +54,7 @@ describe("Open Contract", () => {
 
   it("rejects malformed cs input", () => {
     expect(() => parseOpenContract("?cs=not a url")).toThrow(OpenContractError);
-    expect(() => encodeOpenContract({ cs: "red://localhost" })).toThrow(
+    expect(() => encodeOpenContract({ cs: "ftp://localhost" })).toThrow(
       OpenContractError
     );
   });
@@ -133,5 +133,36 @@ describe("LocalUrlProvider.bootParams", () => {
     expect(routeOnly.bootParams()).toEqual({ to: "/query" });
 
     expect(new LocalUrlProvider().bootParams()).toBeNull();
+  });
+});
+
+describe("credential connection contract", () => {
+  const cs = "https://alice:p%40ss%2Fword@db.example";
+  it.each([
+    cs,
+    Buffer.from(cs).toString("base64"),
+    Buffer.from(cs).toString("base64url"),
+  ])("round-trips secrets only in the fragment (%#)", (input) => {
+    const encoded = encodeOpenContract({ cs: input, to: "/query" });
+    expect(encoded).toMatch(/^\?to=%2Fquery#cs=/);
+    expect(parseOpenContract(encoded)).toEqual({ cs: input, to: "/query" });
+    const url = new URL(encoded, "https://ui.example");
+    expect(parseBootParams(url.search, url.hash)).toEqual({
+      endpoint: "https://db.example",
+      to: "/query",
+    });
+  });
+  it("sanitizes legacy credential aliases and query cs", () => {
+    for (const key of ["cs", "endpoint", "connection", "red_url", "red"]) {
+      expect(
+        parseBootParams(`?${key}=${encodeURIComponent(cs)}`).endpoint
+      ).toBe("https://db.example");
+    }
+  });
+  it("prefers fragment cs over query cs", () => {
+    expect(
+      parseOpenContract(`?cs=https://old.example#cs=${encodeURIComponent(cs)}`)
+        .cs
+    ).toBe(cs);
   });
 });

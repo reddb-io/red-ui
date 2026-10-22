@@ -9,6 +9,8 @@
 //   - Embedded and managed Web boot targets store nothing.
 
 import {
+  parseConnectionString,
+  type ConnectionCredentials,
   BROWSER_TRANSPORTS,
   DESKTOP_TRANSPORTS,
   DesktopError,
@@ -137,46 +139,18 @@ const historyStore = new SurfaceHistoryStore({
  * host[:port]                 → http://host:port|5055
  */
 export function normalizeUrl(input: string): string {
-  return parseConnectionInput(input).url;
+  if (!input.trim()) return "";
+  return parseConnectionString(input).url;
 }
 
-/** Parse only explicit Connect input; Open Contract URLs still reject secrets. */
-export function parseConnectionInput(input: string): {
-  url: string;
-  credentials?: { username: string; password: string };
-} {
-  let raw = input.trim().replace(/\/$/, "");
-  if (!raw) return { url: raw };
-  if (!/:\/\//.test(raw)) raw = "http://" + raw;
-  const scheme = raw.slice(0, raw.indexOf(":")).toLowerCase();
-  const alias = ["red", "red+tcp", "red+wire", "reds", "red+tls"].includes(
-    scheme
-  );
-  if (!alias && scheme !== "http" && scheme !== "https") return { url: raw };
+/** Backwards-compatible explicit-input API, backed by the shared URI/Base64 parser. */
+export function parseConnectionInput(
+  input: string
+): ReturnType<typeof parseConnectionString> {
+  if (!input.trim()) return { url: "" };
   try {
-    const protocol =
-      scheme === "reds" || scheme === "red+tls" ? "https" : "http";
-    const endpoint = new URL(
-      alias ? raw.replace(/^[^:]+:/, `${protocol}:`) : raw
-    );
-    let credentials: { username: string; password: string } | undefined;
-    if (endpoint.username || endpoint.password) {
-      if (!endpoint.username || !endpoint.password) throw new Error();
-      credentials = {
-        username: decodeURIComponent(endpoint.username),
-        password: decodeURIComponent(endpoint.password),
-      };
-      endpoint.username = "";
-      endpoint.password = "";
-    }
-    // RedWire ports are not HTTP API ports. Keep the UI's existing alias.
-    if (alias) endpoint.port = "5055";
-    return {
-      url: endpoint.href.replace(/\/$/, ""),
-      ...(credentials ? { credentials } : {}),
-    };
+    return parseConnectionString(input);
   } catch {
-    // URL/decode errors can contain the original credential-bearing input.
     throw new Error(
       "Invalid connection string. Check the address and provide both username and password."
     );
@@ -448,8 +422,34 @@ class ConnectionStore {
   ): Promise<string | null> {
     const boot = await resolve();
     const route = boot.route ?? null;
+    if (boot.error) {
+      this.disconnect();
+      this.probe = { reachable: false, error: boot.error };
+      return route;
+    }
     if (!boot.target) return route;
-    const preset = makeCustomConnection(boot.target);
+    if (!boot.token) {
+      await this.connectString(boot.target);
+      return route;
+    }
+    let preset: ConnectionPreset;
+    try {
+      const parsed = parseConnectionString(boot.target);
+      if (parsed.credentials)
+        throw new Error(
+          "Choose either connection credentials or a session token."
+        );
+      preset = makeCustomConnection(parsed.url);
+    } catch (error) {
+      this.disconnect();
+      this.active = makeCustomConnection("");
+      this.probe = {
+        reachable: false,
+        error:
+          error instanceof Error ? error.message : "Invalid connection string.",
+      };
+      return route;
+    }
     if (boot.token) {
       markManagedWebHandoff();
       const provider = getConnectionProvider();
@@ -470,6 +470,39 @@ class ConnectionStore {
     await this.tryConnect(preset);
   }
 
+  /** Accept a plain URI or Base64 URI, keeping credentials out of connection metadata. */
+  async connectString(
+    input: string,
+    credentials?: ConnectionCredentials
+  ): Promise<boolean> {
+    try {
+      const parsed = parseConnectionString(input);
+      if (parsed.credentials && credentials)
+        throw new Error(
+          "Use credentials in either the connection string or the sign-in fields."
+        );
+      const auth = credentials ?? parsed.credentials;
+      const preset = makeCustomConnection(parsed.url);
+      if (!this.canReach(parsed.url))
+        throw new Error(
+          unreachableConnectHint(parsed.url) ??
+            "This connection transport is not available here."
+        );
+      return auth
+        ? await this.login(preset, auth.username, auth.password)
+        : await this.tryConnect(preset);
+    } catch (error) {
+      this.disconnect();
+      this.active = makeCustomConnection("");
+      this.probe = {
+        reachable: false,
+        error:
+          error instanceof Error ? error.message : "Invalid connection string.",
+      };
+      return false;
+    }
+  }
+
   async login(
     preset: ConnectionPreset,
     username: string,
@@ -478,6 +511,7 @@ class ConnectionStore {
     this.active = preset;
     this.#client = null;
     this.connected = false;
+    this.#capabilities = { ...EMPTY_SERVER_CAPABILITIES };
     this.probe = { reachable: false };
     try {
       const targetProvider = getConnectionProvider();
@@ -585,7 +619,7 @@ class ConnectionStore {
     if (!boot) return null;
     const route = boot.to ?? boot.view ?? null;
     if (!boot.endpoint) return route;
-    await this.tryConnect(makeCustomConnection(boot.endpoint));
+    await this.connectString(boot.endpoint);
     return route;
   }
 
