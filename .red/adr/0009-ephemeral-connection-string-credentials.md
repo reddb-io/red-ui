@@ -24,8 +24,8 @@ contracts report an error instead of falling back to a persisted database.
 Base64 is an encoding and provides no confidentiality. Generated links must use
 the fragment to avoid sending credentials to the UI host. Consumed links do not
 automatically replay password login on refresh. Legacy query credentials may
-reach the hosting server before the app can scrub them; the web shell sends no
-referrer. Existing endpoint-only app-clients links remain compatible.
+reach the hosting server during initial page/preload requests before the app can
+scrub them; the web shell also requests a no-referrer policy for later requests. Existing endpoint-only app-clients links remain compatible.
 
 Browser transport reachability and the legacy 5055 HTTP bridge mapping remain
 unchanged (ADR 0003). Hosted databases should use their published HTTPS endpoint,
