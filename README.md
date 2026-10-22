@@ -97,6 +97,16 @@ credentials are removed from the field before sign-in. Plain and Base64 strings
 also work in Open Contract `cs`; generated credential links use `#cs=`. For
 hosted databases, use their published HTTPS endpoint.
 
+RedDB compatibility follows the HTTP API and available features rather than a
+server version allowlist. Legacy flat capability declarations remain authoritative;
+structured discovery or an absent discovery route uses read-only probes for
+optional UI features. Authentication failures and unexpected server errors do not enable
+fallback features. Browser connections still require a server with CORS support
+(RedDB 1.9.1+), HTTPS for remote password sign-in, and compatible query responses.
+The RedDB bundled with desktop builds is a tested default, independently of
+which compatible remote RedDB version the UI can connect to; build it with
+`REDDB_VERSION=vX.Y.Z` to select a different sidecar release.
+
 ## Embeddable Lib
 
 The Embeddable Lib ships from the existing `@reddb-io/ui` package as
