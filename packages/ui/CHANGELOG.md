@@ -1,5 +1,18 @@
 # @reddb-io/ui
 
+## 0.4.0
+
+### Minor Changes
+
+- a7a767b: Accept plain and UTF-8 Base64/Base64url connection strings with URI credentials in
+  Connect and URL bootstrap. Exchange credentials for an in-memory database session,
+  keep connection metadata secret-free, and consume credential launch fragments.
+
+### Patch Changes
+
+- @reddb-io/ui-kit@0.4.0
+- @reddb-io/ui-mcp@0.4.0
+
 ## 0.3.6
 
 ### Patch Changes
