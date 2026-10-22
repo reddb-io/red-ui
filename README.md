@@ -88,6 +88,13 @@ memory in the current tab; passwords and tokens are excluded from connection
 history, browser storage, query parameters, and the developer console. Failed
 boot connections keep the supplied endpoint visible for sign-in or retry.
 
+The Connect URL field also accepts `red://user:password@localhost` and
+`reds://user:password@host`. Percent-encode special characters in credentials
+(for example, `p%40ss` for `p@ss`). These aliases use the HTTP API on port 5055;
+use `https://user:password@host:port` for a different HTTPS port. Inline
+credentials are removed from the field before sign-in and are never accepted
+in the public `?cs=` Open Contract. Use `reds://` for remote password sign-in.
+
 ## Embeddable Lib
 
 The Embeddable Lib ships from the existing `@reddb-io/ui` package as

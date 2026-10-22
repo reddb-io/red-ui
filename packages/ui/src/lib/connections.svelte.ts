@@ -143,6 +143,15 @@ export function normalizeUrl(input: string): string {
   return parseConnectionString(input).url;
 }
 
+/** Backwards-compatible explicit-input API, backed by the shared URI/Base64 parser. */
+export function parseConnectionInput(input: string): ReturnType<typeof parseConnectionString> {
+  if (!input.trim()) return { url: "" };
+  try { return parseConnectionString(input); }
+  catch {
+    throw new Error("Invalid connection string. Check the address and provide both username and password.");
+  }
+}
+
 export function makeCustomConnection(input: string): ConnectionPreset {
   const url = normalizeUrl(input);
   let host = url;

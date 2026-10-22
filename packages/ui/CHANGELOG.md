@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.3.6
+
+### Patch Changes
+
+- 44269e7: Fix database sign-in from red:// and reds:// connection strings containing user:password. Decode inline credentials, exchange them for a session token, and keep credentials out of connection URLs and history.
+  - @reddb-io/ui-kit@0.3.6
+  - @reddb-io/ui-mcp@0.3.6
+
 ## 0.3.5
 
 ### Patch Changes
