@@ -144,11 +144,16 @@ export function normalizeUrl(input: string): string {
 }
 
 /** Backwards-compatible explicit-input API, backed by the shared URI/Base64 parser. */
-export function parseConnectionInput(input: string): ReturnType<typeof parseConnectionString> {
+export function parseConnectionInput(
+  input: string
+): ReturnType<typeof parseConnectionString> {
   if (!input.trim()) return { url: "" };
-  try { return parseConnectionString(input); }
-  catch {
-    throw new Error("Invalid connection string. Check the address and provide both username and password.");
+  try {
+    return parseConnectionString(input);
+  } catch {
+    throw new Error(
+      "Invalid connection string. Check the address and provide both username and password."
+    );
   }
 }
 
