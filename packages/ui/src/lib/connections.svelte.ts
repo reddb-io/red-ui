@@ -137,25 +137,50 @@ const historyStore = new SurfaceHistoryStore({
  * host[:port]                 → http://host:port|5055
  */
 export function normalizeUrl(input: string): string {
+  return parseConnectionInput(input).url;
+}
+
+/** Parse only explicit Connect input; Open Contract URLs still reject secrets. */
+export function parseConnectionInput(input: string): {
+  url: string;
+  credentials?: { username: string; password: string };
+} {
   let raw = input.trim().replace(/\/$/, "");
-  if (!raw) return raw;
-
+  if (!raw) return { url: raw };
   if (!/:\/\//.test(raw)) raw = "http://" + raw;
-
-  const m = raw.match(/^([a-z+]+):\/\/(.+)$/i);
-  if (!m) return raw;
-  const [, scheme, rest] = m;
-  const s = scheme.toLowerCase();
-
-  if (s === "red" || s === "red+tcp" || s === "red+wire") {
-    const [host] = rest.split("/")[0].split(":");
-    return `http://${host}:5055${rest.includes("/") ? "/" + rest.split("/").slice(1).join("/") : ""}`;
+  const scheme = raw.slice(0, raw.indexOf(":")).toLowerCase();
+  const alias = ["red", "red+tcp", "red+wire", "reds", "red+tls"].includes(
+    scheme
+  );
+  if (!alias && scheme !== "http" && scheme !== "https") return { url: raw };
+  try {
+    const protocol =
+      scheme === "reds" || scheme === "red+tls" ? "https" : "http";
+    const endpoint = new URL(
+      alias ? raw.replace(/^[^:]+:/, `${protocol}:`) : raw
+    );
+    let credentials: { username: string; password: string } | undefined;
+    if (endpoint.username || endpoint.password) {
+      if (!endpoint.username || !endpoint.password) throw new Error();
+      credentials = {
+        username: decodeURIComponent(endpoint.username),
+        password: decodeURIComponent(endpoint.password),
+      };
+      endpoint.username = "";
+      endpoint.password = "";
+    }
+    // RedWire ports are not HTTP API ports. Keep the UI's existing alias.
+    if (alias) endpoint.port = "5055";
+    return {
+      url: endpoint.href.replace(/\/$/, ""),
+      ...(credentials ? { credentials } : {}),
+    };
+  } catch {
+    // URL/decode errors can contain the original credential-bearing input.
+    throw new Error(
+      "Invalid connection string. Check the address and provide both username and password."
+    );
   }
-  if (s === "reds" || s === "red+tls") {
-    const [host] = rest.split("/")[0].split(":");
-    return `https://${host}:5055`;
-  }
-  return raw;
 }
 
 export function makeCustomConnection(input: string): ConnectionPreset {

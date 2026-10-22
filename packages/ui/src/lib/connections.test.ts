@@ -5,6 +5,7 @@ import {
   LOCAL_FILE_DESKTOP_ONLY,
   makeCustomConnection,
   normalizeUrl,
+  parseConnectionInput,
   openDatabaseFile,
   provider,
   setConnectionProvider,
@@ -540,5 +541,68 @@ describe("makeCustomConnection — connection preset from deep-link URL (#124)",
     const preset = makeCustomConnection("http://my-server:5055");
     expect(preset.url).toBe("http://my-server:5055");
     expect(preset.label).toBe("my-server:5055");
+  });
+});
+
+describe("credential-bearing connection input", () => {
+  it.each([
+    ["red", "http"],
+    ["red+tcp", "http"],
+    ["red+wire", "http"],
+    ["reds", "https"],
+    ["red+tls", "https"],
+  ])("extracts %s credentials before creating a preset", (scheme, protocol) => {
+    const input = `${scheme}://al%40ice:p%40ss%3Aword%2F%25@dbhost:5050`;
+    expect(parseConnectionInput(input)).toEqual({
+      url: `${protocol}://dbhost:5055`,
+      credentials: { username: "al@ice", password: "p@ss:word/%" },
+    });
+    expect(makeCustomConnection(input)).toMatchObject({
+      id: `${protocol}://dbhost:5055`,
+      url: `${protocol}://dbhost:5055`,
+      label: "dbhost:5055",
+    });
+  });
+
+  it("handles IPv6 and preserves the HTTP API path", () => {
+    expect(parseConnectionInput("reds://alice:secret@[::1]:5050/api/")).toEqual(
+      {
+        url: "https://[::1]:5055/api",
+        credentials: { username: "alice", password: "secret" },
+      }
+    );
+  });
+
+  it("extracts credentials from HTTP endpoints while preserving their port", () => {
+    expect(parseConnectionInput("https://alice:secret@host:9000")).toEqual({
+      url: "https://host:9000",
+      credentials: { username: "alice", password: "secret" },
+    });
+    expect(normalizeUrl("http://alice:secret@localhost:9000")).toBe(
+      "http://localhost:9000"
+    );
+  });
+
+  it.each([
+    "red://alice@host",
+    "reds://:secret@host",
+    "red://alice:%ZZ@host",
+    "red://alice:secret@[",
+  ])(
+    "rejects malformed or incomplete credentials without reflecting the input",
+    (input) => {
+      expect(() => parseConnectionInput(input)).toThrow(
+        "Invalid connection string. Check the address and provide both username and password."
+      );
+    }
+  );
+
+  it("keeps credential-free and desktop file connections working", () => {
+    expect(parseConnectionInput("localhost:9000")).toEqual({
+      url: "http://localhost:9000",
+    });
+    expect(parseConnectionInput("file:///tmp/test.rdb")).toEqual({
+      url: "file:///tmp/test.rdb",
+    });
   });
 });
