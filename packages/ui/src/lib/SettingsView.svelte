@@ -1,25 +1,24 @@
 <script lang="ts">
   // Settings surface: a bounded pane shell backed by live SQL introspection.
-  import { ListRow, NavItem, Pill, SectionHeading } from '@reddb-io/ui-kit'
-  import {
-    AlertCircle,
-    Download,
-    FileJson,
-    KeyRound,
-    Eye,
-    EyeOff,
-    Link2,
-    Plus,
-    RefreshCw,
-    Search,
-    Save,
-    Settings2,
-    ShieldOff,
-    SlidersHorizontal,
-    Trash2,
-    Unplug,
-    type Icon,
-  } from 'lucide-svelte'
+  import { NavItem, Pill } from '@reddb-io/design-system/app'
+  import { Icon as DsIcon, type IconGlyph } from '@reddb-io/design-system/base'
+  import { ListRow, SectionHeading } from '@reddb-io/ui-kit'
+  import AlertCircle from '@lucide/svelte/icons/alert-circle'
+  import Download from '@lucide/svelte/icons/download'
+  import FileJson from '@lucide/svelte/icons/file-json'
+  import KeyRound from '@lucide/svelte/icons/key-round'
+  import Eye from '@lucide/svelte/icons/eye'
+  import EyeOff from '@lucide/svelte/icons/eye-off'
+  import Link2 from '@lucide/svelte/icons/link-2'
+  import Plus from '@lucide/svelte/icons/plus'
+  import RefreshCw from '@lucide/svelte/icons/refresh-cw'
+  import Search from '@lucide/svelte/icons/search'
+  import Save from '@lucide/svelte/icons/save'
+  import Settings2 from '@lucide/svelte/icons/settings-2'
+  import ShieldOff from '@lucide/svelte/icons/shield-off'
+  import SlidersHorizontal from '@lucide/svelte/icons/sliders-horizontal'
+  import Trash2 from '@lucide/svelte/icons/trash-2'
+  import Unplug from '@lucide/svelte/icons/unplug'
   import PageHeader from '$lib/PageHeader.svelte'
   import EmptyState from '$lib/EmptyState.svelte'
   import { activity } from '$lib/activity.svelte'
@@ -45,7 +44,7 @@
     type SettingsPane,
   } from '$lib/settings-sections'
 
-  const icons: Record<string, typeof Icon> = {
+  const icons: Record<string, IconGlyph> = {
     key: KeyRound,
     settings: Settings2,
   }
@@ -587,10 +586,10 @@
           {@const PaneIcon = icons[pane.icon] ?? Settings2}
           <NavItem
             label={pane.label}
-            active={pane.id === activePane.id}
+            current={pane.id === activePane.id}
             onclick={() => (activePaneId = pane.id)}
           >
-            {#snippet icon()}<PaneIcon class="size-3.5" />{/snippet}
+            {#snippet icon()}<DsIcon icon={PaneIcon} size="sm" />{/snippet}
             {#snippet trailing()}<Pill>{paneCount(pane)}</Pill>{/snippet}
           </NavItem>
         {/each}
@@ -741,7 +740,7 @@
                     disabled
                     tabindex="-1"
                     value={String(entry.value)}
-                    class="h-6 w-28 rounded border border-line-2 bg-bg-2 px-1.5 font-mono text-[11px] text-accent disabled:opacity-100"
+                    class="h-6 w-28 rounded border border-line-2 bg-bg-2 px-1.5 font-mono text-[11px] text-primary-text disabled:opacity-100"
                     aria-label={control.label}
                   >
                     {#if !control.options?.includes(String(entry.value))}

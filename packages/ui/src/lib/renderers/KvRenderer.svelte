@@ -1,6 +1,9 @@
 <script lang="ts">
   import type { QueryResult } from '#reddb'
-  import { Braces, ListTree, Search, X } from 'lucide-svelte'
+  import Braces from '@lucide/svelte/icons/braces'
+  import ListTree from '@lucide/svelte/icons/list-tree'
+  import Search from '@lucide/svelte/icons/search'
+  import X from '@lucide/svelte/icons/x'
   import { buildTree, extractKv, formatValue, materializeKvJson, type KvNode } from './kv-render'
 
   interface Props {
@@ -44,7 +47,7 @@
           type="button"
           class={[
             'inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors',
-            viewMode === 'tree' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0',
+            viewMode === 'tree' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0',
           ].join(' ')}
           onclick={() => (viewMode = 'tree')}
           aria-pressed={viewMode === 'tree'}
@@ -56,7 +59,7 @@
           type="button"
           class={[
             'inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2',
-            viewMode === 'json' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0',
+            viewMode === 'json' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0',
           ].join(' ')}
           onclick={() => (viewMode = 'json')}
           aria-pressed={viewMode === 'json'}
@@ -130,7 +133,7 @@
     <button
       type="button"
       class="w-full text-left px-2 py-0.5 hover:bg-bg-1/60"
-      class:text-accent={selected === node}
+      class:text-primary-text={selected === node}
       style:padding-left={`${8 + depth * 12}px`}
       onclick={() => (selected = node)}
     >

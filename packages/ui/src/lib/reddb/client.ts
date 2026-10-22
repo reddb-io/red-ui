@@ -397,7 +397,7 @@ export class RedClient {
   constructor(baseUrl: string, opts: RedClientOptions = {}) {
     this.baseUrl = baseUrl.replace(/\/$/, "");
     this.headers = opts.headers;
-    this.fetcher = opts.fetch ?? fetch;
+    this.fetcher = opts.fetch ?? globalThis.fetch.bind(globalThis);
   }
 
   private async json<T>(path: string, init?: RequestInit): Promise<T> {

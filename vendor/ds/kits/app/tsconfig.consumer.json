@@ -12,7 +12,19 @@
     "isolatedModules": true,
     "resolveJsonModule": true,
     "noEmit": true,
-    "types": []
+    "types": ["vite/client"],
+    "paths": {
+      "@reddb-io/design-system/app": ["./src/index.ts"],
+      "@reddb-io/design-system/base": ["../base/src/index.ts"]
+    }
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "test/fixtures/ApplicationLayoutsConsumer.svelte",
+    "test/fixtures/CommandPaletteConsumer.svelte",
+  "test/fixtures/MerchandisingSurfacesConsumer.svelte",
+  "test/fixtures/DiffConsumer.svelte",
+    "test/fixtures/ProductCatalogueConsumer.svelte",
+    "test/fixtures/TitlingSurfacesConsumer.svelte"
+  ]
 }

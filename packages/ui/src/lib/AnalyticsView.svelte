@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Card, Badge } from '@reddb-io/ui-kit'
+  import { Card, Badge } from '@reddb-io/design-system/base'
   import PageHeader from '$lib/PageHeader.svelte'
   import EmptyState from '$lib/EmptyState.svelte'
   import MetricChart from '$lib/MetricChart.svelte'
@@ -14,7 +14,9 @@
     type NormalizedSeries,
     type ChartKind,
   } from '#reddb'
-  import { LineChart, Lock, RefreshCw } from 'lucide-svelte'
+  import LineChart from '@lucide/svelte/icons/line-chart'
+  import Lock from '@lucide/svelte/icons/lock'
+  import RefreshCw from '@lucide/svelte/icons/refresh-cw'
 
   let metrics = $state<MetricDescriptor[]>([])
   let selectedPath = $state<string | null>(null)
@@ -32,11 +34,11 @@
 
   // A metric's kind tells the chart what it is — surfaced as a tone so the
   // catalog reads at a glance.
-  const KIND_TONE: Record<MetricKind, 'ok' | 'info' | 'warn' | 'accent' | 'neutral'> = {
+  const KIND_TONE: Record<MetricKind, 'success' | 'info' | 'warning' | 'neutral'> = {
     counter: 'info',
-    gauge: 'ok',
-    histogram: 'accent',
-    ratio: 'warn',
+    gauge: 'success',
+    histogram: 'neutral',
+    ratio: 'warning',
     derived: 'neutral',
   }
 

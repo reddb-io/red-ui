@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { Lock, Loader2, AlertCircle, KeyRound, Trash2 } from 'lucide-svelte'
+  import Lock from '@lucide/svelte/icons/lock'
+  import Loader2 from '@lucide/svelte/icons/loader-2'
+  import AlertCircle from '@lucide/svelte/icons/alert-circle'
+  import KeyRound from '@lucide/svelte/icons/key-round'
+  import Trash2 from '@lucide/svelte/icons/trash-2'
   import { secureStore } from './secureStore.svelte'
   import { connection } from './connections.svelte'
 
@@ -75,9 +79,9 @@
     >
       <div class="flex items-center gap-2 mb-1.5 text-fg-0">
         {#if needsSetup}
-          <KeyRound class="size-4 text-accent" />
+          <KeyRound class="size-4 text-primary-text" />
         {:else}
-          <Lock class="size-4 text-accent" />
+          <Lock class="size-4 text-primary-text" />
         {/if}
         <h2 id="mp-title" class="type-h2 m-0">{title}</h2>
       </div>
@@ -109,7 +113,7 @@
       <button
         type="submit"
         disabled={busy || !password || (needsSetup && !confirm)}
-        class="w-full h-9 mt-1 bg-accent text-white font-medium rounded-md cursor-pointer transition-colors hover:bg-[#ff3868] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-[13px]"
+        class="w-full h-9 mt-1 bg-primary text-on-primary font-medium rounded-md cursor-pointer transition-colors hover:bg-primary-active disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-[13px]"
       >
         {#if busy}
           <Loader2 class="size-3.5 animate-spin" />

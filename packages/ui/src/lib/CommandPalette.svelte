@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { Kbd } from '@reddb-io/ui-kit'
+  import { Kbd } from '@reddb-io/design-system/base'
   import { useRouter, type RouteTarget } from './router.svelte'
   import { theme } from './theme.svelte'
 

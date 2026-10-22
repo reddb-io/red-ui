@@ -1,21 +1,44 @@
 export const colors = {
-  bg: { 0: '#07080a', 1: '#0c0e11', 2: '#14171c', 3: '#1c2027' },
-  fg: { 0: '#f7f8fa', 1: '#c8ccd4', 2: '#9ca1a9', 3: '#7a7f87' },
-  line: { 1: '#1a1d22', 2: '#262a31', 3: '#353a42' },
-  accent: '#ff2056',
-  ok: '#4ade80',
-  warn: '#fbbf24',
-  danger: '#ff5470',
-  info: '#60a5fa',
-  role: { primary: '#ff2056', replica: '#60a5fa', embedded: '#4ade80' },
-} as const
+  bg: {
+    0: "var(--reddb-color-background)",
+    1: "var(--reddb-color-elevation-base-surface)",
+    2: "var(--reddb-color-muted)",
+    3: "var(--reddb-color-elevation-raised-surface)",
+  },
+  fg: {
+    0: "var(--reddb-color-foreground)",
+    1: "var(--reddb-color-foreground)",
+    2: "var(--reddb-color-ink-muted)",
+    3: "var(--reddb-color-ink-muted)",
+  },
+  line: {
+    1: "var(--reddb-color-border-subtle)",
+    2: "var(--reddb-color-control-edge)",
+    3: "var(--reddb-color-border-strong)",
+  },
+  accent: "var(--reddb-color-primary)",
+  ok: "var(--reddb-color-feedback-success-foreground)",
+  warn: "var(--reddb-color-feedback-warning-foreground)",
+  danger: "var(--reddb-color-feedback-danger-foreground)",
+  info: "var(--reddb-color-feedback-info-foreground)",
+  role: {
+    primary: "var(--reddb-color-primary)",
+    replica: "var(--reddb-color-feedback-info-foreground)",
+    embedded: "var(--reddb-color-feedback-success-foreground)",
+  },
+} as const;
 
-export const radius = { sm: '4px', md: '6px', lg: '10px', xl: '14px' } as const
+export const radius = {
+  sm: "var(--reddb-radius-sm)",
+  md: "var(--reddb-radius-md)",
+  lg: "var(--reddb-radius-lg)",
+  xl: "var(--reddb-radius-xl)",
+} as const;
 export const font = {
-  sans: "'InterVariable', 'Inter Tight', 'Inter', system-ui, sans-serif",
-  mono: "'JetBrains Mono', 'Berkeley Mono', ui-monospace, monospace",
-} as const
+  sans: "var(--reddb-font-family-sans)",
+  mono: "var(--reddb-font-family-mono)",
+} as const;
 export const ease = {
-  out: 'cubic-bezier(0.16, 1, 0.3, 1)',          // ease-out-expo, ambient
-  snap: 'cubic-bezier(0.25, 1, 0.5, 1)',         // ease-out-quart, snappier UI
-} as const
+  out: "var(--reddb-easing-entrance)",
+  snap: "var(--reddb-easing-entrance)",
+} as const;

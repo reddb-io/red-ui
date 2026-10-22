@@ -10,8 +10,8 @@
 // shell over that pure core.
 //
 // Dark-only by design: every seed is a dark surface, and there is no
-// `light` / `system` branch. The default skin keeps reddb's signature
-// `#ff2056` accent.
+// `light` / `system` branch. The default skin restores the canonical DS
+// appearance rather than maintaining a second Brand palette.
 
 export interface SkinSeeds {
   /** Darkest surface — becomes `--color-bg-0`; every other surface ramps up from it. */
@@ -42,10 +42,8 @@ export interface Skin {
   typography: SkinTypography;
 }
 
-const FONT_SANS =
-  "'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif";
-const FONT_MONO =
-  "'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SF Mono', 'Menlo', monospace";
+const FONT_SANS = "var(--reddb-font-family-sans)";
+const FONT_MONO = "var(--reddb-font-family-mono)";
 
 /**
  * The registry. Two curated dark skins — the mechanism, not a buffet.
@@ -55,8 +53,12 @@ export const SKINS: readonly Skin[] = [
   {
     name: "reddb",
     label: "Reddb",
-    description: "The signature near-black with a surgical rose accent.",
-    colors: { bg: "#050607", accent: "#ff2056", fg: "#f7f8fa" },
+    description: "The canonical Design System application appearance.",
+    colors: {
+      bg: "var(--reddb-color-background)",
+      accent: "var(--reddb-color-primary)",
+      fg: "var(--reddb-color-foreground)",
+    },
     typography: { sans: FONT_SANS, mono: FONT_MONO },
   },
   {
@@ -146,14 +148,14 @@ export function skinToCssVars(skin: Skin): Record<string, string> {
     // Node roles — primary tracks the accent; replica/embedded stay legible
     // semantic hues that read on any dark surface.
     "--color-role-primary": accent,
-    "--color-role-replica": "#60a5fa",
-    "--color-role-embedded": "#4ade80",
+    "--color-role-replica": "var(--reddb-color-feedback-info-foreground)",
+    "--color-role-embedded": "var(--reddb-color-feedback-success-foreground)",
 
     // Semantic — dark-tuned, shared across skins.
-    "--color-ok": "#4ade80",
-    "--color-warn": "#fbbf24",
-    "--color-danger": "#ff5470",
-    "--color-info": "#60a5fa",
+    "--color-ok": "var(--reddb-color-feedback-success-foreground)",
+    "--color-warn": "var(--reddb-color-feedback-warning-foreground)",
+    "--color-danger": "var(--reddb-color-feedback-danger-foreground)",
+    "--color-info": "var(--reddb-color-feedback-info-foreground)",
 
     // Typography.
     "--font-sans": skin.typography.sans,
@@ -166,13 +168,40 @@ export function skinToCssVars(skin: Skin): Record<string, string> {
 /**
  * Apply a skin's derived custom properties to a DOM element as inline styles.
  * Inline styles win over the stylesheet's `:root` rules, so this overrides the
- * active theme tokens regardless of `data-theme`. The thin shell
+ * active theme tokens regardless of `data-color-scheme`. The thin shell
  * (`skins.svelte.ts`) wires this to mount + persistence.
  */
 export function applySkin(skin: Skin, target: HTMLElement) {
-  const vars = skinToCssVars(skin);
-  for (const [k, v] of Object.entries(vars)) target.style.setProperty(k, v);
-  // Skins are dark-only; pin data-theme so the shadcn semantic aliases that
-  // key off it stay consistent with the inline surface ramp.
-  target.dataset.theme = "dark";
+  const roles: Record<string, string> = {
+    background: "--color-bg-0",
+    "elevation-base-surface": "--color-bg-1",
+    muted: "--color-bg-2",
+    "elevation-raised-surface": "--color-bg-3",
+    foreground: "--color-fg-0",
+    "ink-muted": "--color-fg-2",
+    "border-subtle": "--color-line-1",
+    "control-edge": "--color-line-2",
+    "border-strong": "--color-line-3",
+    primary: "--color-accent",
+    "primary-text": "--color-accent",
+  };
+  // Returning to the canonical skin restores the DS cascade, including its
+  // Color Scheme. Remove only properties this skin mechanism owns.
+  for (const key of Object.keys(skinToCssVars(skin)))
+    target.style.removeProperty(key);
+  for (const role of Object.keys(roles))
+    target.style.removeProperty(`--reddb-color-${role}`);
+  if (skin.name !== DEFAULT_SKIN.name) {
+    const vars = skinToCssVars(skin);
+    for (const [key, value] of Object.entries(vars))
+      target.style.setProperty(key, value);
+    for (const [role, key] of Object.entries(roles)) {
+      target.style.setProperty(`--reddb-color-${role}`, vars[key]);
+    }
+  }
+  // Skins are dark-only; pin the dark Color Scheme so the shadcn semantic
+  // aliases and the DS roles that key off it stay consistent with the inline
+  // surface ramp.
+  target.dataset.theme = "application";
+  target.dataset.colorScheme = "dark";
 }

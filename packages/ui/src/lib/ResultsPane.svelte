@@ -22,7 +22,19 @@
   import LiveChanges from '$lib/LiveChanges.svelte'
   import QueryEditor from '$lib/QueryEditor.svelte'
   import type { CollectionMetadata, QueryResult, RedClient } from '#reddb'
-  import { X, Activity, Database, Plus, FileCode2, EyeOff, Eye, Info, HardDrive, Rows3, Layers3, ScanLine, GitBranch } from 'lucide-svelte'
+  import X from '@lucide/svelte/icons/x'
+  import Activity from '@lucide/svelte/icons/activity'
+  import Database from '@lucide/svelte/icons/database'
+  import Plus from '@lucide/svelte/icons/plus'
+  import FileCode2 from '@lucide/svelte/icons/file-code-2'
+  import EyeOff from '@lucide/svelte/icons/eye-off'
+  import Eye from '@lucide/svelte/icons/eye'
+  import Info from '@lucide/svelte/icons/info'
+  import HardDrive from '@lucide/svelte/icons/hard-drive'
+  import Rows3 from '@lucide/svelte/icons/rows-3'
+  import Layers3 from '@lucide/svelte/icons/layers-3'
+  import ScanLine from '@lucide/svelte/icons/scan-line'
+  import GitBranch from '@lucide/svelte/icons/git-branch'
 
   const router = useRouter()
 
@@ -458,7 +470,7 @@
             class={[
               'inline-flex items-center gap-1 h-6 px-1.5 rounded border transition-colors cursor-pointer',
               metadataOpen
-                ? 'border-accent/40 bg-accent/10 text-accent'
+                ? 'border-accent/40 bg-accent/10 text-primary-text'
                 : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
             ].join(' ')}
           >
@@ -476,7 +488,7 @@
               class={[
                 'inline-flex items-center gap-1 h-6 px-1.5 rounded border transition-colors cursor-pointer',
                 historyOpen[activeTab.id]
-                  ? 'border-accent/40 bg-accent/10 text-accent'
+                  ? 'border-accent/40 bg-accent/10 text-primary-text'
                   : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
               ].join(' ')}
             >
@@ -493,7 +505,7 @@
           class={[
             'inline-flex items-center gap-1 h-6 px-1.5 rounded border transition-colors cursor-pointer',
             activeTab.showSystemColumns
-              ? 'border-accent/40 bg-accent/10 text-accent'
+              ? 'border-accent/40 bg-accent/10 text-primary-text'
               : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
           ].join(' ')}
         >
@@ -681,7 +693,7 @@
                 <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
                   <div class="min-w-[180px] flex-1">
                     <div class="flex items-center gap-2">
-                      <span class="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-accent">
+                      <span class="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-primary-text">
                         {catalog.model ?? 'collection'}
                       </span>
                       <span class="truncate font-mono text-[12px] text-fg-0">{catalog.name}</span>
@@ -747,7 +759,7 @@
                       <span class="text-fg-3">name</span>
                       <span class="text-fg-0 truncate">{meta.name ?? tab.key}</span>
                       <span class="text-fg-3">kind</span>
-                      <span class="text-accent">{meta.kind ?? meta.capability ?? tab.capability ?? 'unknown'}</span>
+                      <span class="text-primary-text">{meta.kind ?? meta.capability ?? tab.capability ?? 'unknown'}</span>
                       <span class="text-fg-3">tenant</span>
                       <span class="text-fg-1">{meta.tenant ?? 'not exposed'}</span>
                       <span class="text-fg-3">indexes</span>
@@ -757,7 +769,7 @@
                     <div class="grid gap-1">
                       <div class="flex flex-wrap gap-1">
                         {#if meta.capability}
-                          <span class="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-accent">{meta.capability}</span>
+                          <span class="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-primary-text">{meta.capability}</span>
                         {/if}
                         {#each meta.capabilities ?? [] as cap}
                           <span class="rounded border border-line-1 px-1.5 py-0.5 text-fg-2">{cap}</span>

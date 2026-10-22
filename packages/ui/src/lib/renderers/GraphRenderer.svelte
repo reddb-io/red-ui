@@ -34,7 +34,23 @@
   import { collectionPageHref } from '$lib/collection-pages'
   import { connection } from '$lib/connections.svelte'
   import { activity } from '$lib/activity.svelte'
-  import { Network, Table2, Search, X, Info, Maximize2, Play, Code2, RotateCw, Loader2, Route, AlertTriangle, ZoomIn, ZoomOut, Group, Spline, Boxes } from 'lucide-svelte'
+  import Network from '@lucide/svelte/icons/network'
+  import Table2 from '@lucide/svelte/icons/table-2'
+  import Search from '@lucide/svelte/icons/search'
+  import X from '@lucide/svelte/icons/x'
+  import Info from '@lucide/svelte/icons/info'
+  import Maximize2 from '@lucide/svelte/icons/maximize-2'
+  import Play from '@lucide/svelte/icons/play'
+  import Code2 from '@lucide/svelte/icons/code-2'
+  import RotateCw from '@lucide/svelte/icons/rotate-cw'
+  import Loader2 from '@lucide/svelte/icons/loader-2'
+  import Route from '@lucide/svelte/icons/route'
+  import AlertTriangle from '@lucide/svelte/icons/alert-triangle'
+  import ZoomIn from '@lucide/svelte/icons/zoom-in'
+  import ZoomOut from '@lucide/svelte/icons/zoom-out'
+  import Group from '@lucide/svelte/icons/group'
+  import Spline from '@lucide/svelte/icons/spline'
+  import Boxes from '@lucide/svelte/icons/boxes'
 
   interface Props {
     result: QueryResult
@@ -343,7 +359,7 @@
     const observer = new MutationObserver(() => {
       graphThemeVersion += 1
     })
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-color-scheme'] })
     return () => observer.disconnect()
   })
 
@@ -472,12 +488,12 @@
   // See packages/ui/src/lib/renderers/graph-render.ts → runGraphLayout.
   const layout = $derived(runGraphLayout(drawNodes, drawEdges))
 
-  // Dark/light is theme-aware; re-read on the data-theme mutation observer tick.
+  // Dark/light follows the DS Color Scheme; re-read on the mutation observer tick.
   const isDark = $derived.by(() => {
     void graphThemeVersion
     return typeof document === 'undefined'
       ? true
-      : document.documentElement.dataset.theme !== 'light'
+      : document.documentElement.dataset.colorScheme !== 'light'
   })
 
   // Group-in-a-box geometry in layout ([0,100]) space. Shared by the SVG
@@ -699,7 +715,7 @@
 
   // Theme-aware palette handed to the sigma reducers (dark tokens drive it).
   function sigmaThemeColors(): SigmaThemeColors {
-    const dark = document.documentElement.dataset.theme !== 'light'
+    const dark = document.documentElement.dataset.colorScheme !== 'light'
     return {
       background: cssColor('--color-bg-0', dark ? '#050607' : '#ffffff'),
       edge: cssColor('--color-line-3', dark ? '#3a424d' : '#c9cbd1'),
@@ -731,7 +747,7 @@
       layout: renderLayout,
       sizeScales: nodeSizeScales,
       orphanIds: orphanNodeIds,
-      dark: document.documentElement.dataset.theme !== 'light',
+      dark: document.documentElement.dataset.colorScheme !== 'light',
       edgeColor: sigmaThemeColors().edge,
       bundledCurvatures: bundleCurvatures ?? undefined,
     })
@@ -939,7 +955,7 @@
           href={collection ? collectionPageHref(collection, 'graph') : undefined}
           class={[
             'inline-flex items-center gap-1 px-2 py-1 text-[11px] cursor-pointer transition-colors',
-            viewMode === 'canvas' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0',
+            viewMode === 'canvas' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0',
           ].join(' ')}
           onclick={() => { if (!collection) viewMode = 'canvas' }}
           aria-current={viewMode === 'canvas' ? 'page' : undefined}
@@ -951,7 +967,7 @@
           href={collection ? collectionPageHref(collection, 'svg') : undefined}
           class={[
             'inline-flex items-center gap-1 px-2 py-1 text-[11px] cursor-pointer transition-colors border-l border-line-2',
-            viewMode === 'svg' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0',
+            viewMode === 'svg' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0',
           ].join(' ')}
           onclick={() => { if (!collection) viewMode = 'svg' }}
           aria-current={viewMode === 'svg' ? 'page' : undefined}
@@ -963,7 +979,7 @@
           href={collection ? collectionPageHref(collection, 'table') : undefined}
           class={[
             'inline-flex items-center gap-1 px-2 py-1 text-[11px] cursor-pointer transition-colors border-l border-line-2',
-            viewMode === 'table' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0',
+            viewMode === 'table' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0',
           ].join(' ')}
           onclick={() => { if (!collection) viewMode = 'table' }}
           aria-current={viewMode === 'table' ? 'page' : undefined}
@@ -1047,7 +1063,7 @@
           type="button"
           class={[
             'inline-flex items-center gap-1 h-6 px-2 rounded border cursor-pointer transition-colors',
-            groupInBox ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+            groupInBox ? 'border-accent/40 bg-accent/10 text-primary-text' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
           ].join(' ')}
           onclick={() => (groupInBox = !groupInBox)}
           aria-pressed={groupInBox}
@@ -1060,7 +1076,7 @@
           type="button"
           class={[
             'inline-flex items-center gap-1 h-6 px-2 rounded border cursor-pointer transition-colors',
-            bundleEnabled ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+            bundleEnabled ? 'border-accent/40 bg-accent/10 text-primary-text' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
           ].join(' ')}
           onclick={() => (bundleEnabled = !bundleEnabled)}
           aria-pressed={bundleEnabled}
@@ -1079,7 +1095,7 @@
             type="button"
             class={[
               'inline-flex items-center gap-1 h-6 px-2 rounded border cursor-pointer transition-colors',
-              anyCollapsed ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+              anyCollapsed ? 'border-accent/40 bg-accent/10 text-primary-text' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
             ].join(' ')}
             onclick={toggleCollapseAll}
             aria-pressed={anyCollapsed}
@@ -1095,7 +1111,7 @@
         type="button"
         class={[
           'inline-flex items-center gap-1 h-6 px-2 rounded border cursor-pointer transition-colors',
-          queryOpen ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+          queryOpen ? 'border-accent/40 bg-accent/10 text-primary-text' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
         ].join(' ')}
         onclick={() => (queryOpen = !queryOpen)}
         aria-pressed={queryOpen}
@@ -1120,7 +1136,7 @@
       <div class="ml-auto flex items-center gap-3 text-fg-3">
         <span>{graph.nodes.length.toLocaleString()} nodes · {graph.edges.length.toLocaleString()} edges</span>
         {#if viewMode !== 'table' && rendering}
-          <span class="text-accent">rendering {drawNodes.length.toLocaleString()} / {renderTarget.toLocaleString()}</span>
+          <span class="text-primary-text">rendering {drawNodes.length.toLocaleString()} / {renderTarget.toLocaleString()}</span>
         {/if}
         {#if viewMode !== 'table' && truncated}
           <span class="text-warn" title="More nodes match — raise the limit or narrow the filter to see them">
@@ -1213,7 +1229,7 @@
               type="button"
               onclick={() => runQuery(queryText)}
               disabled={querying || !queryText.trim()}
-              class="inline-flex items-center gap-1.5 h-7 px-3 rounded bg-accent text-white cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#ff3868]"
+              class="inline-flex items-center gap-1.5 h-7 px-3 rounded bg-primary text-on-primary cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed hover:bg-primary-active"
             >
               {#if querying}<Loader2 class="size-3 animate-spin" />{:else}<Play class="size-3" />{/if}
               run
@@ -1341,7 +1357,7 @@
                       stroke-width={activeFocusNodeId ? (focusedEdge ? '0.27' : '0.055') : '0.105'}
                       opacity={activeFocusNodeId ? (focusedEdge ? '0.98' : '0.07') : '0.4'}
                       stroke-linejoin="round"
-                      class="text-line-3 cursor-pointer hover:text-accent"
+                      class="text-line-3 cursor-pointer hover:text-primary-text"
                       vector-effect="non-scaling-stroke"
                       role="button"
                       tabindex="0"
@@ -1360,7 +1376,7 @@
                       stroke={activeFocusNodeId ? (focusedEdge ? focusEdgeColor : 'currentColor') : 'currentColor'}
                       stroke-width={activeFocusNodeId ? (focusedEdge ? '0.27' : '0.055') : '0.105'}
                       opacity={activeFocusNodeId ? (focusedEdge ? '0.98' : '0.055') : '0.36'}
-                      class="text-line-3 cursor-pointer hover:text-accent"
+                      class="text-line-3 cursor-pointer hover:text-primary-text"
                       vector-effect="non-scaling-stroke"
                       role="button"
                       tabindex="0"
@@ -1467,7 +1483,7 @@
                 {@const orphan = orphanNodeIds.has(n.id)}
                 <tr class={['border-b border-line-1/60 hover:bg-bg-1/40 cursor-pointer', orphan ? 'bg-warn/10' : ''].join(' ')} onclick={() => { selectedEdge = null; selectedNode = n }}>
                   <td class="px-2 py-1 text-fg-3">node</td>
-                  <td class="px-2 py-1 text-accent font-semibold">{n.id}</td>
+                  <td class="px-2 py-1 text-primary-text font-semibold">{n.id}</td>
                   <td class="px-2 py-1 text-fg-0">{n.label}</td>
                   <td class="px-2 py-1 text-fg-2">
                     {String(n.data.node_type ?? '')}
@@ -1492,7 +1508,7 @@
       {#if selectedNode || selectedEdge}
         <aside class="absolute top-0 right-0 bottom-0 w-[340px] bg-bg-1 border-l border-line-2 shadow-2xl flex flex-col z-20">
           <header class="flex items-center gap-2 px-3 py-2 border-b border-line-1 text-[11px] font-mono">
-            <Info class="size-3.5 text-accent" />
+            <Info class="size-3.5 text-primary-text" />
             <span class="type-label">
               {selectedNode ? 'Node' : 'Edge'}
             </span>
@@ -1515,7 +1531,7 @@
                     </span>
                   {/if}
                 </div>
-                <div class="mt-1 break-all text-accent">{String(selectedNode.data.rid ?? selectedNode.id)}</div>
+                <div class="mt-1 break-all text-primary-text">{String(selectedNode.data.rid ?? selectedNode.id)}</div>
                 {#if selectedNodeCommunity !== null && (communityCounts.get(selectedNodeCommunity) ?? 0) >= 2}
                   <button
                     type="button"

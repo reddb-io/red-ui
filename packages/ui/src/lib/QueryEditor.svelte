@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { Play, Loader2, X } from 'lucide-svelte'
+  import Play from '@lucide/svelte/icons/play'
+  import Loader2 from '@lucide/svelte/icons/loader-2'
+  import X from '@lucide/svelte/icons/x'
   import { connection } from '$lib/connections.svelte'
   import { queryTabs, deriveQueryLabel, formatElapsed } from '$lib/query-tabs.svelte'
   import { tabs } from '$lib/tabs.svelte'
   import { registry } from '$lib/renderers'
   import type { Capability } from '$lib/renderers'
-  import { Kbd } from '@reddb-io/ui-kit'
+  import { Kbd } from '@reddb-io/design-system/base'
 
   interface Props {
     tabId: string
@@ -82,7 +84,7 @@
         <span class="text-fg-3 font-mono text-[11px] hidden sm:inline">Run with <Kbd>⌘</Kbd><Kbd>↵</Kbd></span>
         <button
           type="button"
-          class="inline-flex items-center gap-1 rounded border border-accent/60 bg-accent/10 px-2 py-1 text-[12px] font-mono text-accent hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="inline-flex items-center gap-1 rounded border border-accent/60 bg-accent/10 px-2 py-1 text-[12px] font-mono text-primary-text hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed"
           onclick={run}
           disabled={qs?.running || !connection.connected}
           aria-label="Run query"
@@ -116,7 +118,7 @@
           <div class="flex items-start justify-between gap-4">
             <div class="min-w-0">
               <div class="flex items-center gap-2 text-fg-1 text-[13px]">
-                <Loader2 class="size-4 animate-spin text-accent" />
+                <Loader2 class="size-4 animate-spin text-primary-text" />
                 <span>Running query</span>
               </div>
               <div class="mt-2 text-[11px] text-fg-3">

@@ -72,18 +72,10 @@ describe("fractionAt", () => {
 
 describe("fractionForKey", () => {
   it("moves the divider by one step along its own axis", () => {
-    expect(fractionForKey("ArrowRight", 0.5, "horizontal")).toBeCloseTo(
-      0.5 + SPLIT_STEP
-    );
-    expect(fractionForKey("ArrowLeft", 0.5, "horizontal")).toBeCloseTo(
-      0.5 - SPLIT_STEP
-    );
-    expect(fractionForKey("ArrowDown", 0.5, "vertical")).toBeCloseTo(
-      0.5 + SPLIT_STEP
-    );
-    expect(fractionForKey("ArrowUp", 0.5, "vertical")).toBeCloseTo(
-      0.5 - SPLIT_STEP
-    );
+    expect(fractionForKey("ArrowRight", 0.5, "horizontal")).toBeCloseTo(0.5 + SPLIT_STEP);
+    expect(fractionForKey("ArrowLeft", 0.5, "horizontal")).toBeCloseTo(0.5 - SPLIT_STEP);
+    expect(fractionForKey("ArrowDown", 0.5, "vertical")).toBeCloseTo(0.5 + SPLIT_STEP);
+    expect(fractionForKey("ArrowUp", 0.5, "vertical")).toBeCloseTo(0.5 - SPLIT_STEP);
   });
 
   it("leaves the other axis' keys to the page", () => {
@@ -111,17 +103,13 @@ describe("fractionForKey", () => {
   });
 
   it("stops at the bounds rather than stepping past them", () => {
-    expect(fractionForKey("ArrowLeft", SPLIT_BOUNDS.min, "horizontal")).toBe(
-      SPLIT_BOUNDS.min
-    );
-    expect(fractionForKey("ArrowRight", SPLIT_BOUNDS.max, "horizontal")).toBe(
-      SPLIT_BOUNDS.max
-    );
+    expect(fractionForKey("ArrowLeft", SPLIT_BOUNDS.min, "horizontal")).toBe(SPLIT_BOUNDS.min);
+    expect(fractionForKey("ArrowRight", SPLIT_BOUNDS.max, "horizontal")).toBe(SPLIT_BOUNDS.max);
   });
 
   it("steps from a fraction that was already out of bounds", () => {
     expect(fractionForKey("ArrowRight", -5, "horizontal")).toBeCloseTo(
-      SPLIT_BOUNDS.min + SPLIT_STEP
+      SPLIT_BOUNDS.min + SPLIT_STEP,
     );
   });
 });

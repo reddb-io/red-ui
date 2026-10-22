@@ -17,20 +17,16 @@ import {
   type Snippet,
 } from "svelte";
 
-const mounted: { instance: Record<string, unknown>; target: HTMLElement }[] =
-  [];
+const mounted: { instance: Record<string, unknown>; target: HTMLElement }[] = [];
 
 /** Mount `component` with `props` into a fresh detached element. */
 export function render<Props extends Record<string, unknown>>(
   component: Component<Props>,
-  props: Props = {} as Props
+  props: Props = {} as Props,
 ): HTMLElement {
   const target = document.createElement("div");
   document.body.appendChild(target);
-  const instance = mount(component, { target, props }) as Record<
-    string,
-    unknown
-  >;
+  const instance = mount(component, { target, props }) as Record<string, unknown>;
   mounted.push({ instance, target });
   flushSync();
   return target;
@@ -65,7 +61,7 @@ export function classesOf(className: string): Set<string> {
  * The element's classes as a set.
  *
  * Read off the attribute rather than off `className`, because on an SVG
- * element — the spinner LoadingState draws — `className` is an
+ * element — such as an inline SVG — `className` is an
  * `SVGAnimatedString` and not a string at all.
  */
 export function classes(element: Element): Set<string> {
@@ -77,9 +73,14 @@ export function text(content: string): Snippet {
   return createRawSnippet(() => ({ render: () => `<span>${content}</span>` }));
 }
 
-afterEach(() => {
+afterEach(async () => {
   for (const { instance, target } of mounted.splice(0)) {
     unmount(instance);
     target.remove();
   }
+
+  // Bits UI restores its shared body scroll lock 24ms after the final
+  // overlay is destroyed. Keep jsdom alive through that bounded cleanup so
+  // the callback cannot outlive the document when test files run in parallel.
+  await new Promise<void>((resolve) => window.setTimeout(resolve, 30));
 });

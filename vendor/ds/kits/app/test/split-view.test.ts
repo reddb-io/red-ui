@@ -9,10 +9,7 @@
 import { flushSync } from "svelte";
 import { describe, expect, it } from "vitest";
 import SplitView from "../src/primitives/SplitView.svelte";
-import {
-  SPLIT_BOUNDS,
-  SPLIT_STEP,
-} from "../src/primitives/split-view.behavior";
+import { SPLIT_BOUNDS, SPLIT_STEP } from "../src/primitives/split-view.behavior";
 import { splitView } from "../src/primitives/split-view.variants";
 import { classes, classesOf, render, rendered, text } from "./mount";
 
@@ -31,45 +28,24 @@ function basis(element: HTMLElement): [string, string] {
 /** Give the container a size, which jsdom otherwise reports as zero. */
 function measured(element: HTMLElement, width: number, height: number): void {
   element.getBoundingClientRect = () =>
-    ({
-      left: 0,
-      top: 0,
-      right: width,
-      bottom: height,
-      width,
-      height,
-      x: 0,
-      y: 0,
-    }) as DOMRect;
+    ({ left: 0, top: 0, right: width, bottom: height, width, height, x: 0, y: 0 }) as DOMRect;
 }
 
 function press(element: HTMLElement, key: string): KeyboardEvent {
-  const event = new KeyboardEvent("keydown", {
-    key,
-    bubbles: true,
-    cancelable: true,
-  });
+  const event = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true });
   element.dispatchEvent(event);
   flushSync();
   return event;
 }
 
-function pointer(
-  element: HTMLElement,
-  type: string,
-  position: Partial<MouseEventInit> = {}
-): void {
-  element.dispatchEvent(
-    new MouseEvent(type, { bubbles: true, cancelable: true, ...position })
-  );
+function pointer(element: HTMLElement, type: string, position: Partial<MouseEventInit> = {}): void {
+  element.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, ...position }));
   flushSync();
 }
 
 describe("SplitView", () => {
   it("renders two panes with a divider between them", () => {
-    const element = rendered(
-      render(SplitView, { start: text("left"), end: text("right") })
-    );
+    const element = rendered(render(SplitView, { start: text("left"), end: text("right") }));
     const [start, divider, end] = parts(element);
     expect(start.textContent?.trim()).toBe("left");
     expect(divider.getAttribute("role")).toBe("separator");
@@ -82,10 +58,7 @@ describe("SplitView", () => {
   });
 
   it("takes the fraction it is given, and keeps both panes on screen", () => {
-    expect(basis(rendered(render(SplitView, { fraction: 0.25 })))).toEqual([
-      "25%",
-      "75%",
-    ]);
+    expect(basis(rendered(render(SplitView, { fraction: 0.25 })))).toEqual(["25%", "75%"]);
     // A fraction outside the bounds is held at them rather than collapsing a pane.
     expect(basis(rendered(render(SplitView, { fraction: 2 })))).toEqual([
       `${SPLIT_BOUNDS.max * 100}%`,
@@ -98,21 +71,15 @@ describe("SplitView", () => {
     // Panes side by side are divided by a vertical rule.
     expect(divider.getAttribute("aria-orientation")).toBe("vertical");
     expect(divider.getAttribute("aria-valuenow")).toBe("40");
-    expect(divider.getAttribute("aria-valuemin")).toBe(
-      `${SPLIT_BOUNDS.min * 100}`
-    );
-    expect(divider.getAttribute("aria-valuemax")).toBe(
-      `${SPLIT_BOUNDS.max * 100}`
-    );
+    expect(divider.getAttribute("aria-valuemin")).toBe(`${SPLIT_BOUNDS.min * 100}`);
+    expect(divider.getAttribute("aria-valuemax")).toBe(`${SPLIT_BOUNDS.max * 100}`);
     // Reachable without a pointer at all, and named when it gets there.
     expect(divider.getAttribute("tabindex")).toBe("0");
     expect(divider.getAttribute("aria-label")).toBe("Resize panes");
   });
 
   it("takes the caller's name for the divider", () => {
-    const [, divider] = parts(
-      rendered(render(SplitView, { label: "Resize the inspector" }))
-    );
+    const [, divider] = parts(rendered(render(SplitView, { label: "Resize the inspector" })));
     expect(divider.getAttribute("aria-label")).toBe("Resize the inspector");
   });
 
@@ -121,12 +88,8 @@ describe("SplitView", () => {
     const [start, divider] = parts(element);
     expect(element.getAttribute("data-orientation")).toBe("vertical");
     expect(divider.getAttribute("aria-orientation")).toBe("horizontal");
-    expect(classes(element)).toEqual(
-      classesOf(splitView({ orientation: "vertical" }).root())
-    );
-    expect(classes(start)).toEqual(
-      classesOf(splitView({ orientation: "vertical" }).pane())
-    );
+    expect(classes(element)).toEqual(classesOf(splitView({ orientation: "vertical" }).root()));
+    expect(classes(start)).toEqual(classesOf(splitView({ orientation: "vertical" }).pane()));
   });
 
   it("moves the divider with the arrow keys of its own axis", () => {
@@ -218,14 +181,10 @@ describe("SplitView", () => {
     const [, divider] = parts(element);
 
     pointer(divider, "pointerdown", { clientX: 100 });
-    expect(classes(divider)).toEqual(
-      classesOf(splitView({ dragging: true }).divider())
-    );
+    expect(classes(divider)).toEqual(classesOf(splitView({ dragging: true }).divider()));
 
     pointer(divider, "pointerup", { clientX: 100 });
-    expect(classes(divider)).toEqual(
-      classesOf(splitView({ dragging: false }).divider())
-    );
+    expect(classes(divider)).toEqual(classesOf(splitView({ dragging: false }).divider()));
   });
 
   it("wears exactly the classes its variants module produces", () => {

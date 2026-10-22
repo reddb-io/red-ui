@@ -3,7 +3,7 @@
   // card — a mini-mockup painted with that skin's *own* derived tokens — and
   // applies the skin on click. Selection persists across reloads via the skin
   // store. Dark-only: there is no light/system switch here.
-  import { Check } from 'lucide-svelte'
+  import Check from '@lucide/svelte/icons/check'
   import PageHeader from '$lib/PageHeader.svelte'
   import { SKINS, skinToCssVars, type Skin } from '$lib/skins/skins'
   import { skins } from '$lib/skins/skins.svelte'
@@ -77,7 +77,7 @@
           <span class="type-h2 text-fg-0">{skin.label}</span>
           {#if active}
             <span
-              class="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-accent"
+              class="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-primary-text"
             >
               <Check class="size-3" /> Active
             </span>

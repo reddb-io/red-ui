@@ -1,6 +1,9 @@
 <script lang="ts">
   import type { QueryResult } from '#reddb'
-  import { Braces, FileText, Search, X } from 'lucide-svelte'
+  import Braces from '@lucide/svelte/icons/braces'
+  import FileText from '@lucide/svelte/icons/file-text'
+  import Search from '@lucide/svelte/icons/search'
+  import X from '@lucide/svelte/icons/x'
   import { extractDocuments, type DocumentItem } from './document-render'
 
   interface Props {
@@ -41,7 +44,7 @@
       <div class="inline-flex border border-line-2 rounded overflow-hidden">
         <button
           type="button"
-          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors', mode === 'body' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors', mode === 'body' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
           onclick={() => (mode = 'body')}
           aria-pressed={mode === 'body'}
         >
@@ -50,7 +53,7 @@
         </button>
         <button
           type="button"
-          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'fields' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'fields' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
           onclick={() => (mode = 'fields')}
           aria-pressed={mode === 'fields'}
         >
@@ -59,7 +62,7 @@
         </button>
         <button
           type="button"
-          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'raw' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'raw' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
           onclick={() => (mode = 'raw')}
           aria-pressed={mode === 'raw'}
         >
@@ -93,7 +96,7 @@
             class={['w-full text-left px-3 py-2 border-b border-line-1/60 hover:bg-bg-1/50 cursor-pointer', active === doc ? 'bg-bg-1 text-fg-0' : 'text-fg-2'].join(' ')}
           >
             <div class="flex items-center gap-2">
-              <span class="text-accent truncate">{doc.title}</span>
+              <span class="text-primary-text truncate">{doc.title}</span>
               <span class="ml-auto text-fg-3">#{doc.rid}</span>
             </div>
             {#if doc.subtitle}

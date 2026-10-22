@@ -2,7 +2,10 @@
   import { useRouter } from './router.svelte'
   import { connection } from './connections.svelte'
   import { pendingChanges } from './pending-changes.svelte'
-  import { ArrowRight, FilePenLine, Lock, Terminal } from 'lucide-svelte'
+  import ArrowRight from '@lucide/svelte/icons/arrow-right'
+  import FilePenLine from '@lucide/svelte/icons/file-pen-line'
+  import Lock from '@lucide/svelte/icons/lock'
+  import Terminal from '@lucide/svelte/icons/terminal'
   import { readBuildInfo } from './build-info'
 
   const build = readBuildInfo()
@@ -141,7 +144,7 @@
       onclick={openPending}
       data-no-nav
       aria-label={`${pendingCount} pending changes`}
-      class="inline-flex items-center gap-1.5 px-3 text-accent hover:bg-bg-2/60 transition-colors cursor-pointer bg-transparent border-0 border-l border-line-1"
+      class="inline-flex items-center gap-1.5 px-3 text-primary-text hover:bg-bg-2/60 transition-colors cursor-pointer bg-transparent border-0 border-l border-line-1"
     >
       <FilePenLine class="size-3" />
       <span class="tabular-nums">Pending changes ({pendingCount})</span>

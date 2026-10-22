@@ -1,6 +1,9 @@
 <script lang="ts">
   import { activity } from './activity.svelte'
-  import { Activity, CheckCircle2, AlertCircle, Loader2 } from 'lucide-svelte'
+  import Activity from '@lucide/svelte/icons/activity'
+  import CheckCircle2 from '@lucide/svelte/icons/check-circle-2'
+  import AlertCircle from '@lucide/svelte/icons/alert-circle'
+  import Loader2 from '@lucide/svelte/icons/loader-2'
 
   let open = $state(false)
 
@@ -27,7 +30,7 @@
     class={[
       'inline-flex items-center gap-1.5 h-7 px-2 rounded-md border text-xs font-mono transition-colors cursor-pointer',
       activity.inflight > 0
-        ? 'border-accent/40 bg-accent/10 text-accent'
+        ? 'border-accent/40 bg-accent/10 text-primary-text'
         : 'border-line-2 bg-bg-2 text-fg-3 hover:text-fg-1',
     ].join(' ')}
   >
@@ -71,7 +74,7 @@
             <div class="px-3 py-1.5 border-b border-line-1/50 last:border-0 grid grid-cols-[16px_1fr_auto] items-center gap-2">
               <span aria-hidden="true">
                 {#if e.status === 'pending'}
-                  <Loader2 class="size-3 animate-spin text-accent" />
+                  <Loader2 class="size-3 animate-spin text-primary-text" />
                 {:else if e.status === 'ok'}
                   <CheckCircle2 class="size-3 text-ok" />
                 {:else}

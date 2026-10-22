@@ -1,7 +1,9 @@
 <script lang="ts">
   import { pendingChanges, buildUpdateSql } from './pending-changes.svelte'
   import { connection } from './connections.svelte'
-  import { X, AlertTriangle, Lock } from 'lucide-svelte'
+  import X from '@lucide/svelte/icons/x'
+  import AlertTriangle from '@lucide/svelte/icons/alert-triangle'
+  import Lock from '@lucide/svelte/icons/lock'
 
   // Mutations are committed against the server; block them while it reports
   // read-only (#23). The reason explains *why* the control is disabled.
@@ -96,7 +98,7 @@
                   <span class="text-fg-3">old</span>
                   <span class="text-fg-2 truncate">{String(change.oldValue ?? 'NULL')}</span>
                   <span class="text-fg-3">new</span>
-                  <span class="text-accent truncate">{change.newValue}</span>
+                  <span class="text-primary-text truncate">{change.newValue}</span>
                 </div>
                 <div class="text-fg-3 text-[10.5px] mt-1 truncate">
                   {buildUpdateSql(change)}
@@ -140,7 +142,7 @@
         </button>
         <button
           type="button"
-          class="text-[12px] font-mono px-3 py-1 bg-accent text-white rounded disabled:opacity-50"
+          class="text-[12px] font-mono px-3 py-1 bg-primary text-on-primary rounded disabled:opacity-50"
           onclick={apply}
           disabled={pendingChanges.count === 0 || committing || readOnly}
           title={readOnly ? (readOnlyReason ?? 'Server is read-only — mutations are disabled.') : undefined}

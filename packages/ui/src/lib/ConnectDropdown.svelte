@@ -6,17 +6,15 @@
     openDatabaseFile,
     unreachableConnectHint,
   } from './connections.svelte'
-  import {
-    Zap,
-    Loader2,
-    AlertCircle,
-    CheckCircle2,
-    Clock,
-    X,
-    Plug,
-    ChevronDown,
-    FolderOpen,
-  } from 'lucide-svelte'
+  import Zap from '@lucide/svelte/icons/zap'
+  import Loader2 from '@lucide/svelte/icons/loader-2'
+  import AlertCircle from '@lucide/svelte/icons/alert-circle'
+  import CheckCircle2 from '@lucide/svelte/icons/check-circle-2'
+  import Clock from '@lucide/svelte/icons/clock'
+  import X from '@lucide/svelte/icons/x'
+  import Plug from '@lucide/svelte/icons/plug'
+  import ChevronDown from '@lucide/svelte/icons/chevron-down'
+  import FolderOpen from '@lucide/svelte/icons/folder-open'
 
   const DEFAULT_URL = 'red://localhost'
 
@@ -227,7 +225,7 @@
         <button
           type="submit"
           disabled={status === 'probing' || !url.trim() || Boolean(username.trim()) !== Boolean(password)}
-          class="w-full h-9 bg-accent text-white font-medium rounded-md cursor-pointer transition-colors hover:bg-[#ff3868] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-[13px]"
+          class="w-full h-9 bg-primary text-on-primary font-medium rounded-md cursor-pointer transition-colors hover:bg-primary-active disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-[13px]"
         >
           {#if status === 'probing'}
             <Loader2 class="size-3.5 animate-spin" />

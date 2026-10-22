@@ -1,6 +1,13 @@
 <script lang="ts">
   import type { QueryResult, RedClient } from '#reddb'
-  import { Braces, Gauge, ListFilter, LoaderCircle, Play, Rows3, Search, X } from 'lucide-svelte'
+  import Braces from '@lucide/svelte/icons/braces'
+  import Gauge from '@lucide/svelte/icons/gauge'
+  import ListFilter from '@lucide/svelte/icons/list-filter'
+  import LoaderCircle from '@lucide/svelte/icons/loader-circle'
+  import Play from '@lucide/svelte/icons/play'
+  import Rows3 from '@lucide/svelte/icons/rows-3'
+  import Search from '@lucide/svelte/icons/search'
+  import X from '@lucide/svelte/icons/x'
   import {
     buildVectorSearchQuery,
     compactValue,
@@ -96,7 +103,7 @@
       <div class="inline-flex shrink-0 overflow-hidden rounded border border-line-2">
         <button
           type="button"
-          class={['inline-flex h-7 items-center gap-1 px-2 transition-colors', surface === 'browse' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+          class={['inline-flex h-7 items-center gap-1 px-2 transition-colors', surface === 'browse' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
           onclick={() => { surface = 'browse'; selected = null }}
           aria-pressed={surface === 'browse'}
         >
@@ -105,7 +112,7 @@
         </button>
         <button
           type="button"
-          class={['inline-flex h-7 items-center gap-1 border-l border-line-2 px-2 transition-colors', surface === 'search' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+          class={['inline-flex h-7 items-center gap-1 border-l border-line-2 px-2 transition-colors', surface === 'search' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
           onclick={() => { surface = 'search'; selected = null }}
           aria-pressed={surface === 'search'}
         >
@@ -171,7 +178,7 @@
             'inline-flex h-7 items-center gap-1 rounded border px-2 transition-colors',
             searching
               ? 'border-line-1 bg-bg-2 text-fg-3'
-              : 'border-accent/40 bg-accent text-white hover:bg-accent/90',
+              : 'border-accent/40 bg-primary text-on-primary hover:bg-accent/90',
           ].join(' ')}
           disabled={searching}
           onclick={() => void runSearch()}
@@ -238,7 +245,7 @@
       <div class="inline-flex border border-line-2 rounded overflow-hidden">
         <button
           type="button"
-          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors', mode === 'metadata' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors', mode === 'metadata' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
           onclick={() => (mode = 'metadata')}
           aria-pressed={mode === 'metadata'}
         >
@@ -247,7 +254,7 @@
         </button>
         <button
           type="button"
-          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'vector' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'vector' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
           onclick={() => (mode = 'vector')}
           aria-pressed={mode === 'vector'}
         >
@@ -256,7 +263,7 @@
         </button>
         <button
           type="button"
-          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'scalar' ? 'bg-accent text-white' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+          class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'scalar' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
           onclick={() => (mode = 'scalar')}
           aria-pressed={mode === 'scalar'}
         >
@@ -300,7 +307,7 @@
             ].join(' ')}
           >
             <div class="flex items-baseline gap-2">
-              <span class="text-accent">{row.id}</span>
+              <span class="text-primary-text">{row.id}</span>
               <span class="text-fg-3">{row.dimension}d</span>
               {#if surface === 'search' && row.scalar !== null}<span class="ml-auto text-fg-1" title={scalarLabel(row)}>{row.scalar.toFixed(4)}</span>{/if}
             </div>
@@ -374,7 +381,7 @@
             <tbody>
               {#each filtered as row (row.id)}
                 <tr class="border-b border-line-1/60 hover:bg-bg-1/40 cursor-pointer" onclick={() => (selected = row)}>
-                  <td class="px-2 py-1 text-accent">{row.id}</td>
+                  <td class="px-2 py-1 text-primary-text">{row.id}</td>
                   <td class="px-2 py-1 text-right" title={scalarLabel(row)}>{row.scalar === null ? 'n/a' : row.scalar.toFixed(6)}</td>
                   <td class="px-2 py-1 text-right">{vectorMagnitude(row.vector).toFixed(6)}</td>
                 </tr>

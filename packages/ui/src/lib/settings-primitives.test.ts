@@ -56,12 +56,12 @@ describe("ListRow", () => {
 });
 
 describe("NavItem", () => {
-  it("marks the active item with aria-current=page", () => {
+  it("marks the current item with aria-current=page", () => {
     const active = render(NavItem, {
-      props: { label: "General", active: true },
+      props: { label: "General", current: true },
     }).body;
     const idle = render(NavItem, {
-      props: { label: "General", active: false },
+      props: { label: "General", current: false },
     }).body;
     expect(active).toContain('aria-current="page"');
     expect(idle).not.toContain('aria-current="page"');
@@ -105,13 +105,13 @@ describe("SectionHeading", () => {
 });
 
 describe("Pill", () => {
-  it("defaults to the muted tone and switches to accent", () => {
+  it("maps legacy emphasis to a neutral DS tone", () => {
     const muted = render(Pill, { props: { children: marker("3") } }).body;
     const accent = render(Pill, {
       props: { tone: "accent", children: marker("Live") },
     }).body;
-    expect(muted).toContain("text-fg-2");
-    expect(accent).toContain("text-accent");
+    expect(muted).toContain('data-tone="neutral"');
+    expect(accent).toContain('data-tone="neutral"');
     expect(accent).toContain("Live");
   });
 });

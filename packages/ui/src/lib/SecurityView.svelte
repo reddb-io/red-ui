@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Card, Badge } from '@reddb-io/ui-kit'
+  import { Card, Badge } from '@reddb-io/design-system/base'
   import PageHeader from '$lib/PageHeader.svelte'
   import EmptyState from '$lib/EmptyState.svelte'
   import { activity } from '$lib/activity.svelte'
@@ -13,7 +13,14 @@
   } from '$lib/policies'
   import { secureStore } from '$lib/secureStore.svelte'
   import type { AuthPolicy, AuthTenant, AuthUser, Whoami } from '#reddb'
-  import { Building2, CheckCircle2, Lock, RefreshCw, ScrollText, ShieldAlert, Users, XCircle } from 'lucide-svelte'
+  import Building2 from '@lucide/svelte/icons/building-2'
+  import CheckCircle2 from '@lucide/svelte/icons/check-circle-2'
+  import Lock from '@lucide/svelte/icons/lock'
+  import RefreshCw from '@lucide/svelte/icons/refresh-cw'
+  import ScrollText from '@lucide/svelte/icons/scroll-text'
+  import ShieldAlert from '@lucide/svelte/icons/shield-alert'
+  import Users from '@lucide/svelte/icons/users'
+  import XCircle from '@lucide/svelte/icons/x-circle'
 
   let whoami = $state<Whoami | null>(null)
   let tenants = $state<AuthTenant[]>([])
@@ -151,11 +158,11 @@
           {:else if whoami}
             <div class="grid grid-cols-[110px_1fr] gap-x-3 gap-y-2 text-[12px] font-mono">
               <span class="text-fg-3">authenticated</span>
-              <span>{#if whoami.authenticated}<Badge tone="ok">yes</Badge>{:else}<Badge tone="warn">no</Badge>{/if}</span>
+              <span>{#if whoami.authenticated}<Badge tone="success">yes</Badge>{:else}<Badge tone="warning">no</Badge>{/if}</span>
               <span class="text-fg-3">username</span>
               <span class="text-fg-0">{whoami.username}</span>
               <span class="text-fg-3">role</span>
-              <span class="text-accent">{whoami.role}</span>
+              <span class="text-primary-text">{whoami.role}</span>
               {#if whoami.note}
                 <span class="text-fg-3">note</span>
                 <span class="text-fg-1">{whoami.note}</span>
@@ -184,7 +191,7 @@
                 <div class="rounded border border-line-1 bg-bg-0 px-2 py-1.5">
                   <div class="flex items-center gap-2">
                     <span class="text-fg-0">{tenant.name ?? tenant.slug ?? tenant.id ?? 'tenant'}</span>
-                    {#if tenant.role}<Badge tone="accent">{tenant.role}</Badge>{/if}
+                    {#if tenant.role}<Badge tone="neutral">{tenant.role}</Badge>{/if}
                   </div>
                   <div class="mt-1 text-fg-3">
                     {tenant.id ?? tenant.slug ?? '-'}
@@ -215,7 +222,7 @@
                   <div class="rounded border border-line-1 bg-bg-0 px-2 py-1.5">
                     <div class="flex items-center gap-2">
                       <span class="text-fg-0">{policy.name ?? policy.id ?? 'policy'}</span>
-                      {#if policy.effect}<Badge tone={policy.effect === 'deny' ? 'danger' : 'ok'}>{policy.effect}</Badge>{/if}
+                      {#if policy.effect}<Badge tone={policy.effect === 'deny' ? 'danger' : 'success'}>{policy.effect}</Badge>{/if}
                     </div>
                     <div class="mt-1 text-fg-3">
                       {policy.action ?? '*'} · {policy.resource ?? '*'}
@@ -261,8 +268,8 @@
                   {#each users as user (user.username)}
                     <tr class="border-b border-line-1/60 hover:bg-bg-1/40">
                       <td class="px-2 py-1 text-fg-0">{user.username}</td>
-                      <td class="px-2 py-1 text-accent">{user.role ?? '-'}</td>
-                      <td class="px-2 py-1">{#if user.mfa}<Badge tone="ok">on</Badge>{:else}<span class="text-fg-3">-</span>{/if}</td>
+                      <td class="px-2 py-1 text-primary-text">{user.role ?? '-'}</td>
+                      <td class="px-2 py-1">{#if user.mfa}<Badge tone="success">on</Badge>{:else}<span class="text-fg-3">-</span>{/if}</td>
                       <td class="px-2 py-1 text-fg-2">{fmtTime(user.created_at)}</td>
                       <td class="px-2 py-1 text-fg-2">{fmtTime(user.last_active)}</td>
                     </tr>
@@ -294,9 +301,9 @@
                   <tbody>
                     {#each policies as policy, i (`${policy.id ?? policy.name ?? i}`)}
                       <tr class="border-b border-line-1/60 hover:bg-bg-1/40">
-                        <td class="px-2 py-1">{#if policy.effect}<Badge tone={policy.effect === 'deny' ? 'danger' : 'ok'}>{policy.effect}</Badge>{:else}<span class="text-fg-3">-</span>{/if}</td>
+                        <td class="px-2 py-1">{#if policy.effect}<Badge tone={policy.effect === 'deny' ? 'danger' : 'success'}>{policy.effect}</Badge>{:else}<span class="text-fg-3">-</span>{/if}</td>
                         <td class="px-2 py-1 text-fg-1">{policy.principal ?? '-'}</td>
-                        <td class="px-2 py-1 text-accent">{policy.action ?? '*'}</td>
+                        <td class="px-2 py-1 text-primary-text">{policy.action ?? '*'}</td>
                         <td class="px-2 py-1 text-fg-1">{policy.resource ?? '*'}</td>
                         <td class="px-2 py-1 text-fg-2">{policy.tenant ?? '-'}</td>
                       </tr>
@@ -338,7 +345,7 @@
                             <span class="inline-flex items-center gap-1 text-danger"><XCircle class="size-3.5" /> no</span>
                           {/if}
                         </td>
-                        <td class="px-2 py-1 text-accent">{row.action}</td>
+                        <td class="px-2 py-1 text-primary-text">{row.action}</td>
                         <td class="px-2 py-1 text-fg-1">{row.resourceLabel}</td>
                         <td class="px-2 py-1">
                           {#if row.effects.length === 0}
@@ -346,7 +353,7 @@
                           {:else}
                             <span class="inline-flex flex-wrap gap-1">
                               {#each row.effects as effect}
-                                <Badge tone={effect === 'deny' ? 'danger' : 'ok'}>{effect}</Badge>
+                                <Badge tone={effect === 'deny' ? 'danger' : 'success'}>{effect}</Badge>
                               {/each}
                             </span>
                           {/if}

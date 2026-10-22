@@ -15,11 +15,11 @@
   let { chart, series, unit = null }: Props = $props()
 
   // Worse percentiles trend redder; single series leads with the accent.
-  const PALETTE = ['#ff2056', '#4ade80', '#fbbf24', '#38bdf8', '#a78bfa']
+  const PALETTE = Array.from({ length: 5 }, (_, i) => `var(--reddb-color-series-${i + 1})`)
   const PERCENTILE_COLOR: Record<string, string> = {
-    p50: '#4ade80',
-    p95: '#fbbf24',
-    p99: '#ff2056',
+    p50: 'var(--reddb-color-feedback-success-foreground)',
+    p95: 'var(--reddb-color-feedback-warning-foreground)',
+    p99: 'var(--reddb-color-feedback-danger-foreground)',
   }
 
   // LayerChart auto-detects a time scale from Date x-values.
@@ -55,7 +55,7 @@
   <!-- Point-in-time level. A ratio shows a 0–100% bar; other gauges show the
        raw latest value. -->
   <div class="flex h-full flex-col items-center justify-center gap-3">
-    <div class="font-mono text-[40px] font-semibold leading-none text-accent">
+    <div class="font-mono text-[40px] font-semibold leading-none text-primary-text">
       {latest === null ? '—' : fmtValue(latest)}{#if unit && !isRatio}<span class="ml-1 text-[16px] text-fg-3">{unit}</span>{/if}
     </div>
     {#if isRatio && latest !== null}

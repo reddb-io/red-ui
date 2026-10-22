@@ -1,18 +1,10 @@
 <script lang="ts">
-  type Role = 'primary' | 'replica' | 'embedded'
-  interface Props { role: Role; label?: string }
-  let { role, label }: Props = $props()
+  import { Badge } from '@reddb-io/design-system/base'
 
-  const dotColor = $derived(
-    ({
-      primary: 'bg-role-primary text-role-primary',
-      replica: 'bg-role-replica text-role-replica',
-      embedded: 'bg-role-embedded text-role-embedded',
-    } as const)[role]
-  )
+  // The legacy marker names a role, not reachability. Do not manufacture an
+  // online status to fit the DS NodeBadge's different domain contract.
+  interface Props { role: 'primary' | 'replica' | 'embedded'; label?: string }
+  let { role, label }: Props = $props()
 </script>
 
-<span class="inline-flex items-center gap-1.5 font-mono text-[11px] text-fg-1 uppercase tracking-[0.06em]">
-  <span class="w-1.5 h-1.5 rounded-full {dotColor} shadow-[0_0_0_3px_currentColor]/20"></span>
-  <span>{label ?? role}</span>
-</span>
+<Badge tone="neutral">{label ?? role}</Badge>

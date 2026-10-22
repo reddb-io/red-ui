@@ -1,17 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { page } from '$app/state'
-  import {
-    ArrowLeft,
-    Box,
-    ChevronRight,
-    CircleDot,
-    FileJson,
-    Layers3,
-    Link2,
-    RotateCw,
-    Upload,
-  } from 'lucide-svelte'
+  import ArrowLeft from '@lucide/svelte/icons/arrow-left'
+  import Box from '@lucide/svelte/icons/box'
+  import ChevronRight from '@lucide/svelte/icons/chevron-right'
+  import CircleDot from '@lucide/svelte/icons/circle-dot'
+  import FileJson from '@lucide/svelte/icons/file-json'
+  import Layers3 from '@lucide/svelte/icons/layers-3'
+  import Link2 from '@lucide/svelte/icons/link-2'
+  import RotateCw from '@lucide/svelte/icons/rotate-cw'
+  import Upload from '@lucide/svelte/icons/upload'
   import GraphRenderer from '$lib/renderers/GraphRenderer.svelte'
   import EmptyState from '$lib/EmptyState.svelte'
   import {
@@ -379,7 +377,7 @@
                 />
               </div>
               <button
-                class="px-4 py-2 bg-accent text-white rounded-md text-[13px] font-medium whitespace-nowrap disabled:opacity-50"
+                class="px-4 py-2 bg-primary text-on-primary rounded-md text-[13px] font-medium whitespace-nowrap disabled:opacity-50"
                 type="submit"
                 disabled={loading || !srcInput.trim()}
               >
@@ -411,7 +409,7 @@
 
             {#if error}
               <p
-                class="m-0 px-3 py-2 rounded-md text-accent text-[12px] leading-relaxed border border-accent/35 bg-accent/10"
+                class="m-0 px-3 py-2 rounded-md text-primary-text text-[12px] leading-relaxed border border-accent/35 bg-accent/10"
               >
                 {error}
               </p>

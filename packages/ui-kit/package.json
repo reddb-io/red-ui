@@ -10,17 +10,21 @@
       "types": "./src/lib/index.ts"
     },
     "./tokens": "./src/tokens/index.ts",
-    "./tokens.css": "./src/tokens/tokens.css"
+    "./tokens.css": "./src/tokens/tokens.css",
+    "./styles.css": "./src/tokens/styles.css"
   },
   "files": [
     "src/lib",
     "src/tokens"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "directory": ".package",
+    "linkDirectory": false
   },
   "scripts": {
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "prepack": "node ../../scripts/package-with-design-system.mjs ui-kit"
   },
   "peerDependencies": {
     "svelte": "^5.0.0"
@@ -28,11 +32,12 @@
   "devDependencies": {
     "svelte": "^5.20.0",
     "svelte-check": "^4.1.4",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
   },
   "dependencies": {
-    "tailwind-variants": "^2.1.0",
-    "@reddb-io/kit-app": "workspace:*"
+    "@reddb-io/design-system": "workspace:*",
+    "@lucide/svelte": "^1.0.1"
   },
   "engines": {
     "node": ">=20"

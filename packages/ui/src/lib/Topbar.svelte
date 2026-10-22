@@ -1,8 +1,17 @@
 <script lang="ts">
-  import { Kbd } from '@reddb-io/ui-kit'
+  import { Kbd } from '@reddb-io/design-system/base'
   import ConnectDropdown from './ConnectDropdown.svelte'
   import ActivityIndicator from './ActivityIndicator.svelte'
-  import { Search, Sun, Moon, Network, Database, FileCode2, Shield, Settings2, LineChart, Sparkles } from 'lucide-svelte'
+  import Search from '@lucide/svelte/icons/search'
+  import Sun from '@lucide/svelte/icons/sun'
+  import Moon from '@lucide/svelte/icons/moon'
+  import Network from '@lucide/svelte/icons/network'
+  import Database from '@lucide/svelte/icons/database'
+  import FileCode2 from '@lucide/svelte/icons/file-code-2'
+  import Shield from '@lucide/svelte/icons/shield'
+  import Settings2 from '@lucide/svelte/icons/settings-2'
+  import LineChart from '@lucide/svelte/icons/line-chart'
+  import Sparkles from '@lucide/svelte/icons/sparkles'
   import { theme } from './theme.svelte'
   import { useRouter } from './router.svelte'
 
@@ -28,9 +37,9 @@
     <a
       href={router.href({ view: 'collections' })}
       onclick={(e) => router.go({ view: 'collections' }, e)}
-      class="font-mono font-semibold text-[13px] tracking-tight text-fg-0 no-underline hover:text-accent transition-colors"
+      class="font-mono font-semibold text-[13px] tracking-tight text-fg-0 no-underline hover:text-primary-text transition-colors"
     >
-      red<span class="text-accent mx-px">·</span>ui
+      red<span class="text-primary-text mx-px">·</span>ui
     </a>
     {#if showConnect}
       <div class="w-px h-[18px] bg-line-2"></div>
@@ -47,7 +56,7 @@
         aria-current={onAsk ? 'page' : undefined}
         class={[
           'inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs no-underline transition-colors',
-          onAsk ? 'bg-bg-2 text-accent' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
+          onAsk ? 'bg-bg-2 text-primary-text' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
         ].join(' ')}
       >
         <Sparkles class="size-3.5" />

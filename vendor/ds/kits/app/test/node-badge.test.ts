@@ -7,10 +7,7 @@
 
 import { describe, expect, it } from "vitest";
 import NodeBadge from "../src/primitives/NodeBadge.svelte";
-import {
-  NODE_STATUSES,
-  nodeBadge,
-} from "../src/primitives/node-badge.variants";
+import { NODE_STATUSES, nodeBadge } from "../src/primitives/node-badge.variants";
 import { classes, classesOf, render, rendered } from "./mount";
 
 /** The dot, the name and the status word, in document order. */
@@ -37,11 +34,7 @@ describe("NodeBadge", () => {
 
   it("keeps the status word in the DOM when it is not drawn", () => {
     const element = rendered(
-      render(NodeBadge, {
-        name: "reddb-01",
-        status: "offline",
-        showStatus: false,
-      })
+      render(NodeBadge, { name: "reddb-01", status: "offline", showStatus: false }),
     );
     const word = parts(element).at(-1)!;
     expect(word.textContent).toBe("offline");
@@ -65,9 +58,7 @@ describe("NodeBadge", () => {
   it("defaults to unknown, because no reading is not a good reading", () => {
     const element = rendered(render(NodeBadge, { name: "reddb-01" }));
     expect(element.getAttribute("data-node-status")).toBe("unknown");
-    expect(classes(parts(element)[0]!)).toEqual(
-      classesOf(nodeBadge({ status: "unknown" }).dot())
-    );
+    expect(classes(parts(element)[0]!)).toEqual(classesOf(nodeBadge({ status: "unknown" }).dot()));
   });
 
   it("wears exactly the classes its variants module produces", () => {
@@ -78,17 +69,13 @@ describe("NodeBadge", () => {
   });
 
   it("merges a caller's classes over the root slot's own", () => {
-    const element = rendered(
-      render(NodeBadge, { name: "reddb-01", class: "max-w-40" })
-    );
+    const element = rendered(render(NodeBadge, { name: "reddb-01", class: "max-w-40" }));
     expect(classes(element).has("max-w-40")).toBe(true);
     expect(classes(element).has("rounded-full")).toBe(true);
   });
 
   it("passes native attributes straight through", () => {
-    const element = rendered(
-      render(NodeBadge, { name: "reddb-01", id: "node-1" })
-    );
+    const element = rendered(render(NodeBadge, { name: "reddb-01", id: "node-1" }));
     expect(element.id).toBe("node-1");
   });
 });

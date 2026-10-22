@@ -1,6 +1,6 @@
 // Consumer type-check command for the Kit.
 //
-//   pnpm --filter @reddb-io/kit-app check
+//   pnpm --filter kit-app check
 //
 // Compiles the vendorable source the way a consumer application does — the
 // consumer's svelte-check, a strict tsconfig with no DS base behind it — and
@@ -22,12 +22,12 @@ if (problems.length > 0) {
   }
   process.stderr.write(
     `\nconsumer type check failed: ${errors.length} error(s) and ${warnings.length} warning(s) ` +
-      "against a strict consumer tsconfig; a Kit ships as source, so this is the compiler that judges it.\n"
+      "against a strict consumer tsconfig; a Kit ships as source, so this is the compiler that judges it.\n",
   );
   process.exit(1);
 }
 
 process.stdout.write(
   "consumer type check passed: the Kit's source compiles clean under a strict consumer " +
-    `svelte-check (${relative(KIT_ROOT, tsconfig)}).\n`
+    `svelte-check (${relative(KIT_ROOT, tsconfig)}).\n`,
 );

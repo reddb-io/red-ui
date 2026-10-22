@@ -2,7 +2,7 @@ import appCss from "../../app.css?inline";
 import type { Component } from "svelte";
 import type { ConnectionProvider, ConsoleSink } from "../reddb";
 import { devConsole } from "../reddb/dev-console";
-import type { Theme } from "../theme.svelte";
+import { applyAppearance, type Theme } from "../theme.svelte";
 import { RED_UI_VERSION, readBuildInfo } from "../build-info";
 
 /** Build version of the embeddable bundle, stamped at build time. */
@@ -59,61 +59,6 @@ const shadowCss = `
   font-family: var(--font-sans);
 }
 
-:host,
-:host([data-theme='light']) {
-  --color-bg-0: #ffffff;
-  --color-bg-1: #fafafa;
-  --color-bg-2: #f4f4f5;
-  --color-bg-3: #e7e7ea;
-  --color-fg-0: #0a0a0b;
-  --color-fg-1: #3f3f46;
-  --color-fg-2: #52525b;
-  --color-fg-3: #71717a;
-  --color-line-1: #ececef;
-  --color-line-2: #d4d4d8;
-  --color-line-3: #a1a1aa;
-  --color-accent: #e11d48;
-  --color-accent-soft: rgba(225, 29, 72, 0.10);
-  --color-accent-glow: rgba(225, 29, 72, 0.30);
-  --color-ok: #16a34a;
-  --color-warn: #b45309;
-  --color-danger: #dc2626;
-  --color-info: #2563eb;
-  --color-role-primary: #e11d48;
-  --color-role-replica: #2563eb;
-  --color-role-embedded: #16a34a;
-  --color-ambient-glow: rgba(225, 29, 72, 0.04);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 0 0 1px var(--color-line-2);
-  --shadow-lg: 0 16px 48px rgba(15, 23, 42, 0.14), 0 0 0 1px var(--color-line-2);
-}
-
-:host([data-theme='dark']) {
-  --color-bg-0: #050607;
-  --color-bg-1: #0d0f13;
-  --color-bg-2: #181b21;
-  --color-bg-3: #232730;
-  --color-fg-0: #f7f8fa;
-  --color-fg-1: #c8ccd4;
-  --color-fg-2: #9ca1a9;
-  --color-fg-3: #7a7f87;
-  --color-line-1: #181b21;
-  --color-line-2: #2a2e36;
-  --color-line-3: #3d424b;
-  --color-accent: #ff2056;
-  --color-accent-soft: rgba(255, 32, 86, 0.12);
-  --color-accent-glow: rgba(255, 32, 86, 0.45);
-  --color-ok: #4ade80;
-  --color-warn: #fbbf24;
-  --color-danger: #ff5470;
-  --color-info: #60a5fa;
-  --color-role-primary: #ff2056;
-  --color-role-replica: #60a5fa;
-  --color-role-embedded: #4ade80;
-  --color-ambient-glow: rgba(255, 32, 86, 0.06);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--color-line-2);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--color-line-2);
-}
-
 :host * {
   box-sizing: border-box;
 }
@@ -144,7 +89,25 @@ export async function mountRedUi(
   opts: RedUiEmbedOptions
 ): Promise<RedUiEmbedHandle> {
   markEmbedSurface();
-  host.dataset.theme = opts.theme ?? host.dataset.theme ?? "dark";
+  // The DS axes (ADR 0008): `data-theme` is the Theme direction and
+  // `data-color-scheme` is light/dark. A host that still pre-sets the legacy
+  // `data-theme="light|dark"` keeps its choice.
+  const legacy = host.dataset.theme;
+  const preset =
+    host.dataset.colorScheme ??
+    (legacy === "light" || legacy === "dark" ? legacy : undefined);
+  applyAppearance(host, opts.theme ?? (preset as Theme | undefined) ?? "dark");
+
+  // Browsers do not register @font-face rules inside a shadow tree. Publish
+  // only the received DS faces once per document; appearance stays scoped.
+  const doc = host.ownerDocument;
+  if (!doc.head.querySelector(`style[data-red-ui-fonts="${RED_UI_VERSION}"]`)) {
+    const fonts = doc.createElement("style");
+    fonts.dataset.redUiFonts = RED_UI_VERSION;
+    fonts.textContent =
+      appCss.match(/@font-face\s*\{[^}]*\}/g)?.join("\n") ?? "";
+    doc.head.append(fonts);
+  }
 
   const shadowRoot =
     host.shadowRoot ?? host.attachShadow(opts.shadowRoot ?? { mode: "open" });

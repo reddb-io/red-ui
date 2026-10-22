@@ -1,7 +1,7 @@
 packages:
   - "apps/*"
   - "packages/*"
-  - "vendor/ds/kits/*"
+  - "vendor/ds"
 
 onlyBuiltDependencies:
   - esbuild
