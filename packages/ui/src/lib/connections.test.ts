@@ -542,3 +542,70 @@ describe("makeCustomConnection — connection preset from deep-link URL (#124)",
     expect(preset.label).toBe("my-server:5055");
   });
 });
+
+describe("credential connection strings", () => {
+  it.each([false, true])(
+    "exchanges URI credentials and connects with the returned token (Base64: %s)",
+    async (encoded) => {
+      const cs = "https://alice:p%40ss%2Fword@chosen.example";
+      const clientFactory = vi.fn(() => fakeClient());
+      setConnectionProvider(new LocalUrlProvider({ clientFactory }));
+      const fetcher = vi.fn(async () =>
+        Response.json({ ok: true, token: "ephemeral-session" })
+      );
+      vi.stubGlobal("fetch", fetcher);
+      try {
+        expect(
+          await connection.connectString(
+            encoded ? Buffer.from(cs).toString("base64") : cs
+          )
+        ).toBe(true);
+        expect(fetcher).toHaveBeenCalledWith(
+          "https://chosen.example/auth/login",
+          expect.objectContaining({
+            method: "POST",
+            body: JSON.stringify({ username: "alice", password: "p@ss/word" }),
+          })
+        );
+        expect(clientFactory).toHaveBeenCalledWith("https://chosen.example", {
+          headers: { Authorization: "Bearer ephemeral-session" },
+        });
+        expect(connection.active.url).toBe("https://chosen.example");
+        expect(JSON.stringify(connection.active)).not.toContain("alice");
+        expect(JSON.stringify(connection.active)).not.toContain("p%40ss");
+      } finally {
+        vi.unstubAllGlobals();
+      }
+    }
+  );
+  it("rejects malformed input and competing credential sources before any request", async () => {
+    const fetcher = vi.fn();
+    vi.stubGlobal("fetch", fetcher);
+    try {
+      expect(await connection.connectString("base64:invalid!")).toBe(false);
+      expect(
+        await connection.connectString("https://alice:secret@db.example", {
+          username: "bob",
+          password: "other",
+        })
+      ).toBe(false);
+      expect(fetcher).not.toHaveBeenCalled();
+      expect(connection.connected).toBe(false);
+      expect(connection.client).toBeNull();
+      expect(connection.probe.error).not.toContain("secret");
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+  it("rejects credential plus token bootstrap without probing a previous target", async () => {
+    const clientFactory = vi.fn(() => fakeClient());
+    setConnectionProvider(new LocalUrlProvider({ clientFactory }));
+    await connection.bootstrap(async () => ({
+      target: "https://alice:secret@db.example",
+      token: "token",
+    }));
+    expect(clientFactory).not.toHaveBeenCalled();
+    expect(connection.probe.error).toContain("Choose either");
+    expect(connection.connected).toBe(false);
+  });
+});

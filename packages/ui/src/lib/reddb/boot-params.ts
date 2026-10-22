@@ -1,3 +1,8 @@
+import {
+  decodeConnectionString,
+  parseConnectionString,
+} from "./connection-string";
+
 // Open Contract URL pre-configuration. A Surface can seed the loaded Core with
 // a browser-reachable reddb endpoint (`cs`), an initial app route (`to`), and a
 // short-lived token carried only in the URL hash. The Core currently consumes
@@ -6,7 +11,7 @@
 
 /** Parsed Open Contract from the app URL. */
 export interface OpenContract {
-  /** Browser-reachable reddb HTTP endpoint, e.g. `http://host:5055`. */
+  /** Ephemeral plain/Base64 HTTP connection URI; may contain credentials. */
   cs?: string;
   /** Initial app route, e.g. `/cluster` or `/c/users/p/table`. */
   to?: string;
@@ -84,7 +89,7 @@ function looksLikeFilesystemPath(value: string): boolean {
 }
 
 function normalizeCs(input: string): string {
-  const cs = input.trim().replace(/\/$/, "");
+  const cs = input.trim();
   if (!cs) throw new OpenContractError("EMPTY_CS", "Open Contract cs is empty");
   if (looksLikeFilesystemPath(cs)) {
     throw new OpenContractError(
@@ -93,30 +98,17 @@ function normalizeCs(input: string): string {
     );
   }
 
-  let url: URL;
   try {
-    url = new URL(cs);
+    const decoded = decodeConnectionString(cs);
+    if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(decoded)) throw new Error();
+    if (looksLikeFilesystemPath(decoded)) throw new Error();
+    const parsed = parseConnectionString(decoded);
+    if (!/^https?:\/\//.test(parsed.url)) throw new Error();
   } catch {
     throw new OpenContractError(
       "MALFORMED_URL",
-      "Open Contract cs is not a valid URL"
+      "Enter a valid HTTP connection string or its Base64 encoding."
     );
-  }
-
-  if (url.protocol !== "http:" && url.protocol !== "https:") {
-    throw new OpenContractError(
-      "UNSUPPORTED_SCHEME",
-      "Open Contract cs must use http:// or https://"
-    );
-  }
-
-  for (const key of url.searchParams.keys()) {
-    if (SECRET_KEY.test(key)) {
-      throw new OpenContractError(
-        "SECRET_IN_CS",
-        "Open Contract secrets must be carried in the app URL hash, not inside cs"
-      );
-    }
   }
 
   return cs;
@@ -164,7 +156,7 @@ export function parseOpenContract(
   );
   const out: OpenContract = {};
 
-  const cs = query.get(CS_KEY);
+  const cs = hashParams.get(CS_KEY) ?? query.get(CS_KEY);
   if (cs !== null) out.cs = normalizeCs(cs);
 
   const to = query.get(TO_KEY);
@@ -176,12 +168,16 @@ export function parseOpenContract(
   return out;
 }
 
-/** Encode the public Open Contract, carrying `token` only in the hash. */
+/** Encode Open Contract; credentials and tokens belong only in the fragment. */
 export function encodeOpenContract(contract: OpenContract): string {
   const query = new URLSearchParams();
   const hash = new URLSearchParams();
 
-  if (contract.cs) query.set(CS_KEY, normalizeCs(contract.cs));
+  if (contract.cs) {
+    const cs = normalizeCs(contract.cs);
+    const parsed = parseConnectionString(cs);
+    (parsed.credentials ? hash : query).set(CS_KEY, cs);
+  }
   if (contract.to) query.set(TO_KEY, normalizeRoute(contract.to));
   if (contract.token) hash.set(TOKEN_KEY, contract.token);
 
@@ -200,10 +196,12 @@ export function parseBootParams(search: string, hash = ""): BootParams {
   const params = new URLSearchParams(search ?? "");
   const out: BootParams = {};
 
-  const cs = params.get(CS_KEY);
+  const cs =
+    new URLSearchParams(hash.replace(/^#/, "")).get(CS_KEY) ??
+    params.get(CS_KEY);
   if (cs !== null) {
     try {
-      out.endpoint = normalizeCs(cs);
+      out.endpoint = parseConnectionString(normalizeCs(cs)).url;
     } catch {
       // Invalid Open Contract endpoints are rejected by omitting the endpoint;
       // the full parser still throws for callers that need diagnostics.
@@ -223,7 +221,12 @@ export function parseBootParams(search: string, hash = ""): BootParams {
     if (out.endpoint) break;
     const v = params.get(key);
     if (v && !SECRET_KEY.test(key)) {
-      out.endpoint = v;
+      try {
+        const parsed = parseConnectionString(v);
+        out.endpoint = parsed.credentials ? parsed.url : v;
+      } catch {
+        /* Invalid legacy endpoint: omit. */
+      }
       break;
     }
   }

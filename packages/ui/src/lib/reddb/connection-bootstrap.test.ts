@@ -171,3 +171,74 @@ describe("Connection Bootstrap", () => {
     ).toEqual({ target: "http://last-standalone:5055" });
   });
 });
+
+describe("connection string consumption", () => {
+  const cs = "https://alice:private-password@chosen.example";
+  it.each([cs, Buffer.from(cs).toString("base64url")])(
+    "consumes credential strings from query and fragment (%#)",
+    (input) => {
+      for (const fragment of [false, true]) {
+        const location = {
+          pathname: "/app",
+          search: fragment
+            ? "?to=/query&state=keep"
+            : `?to=/query&cs=${encodeURIComponent(input)}`,
+          hash: fragment
+            ? `#cs=${encodeURIComponent(input)}&state=keep`
+            : "#state=keep",
+        };
+        const replaceState = vi.fn();
+        const result = readUrlOpenContractBootstrap(
+          location.search,
+          location.hash,
+          {
+            consume: true,
+            location,
+            history: { state: { page: 2 }, replaceState },
+          }
+        );
+        expect(result).toEqual({
+          target: input,
+          token: undefined,
+          route: "/query",
+        });
+        expect(replaceState).toHaveBeenCalledOnce();
+        const cleaned = replaceState.mock.calls[0][2];
+        expect(cleaned).not.toContain("private-password");
+        expect(cleaned).not.toContain(input);
+        expect(cleaned).toContain("state=keep");
+      }
+    }
+  );
+
+  it("cleans up invalid input even when injected bootstrap wins", async () => {
+    const replaceState = vi.fn();
+    vi.stubGlobal("location", {
+      pathname: "/",
+      search: "?cs=broken-secret&to=/query",
+      hash: "#token=session&state=keep",
+    });
+    vi.stubGlobal("history", { state: null, replaceState });
+    await expect(
+      resolveConnectionBootstrap({
+        readTauri: () => ({ target: "https://injected.example" }),
+      })
+    ).resolves.toEqual({ target: "https://injected.example" });
+    expect(replaceState).toHaveBeenCalled();
+    expect(replaceState.mock.calls[0][2]).not.toContain("broken-secret");
+    expect(replaceState.mock.calls[0][2]).not.toContain("session");
+  });
+
+  it("does not fall back to a persisted database after an invalid explicit contract", async () => {
+    const readPersisted = vi.fn(() => ({ target: "https://old.example" }));
+    const result = await resolveConnectionBootstrap({
+      readTauri: () => null,
+      readInjectedGlobal: () => null,
+      readUrl: () =>
+        readUrlOpenContractBootstrap("?cs=base64:invalid!", "", {}),
+      readPersisted,
+    });
+    expect(result).toMatchObject({ target: null, error: expect.any(String) });
+    expect(readPersisted).not.toHaveBeenCalled();
+  });
+});

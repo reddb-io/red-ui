@@ -17,3 +17,5 @@ export * from "./secure-store";
 export * from "./web-encrypted-store";
 export * from "./tauri-encrypted-store";
 export * from "./desktop-error";
+
+export * from "./connection-string";

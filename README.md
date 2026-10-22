@@ -189,12 +189,46 @@ NPM_TOKEN
 
 ## Connection strings
 
+The Connect dialog and Open Contract `cs` parameter accept a plain connection
+URI or its UTF-8 Base64 encoding. Standard Base64 and Base64url, with or without
+padding, are supported; `base64:` and `base64url:` prefixes are optional.
+
+```text
+https://user:password@database.example
+https://database.example
+http://localhost:5055
 ```
-red://user:pass@host:6379/main?role=primary
-red+tls://cluster.reddb.io:443
-red+unix:///var/run/reddb.sock
-red+http://localhost:8080
+
+Percent-encode reserved characters in usernames and passwords (for example,
+`p@ss/word` becomes `p%40ss%2Fword`). The UI extracts URI credentials, signs in
+through `/auth/login`, and uses the resulting session in memory. Remote password
+sign-in requires HTTPS; HTTP is allowed for loopback development only. Secrets
+are excluded from connection metadata, history entries, and the developer
+console. Base64 is an encoding, not encryption.
+
+To generate a browser launch link, URL-encode `cs` with `URLSearchParams`. Carry
+credential-bearing strings in the **fragment**, which is not sent to the UI
+hosting server:
+
+```js
+const cs = `https://${encodeURIComponent(user)}:${encodeURIComponent(password)}@database.example`;
+const fragment = new URLSearchParams({ cs }); // Or UTF-8 Base64/Base64url(cs).
+const href = `https://ui.reddb.io/?to=/query#${fragment}`;
 ```
+
+`encodeOpenContract({ cs, to: "/query" })` follows this rule automatically.
+`#cs=` takes precedence over `?cs=`. Credential-bearing `cs` and hash tokens are
+consumed once and removed from the address bar; legacy query strings retain
+only the sanitized endpoint. Plain endpoint-only links remain compatible:
+`https://ui.reddb.io/?cs=https%3A%2F%2Fdatabase.example&to=%2Fquery`.
+
+For browser connections, use the database's published **HTTPS endpoint** (443 by
+default). Native TCP RedWire URIs on port 5050 are not browser endpoints.
+Existing `red://`, `red+tcp://`, `red+wire://`, `reds://`, and `red+tls://` aliases
+retain their HTTP bridge convention: port 5055, regardless of the native URI
+port. `red+http://` / `red+https://` preserve their explicit HTTP port. Local
+`file://`, `unix://`, and `red+unix://` targets remain Surface-dependent; browser
+builds cannot open local files.
 
 ## Launch from `red` CLI
 

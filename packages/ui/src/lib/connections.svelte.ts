@@ -9,6 +9,8 @@
 //   - Embedded and managed Web boot targets store nothing.
 
 import {
+  parseConnectionString,
+  type ConnectionCredentials,
   BROWSER_TRANSPORTS,
   DESKTOP_TRANSPORTS,
   DesktopError,
@@ -137,25 +139,8 @@ const historyStore = new SurfaceHistoryStore({
  * host[:port]                 → http://host:port|5055
  */
 export function normalizeUrl(input: string): string {
-  let raw = input.trim().replace(/\/$/, "");
-  if (!raw) return raw;
-
-  if (!/:\/\//.test(raw)) raw = "http://" + raw;
-
-  const m = raw.match(/^([a-z+]+):\/\/(.+)$/i);
-  if (!m) return raw;
-  const [, scheme, rest] = m;
-  const s = scheme.toLowerCase();
-
-  if (s === "red" || s === "red+tcp" || s === "red+wire") {
-    const [host] = rest.split("/")[0].split(":");
-    return `http://${host}:5055${rest.includes("/") ? "/" + rest.split("/").slice(1).join("/") : ""}`;
-  }
-  if (s === "reds" || s === "red+tls") {
-    const [host] = rest.split("/")[0].split(":");
-    return `https://${host}:5055`;
-  }
-  return raw;
+  if (!input.trim()) return "";
+  return parseConnectionString(input).url;
 }
 
 export function makeCustomConnection(input: string): ConnectionPreset {
@@ -423,8 +408,34 @@ class ConnectionStore {
   ): Promise<string | null> {
     const boot = await resolve();
     const route = boot.route ?? null;
+    if (boot.error) {
+      this.disconnect();
+      this.probe = { reachable: false, error: boot.error };
+      return route;
+    }
     if (!boot.target) return route;
-    const preset = makeCustomConnection(boot.target);
+    if (!boot.token) {
+      await this.connectString(boot.target);
+      return route;
+    }
+    let preset: ConnectionPreset;
+    try {
+      const parsed = parseConnectionString(boot.target);
+      if (parsed.credentials)
+        throw new Error(
+          "Choose either connection credentials or a session token."
+        );
+      preset = makeCustomConnection(parsed.url);
+    } catch (error) {
+      this.disconnect();
+      this.active = makeCustomConnection("");
+      this.probe = {
+        reachable: false,
+        error:
+          error instanceof Error ? error.message : "Invalid connection string.",
+      };
+      return route;
+    }
     if (boot.token) {
       markManagedWebHandoff();
       const provider = getConnectionProvider();
@@ -445,6 +456,39 @@ class ConnectionStore {
     await this.tryConnect(preset);
   }
 
+  /** Accept a plain URI or Base64 URI, keeping credentials out of connection metadata. */
+  async connectString(
+    input: string,
+    credentials?: ConnectionCredentials
+  ): Promise<boolean> {
+    try {
+      const parsed = parseConnectionString(input);
+      if (parsed.credentials && credentials)
+        throw new Error(
+          "Use credentials in either the connection string or the sign-in fields."
+        );
+      const auth = credentials ?? parsed.credentials;
+      const preset = makeCustomConnection(parsed.url);
+      if (!this.canReach(parsed.url))
+        throw new Error(
+          unreachableConnectHint(parsed.url) ??
+            "This connection transport is not available here."
+        );
+      return auth
+        ? await this.login(preset, auth.username, auth.password)
+        : await this.tryConnect(preset);
+    } catch (error) {
+      this.disconnect();
+      this.active = makeCustomConnection("");
+      this.probe = {
+        reachable: false,
+        error:
+          error instanceof Error ? error.message : "Invalid connection string.",
+      };
+      return false;
+    }
+  }
+
   async login(
     preset: ConnectionPreset,
     username: string,
@@ -453,6 +497,7 @@ class ConnectionStore {
     this.active = preset;
     this.#client = null;
     this.connected = false;
+    this.#capabilities = { ...EMPTY_SERVER_CAPABILITIES };
     this.probe = { reachable: false };
     try {
       const targetProvider = getConnectionProvider();
@@ -560,7 +605,7 @@ class ConnectionStore {
     if (!boot) return null;
     const route = boot.to ?? boot.view ?? null;
     if (!boot.endpoint) return route;
-    await this.tryConnect(makeCustomConnection(boot.endpoint));
+    await this.connectString(boot.endpoint);
     return route;
   }
 

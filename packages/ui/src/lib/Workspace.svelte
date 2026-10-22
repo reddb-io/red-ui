@@ -21,7 +21,7 @@
   import SecurityView from './SecurityView.svelte'
   import SettingsView from './SettingsView.svelte'
   import Appearance from './Appearance.svelte'
-  import { connection, makeCustomConnection, setConnectionProvider } from './connections.svelte'
+  import { connection, setConnectionProvider } from './connections.svelte'
   import { runQueryPreferStream, type ConnectionProvider } from '#reddb'
   import { theme, type Theme } from './theme.svelte'
   import { skins } from './skins/skins.svelte'
@@ -162,7 +162,7 @@
             if (route) target = raw.split('?')[0]
           } catch {}
 
-          await connection.tryConnect(makeCustomConnection(target))
+          await connection.connectString(target)
           if (route) navigateToBootRoute(route)
         })
       )

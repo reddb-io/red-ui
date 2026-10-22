@@ -2,9 +2,7 @@
   import { onMount } from 'svelte'
   import {
     connection,
-    makeCustomConnection,
     openDatabaseFile,
-    unreachableConnectHint,
   } from './connections.svelte'
   import Zap from '@lucide/svelte/icons/zap'
   import Loader2 from '@lucide/svelte/icons/loader-2'
@@ -36,30 +34,17 @@
   let inputEl: HTMLInputElement | undefined = $state()
 
   async function attempt(targetUrl: string, signIn = false) {
-    const cleaned = targetUrl.trim().replace(/\/$/, '')
+    const cleaned = targetUrl.trim()
     if (!cleaned) return
     url = cleaned
-    // Transport reachability guard (#34): never attempt a transport this
-    // Surface can't materialize — fail with a clear message instead of an
-    // opaque transport-unsupported error from the client.
-    if (!connection.canReach(cleaned)) {
-      status = 'error'
-      // A file:// target on the web gets an honest, actionable explanation
-      // (#123) instead of the generic transport-unsupported line.
-      error =
-        unreachableConnectHint(cleaned) ??
-        `This app can't reach that transport here — supported: ${supportedHint}`
-      return
-    }
     status = 'probing'
     error = null
     rtt = null
-    const preset = makeCustomConnection(cleaned)
     const secret = password
     password = ''
-    const ok = signIn
-      ? await connection.login(preset, username.trim(), secret)
-      : await connection.tryConnect(preset)
+    const ok = await connection.connectString(cleaned, signIn ? { username: username.trim(), password: secret } : undefined)
+    // The canonical endpoint contains neither URI credentials nor their Base64 representation.
+    url = connection.active.url || ''
     if (ok) {
       status = 'ok'
       rtt = connection.probe.rtt_ms ?? null
@@ -197,7 +182,7 @@
       aria-label="Connect to reddb"
     >
       <form onsubmit={submit}>
-        <label for="connect-url" class="type-label block mb-1.5">Instance URL</label>
+        <label for="connect-url" class="type-label block mb-1.5">Connection string</label>
         <input
           id="connect-url"
           bind:this={inputEl}
@@ -205,11 +190,11 @@
           disabled={status === 'probing'}
           oninput={() => { password = '' }}
           spellcheck="false"
-          placeholder="red://localhost"
+          placeholder="https://user:password@host or Base64"
           class="w-full h-9 px-3 mb-1 bg-bg-0 border border-line-2 rounded-md font-mono text-[13px] text-fg-0 outline-none transition-colors focus:border-accent placeholder:text-fg-3"
         />
 
-        <div class="mb-2 text-[10px] font-mono text-fg-3">reachable here: {supportedHint}</div>
+        <div class="mb-2 text-[10px] font-mono text-fg-3">URL or Base64-encoded URL · reachable here: {supportedHint}</div>
 
         <details class="mb-3">
           <summary class="cursor-pointer text-xs text-fg-2">Sign in to the database</summary>
