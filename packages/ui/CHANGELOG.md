@@ -1,5 +1,14 @@
 # @reddb-io/ui
 
+## 0.3.5
+
+### Patch Changes
+
+- 43ca0cf: Adopt the pinned Svelte Design System through ds-sync, replace local primitive styling and duplicate palettes with DS components and tokens, and include the vendored DS in public npm artifacts without a private registry dependency.
+- Updated dependencies [43ca0cf]
+  - @reddb-io/ui-kit@0.3.5
+  - @reddb-io/ui-mcp@0.3.5
+
 ## 0.3.4
 
 ### Patch Changes
