@@ -98,6 +98,17 @@ export async function mountRedUi(
     (legacy === "light" || legacy === "dark" ? legacy : undefined);
   applyAppearance(host, opts.theme ?? (preset as Theme | undefined) ?? "dark");
 
+  // Browsers do not register @font-face rules inside a shadow tree. Publish
+  // only the received DS faces once per document; appearance stays scoped.
+  const doc = host.ownerDocument;
+  if (!doc.head.querySelector(`style[data-red-ui-fonts="${RED_UI_VERSION}"]`)) {
+    const fonts = doc.createElement("style");
+    fonts.dataset.redUiFonts = RED_UI_VERSION;
+    fonts.textContent =
+      appCss.match(/@font-face\s*\{[^}]*\}/g)?.join("\n") ?? "";
+    doc.head.append(fonts);
+  }
+
   const shadowRoot =
     host.shadowRoot ?? host.attachShadow(opts.shadowRoot ?? { mode: "open" });
   shadowRoot.textContent = "";
