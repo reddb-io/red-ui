@@ -3,6 +3,7 @@
   import {
     connection,
     makeCustomConnection,
+    parseConnectionInput,
     openDatabaseFile,
     unreachableConnectHint,
   } from './connections.svelte'
@@ -38,27 +39,40 @@
   async function attempt(targetUrl: string, signIn = false) {
     const cleaned = targetUrl.trim().replace(/\/$/, '')
     if (!cleaned) return
-    url = cleaned
+    let parsed: ReturnType<typeof parseConnectionInput>
+    const secret = password
+    password = ''
+    try {
+      parsed = parseConnectionInput(cleaned)
+      url = parsed.url
+      if (parsed.credentials && signIn) {
+        throw new Error('Use credentials in either the connection string or the sign-in fields.')
+      }
+    } catch (cause) {
+      url = ''
+      status = 'error'
+      error = cause instanceof Error ? cause.message : 'Invalid connection string.'
+      return
+    }
     // Transport reachability guard (#34): never attempt a transport this
     // Surface can't materialize — fail with a clear message instead of an
     // opaque transport-unsupported error from the client.
-    if (!connection.canReach(cleaned)) {
+    if (!connection.canReach(parsed.url)) {
       status = 'error'
       // A file:// target on the web gets an honest, actionable explanation
       // (#123) instead of the generic transport-unsupported line.
       error =
-        unreachableConnectHint(cleaned) ??
+        unreachableConnectHint(parsed.url) ??
         `This app can't reach that transport here — supported: ${supportedHint}`
       return
     }
     status = 'probing'
     error = null
     rtt = null
-    const preset = makeCustomConnection(cleaned)
-    const secret = password
-    password = ''
-    const ok = signIn
-      ? await connection.login(preset, username.trim(), secret)
+    const preset = makeCustomConnection(parsed.url)
+    const credentials = parsed.credentials ?? (signIn ? { username: username.trim(), password: secret } : undefined)
+    const ok = credentials
+      ? await connection.login(preset, credentials.username, credentials.password)
       : await connection.tryConnect(preset)
     if (ok) {
       status = 'ok'
@@ -203,7 +217,7 @@
           bind:this={inputEl}
           bind:value={url}
           disabled={status === 'probing'}
-          oninput={() => { password = '' }}
+          oninput={() => { username = ''; password = '' }}
           spellcheck="false"
           placeholder="red://localhost"
           class="w-full h-9 px-3 mb-1 bg-bg-0 border border-line-2 rounded-md font-mono text-[13px] text-fg-0 outline-none transition-colors focus:border-accent placeholder:text-fg-3"
