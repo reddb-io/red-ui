@@ -67,6 +67,27 @@ npx @reddb-io/ui open red://localhost
 npx @reddb-io/ui mcp --stdio
 ```
 
+## Open a database in the browser
+
+The universal web client is https://ui.reddb.io. Open an HTTPS database endpoint
+with the non-secret Open Contract parameters:
+
+```text
+https://ui.reddb.io/?cs=https%3A%2F%2Ffree.example.dbs.reddb.io&to=%2Fquery
+```
+
+`cs` targets the database HTTP API on port 443, independently of its RedWire
+port. `to` selects the initial workspace route. The endpoint must have a valid
+TLS certificate and permit browser CORS requests from the web client.
+
+If the database requires authentication, expand **Sign in to the database** in
+Connect and enter its username and password. Credentials are sent directly to
+that endpoint's `/auth/login` over HTTPS (HTTP is accepted only for loopback
+development). Redirects are refused. The resulting bearer session stays in
+memory in the current tab; passwords and tokens are excluded from connection
+history, browser storage, query parameters, and the developer console. Failed
+boot connections keep the supplied endpoint visible for sign-in or retry.
+
 ## Embeddable Lib
 
 The Embeddable Lib ships from the existing `@reddb-io/ui` package as

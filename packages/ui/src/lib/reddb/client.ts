@@ -256,7 +256,12 @@ function isPermissionResource(value: unknown): value is PermissionResource {
 
 /** One NDJSON frame from `POST /query/stream`. Discriminated by its single key. */
 type NdjsonFrame =
-  | { descriptor: { columns: string[]; schema_fingerprint?: string } }
+  | {
+      descriptor: {
+        columns: Array<string | { name: string }>;
+        schema_fingerprint?: string;
+      };
+    }
   | { cursor: { token: string; snapshot_lsn?: number; resumable?: boolean } }
   | { row: Record<string, unknown> }
   | { end: { row_count?: number } }
@@ -359,7 +364,16 @@ export async function runQueryPreferStream(
       record_count: s.rowCount,
       result: {
         columns: s.columns,
-        records: s.rows.map((values) => ({ values })),
+        records: s.rows.map((row) =>
+          row.values &&
+          typeof row.values === "object" &&
+          ("nodes" in row ||
+            "edges" in row ||
+            "paths" in row ||
+            "vector_results" in row)
+            ? (row as unknown as QueryRow)
+            : { values: row }
+        ),
       },
       streamed: true,
       truncated: s.truncated,
@@ -454,6 +468,46 @@ export class RedClient {
       payload,
     });
     return data;
+  }
+
+  /** Exchange credentials for a session token. Neither value is persisted. */
+  async login(username: string, password: string): Promise<string> {
+    const endpoint = new URL(this.baseUrl);
+    if (
+      endpoint.username ||
+      endpoint.password ||
+      endpoint.search ||
+      endpoint.hash ||
+      (endpoint.protocol !== "https:" &&
+        !(
+          endpoint.protocol === "http:" &&
+          ["localhost", "127.0.0.1", "[::1]"].includes(endpoint.hostname)
+        ))
+    ) {
+      throw new Error("Use HTTPS to sign in to a remote database.");
+    }
+    // Bypass query instrumentation: credentials and the session response must
+    // never enter the developer console, including an authentication failure.
+    const response = await this.fetcher(`${this.baseUrl}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "omit",
+      redirect: "error",
+      body: JSON.stringify({ username, password }),
+    });
+    if (!response.ok)
+      throw new Error(
+        "Database sign-in failed. Check your credentials and try again."
+      );
+    const session = await response.json();
+    if (
+      session.ok !== true ||
+      typeof session.token !== "string" ||
+      !session.token
+    ) {
+      throw new Error("The database did not return a session token.");
+    }
+    return session.token;
   }
 
   async stats(): Promise<Stats> {
@@ -716,7 +770,9 @@ export class RedClient {
 
     for await (const frame of parseNdjsonFrames(res.body)) {
       if ("descriptor" in frame) {
-        out.columns = frame.descriptor.columns ?? [];
+        out.columns = (frame.descriptor.columns ?? []).map((column) =>
+          typeof column === "string" ? column : column.name
+        );
         out.schemaFingerprint = frame.descriptor.schema_fingerprint;
       } else if ("cursor" in frame) {
         out.cursor = frame.cursor.token;
