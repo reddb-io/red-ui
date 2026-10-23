@@ -546,6 +546,63 @@ describe("makeCustomConnection — connection preset from deep-link URL (#124)",
 
 describe("credential connection strings", () => {
   it.each([false, true])(
+    "boots managed credentials from a single-use URL fragment (Base64: %s)",
+    async (encoded) => {
+      const cs = "reds://admin:p%40ss%2Fword@orders.acme.dbs.reddb.dev:5050";
+      const location = {
+        pathname: "/",
+        search: "?to=%2Fquery",
+        hash:
+          "#" +
+          new URLSearchParams({
+            cs: encoded ? Buffer.from(cs).toString("base64") : cs,
+          }),
+      };
+      const replaceState = vi.fn();
+      const history = { load: vi.fn(() => []), save: vi.fn() };
+      const clientFactory = vi.fn(() => fakeClient());
+      setConnectionProvider(new LocalUrlProvider({ clientFactory, history }));
+      const fetcher = vi.fn(async () =>
+        Response.json({ ok: true, token: "single-use-session" })
+      );
+      vi.stubGlobal("fetch", fetcher);
+      try {
+        const route = await connection.bootstrap(() =>
+          resolveConnectionBootstrap({
+            readTauri: () => null,
+            readInjectedGlobal: () => null,
+            readUrl: () =>
+              readUrlOpenContractBootstrap(location.search, location.hash, {
+                consume: true,
+                location,
+                history: { state: {}, replaceState },
+              }),
+            readPersisted: () => null,
+          })
+        );
+        expect(route).toBe("/query");
+        expect(connection.connected).toBe(true);
+        expect(fetcher).toHaveBeenCalledWith(
+          "https://orders.acme.dbs.reddb.dev/auth/login",
+          expect.objectContaining({
+            body: JSON.stringify({ username: "admin", password: "p@ss/word" }),
+          })
+        );
+        expect(clientFactory).toHaveBeenCalledWith(
+          "https://orders.acme.dbs.reddb.dev",
+          { headers: { Authorization: "Bearer single-use-session" } }
+        );
+        expect(replaceState).toHaveBeenCalledWith({}, "", "/?to=%2Fquery");
+        expect(JSON.stringify(history.save.mock.calls)).not.toContain("p%40ss");
+        expect(JSON.stringify(connection.active)).not.toContain(
+          "single-use-session"
+        );
+      } finally {
+        vi.unstubAllGlobals();
+      }
+    }
+  );
+  it.each([false, true])(
     "exchanges URI credentials and connects with the returned token (Base64: %s)",
     async (encoded) => {
       const cs = "https://alice:p%40ss%2Fword@chosen.example";

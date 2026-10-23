@@ -3,6 +3,18 @@ import { RedClient } from "./client";
 import { devConsole } from "./dev-console";
 
 describe("database password sign-in", () => {
+  it("reports an anonymous 401 as a sign-in requirement without reflecting the response body", async () => {
+    const client = new RedClient("https://bank.example", {
+      fetch: vi.fn(
+        async () => new Response("private-error-detail", { status: 401 })
+      ),
+    });
+    await expect(client.ping()).resolves.toEqual({
+      ok: false,
+      error:
+        "Database credentials required (HTTP 401). Sign in with a database username and password.",
+    });
+  });
   it("exchanges credentials directly without redirects, cookies, or console entries", async () => {
     const fetcher = vi.fn(async () =>
       Response.json({ ok: true, token: "session-secret" })
