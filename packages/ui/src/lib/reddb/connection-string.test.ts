@@ -75,6 +75,43 @@ describe("connection strings", () => {
     }
   });
 
+  it.each(["reds", "red+tls", "red", "red+tcp", "red+wire"])(
+    "uses the published HTTPS endpoint for managed %s connections, including Base64",
+    (scheme) => {
+      for (const domain of ["dev", "io"]) {
+        const cs = `${scheme}://alice:${encodeURIComponent(password)}@orders.acme.dbs.reddb.${domain}:5050`;
+        for (const input of [
+          cs,
+          encode(cs),
+          Buffer.from(cs).toString("base64url"),
+        ]) {
+          expect(parseConnectionString(input)).toEqual({
+            url: `https://orders.acme.dbs.reddb.${domain}`,
+            credentials: { username: "alice", password },
+          });
+        }
+      }
+    }
+  );
+
+  it("matches only canonical managed database hosts and preserves explicit HTTPS ports", () => {
+    for (const host of [
+      "orders.acme.dbs.reddb.dev.evil.test",
+      "dbs.reddb.dev",
+      "acme.dbs.reddb.dev",
+      "orders.acme.dbs.reddb.dev.attacker",
+      "localhost",
+      "[::1]",
+    ]) {
+      expect(parseConnectionString(`reds://${host}:5050`).url).toBe(
+        `https://${host}:5055`
+      );
+    }
+    expect(
+      parseConnectionString("https://orders.acme.dbs.reddb.dev:8443").url
+    ).toBe("https://orders.acme.dbs.reddb.dev:8443");
+  });
+
   it("keeps the existing HTTP bridge and desktop transport contracts", () => {
     expect(parseConnectionString("reds://user:password@host:5050")).toEqual({
       url: "https://host:5055",

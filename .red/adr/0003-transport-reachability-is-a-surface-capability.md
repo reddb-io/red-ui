@@ -23,6 +23,17 @@ accepted — transport reference matrix verified against `../reddb` docs + sourc
 
 ---
 
+## Managed database endpoint amendment (2026-10-23)
+
+Managed database names `<database>.<organization>.dbs.reddb.dev` and `.io`
+terminate public HTTPS on port 443. When interpreting a RedWire alias for one of
+these canonical hosts, the Core uses `https://<host>` and extracts userinfo into
+an ephemeral login intent. It must never expose the private HTTP port 5055 in the
+browser. Plain/Base64/Base64url input shares this normalization. Self-hosted
+aliases retain the bridge convention above; explicit HTTP(S) URLs retain their
+chosen port. This narrows the historical blanket `:5055` coercion to its original
+self-hosted/tunnel use case.
+
 ## Transport reference matrix (verified against `../reddb` docs + source, 2026-06-01)
 
 reddb exposes **many** wire transports; the red-ui _client_ deliberately speaks a
