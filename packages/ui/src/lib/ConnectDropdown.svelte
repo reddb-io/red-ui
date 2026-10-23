@@ -27,6 +27,7 @@
   }
 
   let open = $state(false)
+  let signInOpen = $state(false)
   let url = $state(pickDefaultUrl())
   let username = $state('')
   let password = $state('')
@@ -143,6 +144,7 @@
       error = connection.probe.error
       status = 'error'
       open = true
+      if (error.includes('HTTP 401')) signInOpen = true
     }
   })
 
@@ -225,7 +227,7 @@
 
         <div class="mb-2 text-[10px] font-mono text-fg-3">URL or Base64-encoded URL · reachable here: {supportedHint}</div>
 
-        <details class="mb-3">
+        <details class="mb-3" bind:open={signInOpen}>
           <summary class="cursor-pointer text-xs text-fg-2">Sign in to the database</summary>
           <div class="grid gap-2 mt-2">
             <label class="text-xs text-fg-2" for="connect-username">Username</label>

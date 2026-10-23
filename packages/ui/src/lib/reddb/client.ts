@@ -430,7 +430,10 @@ export class RedClient {
 
     if (!res.ok) {
       const body = await res.text().catch(() => "");
-      const message = `${verb} ${path} → ${res.status} ${body.slice(0, 200)}`;
+      const message =
+        res.status === 401
+          ? "Database credentials required (HTTP 401). Sign in with a database username and password."
+          : `${verb} ${path} → ${res.status} ${body.slice(0, 200)}`;
       devConsole.record({
         kind: "http",
         verb,

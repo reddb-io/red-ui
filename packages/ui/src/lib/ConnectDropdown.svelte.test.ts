@@ -97,6 +97,21 @@ test("separate sign-in fields still work and the password is cleared", () => {
   expect(password.value).toBe("");
 });
 
+test("a protected database opens the sign-in fields after an anonymous 401", () => {
+  const target = render();
+  connection.probe = {
+    reachable: false,
+    error:
+      "Database credentials required (HTTP 401). Sign in with a database username and password.",
+  };
+  flushSync();
+  expect(target.querySelector("details")?.open).toBe(true);
+  expect(target.textContent).toContain("HTTP 401");
+  expect(
+    target.querySelector<HTMLInputElement>("#connect-password")?.value
+  ).toBe("");
+});
+
 test.each(["red://alice@localhost", "reds://alice:%ZZ@localhost"])(
   "invalid credentials show a safe error without making a request: %s",
   (input) => {
