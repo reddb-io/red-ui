@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Kbd } from '@reddb-io/design-system/base'
+  import { Kbd, Logo } from '@reddb-io/design-system/base'
   import ConnectDropdown from './ConnectDropdown.svelte'
   import ActivityIndicator from './ActivityIndicator.svelte'
   import Search from '@lucide/svelte/icons/search'
@@ -34,13 +34,14 @@
 
 <header class="h-11 flex items-center justify-between px-3.5 bg-bg-1/80 backdrop-blur-md border-b border-line-1 relative z-10">
   <div class="flex items-center gap-2.5">
-    <a
+    <Logo
+      layout="horizontal"
+      size={16}
+      on={theme.current}
       href={router.href({ view: 'collections' })}
+      label="RedDB home"
       onclick={(e) => router.go({ view: 'collections' }, e)}
-      class="font-mono font-semibold text-[13px] tracking-tight text-fg-0 no-underline hover:text-primary-text transition-colors"
-    >
-      red<span class="text-primary-text mx-px">·</span>ui
-    </a>
+    />
     {#if showConnect}
       <div class="w-px h-[18px] bg-line-2"></div>
       <ConnectDropdown />
