@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.4.4
+
+### Patch Changes
+
+- 6fbb2aa: Use the official Design System RedDB Logo in the application navbar, with the correct light and dark marks and the existing home navigation behavior.
+  - @reddb-io/ui-kit@0.4.4
+  - @reddb-io/ui-mcp@0.4.4
+
 ## 0.4.3
 
 ### Patch Changes
