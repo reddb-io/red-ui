@@ -125,3 +125,22 @@ test("conflicting credential sources require an explicit choice", () => {
   expect(password.value).toBe("");
   expect(login).not.toHaveBeenCalled();
 });
+
+test.each([false, true])(
+  "managed wire credentials use public HTTPS and never enter rendered metadata (Base64=%s)",
+  async (encoded) => {
+    const login = vi.spyOn(connection, "login").mockResolvedValue(false);
+    const target = render();
+    const uri = "reds://alice:p%40ss%3Aword@orders.acme.dbs.reddb.dev:5050";
+    const input = fill(target, "#connect-url", encoded ? btoa(uri) : uri);
+    submit(target);
+    expect(login).toHaveBeenCalledWith(
+      expect.objectContaining({ url: "https://orders.acme.dbs.reddb.dev" }),
+      "alice",
+      "p@ss:word"
+    );
+    expect(input.value).toBe("https://orders.acme.dbs.reddb.dev");
+    expect(target.innerHTML).not.toContain("p%40ss");
+    expect(target.innerHTML).not.toContain("p@ss");
+  }
+);

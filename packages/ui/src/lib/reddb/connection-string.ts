@@ -59,7 +59,16 @@ export function decodeConnectionString(input: string): string {
   }
 }
 
-/** Browser connections use HTTP. RedWire aliases retain the existing HTTP bridge port convention. */
+/** Managed RedDB databases publish HTTPS on 443; their native wire and HTTP
+ * container ports are not browser endpoints. Self-hosted aliases keep the
+ * existing local HTTP bridge convention. Explicit HTTP(S) URLs stay caller-owned. */
+function managedDatabaseHost(hostname: string): boolean {
+  const label = "[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?";
+  return new RegExp(
+    `^${label}\\.${label}\\.dbs\\.reddb\\.(?:dev|io)$`,
+    "i"
+  ).test(hostname);
+}
 export function parseConnectionString(input: string): ParsedConnectionString {
   let raw = decodeConnectionString(input);
   if (/^(file|unix|red\+unix):\/\//i.test(raw)) return { url: raw };
@@ -98,7 +107,14 @@ export function parseConnectionString(input: string): ParsedConnectionString {
       url.username = "";
       url.password = "";
     }
-    if (wire) url.port = "5055";
+    if (wire) {
+      if (managedDatabaseHost(url.hostname)) {
+        url.protocol = "https:";
+        url.port = "";
+      } else {
+        url.port = "5055";
+      }
+    }
     const endpoint = url.href.replace(/\/$/, "");
     return { url: endpoint, ...(credentials ? { credentials } : {}) };
   } catch (error) {
