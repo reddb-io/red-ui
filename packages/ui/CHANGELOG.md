@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.4.3
+
+### Patch Changes
+
+- c9a8aec: Generate static HTML for fixed application routes and a client-side 404 fallback for dynamic collection URLs so direct visits and refreshes work on GitHub Pages.
+  - @reddb-io/ui-kit@0.4.3
+  - @reddb-io/ui-mcp@0.4.3
+
 ## 0.4.2
 
 ### Patch Changes
