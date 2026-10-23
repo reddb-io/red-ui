@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.4.5
+
+### Patch Changes
+
+- 466a54f: Use the published HTTPS endpoint for managed RedDB database connection strings instead of the internal HTTP bridge port, including Base64-encoded strings. Preserve self-hosted port behavior and ephemeral credential handling.
+  - @reddb-io/ui-kit@0.4.5
+  - @reddb-io/ui-mcp@0.4.5
+
 ## 0.4.4
 
 ### Patch Changes
