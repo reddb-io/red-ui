@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.4.6
+
+### Patch Changes
+
+- 7a75fc5: Open database sign-in fields on HTTP 401 and explain the credential requirement. Verify managed database credential handoffs through plain and Base64 Open Contract fragments.
+  - @reddb-io/ui-kit@0.4.6
+  - @reddb-io/ui-mcp@0.4.6
+
 ## 0.4.5
 
 ### Patch Changes
