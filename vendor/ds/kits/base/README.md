@@ -1480,3 +1480,19 @@ Import `PhoneInput` from the canonical Base Kit. Its pinned
 `libphonenumber-js/min` engine and metadata are component-scoped; unrelated
 components retain their tree-shaking boundary. Flags need no image bundle or
 external requests. Sync selects `framework: "react"` or `"svelte"`.
+
+## Protected values
+
+`SecretValue` presents a named sensitive value as selectable text, masked by
+default with a fixed-length visual marker. Set `revealable` only after the
+application has authorized the action. `onrevealedchange(true, "control")`
+requests retrieval; supply `value` and `revealed` only after that succeeds.
+Loading and caller-safe errors remain application-owned.
+
+The shared exposure controller expires after `hideAfter` milliseconds (30000 by
+default; zero explicitly disables expiry), without extending the deadline on
+ordinary refreshes. Hiding, permission loss, replacement values and hidden
+documents remove plaintext from the rendered DOM. Handle false callbacks by
+clearing the supplied value as well. The component stores no credentials and
+provides no access control; masking does not make client-held plaintext secret.
+See `/kit/secret-value` and `/examples/operations-workbench` for both flavors.

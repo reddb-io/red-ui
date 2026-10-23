@@ -23,7 +23,7 @@ describe("field control sizes", () => {
       const buttonClasses = classesOf(button({ size }));
       const height = `h-${role(`control-height-${size}`)}`;
       const inset = `px-${role(INSET[size])}`;
-      expect(buttonClasses.has(height) && buttonClasses.has(inset)).toBe(true);
+      expect(buttonClasses.has(`min-${height}`) && buttonClasses.has(inset)).toBe(true);
 
       const field = rendered(render(Input, { controlSize: size }));
       const choice = rendered(render(Select, { controlSize: size, options: [{ value: "a", label: "A" }] }));

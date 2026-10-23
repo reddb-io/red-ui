@@ -34,3 +34,6 @@ const invalidEvent = <CheckoutForm onSubmit={(value: string)=>value.trim()} />;
 // @ts-expect-error A span ref cannot target a form.
 const invalidRef = <CheckoutForm ref={createRef<HTMLSpanElement>()} />;
 void [missingMedia, missingAction, invalidTask, invalidEvent, invalidRef];
+
+import { WorkspaceTabs, ChangeReview, ShortcutHelp, ErrorBoundary } from "../react/src";
+export const recoveredWorkspace = <ErrorBoundary onfailure={error => String(error)}><WorkspaceTabs label="Documents" items={[{id:"a",label:"Draft",dirty:true}]} oncloserequest={id => id.trim()}>{item => item.id}</WorkspaceTabs><ChangeReview title="Review" items={[{id:"a",label:"Timeout",before:"1",after:"2"}]} onapplyrequest={ids => ids.map(id => id.trim())} /><ShortcutHelp title="Keys" groups={[]} /></ErrorBoundary>;

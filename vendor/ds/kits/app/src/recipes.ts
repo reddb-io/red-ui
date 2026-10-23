@@ -42,3 +42,11 @@ export * from "./composites/settings-row.variants";
 
 export * from "./entity-inspector.variants";
 export * from "./entity-journey.variants";
+
+export * from "./workspace-tabs.variants";
+
+export * from "./change-review.variants";
+
+export * from "./error-boundary.variants";
+
+export * from "./shortcut-help.variants";

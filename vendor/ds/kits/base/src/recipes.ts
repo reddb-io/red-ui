@@ -98,3 +98,5 @@ export { fieldAssociation } from "./core/field";
 export { typeRoleMerge, TYPE_ROLE_UTILITIES } from "./type-roles";
 
 export * from "./phone-input.variants";
+
+export * from "./secret-value.variants";

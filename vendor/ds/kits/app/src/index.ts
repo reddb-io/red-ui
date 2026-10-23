@@ -305,6 +305,11 @@ export type PrimitiveName = (typeof PRIMITIVES)[number];
  * the Taxonomy's other half, kept for the same reason.
  */
 export const COMPOSITES = [
+  "WorkspaceTabs",
+  "ChangeReview",
+  "ErrorBoundary",
+  "ShortcutHelp",
+
   "EntityInspector",
   "EntityJourney",
   "SettingsRow",
@@ -362,6 +367,10 @@ export type ComponentName = PrimitiveName | CompositeName;
  * capabilities use the same shared purpose vocabulary.
  */
 export const COMPONENT_PURPOSES = {
+  WorkspaceTabs: "Navigation",
+  ChangeReview: "Data display",
+  ErrorBoundary: "Feedback",
+  ShortcutHelp: "Navigation",
   EntityInspector: "Data display",
   EntityJourney: "Data display",
   SettingsRow: "Data input",
@@ -427,3 +436,15 @@ export type { InspectorEntity } from "./core/entity-inspector";
 
 export { default as EntityJourney } from "./composites/EntityJourney.svelte";
 export type { JourneyStage, JourneyState } from "./core/entity-journey";
+
+export { default as WorkspaceTabs } from "./composites/WorkspaceTabs.svelte";
+
+export { default as ChangeReview } from "./composites/ChangeReview.svelte";
+
+export { default as ErrorBoundary } from "./composites/ErrorBoundary.svelte";
+
+export { default as ShortcutHelp } from "./composites/ShortcutHelp.svelte";
+
+export type { WorkspaceTab } from "./core/workspace-tabs";
+export type { ReviewChange, ReviewState } from "./core/change-review";
+export type { ShortcutGroup, ShortcutCommand } from "./core/shortcut-help";

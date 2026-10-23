@@ -149,10 +149,10 @@ describe("the application layout composites", () => {
 describe("the application Kit's event dialect", () => {
   /** Discrete DS events: a noun, never a native event name — except `onselect`. */
   // PlaybackControls emits a discrete step request; the application owns execution.
-  const DISCRETE = new Set(["ondismiss", "onremove", "onstep"]);
+  const DISCRETE = new Set(["ondismiss", "onremove", "onstep", "oncloserequest", "onapplyrequest", "ondiscardrequest", "onfailure", "onretry"]);
   /** The sanctioned exception (maintainer decision, 2026-10-06): item activation. */
   const SANCTIONED = new Set(["onselect"]);
-  const NATIVE = new Set(["onchange", "oninput", "onclick"]);
+  const NATIVE = new Set(["onchange", "oninput", "onclick", "onclose", "onerror"]);
 
   it("names every callback in the one dialect, with onselect as the sanctioned exception", () => {
     const offenders: string[] = [];
