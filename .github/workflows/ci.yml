@@ -44,6 +44,12 @@ jobs:
       # caught when the runtime is wired up).
       - run: pnpm --filter @reddb-io/ui build
 
+      - name: verify static routes and SPA fallback
+        run: |
+          for route in index query collections cluster security analytics settings ask appearance 404; do
+            test -s "packages/ui/build/$route.html"
+          done
+
       # icon.ico and icon.icns are container formats no Linux build ever opens,
       # so PNGs carrying those extensions sat in the tree until the first
       # Windows build failed on `RC2175: not in 3.00 format`. Check the magic
