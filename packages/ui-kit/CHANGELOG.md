@@ -1,5 +1,11 @@
 # @reddb-io/ui-kit
 
+## 0.4.2
+
+### Patch Changes
+
+- 19868ef: Sync the native Svelte Design System to v2026.10.30 through its official producer. Include SecretValue, WorkspaceTabs, ChangeReview, ErrorBoundary, ShortcutHelp, and the updated Button wrapping behavior.
+
 ## 0.4.1
 
 ## 0.4.0
