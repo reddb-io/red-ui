@@ -217,17 +217,17 @@ const SPECIMENS: readonly Specimen[] = [
   {
     name: "Button, size sm",
     classes: () => button({ size: "sm" }),
-    routed: [HEIGHT_SM, inset("px", "sm"), GAP_MD],
+    routed: [{ ...HEIGHT_SM, position: "min-h" }, inset("px", "sm"), GAP_MD],
   },
   {
     name: "Button, size md",
     classes: () => button({ size: "md" }),
-    routed: [HEIGHT_MD, inset("px", "md"), GAP_MD],
+    routed: [{ ...HEIGHT_MD, position: "min-h" }, inset("px", "md"), GAP_MD],
   },
   {
     name: "Button, size lg",
     classes: () => button({ size: "lg" }),
-    routed: [HEIGHT_LG, inset("px", "lg"), GAP_MD],
+    routed: [{ ...HEIGHT_LG, position: "min-h" }, inset("px", "lg"), GAP_MD],
   },
   {
     name: "Card header, padding md",

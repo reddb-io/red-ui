@@ -286,7 +286,7 @@ describe("the Base DropdownMenu appearance", () => {
   it("moves trigger and rows to the requested density size", async () => {
     const trigger = mountMenu({ size: "sm" });
     await open(trigger);
-    expect(classes(trigger).has("h-[var(--reddb-spatial-control-height-sm)]")).toBe(true);
+    expect(classes(trigger).has("min-h-[var(--reddb-spatial-control-height-sm)]")).toBe(true);
     expect(classes(rows()[0]!).has("h-[var(--reddb-spatial-control-height-sm)]")).toBe(true);
   });
 

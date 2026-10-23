@@ -599,3 +599,41 @@ long labels stay readable and interactive stages keep native button semantics.
 
 Use the same ids with `EntityInspector` and `SceneViewport` annotations. See
 `/examples/entity-follow` for the linked APM composition in both native flavors.
+
+## Document workspaces and recovery
+
+`WorkspaceTabs` takes stable `items: { id, label, closable?, dirty?, busy?,
+disabled? }[]`, optional controlled `selected`, and `onselectedchange`. Without
+`selected` it keeps local selection. Dirty drafts and execution are independent
+caller-observed flags. Inactive panels stay mounted and hidden. Arrow/Home/End
+keys follow native tab semantics; Delete or the separate Close button calls
+`oncloserequest(id)` without removing anything. The application confirms drafts, cancels
+work, persists documents and removes accepted ids. Removing a focused tab
+restores focus to the surviving active tab. If an application opens a separate
+confirmation overlay, it owns the return path after accepting the removal.
+
+`ChangeReview` takes explicit caller-formatted `before`/`after` strings and
+observed `pending | applying | applied | failed` states. Batch `onapplyrequest(ids)`
+and `ondiscardrequest(ids)` exclude applied entries; per-item discard names one id.
+Actions are requests only: keep failed changes and safe errors in `items` after
+partial results. `applying` disables actions; `blockedReason` explains an apply
+restriction while retaining review/discard. It executes no operation or SQL.
+
+`ErrorBoundary` wraps a region using each framework's native client render
+boundary. A failure shows safe default copy and Retry; raw exception text and
+stacks are absent. `onfailure` observes the exception for application-owned logging;
+`onretry` can repair state before resetting. Changing `resetKey` remounts the
+region. A native `fallback({ error, retry })` projection replaces the recovery
+content. Event-handler exceptions, rejected asynchronous work, and server render
+failures are outside this contract and must be handled by the application.
+
+`ShortcutHelp` composes the canonical Dialog and Kbd into a keyboard reference.
+Supply contextual `groups`, platform-specific `keys`, optional `triggerLabel`
+and `open` / `onopenchange`. It registers no shortcuts or global listeners.
+Escape, focus containment and return use the canonical modal lifecycle.
+
+`/examples/operations-workbench` combines all four with Base SecretValue, an
+editable draft and Data EventLog. The recorded sample preserves canceled drafts,
+shows explicit partial apply results, supports recovery and masks sample values
+after five seconds. Its console can collapse, filter, clear and copy safe events.
+Both native flavors share the example's transition functions and visual recipe.

@@ -91,6 +91,7 @@ describe("the Base Kit's public surface", () => {
       "RangeCalendar",
       "Rating",
       "SearchSelect",
+      "SecretValue",
       "SectionSlide",
       "Slider",
       "Statistic",

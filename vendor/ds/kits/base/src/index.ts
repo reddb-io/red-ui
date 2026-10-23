@@ -252,6 +252,7 @@ export const BASE_COMPONENTS = [
   "Reveal",
   "ScrollArea",
   "SearchSelect",
+  "SecretValue",
   "SectionHeading",
   "SectionSlide",
   "Select",
@@ -399,6 +400,7 @@ export const BASE_COMPONENT_PURPOSES = {
   ScrollArea: "Layout",
   SectionHeading: "Data display",
   SectionSlide: "Layout",
+  SecretValue: "Data display",
   SearchSelect: "Data input",
   Select: "Data input",
   Skeleton: "Feedback",
@@ -502,6 +504,7 @@ export const BASE_COMPOSITES = [
   "RangeCalendar",
   "Rating",
   "SearchSelect",
+  "SecretValue",
   "SectionSlide",
   "Slider",
   "Statistic",
@@ -1037,3 +1040,6 @@ export { afterFormReset, associatedForm } from "./core/native-controls";
 
 export { default as Transfer } from "./Transfer.svelte";
 export { observeActivity } from "./core/operational-motion";
+
+export { default as SecretValue } from "./SecretValue.svelte";
+export type { SecretValueContract, SecretHideReason } from "./core/contracts/secretvalue";

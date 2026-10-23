@@ -265,8 +265,14 @@ Apache-2.0
 
 ## Design System adoption
 
+The current pin adds `SecretValue` from `@reddb-io/design-system/base` and
+`WorkspaceTabs`, `ChangeReview`, `ErrorBoundary`, and `ShortcutHelp` from
+`@reddb-io/design-system/app`. They are available through the canonical imports;
+application-specific state, authorization, commands, and persistence remain
+owned by Red UI.
+
 The Core vendors `reddb-io/design-system` through its official `ds-sync`
-producer. `design-system.manifest.json` pins **v2026.10.29**, selects the native
+producer. `design-system.manifest.json` pins **v2026.10.30**, selects the native
 Svelte flavor and the Application Kit (which inherits Base). The generated
 `vendor/ds/design-system.receipt.json` records the revision and file hashes.
 

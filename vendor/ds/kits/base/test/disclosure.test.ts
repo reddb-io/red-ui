@@ -43,7 +43,7 @@ describe("the Base Disclosure", () => {
     const styles = disclosure();
 
     expect(classes(root)).toEqual(classesOf(styles.root()));
-    expect(classes(root.querySelector("button")!).has("h-[var(--reddb-spatial-control-height-sm)]")).toBe(true);
+    expect(classes(root.querySelector("button")!).has("min-h-[var(--reddb-spatial-control-height-sm)]")).toBe(true);
     expect(root.hasAttribute("data-theme")).toBe(false);
     expect(root.hasAttribute("data-color-scheme")).toBe(false);
     expect(root.hasAttribute("data-density")).toBe(false);

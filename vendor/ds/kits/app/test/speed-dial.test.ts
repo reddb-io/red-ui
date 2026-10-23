@@ -48,6 +48,6 @@ describe("the application SpeedDial", () => {
 
     const surface = document.querySelector<HTMLElement>("[data-popover-surface]")!;
     expect(classes(surface)).toEqual(classesOf(speedDial({ size: "sm" }).content()));
-    expect(classes(surface.querySelector("[data-speed-dial-action]")!).has("h-[var(--reddb-spatial-control-height-sm)]")).toBe(true);
+    expect(classes(surface.querySelector("[data-speed-dial-action]")!).has("min-h-[var(--reddb-spatial-control-height-sm)]")).toBe(true);
   });
 });

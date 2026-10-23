@@ -103,6 +103,11 @@ async function bundle(entry: string): Promise<string> {
  * variants module and fails if a marker is written by more or fewer than one.
  */
 const MARKERS: Readonly<Record<string, string>> = {
+  WorkspaceTabs: "@container/workspace-tabs",
+  ChangeReview: "@container/change-review",
+  ErrorBoundary: "@container/error-boundary",
+  ShortcutHelp: "@container/shortcut-help",
+  SecretValue: "@container/secret-value",
   EntityJourney: "@container/entity-journey",
   EntityInspector: "flex min-w-0 flex-col overflow-hidden rounded-[var(--reddb-radius-lg)] border border-muted bg-elevation-raised-surface text-foreground",
   BottomNavigation: "m-0 flex list-none items-stretch gap-[var(--reddb-spatial-gap-sm)] p-0",
@@ -235,6 +240,7 @@ const variantsModules = [
   join(BASE_SRC, "button.variants.ts"),
   join(BASE_SRC, "dropdown-menu.variants.ts"),
   join(BASE_SRC, "kbd.variants.ts"),
+  join(BASE_SRC, "secret-value.variants.ts"),
 ];
 
 /**

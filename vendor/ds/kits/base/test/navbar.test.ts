@@ -381,7 +381,7 @@ describe("the Base Navbar appearance", () => {
   it("uses a canonical Button for the collapsed toggle", () => {
     const worn = classes(toggle(mountNavbar({ collapse: "collapsed" })));
     expect(worn.has("inline-flex")).toBe(true);
-    expect(worn.has("h-[var(--reddb-spatial-control-height-md)]")).toBe(true);
+    expect(worn.has("min-h-[var(--reddb-spatial-control-height-md)]")).toBe(true);
   });
 
   it("merges caller classes over its canonical appearance", () => {
