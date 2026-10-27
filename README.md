@@ -265,6 +265,14 @@ Apache-2.0
 
 ## Design System adoption
 
+Official `StateIllustration` artwork also covers connection setup/interruption,
+authentication, locked settings, first queries, query errors and render recovery.
+Connection actions open the existing target/sign-in flow; embeds direct recovery
+to their host. Query failures retain the database message and never replay SQL.
+Render failures expose stack details in a disclosure with retry/reload controls.
+Unknown web routes render an illustrated, noindex error page with a link back to
+the workspace. HTTP status delivery remains the hosting server's responsibility.
+
 The current pin adds `SecretValue` from `@reddb-io/design-system/base` and
 `WorkspaceTabs`, `ChangeReview`, `ErrorBoundary`, and `ShortcutHelp` from
 `@reddb-io/design-system/app`. They are available through the canonical imports;

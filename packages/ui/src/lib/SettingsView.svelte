@@ -5,7 +5,6 @@
   import { ListRow, SectionHeading } from '@reddb-io/ui-kit'
   import AlertCircle from '@lucide/svelte/icons/alert-circle'
   import Download from '@lucide/svelte/icons/download'
-  import FileJson from '@lucide/svelte/icons/file-json'
   import KeyRound from '@lucide/svelte/icons/key-round'
   import Eye from '@lucide/svelte/icons/eye'
   import EyeOff from '@lucide/svelte/icons/eye-off'
@@ -18,9 +17,9 @@
   import ShieldOff from '@lucide/svelte/icons/shield-off'
   import SlidersHorizontal from '@lucide/svelte/icons/sliders-horizontal'
   import Trash2 from '@lucide/svelte/icons/trash-2'
-  import Unplug from '@lucide/svelte/icons/unplug'
   import PageHeader from '$lib/PageHeader.svelte'
   import EmptyState from '$lib/EmptyState.svelte'
+  import { accessLocked, connectionLost, integrationEmpty, searchEmpty, collectionEmpty } from '@reddb-io/design-system/base/illustrations'
   import { activity } from '$lib/activity.svelte'
   import { connection } from '$lib/connections.svelte'
   import { PermissionGate } from '$lib/permission-gate'
@@ -641,7 +640,8 @@
           </div>
         {:else if !hasVisiblePane}
           <EmptyState
-            icon={ShieldOff}
+            illustration={connected ? accessLocked : integrationEmpty}
+            illustrationSize="sm"
             title={connected ? 'No readable settings panes' : 'No active connection'}
             message={connected
               ? 'The current principal has no Settings read grant.'
@@ -650,7 +650,8 @@
           />
         {:else if unreachable}
           <EmptyState
-            icon={Unplug}
+            illustration={connectionLost}
+            illustrationSize="sm"
             title={connected ? `${activePane.label} is unreachable` : 'No active connection'}
             message={connected
               ? `red-ui could not read ${activePane.id === 'secrets' ? 'SHOW SECRETS' : 'SHOW CONFIG'} from the active target.`
@@ -665,7 +666,8 @@
           </div>
         {:else if activeRowCount === 0}
           <EmptyState
-            icon={Search}
+            illustration={query ? searchEmpty : collectionEmpty}
+            illustrationSize="sm"
             title={query ? `No ${activePane.label.toLowerCase()} match` : `No ${activePane.label.toLowerCase()} reported`}
             message={query
               ? `Search checks the ${activePane.label.toLowerCase()} key and metadata.`
@@ -800,7 +802,8 @@
         {:else if !hasVisiblePane}
           <PageHeader eyebrow="Settings" title="Settings" subtitle="No readable governance surface." />
           <EmptyState
-            icon={ShieldOff}
+            illustration={connected ? accessLocked : integrationEmpty}
+            illustrationSize="sm"
             title={connected ? 'No readable settings panes' : 'No active connection'}
             message={connected
               ? 'Missing Settings read grant for this principal.'
@@ -824,7 +827,8 @@
 
           {#if unreachable}
           <EmptyState
-            icon={Unplug}
+            illustration={connectionLost}
+            illustrationSize="sm"
             title={connected ? `Unable to read ${activePane.label.toLowerCase()}` : 'No active connection'}
             message={connected
               ? `The ${activePane.label} pane is intentionally empty because ${activePane.id === 'secrets' ? 'SHOW SECRETS' : 'SHOW CONFIG'} did not complete.`
@@ -1000,7 +1004,7 @@
             </section>
           {:else if !selectedEntry || !selectedControl}
           <EmptyState
-            icon={FileJson}
+            illustration={collectionEmpty}
             title="No config entry selected"
             message="Select a live SHOW CONFIG row to inspect its read-only control."
           />

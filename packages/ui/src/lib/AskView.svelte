@@ -6,12 +6,13 @@
   // claim to the exact source that supports it — "the logic it took".
   import { Badge } from '@reddb-io/design-system/base'
   import EmptyState from '$lib/EmptyState.svelte'
+  import DisconnectedState from '$lib/DisconnectedState.svelte'
+  import { accessLocked } from '@reddb-io/design-system/base/illustrations'
   import { activity } from '$lib/activity.svelte'
   import { connection } from '$lib/connections.svelte'
   import { secureStore } from '$lib/secureStore.svelte'
   import { parseAnswerSegments, parseUrn, type AskResponse } from '#reddb'
   import Sparkles from '@lucide/svelte/icons/sparkles'
-  import Lock from '@lucide/svelte/icons/lock'
   import CornerDownLeft from '@lucide/svelte/icons/corner-down-left'
   import AlertTriangle from '@lucide/svelte/icons/alert-triangle'
 
@@ -244,9 +245,9 @@
 
 <div class="h-full overflow-hidden bg-bg-0 text-fg-1">
   {#if locked}
-    <div class="p-6"><EmptyState icon={Lock} title="Locked" message="Unlock the secure store to ask." /></div>
+    <div class="p-6"><EmptyState illustration={accessLocked} title="Locked" message="Unlock the secure store to ask." /></div>
   {:else if !connected}
-    <div class="p-6"><EmptyState icon={Sparkles} title="Not connected" message="Connect to a reddb instance to ask grounded questions." /></div>
+    <div class="grid h-full place-items-center overflow-auto p-6"><DisconnectedState message="Connect to a reddb instance to ask grounded questions with citations to your data." /></div>
   {:else if splitOpen}
     <div class="grid h-full grid-cols-[minmax(340px,42%)_1fr] overflow-hidden">
       <div class="min-h-0 border-r border-line-1">{@render conversation(true)}</div>

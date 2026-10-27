@@ -2,6 +2,8 @@
   import { Card, Badge } from '@reddb-io/design-system/base'
   import PageHeader from '$lib/PageHeader.svelte'
   import EmptyState from '$lib/EmptyState.svelte'
+  import DisconnectedState from '$lib/DisconnectedState.svelte'
+  import { accessLocked } from '@reddb-io/design-system/base/illustrations'
   import { activity } from '$lib/activity.svelte'
   import { connection } from '$lib/connections.svelte'
   import type { PermissionDecision } from '$lib/permission-gate'
@@ -15,7 +17,6 @@
   import type { AuthPolicy, AuthTenant, AuthUser, Whoami } from '#reddb'
   import Building2 from '@lucide/svelte/icons/building-2'
   import CheckCircle2 from '@lucide/svelte/icons/check-circle-2'
-  import Lock from '@lucide/svelte/icons/lock'
   import RefreshCw from '@lucide/svelte/icons/refresh-cw'
   import ScrollText from '@lucide/svelte/icons/scroll-text'
   import ShieldAlert from '@lucide/svelte/icons/shield-alert'
@@ -146,9 +147,9 @@
   </PageHeader>
 
   {#if secureStore.locked}
-    <EmptyState icon={Lock} title="Security locked" message="Enter the master password before red-ui loads auth data." />
+    <EmptyState illustration={accessLocked} title="Security locked" message="Enter the master password before red-ui loads auth data." />
   {:else if !connected}
-    <EmptyState icon={ShieldAlert} title="No active connection" message="Connect to a reddb instance to inspect security posture." />
+    <DisconnectedState message="Connect to a reddb instance to inspect its users, policies and security posture." />
   {:else}
     <div class="grid grid-cols-[minmax(280px,0.75fr)_1.25fr] gap-3">
       <div class="grid gap-3 content-start">
