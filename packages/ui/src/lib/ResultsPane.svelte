@@ -578,7 +578,7 @@
     {#if !tabs.active}
       <div class="h-full grid place-items-center p-6">
         {#if connection.connected}
-          <EmptyState illustration={projectEmpty} title="Choose a collection" message="Your database is connected. Pick a collection from the schema browser to inspect its data." />
+          <EmptyState illustration={projectEmpty} illustrationSize="lg" title="Choose a collection" message="Your database is connected. Pick a collection from the schema browser to inspect its data." />
         {:else}
           <DisconnectedState />
         {/if}

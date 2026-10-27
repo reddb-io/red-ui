@@ -147,7 +147,7 @@
       <QueryFailure message={qs.error} />
     {:else if !qs?.result}
       <div class="grid h-full place-items-center overflow-auto p-6">
-        <EmptyState illustration={documentDraft} title="Ready for your first query" message="Write a query above, then run it to inspect its results." />
+        <EmptyState illustration={documentDraft} illustrationSize="lg" title="Ready for your first query" message="Write a query above, then run it to inspect its results." />
       </div>
     {:else}
       {#if qs.result.truncated}

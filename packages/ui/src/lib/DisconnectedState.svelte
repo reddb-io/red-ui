@@ -12,6 +12,7 @@
 
 <EmptyState
   illustration={signInRequired ? sessionExpired : interrupted ? connectionLost : integrationEmpty}
+  illustrationSize="lg"
   title={signInRequired ? 'Sign in to your database' : interrupted ? 'Connection interrupted' : 'Connect to your database'}
   message={secureStore.surface === 'embedded' ? 'Restore the database connection in the host application to continue.' : signInRequired ? 'This database requires authentication. Review your connection and sign in to continue.' : message}
 >
