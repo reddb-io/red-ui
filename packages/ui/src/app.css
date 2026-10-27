@@ -1,5 +1,5 @@
 @import "tailwindcss";
-/* DS v2026.10 (ds-sync pin): one entry carries the Brand fonts, Tokens, the
+/* The ds-sync pin's entry carries the Brand fonts, Tokens, the
    Base + Application Theme, both Color Schemes, print rules and every Density
    stop. The DS reads its axes from <html data-theme="application"
    data-color-scheme="light|dark"> (ADR 0008). vendor/ds sits outside this

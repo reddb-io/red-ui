@@ -38,7 +38,7 @@ import wordmarkWhite from "./marks/reddb-wordmark-white.svg";
  * remembered: `test/marks.test.ts` fails when it drifts from the lock, which
  * is the same edit re-vendoring makes anyway.
  */
-export const BRAND_RELEASE = "2026.10";
+export const BRAND_RELEASE = "2026.10.3";
 
 /** How the Mark is laid out. */
 export const LOGO_LAYOUTS = ["horizontal", "stacked", "icon", "symbol", "wordmark"] as const;

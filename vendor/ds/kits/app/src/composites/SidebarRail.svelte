@@ -6,6 +6,7 @@
 </script>
 
 <script lang="ts">
+  import { sidebarRailSizing, sidebarRailStyle } from "../core/sidebar-rail-sizing";
   import type { SidebarRailContract } from "../core/contracts/sidebarrail";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
@@ -36,6 +37,7 @@
     top,
     bottom,
     showLabels = false,
+    itemSize, iconSize, itemGap, labelGap, railWidth, railPadding, labelSize, style,
     class: className,
     ...rest
   }: Props = $props();
@@ -54,6 +56,7 @@
   }
 
   let focusIndex = $state(initialFocusIndex());
+  const sizing = $derived(sidebarRailSizing({ itemSize, iconSize, itemGap, labelGap, railWidth, railPadding, labelSize }, showLabels));
   const styles = $derived(sidebarRail({ labelled: showLabels }));
 
   $effect(() => {
@@ -99,6 +102,7 @@
   {...rest}
   aria-label={label}
   data-sidebar-rail
+  style={[style, sidebarRailStyle(sizing.root)].filter(Boolean).join(";") || undefined}
   data-sidebar-rail-labels={showLabels ? "" : undefined}
   class={styles.root({ class: className })}
   onkeydown={focusControl}
@@ -109,13 +113,13 @@
   </div>
 
   <div data-sidebar-rail-region="middle" class={styles.region({ class: styles.middle() })}>
-    <ul data-sidebar-rail-items class={styles.list()}>
+    <ul data-sidebar-rail-items class={styles.list()} style={sidebarRailStyle(sizing.list)}>
       {#each items as item, index (item.id)}
         <li class="w-full">
           {#if item.separatorBefore && index > 0}<Divider data-sidebar-rail-divider class={styles.divider()} />{/if}
           {#snippet itemFace()}
-            {#if item.icon}<Icon icon={item.icon} size="md" aria-hidden="true" data-sidebar-rail-glyph />
-            {:else}<span aria-hidden="true" data-sidebar-rail-glyph class={styles.fallback()}>{face(item)}</span>{/if}
+            {#if item.icon}<Icon icon={item.icon} size="md" aria-hidden="true" data-sidebar-rail-glyph style={sidebarRailStyle(sizing.glyph)} />
+            {:else}<span aria-hidden="true" data-sidebar-rail-glyph class={styles.fallback()} style={sidebarRailStyle(sizing.label)}>{face(item)}</span>{/if}
           {/snippet}
           <Tooltip content={navigationMarkerLabel(item, item.label)} disabled={item.disabled}>
             {#snippet child({ props })}
@@ -133,11 +137,12 @@
                 data-sidebar-rail-item={item.id}
                 data-sidebar-rail-index={index}
                 class={styles.item()}
+                style={[props.style, sidebarRailStyle(sizing.item)].filter(Boolean).join(";") || undefined}
                 onclick={() => onselect?.(item.id)}
               >
             <!-- Read the destination before its decorative face and notification. -->
-            {#if showLabels}<span data-sidebar-rail-label class={styles.label()}>{item.label}</span>{/if}
-            <span data-sidebar-rail-face class={styles.face()}>
+            {#if showLabels}<span data-sidebar-rail-label class={styles.label()} style={sidebarRailStyle(sizing.label)}>{item.label}</span>{/if}
+            <span data-sidebar-rail-face class={styles.face()} style={sidebarRailStyle(sizing.face)}>
             {#if item.badge !== undefined || item.status}
               <Indicator class={styles.badgeAnchor()}>
                 {#snippet marker()}{#if item.badge !== undefined}<Badge tone={item.badgeTone ?? "neutral"} variant="filled" class={styles.badge()} aria-hidden="true">{navigationBadge(item.badge)}</Badge>{/if}{/snippet}

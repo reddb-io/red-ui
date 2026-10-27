@@ -272,9 +272,16 @@ application-specific state, authorization, commands, and persistence remain
 owned by Red UI.
 
 The Core vendors `reddb-io/design-system` through its official `ds-sync`
-producer. `design-system.manifest.json` pins **v2026.10.30**, selects the native
+producer. `design-system.manifest.json` pins **v2026.10.38**, selects the native
 Svelte flavor and the Application Kit (which inherits Base). The generated
 `vendor/ds/design-system.receipt.json` records the revision and file hashes.
+
+The pin includes the updated SidebarRail sizing and labelled-item spacing,
+Diff rendering, RadialProgress customization, and the new RadialContent
+component. Font loading keeps the official complete profile: browser navigation
+through Red UI's routes also needs original-face fallback with the optional
+`ui` profile, so adding those subsets increases this flow's cold font transfer
+by 64,784 bytes. The Data and Marketing Kits remain opt-in through the manifest.
 
 ```sh
 pnpm ds:sync   # requires the sibling ../design-system checkout and GitHub access

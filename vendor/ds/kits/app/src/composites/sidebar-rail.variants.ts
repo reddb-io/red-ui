@@ -4,7 +4,7 @@ import { tv, type VariantProps } from "tailwind-variants";
 export const sidebarRail = tv({
   slots: {
     root: [
-      "flex h-full min-h-0 w-[calc(var(--reddb-spatial-control-height-md)+2*var(--reddb-spatial-inset-sm))] shrink-0 flex-col items-center",
+      "flex h-full min-h-0 w-[calc(var(--reddb-spatial-control-height-md)+2*var(--reddb-spatial-inset-sm))] min-w-[calc(var(--reddb-spatial-control-height-md)+2*var(--reddb-spatial-inset-sm)+1px)] shrink-0 flex-col items-center",
       "gap-[var(--reddb-spatial-gap-sm)] border-e border-elevation-sunken-border bg-elevation-sunken-surface shadow-elevation-sunken",
       "p-[var(--reddb-spatial-inset-sm)] text-foreground",
     ].join(" "),
@@ -48,7 +48,7 @@ export const sidebarRail = tv({
         // Let the whole item establish the badge's containing block. Presence
         // stays relative to the face through its own Indicator.
         badgeAnchor: "static [&>[data-indicator-marker]]:end-[calc(var(--reddb-spatial-gap-sm)/2)] [&>[data-indicator-marker]]:top-[calc(var(--reddb-spatial-gap-sm)/2)] [&>[data-indicator-marker]]:translate-x-0 [&>[data-indicator-marker]]:translate-y-0",
-        list: "[&_[data-tooltip-root]]:w-full",
+        list: "gap-[var(--reddb-spatial-layout-gap-sm)] [&_[data-tooltip-root]]:w-full",
       },
     },
   },

@@ -34,7 +34,16 @@ if (command === "sync") {
   try {
     execFileSync(
       "pnpm",
-      ["install", "--frozen-lockfile", "--filter", "@reddb-io/producer"],
+      // The current producer also imports the catalogue's source resolver.
+      // Install its dependencies in the disposable tool checkout as well.
+      [
+        "install",
+        "--frozen-lockfile",
+        "--filter",
+        "@reddb-io/producer",
+        "--filter",
+        "@reddb-io/catalogue",
+      ],
       {
         cwd: tool,
         stdio: "inherit",
@@ -64,6 +73,11 @@ if (
 ) {
   throw new Error(
     "DS receipt does not match the manifest pin/framework. Run pnpm ds:sync."
+  );
+}
+if (receipt.fontLoading !== (manifest.fontLoading ?? "complete")) {
+  throw new Error(
+    "DS receipt does not match the manifest font policy. Run pnpm ds:sync."
   );
 }
 for (const kit of manifest.kits) {

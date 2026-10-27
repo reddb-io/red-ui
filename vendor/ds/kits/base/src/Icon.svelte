@@ -3,7 +3,7 @@
   import type { LucideProps } from "@lucide/svelte";
   import type { Component } from "svelte";
 
-  /*! @license Built-in menu geometry: Copyright (c) 2026 Lucide Icons and Contributors.
+  /*! @license Built-in navigation geometry: Copyright (c) 2026 Lucide Icons and Contributors.
    * Permission to use, copy, modify, and/or distribute this software for any
    * purpose with or without fee is hereby granted, provided that the above
    * copyright notice and this permission notice appear in all copies.
@@ -32,8 +32,8 @@
       SVGAttributes<SVGSVGElement>,
       "color" | "height" | "stroke" | "stroke-width" | "width"
     > {
-    /** A consumer-supplied Lucide glyph, or the built-in menu glyph used by navigation without loading the optional icon package. */
-    icon: IconGlyph | "menu";
+    /** A consumer-supplied Lucide glyph, or a built-in navigation glyph without loading the optional icon package. */
+    icon: IconGlyph | "menu" | "chevron-down";
     /** Density-responsive DS size. */
     size?: IconSize;
     /**
@@ -65,10 +65,10 @@
   });
 </script>
 
-{#if Glyph === "menu"}
-  <!-- Geometry: Lucide menu, @lucide/svelte 1.52.0 (ISC). -->
+{#if typeof Glyph === "string"}
+  <!-- Geometry: Lucide menu and chevron-down, @lucide/svelte 1.52.0 (ISC). -->
   <svg {...rest} data-icon width={dimension} height={dimension} viewBox="0 0 24 24" fill="none" stroke={resolvedColor} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
-    <path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" />
+    {#if Glyph === "chevron-down"}<path d="m6 9 6 6 6-6" />{:else}<path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" />{/if}
   </svg>
 {:else}
   <RenderGlyph {...rest} data-icon size={dimension} color={resolvedColor} strokeWidth={2} class={className} />

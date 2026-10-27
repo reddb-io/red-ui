@@ -10,7 +10,10 @@
   import SplitView from "../primitives/SplitView.svelte";
   import { diff, type DiffMode } from "./diff.variants";
 
-  interface Props extends DiffContract, Omit<HTMLAttributes<HTMLDivElement>, "class" | "role"> {
+  interface Props
+    extends
+      DiffContract,
+      Omit<HTMLAttributes<HTMLDivElement>, "class" | "role"> {
     /** Extra classes merged over the comparison surface. */
     class?: string;
   }
@@ -34,16 +37,35 @@
     aria-label={beforeLabel}
     class={styles.pane()}
   >
-    <div data-diff-pane-heading aria-hidden="true" class={styles.heading()}>{beforeLabel}</div>
-    <div role="list" class={styles.lines()}>
+    <div data-diff-pane-heading aria-hidden="true" class={styles.heading()}>
+      {beforeLabel}
+    </div>
+    <!-- svelte-ignore a11y_no_noninteractive_tabindex (The comparison scrolls horizontally and must be reachable by keyboard.) -->
+    <div
+      role="list"
+      tabindex="0"
+      aria-label={beforeLabel}
+      class={styles.lines()}
+    >
       {#each rows as row}
         {#if row.before === undefined}
-          <div data-diff-line data-change-kind="empty" aria-hidden="true" class={styles.line({ change: "empty" })}>
+          <div
+            data-diff-line
+            data-change-kind="empty"
+            aria-hidden="true"
+            class={styles.line({ change: "empty" })}
+          >
             <span data-diff-marker class={styles.marker()}></span><code></code>
           </div>
         {:else if row.before === row.after}
-          <div data-diff-line data-change-kind="context" role="listitem" class={styles.line({ change: "context" })}>
-            <span data-diff-marker aria-hidden="true" class={styles.marker()}></span><code>{row.before}</code>
+          <div
+            data-diff-line
+            data-change-kind="context"
+            role="listitem"
+            class={styles.line({ change: "context" })}
+          >
+            <span data-diff-marker aria-hidden="true" class={styles.marker()}
+            ></span><code>{row.before}</code>
           </div>
         {:else}
           <div
@@ -53,7 +75,9 @@
             aria-label={`Removed: ${row.before}`}
             class={styles.line({ change: "removal" })}
           >
-            <span data-diff-marker aria-hidden="true" class={styles.marker()}>−</span><code>{row.before}</code>
+            <span data-diff-marker aria-hidden="true" class={styles.marker()}
+              >−</span
+            ><code>{row.before}</code>
           </div>
         {/if}
       {/each}
@@ -62,21 +86,36 @@
 {/snippet}
 
 {#snippet afterPane()}
-  <section
-    data-diff-pane="after"
-    aria-label={afterLabel}
-    class={styles.pane()}
-  >
-    <div data-diff-pane-heading aria-hidden="true" class={styles.heading()}>{afterLabel}</div>
-    <div role="list" class={styles.lines()}>
+  <section data-diff-pane="after" aria-label={afterLabel} class={styles.pane()}>
+    <div data-diff-pane-heading aria-hidden="true" class={styles.heading()}>
+      {afterLabel}
+    </div>
+    <!-- svelte-ignore a11y_no_noninteractive_tabindex (The comparison scrolls horizontally and must be reachable by keyboard.) -->
+    <div
+      role="list"
+      tabindex="0"
+      aria-label={afterLabel}
+      class={styles.lines()}
+    >
       {#each rows as row}
         {#if row.after === undefined}
-          <div data-diff-line data-change-kind="empty" aria-hidden="true" class={styles.line({ change: "empty" })}>
+          <div
+            data-diff-line
+            data-change-kind="empty"
+            aria-hidden="true"
+            class={styles.line({ change: "empty" })}
+          >
             <span data-diff-marker class={styles.marker()}></span><code></code>
           </div>
         {:else if row.before === row.after}
-          <div data-diff-line data-change-kind="context" role="listitem" class={styles.line({ change: "context" })}>
-            <span data-diff-marker aria-hidden="true" class={styles.marker()}></span><code>{row.after}</code>
+          <div
+            data-diff-line
+            data-change-kind="context"
+            role="listitem"
+            class={styles.line({ change: "context" })}
+          >
+            <span data-diff-marker aria-hidden="true" class={styles.marker()}
+            ></span><code>{row.after}</code>
           </div>
         {:else}
           <div
@@ -86,7 +125,9 @@
             aria-label={`Added: ${row.after}`}
             class={styles.line({ change: "addition" })}
           >
-            <span data-diff-marker aria-hidden="true" class={styles.marker()}>+</span><code>{row.after}</code>
+            <span data-diff-marker aria-hidden="true" class={styles.marker()}
+              >+</span
+            ><code>{row.after}</code>
           </div>
         {/if}
       {/each}
@@ -110,11 +151,18 @@
       class={styles.split()}
     />
   {:else}
-    <div role="list" class={styles.lines()}>
+    <!-- svelte-ignore a11y_no_noninteractive_tabindex (The comparison scrolls horizontally and must be reachable by keyboard.) -->
+    <div role="list" tabindex="0" aria-label={label} class={styles.lines()}>
       {#each rows as row}
         {#if row.before !== undefined && row.before === row.after}
-          <div data-diff-line data-change-kind="context" role="listitem" class={styles.line({ change: "context" })}>
-            <span data-diff-marker aria-hidden="true" class={styles.marker()}></span><code>{row.before}</code>
+          <div
+            data-diff-line
+            data-change-kind="context"
+            role="listitem"
+            class={styles.line({ change: "context" })}
+          >
+            <span data-diff-marker aria-hidden="true" class={styles.marker()}
+            ></span><code>{row.before}</code>
           </div>
         {:else}
           {#if row.before !== undefined}
@@ -125,7 +173,9 @@
               aria-label={`Removed: ${row.before}`}
               class={styles.line({ change: "removal" })}
             >
-              <span data-diff-marker aria-hidden="true" class={styles.marker()}>−</span><code>{row.before}</code>
+              <span data-diff-marker aria-hidden="true" class={styles.marker()}
+                >−</span
+              ><code>{row.before}</code>
             </div>
           {/if}
           {#if row.after !== undefined}
@@ -136,7 +186,9 @@
               aria-label={`Added: ${row.after}`}
               class={styles.line({ change: "addition" })}
             >
-              <span data-diff-marker aria-hidden="true" class={styles.marker()}>+</span><code>{row.after}</code>
+              <span data-diff-marker aria-hidden="true" class={styles.marker()}
+                >+</span
+              ><code>{row.after}</code>
             </div>
           {/if}
         {/if}

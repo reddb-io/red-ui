@@ -47,6 +47,7 @@
     currentId,
     navigationLabel = "Main navigation",
     showRailLabels = false,
+    railSizing,
     moreLabel = "More",
     rail,
     railOpen = $bindable(true),
@@ -272,6 +273,7 @@
     {#if header}<div bind:this={headerElement} class={frame.header()} data-primary-navigation-header>{@render header()}</div>{/if}
     <div class={frame.rail()} style:height={headerHeight ? `calc(100dvh - ${headerHeight}px)` : undefined} data-primary-navigation-rail>
       <SidebarRail
+        {...railSizing}
         label={navigationLabel}
         showLabels={showRailLabels}
         items={primaryItems.map(item => ({...item,expanded:item.href ? undefined : section?.id === item.id,controls:item.href ? undefined : menuId}))}
