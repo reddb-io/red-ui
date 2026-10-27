@@ -1,4 +1,8 @@
 <script lang="ts">
+  import { tick } from 'svelte'
+  import { Button } from '@reddb-io/design-system/base'
+  import { queueEmptyCompact, searchEmpty } from '@reddb-io/design-system/base/illustrations'
+  import RendererEmptyState from './RendererEmptyState.svelte'
   import type { QueryResult } from '#reddb'
   import { connection } from '$lib/connections.svelte'
   import { activity } from '$lib/activity.svelte'
@@ -38,7 +42,6 @@
 
   const messages = $derived(extractQueueMessages(result))
   const summary = $derived(queueSummary(messages))
-  const events = $derived(extractQueueEvents(messages))
   const commands = $derived(collection ? queueCommandPlan(collection) : [])
   const filtered = $derived.by(() => {
     const q = filter.trim().toLowerCase()
@@ -50,6 +53,20 @@
     )
   })
 
+  let root: HTMLDivElement
+  async function clearFilter() {
+    filter = ''
+    selected = null
+    await tick()
+    root.querySelector<HTMLInputElement>('[data-queue-filter]')?.focus()
+  }
+  const events = $derived(extractQueueEvents(filtered))
+  const active = $derived(selected && filtered.includes(selected) ? selected : null)
+  async function chooseMode(next: 'events' | 'messages' | 'commands' | 'json') {
+    mode = next
+    await tick()
+    root.querySelector<HTMLButtonElement>(`[data-queue-mode="${next}"]`)?.focus()
+  }
   function display(v: unknown): string {
     if (typeof v === 'string') return v
     return JSON.stringify(v)
@@ -93,7 +110,10 @@
   }
 </script>
 
-<div class="flex h-full flex-col text-fg-1">
+<div bind:this={root} data-renderer="queue" class="flex h-full flex-col text-fg-1">
+  {#if !result.ok}
+    <div role="alert" class="grid flex-1 place-items-center p-6 text-[12px] font-mono text-fg-3">{result.error ?? 'Query failed.'}</div>
+  {:else}
   <div class="border-b border-line-1 px-3 py-1.5 flex items-center gap-2 text-[11px] font-mono bg-bg-1/40">
     <div class="inline-flex border border-line-2 rounded overflow-hidden">
       <button
@@ -108,6 +128,7 @@
       <button
         type="button"
         class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'messages' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+        data-queue-mode="messages"
         onclick={() => (mode = 'messages')}
         aria-pressed={mode === 'messages'}
       >
@@ -117,6 +138,7 @@
       <button
         type="button"
         class={['inline-flex items-center gap-1 px-2 py-1 cursor-pointer transition-colors border-l border-line-2', mode === 'commands' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+        data-queue-mode="commands"
         onclick={() => (mode = 'commands')}
         aria-pressed={mode === 'commands'}
       >
@@ -148,9 +170,9 @@
 
     <div class="inline-flex items-center gap-1.5 border border-line-1 rounded px-2 py-1 bg-bg-0">
       <Search class="size-3 text-fg-3" />
-      <input type="text" bind:value={filter} placeholder="message/state…" class="bg-transparent text-fg-1 outline-none w-[180px] placeholder:text-fg-3" />
+      <input data-queue-filter aria-label="Filter queue messages" type="text" bind:value={filter} placeholder="message/state…" class="bg-transparent text-fg-1 outline-none w-[180px] placeholder:text-fg-3" />
       {#if filter}
-        <button type="button" onclick={() => (filter = '')} class="text-fg-3 hover:text-fg-1 cursor-pointer" aria-label="Clear queue filter">
+        <button type="button" onclick={clearFilter} class="text-fg-3 hover:text-fg-1 cursor-pointer" aria-label="Clear queue filter">
           <X class="size-3" />
         </button>
       {/if}
@@ -193,10 +215,20 @@
     </div>
   {/if}
 
-  {#if mode === 'events'}
+  {#if !messages.length && mode !== 'commands'}
+    <RendererEmptyState surface="queue" art={queueEmptyCompact} title="No queue messages returned" description="This result contains no messages. The queue may be empty or the query may exclude available messages.">
+      {#snippet actions()}{#if commands.length}<Button onclick={() => chooseMode('commands')}>View queue commands</Button>{/if}{/snippet}
+    </RendererEmptyState>
+  {:else if !filtered.length && mode !== 'commands'}
+    <RendererEmptyState surface="queue" reason="filtered" art={searchEmpty} title="No messages match this filter" description="Clear the search to show the returned queue messages.">
+      {#snippet actions()}<Button onclick={clearFilter}>Clear queue filter</Button>{/snippet}
+    </RendererEmptyState>
+  {:else if mode === 'events'}
     <div class="flex-1 min-h-0 overflow-auto">
       {#if events.length === 0}
-        <div class="p-3 text-[12px] font-mono text-fg-3">No WITH EVENTS envelopes detected in this queue result.</div>
+        <RendererEmptyState surface="queue" reason="unsupported" art={queueEmptyCompact} title="No event envelopes in these messages" description="Messages were returned, but none contains a WITH EVENTS envelope. Inspect the message payloads instead.">
+          {#snippet actions()}<Button onclick={() => chooseMode('messages')}>View messages</Button>{/snippet}
+        </RendererEmptyState>
       {:else}
         <table class="w-full border-collapse text-[12px] font-mono">
           <thead class="sticky top-0 bg-bg-1 z-10">
@@ -244,9 +276,6 @@
   {:else}
     <div class="flex-1 min-h-0 grid grid-cols-[minmax(360px,0.9fr)_1.1fr]">
       <div class="overflow-auto border-r border-line-1 text-[12px] font-mono">
-        {#if filtered.length === 0}
-          <div class="p-3 text-fg-3">No queue messages in this result.</div>
-        {:else}
           {#each filtered as msg (msg.id)}
             <button
               type="button"
@@ -261,19 +290,18 @@
               <div class="mt-1 truncate text-fg-1">{display(msg.message)}</div>
             </button>
           {/each}
-        {/if}
       </div>
 
       <div class="overflow-auto p-3 text-[12px] font-mono">
         {#if mode === 'json'}
           <pre class="whitespace-pre-wrap text-fg-1">{JSON.stringify(filtered.map((m) => m.values), null, 2)}</pre>
-        {:else if selected}
+        {:else if active}
           <div class="grid grid-cols-[120px_1fr] gap-x-3 gap-y-1.5">
-            <span class="text-fg-3">id</span><span class="text-fg-0">{selected.id}</span>
-            <span class="text-fg-3">state</span><span class="text-fg-0">{selected.state}</span>
-            <span class="text-fg-3">consumer</span><span class="text-fg-0">{selected.consumer ?? 'none'}</span>
-            <span class="text-fg-3">dlc</span><span class="text-fg-0">{selected.dlc ?? 'none'}</span>
-            <span class="text-fg-3">message</span><pre class="m-0 whitespace-pre-wrap text-fg-1">{display(selected.message)}</pre>
+            <span class="text-fg-3">id</span><span class="text-fg-0">{active.id}</span>
+            <span class="text-fg-3">state</span><span class="text-fg-0">{active.state}</span>
+            <span class="text-fg-3">consumer</span><span class="text-fg-0">{active.consumer ?? 'none'}</span>
+            <span class="text-fg-3">dlc</span><span class="text-fg-0">{active.dlc ?? 'none'}</span>
+            <span class="text-fg-3">message</span><pre class="m-0 whitespace-pre-wrap text-fg-1">{display(active.message)}</pre>
           </div>
         {:else}
           <div class="text-fg-3">Select a message to inspect payload, delivery state, consumer, and DLC link.</div>
@@ -290,4 +318,5 @@
       <span><span class="text-fg-2">{op}</span> {count.toLocaleString()}</span>
     {/each}
   </div>
+  {/if}
 </div>

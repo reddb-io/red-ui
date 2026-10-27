@@ -262,6 +262,7 @@ export const BASE_COMPONENTS = [
   "SlideFrame",
   "Slider",
   "Stack",
+  "StateIllustration",
   "Statistic",
   "StatusIndicator",
   "Steps",
@@ -357,6 +358,7 @@ export const BASE_COMPONENT_PURPOSES = {
   Drawer: "Layout",
   DropdownMenu: "Actions",
   EmptyState: "Feedback",
+  StateIllustration: "Feedback",
   Eyebrow: "Data display",
   Field: "Data input",
   Fieldset: "Data input",
@@ -1051,3 +1053,7 @@ export { tokenColor, type ColorToken, type ChartPalette } from "./core/color-tok
 
 export { ringThickness, type RadialReading } from "./core/radial";
 export { default as RadialContent } from "./RadialContent.svelte";
+
+export { default as StateIllustration } from "./StateIllustration.svelte";
+export { STATE_ILLUSTRATION_SIZES, type StateIllustrationSize } from "./state-illustration.variants";
+export type { StateIllustrationAsset } from "./core/state-illustration";

@@ -680,3 +680,10 @@ without separating the icon from its own name. Explicit `itemGap` keeps its
 exact value; it is never multiplied. `labelGap` independently overrides the
 icon-to-label space in CSS pixels and accepts zero. Both values remain local
 and forward through `SidebarLayout.railSizing`.
+
+The same default gap spaces the navigation list and direct children in the
+`top` and `bottom` regions: Density `gap-md` for icon-only rails and
+`layout-gap-sm` when labels are visible. `itemGap` overrides all three stacks,
+including zero. A bottom slot can place a collapse Tooltip beside an account
+DropdownMenu without duplicating that spacing. Nested caller-owned containers
+retain their own layout, and slot control/icon/avatar sizes remain caller-owned.

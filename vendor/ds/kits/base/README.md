@@ -1532,3 +1532,88 @@ remain intact. `RadialContent` supplies a reusable noninteractive center with
 `avatar`, `title`, `value` and `description`; allow sufficient diameter for all
 content. Countdowns supply remaining values from the application; the component
 creates no timers. Omitted values remain indeterminate and honor reduced motion.
+
+## Interface illustrations and zero states
+
+`StateIllustration` renders transparent, passive SVG artwork. Twenty-eight scenes and twelve compact object compositions cover empty search, empty collections/projects/data, missing pages,
+restricted access, lost/restored connections, expired sessions, upload/download,
+processing, completion, capacity, maintenance and invitations. They share native
+Svelte/React geometry and use Theme colour roles without fonts, bitmap images,
+remote resources or animation.
+
+Import individual assets to retain tree shaking:
+
+```svelte
+<script lang="ts">
+  import { Button, EmptyState, StateIllustration } from "@reddb-io/design-system/base";
+  import { projectEmpty } from "@reddb-io/design-system/base/illustrations";
+</script>
+<EmptyState title="No projects yet" description="Create your first project.">
+  {#snippet media()}<StateIllustration art={projectEmpty} size="sm" />{/snippet}
+  {#snippet actions()}<Button href="/projects/new">Create project</Button>{/snippet}
+</EmptyState>
+```
+
+```tsx
+import { Button, EmptyState, StateIllustration } from "@reddb-io/design-system/base";
+import { projectEmpty } from "@reddb-io/design-system/base/illustrations";
+
+<EmptyState title="No projects yet" description="Create your first project."
+  media={<StateIllustration art={projectEmpty} size="sm" />}
+  actions={<Button href="/projects/new">Create project</Button>} />;
+```
+
+The default `size="md"`, plus `sm` and `lg`, follows Density. `size="full"`
+uses its parent's width and all sizes preserve the 480:300 aspect ratio.
+`accent` accepts a DS ColorToken, for example `"--reddb-color-feedback-success-fill"`. Artwork is decorative
+by default, appropriate beside explanatory copy. Use `decorative={false}` and a
+localized `label` only when the artwork itself conveys information.
+
+`illustrationSvg(projectEmpty)` returns standalone SVG source without a framework.
+It keeps semantic CSS variables and system-colour fallbacks; serve it inline with
+the DS styles to retain theming. For an independent image file with fixed colours,
+use the Showcase gallery's **Download SVG**, which resolves the current appearance
+into the downloaded file. Original generated files live in `src/illustrations/`.
+They are interface artwork owned by the Kit, distinct from Brand Marks and fonts.
+
+For selective Sync, include `"base": ["StateIllustration", "EmptyState", "Button"]`
+and `"base/illustrations": ["projectEmpty"]` in `distribution.include`.
+Do not import `STATE_ILLUSTRATIONS` into ordinary pages: it intentionally retains
+the complete catalogue. `pnpm --filter kit-base illustrations` regenerates the
+assets; `illustrations:check` verifies them without changing files.
+
+See `/kit/state-illustration` for the gallery and `/examples/zero-states` for
+working first-project and filtered-search states in both native implementations.
+
+### Document and workflow artwork
+
+The following exports each have a scene and an independently importable compact
+composition. Compact artwork removes surrounding marks, shadows and context,
+keeping the main object clear at smaller display sizes. It is a different
+composition; `size` continues to control Density-responsive display bounds.
+
+| Meaning | Scene export | Compact export |
+| --- | --- | --- |
+| First draft | `documentDraft` | `documentDraftCompact` |
+| Review | `documentReview` | `documentReviewCompact` |
+| Approval | `documentApproved` | `documentApprovedCompact` |
+| History and restoration | `documentHistory` | `documentHistoryCompact` |
+| First teammate | `teamEmpty` | `teamEmptyCompact` |
+| Completed inbox | `inboxClear` | `inboxClearCompact` |
+| No unread notifications | `notificationsQuiet` | `notificationsQuietCompact` |
+| First integration | `integrationEmpty` | `integrationEmptyCompact` |
+| Empty table | `tableEmpty` | `tableEmptyCompact` |
+| Empty graph | `graphEmpty` | `graphEmptyCompact` |
+| Empty queue | `queueEmpty` | `queueEmptyCompact` |
+| Empty document collection | `documentCollectionEmpty` | `documentCollectionEmptyCompact` |
+
+All exports come from `/base/illustrations`. For example,
+`<StateIllustration art={inboxClearCompact} size="sm" />` composes with EmptyState
+in either framework. Select only `inboxClearCompact` in `distribution.include`
+to omit the scene and the other artwork from source or compiled Sync.
+
+Choose the illustration by the reason for the state: first content needs a
+creation action, empty search needs a filter recovery, and completed work needs
+confirmation plus a way to review history. An inbox with a check means the work
+is complete; it should not replace an illustration for missing initial content.
+The gallery compares scene/compact compositions and downloads the selected one.

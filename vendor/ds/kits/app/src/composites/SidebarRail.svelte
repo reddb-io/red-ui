@@ -108,7 +108,7 @@
   onkeydown={focusControl}
   onfocusin={rememberFocusedControl}
 >
-  <div data-sidebar-rail-region="top" class={styles.region()}>
+  <div data-sidebar-rail-region="top" class={styles.region()} style={sidebarRailStyle(sizing.list)}>
     {@render top?.()}
   </div>
 
@@ -161,7 +161,7 @@
     </ul>
   </div>
 
-  <div data-sidebar-rail-region="bottom" class={styles.region()}>
+  <div data-sidebar-rail-region="bottom" class={styles.region()} style={sidebarRailStyle(sizing.list)}>
     {@render bottom?.()}
   </div>
 </nav>

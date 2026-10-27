@@ -1,4 +1,8 @@
 <script lang="ts">
+  import { tick } from 'svelte'
+  import { Button } from '@reddb-io/design-system/base'
+  import { tableEmptyCompact, searchEmpty } from '@reddb-io/design-system/base/illustrations'
+  import RendererEmptyState from './RendererEmptyState.svelte'
   import type { QueryResult } from '#reddb'
   import { connection } from '$lib/connections.svelte'
   import { activity } from '$lib/activity.svelte'
@@ -86,8 +90,11 @@
     filters = next
   }
 
-  function clearAllFilters() {
+  let root: HTMLDivElement
+  async function clearAllFilters() {
     filters = {}
+    await tick()
+    root.querySelector<HTMLButtonElement>('[data-table-filter-toggle]')?.focus()
   }
 
   function safeCollectionName(): string | null {
@@ -126,6 +133,8 @@
       selectError = (e as Error).message
     } finally {
       selecting = false
+      await tick()
+      root.querySelector<HTMLButtonElement>('[data-table-run-select]')?.focus()
     }
   }
 
@@ -179,9 +188,9 @@
   }
 </script>
 
-<div class="flex h-full flex-col text-fg-1">
+<div bind:this={root} data-renderer="table" class="flex h-full flex-col text-fg-1">
   {#if !activeResult.ok}
-    <div class="flex-1 grid place-items-center text-fg-3 text-[12px] font-mono p-6">
+    <div role="alert" class="flex-1 grid place-items-center text-fg-3 text-[12px] font-mono p-6">
       {activeResult.error ?? 'Query failed.'}
     </div>
   {:else}
@@ -205,6 +214,7 @@
         </button>
         <button
           type="button"
+          data-table-run-select
           onclick={runSelect}
           disabled={selecting || !connection.connected}
           class="inline-flex items-center gap-1 h-6 px-2 rounded border border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
@@ -228,6 +238,7 @@
       {/if}
       <button
         type="button"
+        data-table-filter-toggle
         onclick={() => (filtersOpen = !filtersOpen)}
         aria-pressed={filtersOpen}
         title={filtersOpen ? 'Hide column filters' : 'Show column filters'}
@@ -323,9 +334,9 @@
     {/if}
 
     {#if !activeResult.result.records.length}
-      <div class="flex-1 grid place-items-center text-fg-3 text-[12px] font-mono p-6">
-        Empty result.
-      </div>
+      <RendererEmptyState surface="table" art={tableEmptyCompact} title="No rows returned" description={collection ? `This query returned no rows from ${collection}. Adjust the query or run SELECT again.` : 'This query returned no rows. Adjust the query and run it again.'}>
+        {#snippet actions()}{#if collection && connection.connected}<Button onclick={runSelect} disabled={selecting}>Run SELECT again</Button>{/if}{/snippet}
+      </RendererEmptyState>
     {:else}
 
     <div class="flex-1 overflow-auto">
@@ -428,6 +439,13 @@
               {/each}
             </tr>
           {/each}
+          {#if !rows.length}
+            <tr><td colspan={columns.length + 1} class="p-0">
+              <RendererEmptyState surface="table" reason="filtered" art={searchEmpty} title="No rows match these filters" description="Clear the column filters to show the returned rows.">
+                {#snippet actions()}<Button onclick={clearAllFilters}>Clear filters</Button>{/snippet}
+              </RendererEmptyState>
+            </td></tr>
+          {/if}
         </tbody>
       </table>
     </div>

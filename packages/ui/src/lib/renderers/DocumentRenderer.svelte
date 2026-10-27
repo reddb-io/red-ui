@@ -1,4 +1,9 @@
 <script lang="ts">
+  import { tick } from 'svelte'
+  import { Button } from '@reddb-io/design-system/base'
+  import { documentCollectionEmptyCompact, searchEmpty } from '@reddb-io/design-system/base/illustrations'
+  import { collectionPageHref } from '$lib/collection-pages'
+  import RendererEmptyState from './RendererEmptyState.svelte'
   import type { QueryResult } from '#reddb'
   import Braces from '@lucide/svelte/icons/braces'
   import FileText from '@lucide/svelte/icons/file-text'
@@ -29,16 +34,25 @@
   })
   const active = $derived(selected && filtered.includes(selected) ? selected : filtered[0] ?? null)
 
+  let root: HTMLDivElement
+  async function clearFilter() {
+    filter = ''
+    selected = null
+    await tick()
+    root.querySelector<HTMLInputElement>('[data-document-filter]')?.focus()
+  }
   function pretty(v: unknown): string {
     return JSON.stringify(v ?? null, null, 2)
   }
 </script>
 
-<div class="flex h-full flex-col text-fg-1">
-  {#if docs.length === 0}
-    <div class="flex-1 grid place-items-center text-fg-3 text-[12px] font-mono p-6">
-      No document shape in this result.
-    </div>
+<div bind:this={root} data-renderer="document" class="flex h-full flex-col text-fg-1">
+  {#if !result.ok}
+    <div role="alert" class="grid flex-1 place-items-center p-6 text-[12px] font-mono text-fg-3">{result.error ?? 'Query failed.'}</div>
+  {:else if docs.length === 0}
+    <RendererEmptyState surface="document" reason={result.result.records.length ? 'unsupported' : 'empty'} art={documentCollectionEmptyCompact} title={result.result.records.length ? 'No document data in this result' : 'No documents returned'} description={result.result.records.length ? 'The returned records do not contain document bodies. Inspect the collection as a table or return document fields.' : 'This query returned no documents. Adjust the query or inspect the collection as a table.'}>
+      {#snippet actions()}{#if collection}<Button href={collectionPageHref(collection, 'table')}>View as table</Button>{/if}{/snippet}
+    </RendererEmptyState>
   {:else}
     <div class="border-b border-line-1 px-3 py-1.5 flex items-center gap-2 text-[11px] font-mono bg-bg-1/40">
       <div class="inline-flex border border-line-2 rounded overflow-hidden">
@@ -73,9 +87,9 @@
 
       <div class="inline-flex items-center gap-1.5 border border-line-1 rounded px-2 py-1 bg-bg-0">
         <Search class="size-3 text-fg-3" />
-        <input type="text" bind:value={filter} placeholder="document search…" class="bg-transparent text-fg-1 outline-none w-[200px] placeholder:text-fg-3" />
+        <input data-document-filter aria-label="Filter documents" type="text" bind:value={filter} placeholder="document search…" class="bg-transparent text-fg-1 outline-none w-[200px] placeholder:text-fg-3" />
         {#if filter}
-          <button type="button" onclick={() => (filter = '')} class="text-fg-3 hover:text-fg-1 cursor-pointer" aria-label="Clear document filter">
+          <button type="button" onclick={clearFilter} class="text-fg-3 hover:text-fg-1 cursor-pointer" aria-label="Clear document filter">
             <X class="size-3" />
           </button>
         {/if}
@@ -125,7 +139,9 @@
             <pre class="m-0 whitespace-pre-wrap text-fg-1">{pretty(active.values)}</pre>
           {/if}
         {:else}
-          <div class="text-fg-3">No documents match the current filter.</div>
+          <RendererEmptyState surface="document" reason="filtered" art={searchEmpty} title="No documents match this filter" description="Clear the search to show the returned documents.">
+            {#snippet actions()}<Button onclick={clearFilter}>Clear document filter</Button>{/snippet}
+          </RendererEmptyState>
         {/if}
       </div>
     </div>

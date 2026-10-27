@@ -8,7 +8,7 @@ export const sidebarRail = tv({
       "gap-[var(--reddb-spatial-gap-sm)] border-e border-elevation-sunken-border bg-elevation-sunken-surface shadow-elevation-sunken",
       "p-[var(--reddb-spatial-inset-sm)] text-foreground",
     ].join(" "),
-    region: "flex w-full shrink-0 flex-col items-center gap-[var(--reddb-spatial-gap-sm)]",
+    region: "flex w-full shrink-0 flex-col items-center gap-[var(--reddb-spatial-gap-md)]",
     // A classic scrollbar must not consume the icon's whole column and create
     // a second horizontal scrollbar. Wheel, touch and roving focus still
     // scroll this compact rail; ordinary content panels retain their scrollbar.
@@ -48,6 +48,7 @@ export const sidebarRail = tv({
         // Let the whole item establish the badge's containing block. Presence
         // stays relative to the face through its own Indicator.
         badgeAnchor: "static [&>[data-indicator-marker]]:end-[calc(var(--reddb-spatial-gap-sm)/2)] [&>[data-indicator-marker]]:top-[calc(var(--reddb-spatial-gap-sm)/2)] [&>[data-indicator-marker]]:translate-x-0 [&>[data-indicator-marker]]:translate-y-0",
+        region: "gap-[var(--reddb-spatial-layout-gap-sm)]",
         list: "gap-[var(--reddb-spatial-layout-gap-sm)] [&_[data-tooltip-root]]:w-full",
       },
     },

@@ -376,7 +376,11 @@
 
   function pickRenderer(tab: Tab, result: QueryResult) {
     const cap = subpageCapability(tab.subpage, tab.capability ?? (result.capability as Capability | undefined))
-    return registry.pick(cap, result, tab.overrideCapability)
+    // Empty results carry no shape evidence (the server can report "table"
+    // even for an empty graph/queue). Keep the collection's selected view so
+    // its own empty state renders instead of falling back to a blank table.
+    const emptyCapability = result.ok && !result.result.records.length ? cap : undefined
+    return registry.pick(cap, result, tab.overrideCapability ?? emptyCapability)
   }
 
   function openLiveChanges() {
