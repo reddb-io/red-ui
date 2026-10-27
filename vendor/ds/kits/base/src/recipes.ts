@@ -105,3 +105,5 @@ export { tokenColor, type ColorToken, type ChartPalette } from "./core/color-tok
 
 export { ringThickness, type RadialReading } from "./core/radial";
 export * from "./radial-content.variants";
+
+export * from "./state-illustration.variants";

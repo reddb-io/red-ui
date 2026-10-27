@@ -17,6 +17,10 @@
       "svelte": "./kits/base/src/index.ts",
       "default": "./kits/base/src/index.ts"
     },
+    "./base/illustrations": {
+      "types": "./kits/base/src/illustrations.ts",
+      "default": "./kits/base/src/illustrations.ts"
+    },
     "./base/interaction": {
       "types": "./kits/base/src/interaction.ts",
       "default": "./kits/base/src/interaction.ts"

@@ -1,6 +1,9 @@
 <script lang="ts">
+  import { Button } from '@reddb-io/design-system/base'
+  import { graphEmptyCompact, searchEmpty } from '@reddb-io/design-system/base/illustrations'
+  import RendererEmptyState from './RendererEmptyState.svelte'
   import type { QueryResult } from '#reddb'
-  import { onDestroy, onMount } from 'svelte'
+  import { onDestroy, onMount, tick } from 'svelte'
   import { colorForCommunity, compareGraphNodesByCentrality, extractGraph, graphNodeCentrality, graphNodeDetail, graphNodeIncomingSizeScales, graphNodeIsOrphan, runGraphLayout, type GraphNode, type GraphEdge, type GraphNodeRelation } from './graph-render'
   import {
     buildSigmaGraph,
@@ -98,6 +101,12 @@
   let viewMode = $state<'canvas' | 'svg' | 'table'>('canvas')
   let canvasLimit = $state(25000)
   let labelFilter = $state('')
+  let root: HTMLDivElement
+  async function clearLabelFilter() {
+    labelFilter = ''
+    await tick()
+    root.querySelector<HTMLInputElement>('[data-graph-filter]')?.focus()
+  }
   let selectedNode = $state<GraphNode | null>(null)
   let selectedEdge = $state<GraphEdge | null>(null)
   let canvasError = $state<string | null>(null)
@@ -348,7 +357,7 @@
   }
 
   onDestroy(() => {
-    cancelAnimationFrame(pulseRaf)
+    if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(pulseRaf)
     if (sigmaInstance) {
       sigmaInstance.kill()
       sigmaInstance = null
@@ -942,11 +951,13 @@
   }
 </script>
 
-<div class="flex h-full flex-col text-fg-1">
-  {#if graph.nodes.length === 0 && graph.edges.length === 0}
-    <div class="flex-1 grid place-items-center text-fg-3 text-[12px] font-mono p-6">
-      No graph shape in this result.
-    </div>
+<div bind:this={root} data-renderer="graph" class="flex h-full flex-col text-fg-1">
+  {#if !activeResult.ok}
+    <div role="alert" class="grid flex-1 place-items-center p-6 text-[12px] font-mono text-fg-3">{activeResult.error ?? 'Query failed.'}</div>
+  {:else if graph.nodes.length === 0 && graph.edges.length === 0}
+    <RendererEmptyState surface="graph" reason={activeResult.result.records.length ? 'unsupported' : 'empty'} art={graphEmptyCompact} title={activeResult.result.records.length ? 'No graph data in this result' : 'No graph data returned'} description={activeResult.result.records.length ? 'The query returned records without a node or edge shape. Inspect them as a table or return graph fields.' : 'No nodes or relationships were returned. Adjust the graph query or inspect the collection as a table.'}>
+      {#snippet actions()}{#if collection}<Button href={collectionPageHref(collection, 'table')}>View as table</Button>{/if}{/snippet}
+    </RendererEmptyState>
   {:else}
     <!-- Toolbar -->
     <div class="border-b border-line-1 px-3 py-1.5 flex items-center gap-2 text-[11px] font-mono bg-bg-1/40">
@@ -995,11 +1006,13 @@
           <input
             type="text"
             bind:value={labelFilter}
+            data-graph-filter
+            aria-label="Filter graph nodes"
             placeholder="filter by label…"
             class="bg-transparent text-fg-1 text-[11px] outline-none w-[160px] placeholder:text-fg-3"
           />
           {#if labelFilter}
-            <button type="button" class="text-fg-3 hover:text-fg-1 cursor-pointer" onclick={() => (labelFilter = '')} aria-label="Clear filter">
+            <button type="button" class="text-fg-3 hover:text-fg-1 cursor-pointer" onclick={clearLabelFilter} aria-label="Clear filter">
               <X class="size-3" />
             </button>
           {/if}
@@ -1263,7 +1276,8 @@
           bind:this={sigmaContainer}
           class="sigma-canvas absolute inset-0 h-full w-full bg-bg-0"
           role="application"
-          tabindex="0"
+          tabindex={filteredNodes.length ? 0 : -1}
+          aria-hidden={!filteredNodes.length ? true : undefined}
           aria-label={`${drawNodes.length} graph nodes and ${drawEdges.length} graph edges`}
           onkeydown={(event) => { if (event.key === 'Escape') { clearGraphFocus(); clearSelection() } }}
         ></div>
@@ -1304,7 +1318,8 @@
             viewBox="0 0 100 100"
             preserveAspectRatio="xMidYMid meet"
             role="button"
-            tabindex="0"
+            tabindex={filteredNodes.length ? 0 : -1}
+            aria-hidden={!filteredNodes.length ? true : undefined}
             aria-label={`${drawNodes.length} graph nodes and ${drawEdges.length} graph edges`}
             onwheel={onSvgWheel}
             onclick={() => { clearGraphFocus(); clearSelection() }}
@@ -1504,8 +1519,15 @@
         </div>
       {/if}
 
+      {#if viewMode !== 'table' && labelFilter.trim() && !filteredNodes.length}
+        <div class="absolute inset-0 z-30 flex bg-background">
+          <RendererEmptyState surface="graph" reason="filtered" art={searchEmpty} title="No nodes match this filter" description="Clear the label filter to show the returned graph.">
+            {#snippet actions()}<Button onclick={clearLabelFilter}>Clear graph filter</Button>{/snippet}
+          </RendererEmptyState>
+        </div>
+      {/if}
       <!-- Side panel: node / edge details -->
-      {#if selectedNode || selectedEdge}
+      {#if (selectedNode || selectedEdge) && (viewMode === 'table' || filteredNodes.length)}
         <aside class="absolute top-0 right-0 bottom-0 w-[340px] bg-bg-1 border-l border-line-2 shadow-2xl flex flex-col z-20">
           <header class="flex items-center gap-2 px-3 py-2 border-b border-line-1 text-[11px] font-mono">
             <Info class="size-3.5 text-primary-text" />
