@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.1
+
+### Patch Changes
+
+- 4ea0cf5: Use the App Kit's portable document state for workspace tab identity and focus.
+  - @reddb-io/ui-kit@0.7.1
+  - @reddb-io/ui-mcp@0.7.1
+
 ## 0.7.0
 
 ### Minor Changes
