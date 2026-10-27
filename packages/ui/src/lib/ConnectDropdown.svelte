@@ -1,13 +1,8 @@
 <script lang="ts">
+  import { useWorkspace } from './workspace-context'
   import { onMount } from 'svelte'
   import { Button, Field, Icon, Input, Popover } from '@reddb-io/design-system/base'
-  import {
-    connection,
-    makeCustomConnection,
-    parseConnectionInput,
-    openDatabaseFile,
-    unreachableConnectHint,
-  } from './connections.svelte'
+  import { makeCustomConnection, parseConnectionInput } from './connections.svelte'
   import Zap from '@lucide/svelte/icons/zap'
   import Loader2 from '@lucide/svelte/icons/loader-2'
   import AlertCircle from '@lucide/svelte/icons/alert-circle'
@@ -17,6 +12,9 @@
   import Plug from '@lucide/svelte/icons/plug'
   import ChevronDown from '@lucide/svelte/icons/chevron-down'
   import FolderOpen from '@lucide/svelte/icons/folder-open'
+
+  const workspace = useWorkspace()
+  const { connection, openDatabaseFile, unreachableConnectHint } = workspace
 
   const DEFAULT_URL = 'red://localhost'
 
@@ -129,8 +127,7 @@
       open = true
       setTimeout(() => inputEl?.focus(), 0)
     }
-    window.addEventListener('red:open-connect', onOpen)
-    return () => window.removeEventListener('red:open-connect', onOpen)
+    return workspace.on('red:open-connect', onOpen)
   })
 
   $effect(() => {
@@ -191,7 +188,7 @@
     <Icon icon={ChevronDown} size="sm" />
   {/snippet}
   <form onsubmit={submit} class="grid gap-3">
-    <Field id="connect-url" label="Connection string" help={`URL or Base64-encoded URL · reachable here: ${supportedHint}`}>
+    <Field id={workspace.idFor("connect-url")} label="Connection string" help={`URL or Base64-encoded URL · reachable here: ${supportedHint}`}>
       {#snippet children(control)}
         <Input {...control} bind:ref={inputEl} bind:value={url} disabled={status === 'probing'}
           oninput={() => { username = ''; password = '' }} spellcheck="false"
@@ -201,10 +198,10 @@
     <details bind:open={signInOpen}>
       <summary class="cursor-pointer text-sm text-fg-2">Sign in to the database</summary>
       <div class="mt-2 grid gap-2">
-        <Field id="connect-username" label="Username">
+        <Field id={workspace.idFor("connect-username")} label="Username">
           {#snippet children(control)}<Input {...control} autocomplete="username" bind:value={username} disabled={status === 'probing'} />{/snippet}
         </Field>
-        <Field id="connect-password" label="Password">
+        <Field id={workspace.idFor("connect-password")} label="Password">
           {#snippet children(control)}<Input {...control} type="password" autocomplete="current-password" bind:value={password} disabled={status === 'probing'} />{/snippet}
         </Field>
         <p class="text-caption text-ink-muted">Credentials go directly to this database. The session stays in this tab.</p>

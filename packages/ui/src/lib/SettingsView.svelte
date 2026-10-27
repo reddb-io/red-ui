@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useWorkspace } from './workspace-context'
   // Settings surface: a bounded pane shell backed by live SQL introspection.
   import { NavItem, Pill } from '@reddb-io/design-system/app'
   import { AlertDialog, Button, Checkbox, Input, Select, Textarea, Icon as DsIcon, type IconGlyph } from '@reddb-io/design-system/base'
@@ -20,8 +21,7 @@
   import PageHeader from '$lib/PageHeader.svelte'
   import EmptyState from '$lib/EmptyState.svelte'
   import { accessLocked, connectionLost, integrationEmpty, searchEmpty, collectionEmpty } from '@reddb-io/design-system/base/illustrations'
-  import { activity } from '$lib/activity.svelte'
-  import { connection } from '$lib/connections.svelte'
+
   import { PermissionGate } from '$lib/permission-gate'
   import {
     SettingsAuthoringClient,
@@ -42,6 +42,9 @@
     type ControlDescriptor,
     type SettingsPane,
   } from '$lib/settings-sections'
+
+  const workspace = useWorkspace()
+  const { activity, connection } = workspace
 
   const icons: Record<string, IconGlyph> = {
     key: KeyRound,
@@ -567,7 +570,6 @@
     return configEntries.length
   }
 </script>
-
 
 <div class="@container h-full min-h-0 bg-bg-0">
   <div

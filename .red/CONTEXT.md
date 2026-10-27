@@ -24,6 +24,13 @@ The Surface where the Core runs in a Tauri 2 webview as an installable cross-pla
 **Mountable Root**:
 The Core's top-level component (`Workspace`) that a host can mount without the Core owning routing or `window.history`.
 
+**WorkspaceRuntime**:
+The instance boundary owned by one Mountable Root: connection services,
+documents, drafts, staged edits, appearance, persistence, renderer registrations
+and telemetry. It uses the App Kit's portable workspace session for commands,
+cancellation and cleanup. A mount receives fresh services and disposes only its
+runtime; the Shell retains ownership of its supplied provider/client.
+
 **Shell**:
 The per-Surface concerns injected around the Core — connection acquisition, auth ownership, transport, and extension points — so the Core stays identical across Surfaces.
 
@@ -48,7 +55,8 @@ A permission/restriction rule (RBAC, column, ops) authored against reddb's polic
 
 ## Relationships
 
-- One **Core** is rendered by all three **Surfaces**.
+- One **Core** is rendered by all three **Surfaces**. Each simultaneous Mountable Root owns a distinct **WorkspaceRuntime**; module singleton exports serve compatibility components outside a mounted root.
+- DS ADR 0051 defines the consolidation destination: App Kit workspace contracts/composition, Data Kit renderers, a separate RedDB adapter and minimal hosts in the DS repository. This runtime slice prepares extraction; complete native workspace delivery and verified Surface cutovers remain required before retiring red-ui.
 - The **Embeddable Lib** and **MCP App** Surfaces consume the Core via its **Mountable Root** (`lib/` entrypoint); the **Desktop App** and the hosted PWA consume the full SvelteKit app (`routes/`), which itself wraps the same `lib/` components.
 - Each **Surface** supplies its own **Shell**; the **Shell** carries everything that differs between Surfaces.
 - **Transport reachability is a property of the Surface, not the Core.** The Core is transport-agnostic; which transports a **ConnectionProvider** can materialize (http only, or also **Embedded connection**/`red://`) depends on the Surface's runtime.

@@ -1,5 +1,55 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { RedClient } from "./client";
+import { DevConsoleStore } from "./dev-console";
+
+describe("scoped clients", () => {
+  it.each([
+    { name: "object", headers: { Authorization: "Bearer host-token" } },
+    {
+      name: "Headers",
+      headers: new Headers({ Authorization: "Bearer host-token" }),
+    },
+    {
+      name: "tuples",
+      headers: [["Authorization", "Bearer host-token"]] as [string, string][],
+    },
+  ])(
+    "preserves $name auth and transport without owning the host lifecycle",
+    async ({ headers }) => {
+      const received: (string | null)[] = [];
+      const fetcher: typeof fetch = async (_input, init) => {
+        received.push(new Headers(init?.headers).get("Authorization"));
+        init?.signal?.throwIfAborted();
+        return Response.json({ collections: [] });
+      };
+      const host = new RedClient("https://host.example", {
+        headers,
+        fetch: fetcher,
+      });
+      const controller = new AbortController();
+      const log = new DevConsoleStore();
+      const scoped = host.scoped({ signal: controller.signal, console: log });
+      await scoped.collections();
+      if (headers instanceof Headers)
+        headers.set("Authorization", "Bearer renewed-token");
+      else if (Array.isArray(headers)) headers[0][1] = "Bearer renewed-token";
+      else headers.Authorization = "Bearer renewed-token";
+      await scoped.collections();
+      controller.abort();
+      await expect(scoped.collections()).rejects.toMatchObject({
+        name: "AbortError",
+      });
+      await host.collections();
+      expect(received).toEqual([
+        "Bearer host-token",
+        "Bearer renewed-token",
+        "Bearer renewed-token",
+        "Bearer renewed-token",
+      ]);
+      expect(log.size).toBe(3);
+    }
+  );
+});
 
 describe("RedClient collection metadata probing", () => {
   afterEach(() => {

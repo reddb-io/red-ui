@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { useWorkspace } from './workspace-context'
   import { Alert, Button, Dialog, Field, Icon, Input } from '@reddb-io/design-system/base'
   import Loader2 from '@lucide/svelte/icons/loader-2'
   import Trash2 from '@lucide/svelte/icons/trash-2'
-  import { secureStore } from './secureStore.svelte'
-  import { connection } from './connections.svelte'
+
+  const workspace = useWorkspace()
+  const { connection, secureStore } = workspace
 
   let password = $state('')
   let confirm = $state('')

@@ -4,7 +4,10 @@
   // writes the URL itself. Mounted standalone it falls back to an in-memory
   // state router, so a host can embed it without surrendering `window.history`.
   // The SvelteKit Surface wraps this same component with a Kit-backed router.
-  import { onMount, tick, untrack } from 'svelte'
+  import { onMount, onDestroy, tick, untrack } from 'svelte'
+  import { BitsConfig } from 'bits-ui'
+  import { createWorkspaceRuntime, type WorkspaceRuntime } from './workspace-runtime.svelte'
+  import { setWorkspaceRuntime } from './workspace-context'
   import Splash from './Splash.svelte'
   import LoadingOverlay from './LoadingOverlay.svelte'
   import DevConsole from './DevConsole.svelte'
@@ -21,21 +24,20 @@
   import SecurityView from './SecurityView.svelte'
   import SettingsView from './SettingsView.svelte'
   import Appearance from './Appearance.svelte'
-  import { connection, setConnectionProvider } from './connections.svelte'
   import { runQueryPreferStream, type ConnectionProvider } from '#reddb'
-  import { theme, type Theme } from './theme.svelte'
-  import { skins } from './skins/skins.svelte'
-  import { secureStore } from './secureStore.svelte'
-  import { pendingChanges, buildUpdateSql, type CommitOutcome } from './pending-changes.svelte'
-  import { queryTabs } from './query-tabs.svelte'
-  import { tabs } from './tabs.svelte'
+  import type { Theme } from './theme.svelte'
+  import { buildUpdateSql, type CommitOutcome } from './pending-changes.svelte'
   import { detectCapability } from './capability'
   import { defaultSubpage } from './collection-pages'
   import { createStateRouter, pathToLocation, setRouter, type Router, type View } from './router.svelte'
-  import { workspaceSession, type WorkspaceSnapshot } from './workspace-session'
+  import type { WorkspaceSnapshot } from './workspace-session'
 
   let {
     router: injectedRouter,
+    runtime: suppliedRuntime,
+    label,
+    persistenceKey,
+    portalTarget: injectedPortalTarget,
     connectionProvider,
     showConnect = true,
     initialRoute,
@@ -44,6 +46,10 @@
     initialTheme,
   }: {
     router?: Router
+    runtime?: WorkspaceRuntime
+    label?: string
+    persistenceKey?: string
+    portalTarget?: HTMLElement
     connectionProvider?: ConnectionProvider
     showConnect?: boolean
     initialRoute?: string
@@ -59,15 +65,14 @@
   // svelte-ignore state_referenced_locally
   const router = setRouter(injectedRouter ?? createStateRouter())
 
-  // Host-injected connection (ADR-0001 embed Surface): when the embedder
-  // hands in a provider (e.g. an InjectedClientProvider wrapping its own
-  // authenticated client), wire it as the Core's connection seam and connect
-  // immediately, so the Core renders connected without the Connect flow. The
-  // provider is fixed for the lifetime of the mount.
+  // The runtime and router are fixed for this mount. Ownership transfers to
+  // the Workspace; disposal never changes another mount or its host provider.
   // svelte-ignore state_referenced_locally
-  if (connectionProvider) {
-    setConnectionProvider(connectionProvider)
-  }
+  const workspace = setWorkspaceRuntime(suppliedRuntime ?? createWorkspaceRuntime({ connectionProvider, persistenceKey }))
+  const { connection, theme, skins, secureStore, pendingChanges, queryTabs, tabs, workspaceSession, loading, devConsole } = workspace
+  let portalTarget = $state<HTMLDivElement>()
+
+  $effect(() => { workspace.portalTarget = injectedPortalTarget ?? portalTarget ?? null })
 
   function navigateToBootRoute(route: string) {
     const legacyView = route as View
@@ -106,15 +111,17 @@
   }
 
   onMount(() => {
-    if (connectionProvider) {
+    if (workspace.injected) {
       // Host-injected provider (#33): adopt its authenticated connection.
       void connection.adoptInjected().then(() => {
+        if (workspace.session.disposed) return
         if (initialRoute) navigateToBootRoute(initialRoute)
       })
     } else {
       // Connection Bootstrap: one boot resolver handles Tauri IPC, host globals,
       // the Open Contract URL/hash, and finally persisted standalone state.
       void connection.bootstrap().then((route) => {
+        if (workspace.session.disposed) return
         if (route) {
           navigateToBootRoute(route)
         } else {
@@ -129,6 +136,11 @@
   let booted = $state(false)
   let pendingOpen = $state(false)
   let shell = $state<HTMLDivElement>()
+
+  onDestroy(() => {
+    if (booted) workspaceSession.flush(buildSnapshot())
+    workspace.dispose()
+  })
 
   async function closePending() {
     pendingOpen = false
@@ -150,8 +162,9 @@
 
   onMount(() => {
     const handler = () => (pendingOpen = true)
-    window.addEventListener('red:open-pending-changes', handler as EventListener)
-    return () => window.removeEventListener('red:open-pending-changes', handler as EventListener)
+    const stops = ['red:open-pending-changes', 'red:apply-pending', 'red:discard-pending'].map(command =>
+      workspace.on(command as 'red:open-pending-changes' | 'red:apply-pending' | 'red:discard-pending', handler))
+    return () => stops.forEach(stop => stop())
   })
 
   // Runtime deep-link routing: subscribe to Tauri "deep-link" events so that
@@ -160,7 +173,7 @@
   // Boot-time deep links go through connection.bootstrap(); this path handles
   // everything that arrives after the app is already mounted.
   onMount(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined' || workspace.injected || workspace.persistenceKey !== 'default') return
     if (!('__TAURI_INTERNALS__' in window || '__TAURI__' in window)) return
 
     let unlisten: (() => void) | undefined
@@ -185,7 +198,7 @@
           if (route) navigateToBootRoute(route)
         })
       )
-      .then((fn) => { unlisten = fn })
+      .then((fn) => { if (workspace.session.disposed) fn(); else unlisten = fn })
 
     return () => { unlisten?.() }
   })
@@ -219,17 +232,11 @@
 
   const REFRESH_MS = 5000
 
-  // The inline script in app.html has already set data-theme on <html>;
-  // init() syncs the store's reactive state with localStorage so toggles
-  // start from the persisted value rather than the in-memory default.
-  // svelte-ignore state_referenced_locally
-  theme.init({ target: themeTarget ?? null, persist: persistTheme, initial: initialTheme })
-
-  // Skin-as-data (#75): apply the persisted skin's seed-derived custom
-  // properties over the active theme. Scoped to the same target the theme
-  // uses, so an embedded host's shadow root is skinned, not the document.
-  // svelte-ignore state_referenced_locally
-  skins.init(themeTarget ?? null)
+  onMount(() => {
+    const target = themeTarget ?? workspace.root
+    theme.init({ target, persist: Boolean(workspace.persistenceKey) && persistTheme, initial: initialTheme })
+    skins.init(target)
+  })
 
   // Hard lock gate: while the secure store is locked, no automatic network
   // traffic should fire — probing the configured URL would leak its existence
@@ -277,7 +284,7 @@
   // Tauri close-request: flush, then destroy the window. The Rust watchdog
   // races this — if the webview hangs, it force-destroys after its bound.
   onMount(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined' || workspace.injected || workspace.persistenceKey !== 'default') return
     if (!('__TAURI_INTERNALS__' in window || '__TAURI__' in window)) return
 
     let unlisten: (() => void) | undefined
@@ -290,7 +297,7 @@
           await getCurrentWindow().destroy()
         }),
       )
-      .then((fn) => { unlisten = fn })
+      .then((fn) => { if (workspace.session.disposed) fn(); else unlisten = fn })
 
     return () => { unlisten?.() }
   })
@@ -367,14 +374,19 @@
   })
 </script>
 
+<svelte:element this={workspace.persistenceKey === 'default' ? 'div' : 'section'}
+  bind:this={workspace.root} data-workspace-root={workspace.id}
+  aria-label={workspace.persistenceKey === 'default' ? undefined : (label ?? `${connection.active.label} workspace`)}
+  class={`relative isolate h-full bg-bg-0 text-fg-0 ${workspace.persistenceKey === 'default' ? 'min-h-screen' : 'min-h-[720px]'}`} tabindex="-1">
+<BitsConfig defaultPortalTo={injectedPortalTarget ?? portalTarget}>
 {#if !booted}
-  <Splash onDone={() => (booted = true)} />
+  <Splash contained onDone={() => (booted = true)} />
 {:else}
   <div bind:this={shell} class="app relative grid grid-rows-[44px_32px_1fr] h-screen">
     <GlobalProgressBar />
-    <Topbar showConnect={showConnect} />
+    <Topbar showConnect={showConnect} label={label ?? connection.active.label} />
     <StatusBar />
-    <main class="relative overflow-hidden z-[1]">
+    <svelte:element this={workspace.persistenceKey === 'default' ? 'main' : 'div'} class="relative overflow-hidden z-[1]">
       {#if router.view === 'ask'}
         <AskView />
       {:else if router.view === 'cluster'}
@@ -396,7 +408,7 @@
       {:else}
         <CollectionsView />
       {/if}
-    </main>
+    </svelte:element>
     <CommandPalette />
     <ShortcutOverlay />
     <MasterPasswordDialog />
@@ -407,8 +419,12 @@
 <!-- Step-logged loading overlay (#127): sits above the shell during a slow
      connect/boot; self-hides once the open resolves and never flashes on fast
      opens. -->
-<LoadingOverlay />
+<LoadingOverlay contained store={loading} />
 
 <!-- Instrumented developer console (#128): a collapsible, accent-free log of
      every query/HTTP call the client made, toggled from the StatusBar. -->
-<DevConsole />
+<DevConsole contained store={devConsole} />
+
+<div bind:this={portalTarget} data-workspace-portals={workspace.id}></div>
+</BitsConfig>
+</svelte:element>

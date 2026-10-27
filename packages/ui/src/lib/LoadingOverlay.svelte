@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useWorkspace } from "./workspace-context"
   // Step-logged loading overlay (#127). While a connection open is in flight it
   // shows an elapsed badge and a scrolling log of the real steps the connect
   // sequence appended (spawn, readiness, handshake, initial stats/schema). A
@@ -11,10 +12,14 @@
   // threshold clears the store before the reveal timer fires, so nothing shows.
   import { loading as defaultStore, formatElapsed, type LoadingStep } from './loading.svelte'
 
+  const workspace = useWorkspace()
+
   let {
-    store = defaultStore,
+    contained = false,
+    store = workspace.loading,
     revealAfterMs = 400,
   }: {
+    contained?: boolean
     store?: typeof defaultStore
     revealAfterMs?: number
   } = $props()
@@ -49,7 +54,9 @@
 
 {#if store.active && revealed}
   <div
-    class="fixed inset-0 z-[9998] grid place-items-center bg-bg-0/85 backdrop-blur-sm"
+    class:fixed={!contained}
+    class:absolute={contained}
+    class="inset-0 z-[9998] grid place-items-center bg-bg-0/85 backdrop-blur-sm"
     role="status"
     aria-live="polite"
     aria-busy="true"

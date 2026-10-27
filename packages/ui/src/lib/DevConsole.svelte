@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useWorkspace } from "./workspace-context"
   // Instrumented developer console panel (#128). A collapsible, bottom-docked
   // log of every query and HTTP call the client made — verb, target, duration,
   // row count — copyable and secret-free. It bridges the framework-agnostic
@@ -15,10 +16,14 @@
   import Trash2 from '@lucide/svelte/icons/trash-2'
   import Check from '@lucide/svelte/icons/check'
 
+  const workspace = useWorkspace()
+
   let {
-    store = defaultStore,
+    contained = false,
+    store = workspace.devConsole,
     open: openProp = false,
   }: {
+    contained?: boolean
     store?: typeof defaultStore
     open?: boolean
   } = $props()
@@ -38,8 +43,7 @@
   // Toggle from anywhere in the shell (the StatusBar button dispatches this).
   $effect(() => {
     const toggle = () => (open = !open)
-    window.addEventListener('red:toggle-dev-console', toggle)
-    return () => window.removeEventListener('red:toggle-dev-console', toggle)
+    return workspace.on('red:toggle-dev-console', toggle)
   })
 
   // Newest first — an operator reads the most recent call at the top.
@@ -74,7 +78,9 @@
 
 {#if open}
   <div
-    class="fixed inset-x-0 bottom-0 z-[9990] flex max-h-[45vh] flex-col border-t border-line-2 bg-bg-1 shadow-2xl"
+    class:fixed={!contained}
+    class:absolute={contained}
+    class="inset-x-0 bottom-0 z-[9990] flex max-h-[45vh] flex-col border-t border-line-2 bg-bg-1 shadow-2xl"
     role="log"
     aria-label="Developer console"
     data-testid="dev-console"

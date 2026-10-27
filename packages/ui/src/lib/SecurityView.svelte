@@ -1,11 +1,11 @@
 <script lang="ts">
+  import { useWorkspace } from './workspace-context'
   import { Card, Badge } from '@reddb-io/design-system/base'
   import PageHeader from '$lib/PageHeader.svelte'
   import EmptyState from '$lib/EmptyState.svelte'
   import DisconnectedState from '$lib/DisconnectedState.svelte'
   import { accessLocked } from '@reddb-io/design-system/base/illustrations'
-  import { activity } from '$lib/activity.svelte'
-  import { connection } from '$lib/connections.svelte'
+
   import type { PermissionDecision } from '$lib/permission-gate'
   import {
     POLICY_READ_CHECK,
@@ -13,7 +13,7 @@
     capabilityMatrixChecksFromPolicies,
     type CapabilityMatrixRow,
   } from '$lib/policies'
-  import { secureStore } from '$lib/secureStore.svelte'
+
   import type { AuthPolicy, AuthTenant, AuthUser, Whoami } from '#reddb'
   import Building2 from '@lucide/svelte/icons/building-2'
   import CheckCircle2 from '@lucide/svelte/icons/check-circle-2'
@@ -22,6 +22,9 @@
   import ShieldAlert from '@lucide/svelte/icons/shield-alert'
   import Users from '@lucide/svelte/icons/users'
   import XCircle from '@lucide/svelte/icons/x-circle'
+
+  const workspace = useWorkspace()
+  const { activity, connection, secureStore } = workspace
 
   let whoami = $state<Whoami | null>(null)
   let tenants = $state<AuthTenant[]>([])

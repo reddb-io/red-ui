@@ -3,8 +3,9 @@
 
   interface Props {
     onDone?: () => void
+    contained?: boolean
   }
-  let { onDone }: Props = $props()
+  let { onDone, contained = false }: Props = $props()
 
   let visible = $state(true)
   let stage = $state(0) // 0: pre, 1: in, 2: out
@@ -26,7 +27,9 @@
 
 {#if visible}
   <div
-    class="fixed inset-0 z-[9999] grid place-items-center bg-bg-0 transition-opacity duration-200 ease-out"
+    class="inset-0 z-[9999] grid place-items-center bg-bg-0 transition-opacity duration-200 ease-out"
+    class:fixed={!contained}
+    class:absolute={contained}
     class:opacity-0={stage === 2}
     class:opacity-100={stage === 1}
     class:pointer-events-none={stage === 2}

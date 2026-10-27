@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { activity } from './activity.svelte'
+  import { useWorkspace } from './workspace-context'
+
+  const workspace = useWorkspace()
+  const { activity } = workspace
+
 </script>
 
 {#if activity.active}

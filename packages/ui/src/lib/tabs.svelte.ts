@@ -4,40 +4,40 @@
 // collapses to a single tab; Cmd+click bypasses that by minting a fresh
 // id so a duplicate tab opens.
 
-import type { Capability } from './renderers'
+import type { Capability } from "./renderers";
 
-export type TabKind = 'collection' | 'query' | 'live-changes' | 'welcome'
+export type TabKind = "collection" | "query" | "live-changes" | "welcome";
 
 export interface Tab {
   /** Unique within the pane. Stable when re-focusing existing tabs. */
-  id: string
-  kind: TabKind
+  id: string;
+  kind: TabKind;
   /** Display label in the tab header. */
-  label: string
+  label: string;
   /** Stable identity for collapsing duplicates (collection name, query hash). */
-  key: string
+  key: string;
   /** Optional capability hint forwarded to the renderer registry. */
-  capability?: Capability
+  capability?: Capability;
   /** URL-level collection subpage (`graph`, `svg`, `table`, `json`, …). */
-  subpage?: string
+  subpage?: string;
   /** Renderer override (slice #9 wires the UI; the field exists today). */
-  overrideCapability?: Capability
+  overrideCapability?: Capability;
   /** Show reddb system fields (rid, collection, kind, tenant, …) as a
    * prefix block ahead of user columns. Default false so the table shows
    * what the user wrote. */
-  showSystemColumns?: boolean
+  showSystemColumns?: boolean;
 }
 
 function uid(): string {
   // Small, debug-friendly id. Crypto.randomUUID is overkill for in-pane state.
-  return Math.random().toString(36).slice(2, 10)
+  return Math.random().toString(36).slice(2, 10);
 }
 
-class TabsStore {
-  tabs = $state<Tab[]>([])
-  activeId = $state<string | null>(null)
+export class TabsStore {
+  tabs = $state<Tab[]>([]);
+  activeId = $state<string | null>(null);
 
-  active = $derived(this.tabs.find((t) => t.id === this.activeId) ?? null)
+  active = $derived(this.tabs.find((t) => t.id === this.activeId) ?? null);
 
   /**
    * Open or focus a tab.
@@ -45,26 +45,26 @@ class TabsStore {
    *   exists, focus that tab. Otherwise add a new one and focus it.
    * - If `forceNew` is true, always mint a fresh tab id.
    */
-  open(spec: Omit<Tab, 'id'>, forceNew = false): Tab {
+  open(spec: Omit<Tab, "id">, forceNew = false): Tab {
     if (!forceNew) {
-      const existing = this.tabs.find((t) => t.kind === spec.kind && t.key === spec.key)
+      const existing = this.tabs.find(
+        (t) => t.kind === spec.kind && t.key === spec.key
+      );
       if (existing) {
-        const updated = { ...existing, ...spec, id: existing.id }
-        this.tabs = this.tabs.map((t) =>
-          t === existing ? updated : t,
-        )
-        this.activeId = existing.id
-        return updated
+        const updated = { ...existing, ...spec, id: existing.id };
+        this.tabs = this.tabs.map((t) => (t === existing ? updated : t));
+        this.activeId = existing.id;
+        return updated;
       }
     }
-    const tab: Tab = { ...spec, id: uid() }
-    this.tabs = [...this.tabs, tab]
-    this.activeId = tab.id
-    return tab
+    const tab: Tab = { ...spec, id: uid() };
+    this.tabs = [...this.tabs, tab];
+    this.activeId = tab.id;
+    return tab;
   }
 
   focus(id: string): void {
-    if (this.tabs.some((t) => t.id === id)) this.activeId = id
+    if (this.tabs.some((t) => t.id === id)) this.activeId = id;
   }
 
   /**
@@ -74,47 +74,50 @@ class TabsStore {
    * → reopen → close returns to whatever was focused before the closing.
    */
   close(id: string, previousActiveId?: string | null): void {
-    const idx = this.tabs.findIndex((t) => t.id === id)
-    if (idx < 0) return
-    const wasActive = this.activeId === id
-    this.tabs = this.tabs.filter((t) => t.id !== id)
+    const idx = this.tabs.findIndex((t) => t.id === id);
+    if (idx < 0) return;
+    const wasActive = this.activeId === id;
+    this.tabs = this.tabs.filter((t) => t.id !== id);
     if (wasActive) {
-      if (previousActiveId && this.tabs.some((t) => t.id === previousActiveId)) {
-        this.activeId = previousActiveId
+      if (
+        previousActiveId &&
+        this.tabs.some((t) => t.id === previousActiveId)
+      ) {
+        this.activeId = previousActiveId;
       } else if (this.tabs.length === 0) {
-        this.activeId = null
+        this.activeId = null;
       } else {
-        const fallback = this.tabs[Math.max(0, idx - 1)]
-        this.activeId = fallback?.id ?? null
+        const fallback = this.tabs[Math.max(0, idx - 1)];
+        this.activeId = fallback?.id ?? null;
       }
     }
   }
 
   rename(id: string, label: string): void {
-    this.tabs = this.tabs.map((t) => (t.id === id ? { ...t, label } : t))
+    this.tabs = this.tabs.map((t) => (t.id === id ? { ...t, label } : t));
   }
 
   setOverride(id: string, capability: Capability | undefined): void {
     this.tabs = this.tabs.map((t) =>
-      t.id === id ? { ...t, overrideCapability: capability } : t,
-    )
+      t.id === id ? { ...t, overrideCapability: capability } : t
+    );
   }
 
   setShowSystem(id: string, show: boolean): void {
     this.tabs = this.tabs.map((t) =>
-      t.id === id ? { ...t, showSystemColumns: show } : t,
-    )
+      t.id === id ? { ...t, showSystemColumns: show } : t
+    );
   }
 
   hydrate(savedTabs: Tab[], savedActiveId: string | null): void {
-    this.tabs = savedTabs
-    this.activeId = savedActiveId
+    this.tabs = savedTabs;
+    this.activeId = savedActiveId;
   }
 
   clear(): void {
-    this.tabs = []
-    this.activeId = null
+    this.tabs = [];
+    this.activeId = null;
   }
 }
 
-export const tabs = new TabsStore()
+export const tabs = new TabsStore();

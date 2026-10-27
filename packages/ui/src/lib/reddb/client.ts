@@ -15,7 +15,11 @@ import type {
 import type { ClusterStatus, ReplicationStatus } from "./cluster-status";
 import type { MetricDescriptor, PromResponse } from "./analytics";
 import type { AskResponse, AskOptions } from "./ask";
-import { devConsole, sanitizePayload } from "./dev-console";
+import {
+  devConsole,
+  sanitizePayload,
+  type DevConsoleStore,
+} from "./dev-console";
 
 export interface QueryRow {
   values: Record<string, unknown>;
@@ -124,6 +128,10 @@ export interface Whoami {
 export interface RedClientOptions {
   headers?: HeadersInit;
   fetch?: typeof fetch;
+  /** Per-workspace instrumentation. Defaults to the legacy public console. */
+  console?: DevConsoleStore;
+  /** Abort requests owned by this client without affecting the host client. */
+  signal?: AbortSignal;
 }
 
 export interface AuthUser {
@@ -214,9 +222,6 @@ export interface VcsDiff {
   modified: number;
   entries: VcsDiffEntry[];
 }
-
-const unsupportedCollectionMetadata = new Set<string>();
-const collectionMetadataSupportProbe = new Map<string, Promise<boolean>>();
 
 function isUnsupportedCollectionMetadataRoute(e: unknown): boolean {
   const message = e instanceof Error ? e.message : String(e);
@@ -382,15 +387,50 @@ export async function runQueryPreferStream(
   }
 }
 
+function headerRecord(
+  headers?: HeadersInit
+): Record<string, string> | undefined {
+  if (!headers) return undefined;
+  return headers instanceof Headers || Array.isArray(headers)
+    ? Object.fromEntries(new Headers(headers))
+    : headers;
+}
+
 export class RedClient {
   readonly baseUrl: string;
   private readonly headers: HeadersInit | undefined;
   private readonly fetcher: typeof fetch;
+  private readonly transport: typeof fetch;
+  private readonly console: DevConsoleStore;
+  private readonly unsupportedCollectionMetadata = new Set<string>();
+  private readonly collectionMetadataSupportProbe = new Map<
+    string,
+    Promise<boolean>
+  >();
 
   constructor(baseUrl: string, opts: RedClientOptions = {}) {
     this.baseUrl = baseUrl.replace(/\/$/, "");
     this.headers = opts.headers;
-    this.fetcher = opts.fetch ?? globalThis.fetch.bind(globalThis);
+    this.transport = opts.fetch ?? globalThis.fetch.bind(globalThis);
+    this.console = opts.console ?? devConsole;
+    this.fetcher = opts.signal
+      ? (input, init) =>
+          this.transport(input, {
+            ...init,
+            signal: init?.signal
+              ? AbortSignal.any([opts.signal!, init.signal])
+              : opts.signal,
+          })
+      : this.transport;
+  }
+
+  /** Derive an HTTP client with the same auth/transport and its own lifecycle. */
+  scoped(options: Pick<RedClientOptions, "console" | "signal">): RedClient {
+    return new RedClient(this.baseUrl, {
+      headers: this.headers,
+      fetch: this.transport,
+      ...options,
+    });
   }
 
   private async json<T>(path: string, init?: RequestInit): Promise<T> {
@@ -398,8 +438,8 @@ export class RedClient {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
     };
-    Object.assign(headers, this.headers as Record<string, string> | undefined);
-    Object.assign(headers, init?.headers as Record<string, string> | undefined);
+    Object.assign(headers, headerRecord(this.headers));
+    Object.assign(headers, headerRecord(init?.headers));
 
     // Developer console instrumentation (#128). Every HTTP call the client
     // makes is timed and logged from this single seam, so every Surface is
@@ -415,7 +455,7 @@ export class RedClient {
     try {
       res = await this.fetcher(url, { ...init, headers });
     } catch (e) {
-      devConsole.record({
+      this.console.record({
         kind: "http",
         verb,
         target: path,
@@ -434,7 +474,7 @@ export class RedClient {
         res.status === 401
           ? "Database credentials required (HTTP 401). Sign in with a database username and password."
           : `${verb} ${path} → ${res.status} ${body.slice(0, 200)}`;
-      devConsole.record({
+      this.console.record({
         kind: "http",
         verb,
         target: path,
@@ -450,7 +490,7 @@ export class RedClient {
 
     const data = (await res.json()) as T;
     const rowCount = extractRowCount(data);
-    devConsole.record({
+    this.console.record({
       // A response carrying a row count is a query round-trip; everything else
       // is a plain HTTP call. This is how `/query` entries mark themselves.
       kind: rowCount === undefined ? "http" : "query",
@@ -633,12 +673,12 @@ export class RedClient {
   }
 
   async collection(name: string): Promise<CollectionMetadata> {
-    if (unsupportedCollectionMetadata.has(this.baseUrl)) {
+    if (this.unsupportedCollectionMetadata.has(this.baseUrl)) {
       throw unsupportedCollectionMetadataError(this.baseUrl);
     }
 
     const path = `/collections/${encodeURIComponent(name)}`;
-    const inFlightProbe = collectionMetadataSupportProbe.get(this.baseUrl);
+    const inFlightProbe = this.collectionMetadataSupportProbe.get(this.baseUrl);
     if (inFlightProbe) {
       const supported = await inFlightProbe;
       if (!supported) throw unsupportedCollectionMetadataError(this.baseUrl);
@@ -649,7 +689,7 @@ export class RedClient {
     const probe = new Promise<boolean>((resolve) => {
       resolveProbe = resolve;
     });
-    collectionMetadataSupportProbe.set(this.baseUrl, probe);
+    this.collectionMetadataSupportProbe.set(this.baseUrl, probe);
 
     try {
       const metadata = await this.json<CollectionMetadata>(path);
@@ -657,14 +697,14 @@ export class RedClient {
       return metadata;
     } catch (e) {
       if (isUnsupportedCollectionMetadataRoute(e)) {
-        unsupportedCollectionMetadata.add(this.baseUrl);
+        this.unsupportedCollectionMetadata.add(this.baseUrl);
         resolveProbe!(false);
       } else {
         resolveProbe!(true);
       }
       throw e;
     } finally {
-      collectionMetadataSupportProbe.delete(this.baseUrl);
+      this.collectionMetadataSupportProbe.delete(this.baseUrl);
     }
   }
 
@@ -721,7 +761,7 @@ export class RedClient {
       "Content-Type": "application/json",
       Accept: "application/x-ndjson",
     };
-    Object.assign(headers, this.headers as Record<string, string> | undefined);
+    Object.assign(headers, headerRecord(this.headers));
 
     // Developer console instrumentation (#128). The streaming endpoint skips
     // `json()`, so it logs its own query round-trip here (verb `POST`, target
@@ -741,7 +781,7 @@ export class RedClient {
         signal: opts.signal,
       });
     } catch (e) {
-      devConsole.record({
+      this.console.record({
         kind: "query",
         verb: "POST",
         target: "/query/stream",
@@ -756,7 +796,7 @@ export class RedClient {
     if (!res.ok || !res.body) {
       const errBody = res.body ? await res.text().catch(() => "") : "";
       const message = `POST /query/stream → ${res.status} ${errBody.slice(0, 200)}`;
-      devConsole.record({
+      this.console.record({
         kind: "query",
         verb: "POST",
         target: "/query/stream",
@@ -797,7 +837,7 @@ export class RedClient {
       }
     }
 
-    devConsole.record({
+    this.console.record({
       kind: "query",
       verb: "POST",
       target: "/query/stream",

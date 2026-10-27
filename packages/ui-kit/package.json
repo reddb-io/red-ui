@@ -2,7 +2,7 @@
   "name": "@reddb-io/ui-kit",
   "version": "0.6.0",
   "private": false,
-  "description": "Low-level RedDB UI design-system primitives.",
+  "description": "Compatibility facade for legacy RedDB UI component exports.",
   "type": "module",
   "exports": {
     ".": {

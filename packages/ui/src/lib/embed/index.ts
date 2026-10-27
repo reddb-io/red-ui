@@ -1,7 +1,10 @@
 import appCss from "../../app.css?inline";
 import type { Component } from "svelte";
 import type { ConnectionProvider, ConsoleSink } from "../reddb";
-import { devConsole } from "../reddb/dev-console";
+import {
+  createWorkspaceRuntime,
+  type WorkspaceRuntime,
+} from "../workspace-runtime.svelte";
 import { applyAppearance, type Theme } from "../theme.svelte";
 import { RED_UI_VERSION, readBuildInfo } from "../build-info";
 
@@ -28,6 +31,8 @@ export {
 
 export interface RedUiEmbedOptions {
   connectionProvider: ConnectionProvider;
+  /** Distinct accessible name when several workspaces share one page. */
+  label?: string;
   initialRoute?: string;
   theme?: Theme;
   shadowRoot?: ShadowRootInit;
@@ -45,6 +50,8 @@ export interface RedUiEmbedHandle {
   host: HTMLElement;
   shadowRoot: ShadowRoot;
   portalTarget: HTMLElement;
+  /** Instance-local services and command/lifecycle boundary. */
+  runtime: WorkspaceRuntime;
   destroy(): void;
 }
 
@@ -80,15 +87,15 @@ const shadowCss = `
 }
 `;
 
-function markEmbedSurface() {
-  if (typeof window !== "undefined") window.__RED_UI_EMBED_SURFACE__ = true;
-}
+const mounts = new WeakMap<HTMLElement, RedUiEmbedHandle>();
+// Retain closed roots too: host.shadowRoot intentionally cannot expose them.
+const shadowRoots = new WeakMap<HTMLElement, ShadowRoot>();
 
 export async function mountRedUi(
   host: HTMLElement,
   opts: RedUiEmbedOptions
 ): Promise<RedUiEmbedHandle> {
-  markEmbedSurface();
+  mounts.get(host)?.destroy();
   // The DS axes (ADR 0008): `data-theme` is the Theme direction and
   // `data-color-scheme` is light/dark. A host that still pre-sets the legacy
   // `data-theme="light|dark"` keeps its choice.
@@ -110,7 +117,10 @@ export async function mountRedUi(
   }
 
   const shadowRoot =
-    host.shadowRoot ?? host.attachShadow(opts.shadowRoot ?? { mode: "open" });
+    shadowRoots.get(host) ??
+    host.shadowRoot ??
+    host.attachShadow(opts.shadowRoot ?? { mode: "open" });
+  shadowRoots.set(host, shadowRoot);
   shadowRoot.textContent = "";
 
   const style = document.createElement("style");
@@ -124,47 +134,68 @@ export async function mountRedUi(
 
   shadowRoot.append(style, mountTarget, portalTarget);
 
-  const [{ mount, unmount }, root] = await Promise.all([
-    import("svelte"),
-    import("./RedUiEmbedRoot.svelte") as Promise<{
-      default: Component<Record<string, unknown>>;
-    }>,
-  ]);
-
-  const instance = mount(root.default, {
-    target: mountTarget,
-    props: {
-      connectionProvider: opts.connectionProvider,
-      portalTarget,
-      shadowHost: host,
-      initialRoute: opts.initialRoute,
-      initialTheme: opts.theme,
-    },
+  const runtime = createWorkspaceRuntime({
+    connectionProvider: opts.connectionProvider,
+    consoleSink: opts.consoleSink,
   });
-
-  const removeSink = opts.consoleSink
-    ? devConsole.addSink(opts.consoleSink)
-    : undefined;
-
-  return {
+  let instance: ReturnType<typeof import("svelte").mount> | undefined;
+  let disposed = false;
+  const handle: RedUiEmbedHandle = {
     host,
     shadowRoot,
     portalTarget,
-    destroy: () => {
-      removeSink?.();
-      void unmount(instance);
-      shadowRoot.textContent = "";
+    runtime,
+    destroy() {
+      if (disposed) return;
+      disposed = true;
+      runtime.dispose();
+      if (instance)
+        void import("svelte").then(({ unmount }) => unmount(instance!));
+      if (mounts.get(host) === handle) {
+        mounts.delete(host);
+        shadowRoot.textContent = "";
+      }
     },
   };
+  mounts.set(host, handle);
+
+  try {
+    const [{ mount }, root] = await Promise.all([
+      import("svelte"),
+      import("./RedUiEmbedRoot.svelte") as Promise<{
+        default: Component<Record<string, unknown>>;
+      }>,
+    ]);
+
+    if (disposed) return handle;
+    instance = mount(root.default, {
+      target: mountTarget,
+      props: {
+        runtime,
+        label: opts.label,
+        portalTarget,
+        shadowHost: host,
+        initialRoute: opts.initialRoute,
+        initialTheme: opts.theme,
+      },
+    });
+
+    return handle;
+  } catch (error) {
+    handle.destroy();
+    throw error;
+  }
 }
 
 export class RedUiElement extends HTMLElement {
   #connectionProvider: ConnectionProvider | null = null;
   #consoleSink: ConsoleSink | null = null;
   initialRoute: string | undefined;
+  label: string | undefined;
   theme: Theme | undefined;
   #handle: RedUiEmbedHandle | null = null;
   #mounting: Promise<void> | null = null;
+  #generation = 0;
 
   /** Build version of the embedded bundle (also reflected as a `version`
    *  attribute on connect, so a host can read `el.getAttribute('version')`). */
@@ -203,27 +234,37 @@ export class RedUiElement extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this.#generation += 1;
+    mounts.get(this)?.destroy();
     this.#handle?.destroy();
     this.#handle = null;
     this.#mounting = null;
   }
 
   async #mount() {
-    if (!this.#connectionProvider) return;
+    const generation = ++this.#generation;
+    const provider = this.#connectionProvider;
     this.#handle?.destroy();
-    this.#handle = await mountRedUi(this, {
-      connectionProvider: this.#connectionProvider,
+    this.#handle = null;
+    if (!provider) {
+      mounts.get(this)?.destroy();
+      return;
+    }
+    const handle = await mountRedUi(this, {
+      connectionProvider: provider,
+      label: this.label,
       initialRoute: this.initialRoute,
       theme: this.theme,
       consoleSink: this.#consoleSink ?? undefined,
     });
+    if (generation !== this.#generation || !this.isConnected) handle.destroy();
+    else this.#handle = handle;
   }
 }
 
 export function registerRedUiElement(
   tagName: RedUiElementTagName = "red-ui-app"
 ): typeof RedUiElement {
-  markEmbedSurface();
   if (!customElements.get(tagName))
     customElements.define(tagName, RedUiElement);
   return customElements.get(tagName) as typeof RedUiElement;

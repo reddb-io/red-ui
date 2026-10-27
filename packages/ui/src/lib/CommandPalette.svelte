@@ -1,9 +1,12 @@
 <script lang="ts">
+  import { useWorkspace, workspaceKeyboardTarget } from './workspace-context'
   import { onMount } from 'svelte'
   import { CommandPalette as Palette } from '@reddb-io/design-system/app'
   import { isEventFromModal } from '@reddb-io/design-system/base/interaction'
   import { useRouter, type RouteTarget } from './router.svelte'
-  import { theme } from './theme.svelte'
+
+  const workspace = useWorkspace()
+  const { theme } = workspace
 
   const router = useRouter()
 
@@ -20,9 +23,7 @@
 
   let open = $state(false)
 
-  function fire(name: string) {
-    window.dispatchEvent(new CustomEvent(name))
-  }
+  const fire = workspace.dispatch
 
   const commands: Command[] = [
     { id: 'ask', group: 'navigate', label: 'Open ask', hint: '/ask', run: () => navigate({ view: 'ask' }) },
@@ -37,8 +38,8 @@
     { id: 'new-query', group: 'data', label: 'New query', shortcut: '⌘T', run: () => { fire('red:new-query'); close() } },
 
     { id: 'open-connect', group: 'actions', label: 'Open Connect dropdown', shortcut: '⌘⇧C', run: () => { fire('red:open-connect'); close() } },
-    { id: 'apply-pending', group: 'actions', label: 'Apply pending changes', run: () => { fire('red:apply-pending'); close() } },
-    { id: 'discard-pending', group: 'actions', label: 'Discard pending changes', run: () => { fire('red:discard-pending'); close() } },
+    { id: 'apply-pending', group: 'actions', label: 'Review pending changes', run: () => { fire('red:apply-pending'); close() } },
+    { id: 'discard-pending', group: 'actions', label: 'Review changes to discard', run: () => { fire('red:discard-pending'); close() } },
 
     { id: 'toggle-theme', group: 'view', label: 'Toggle theme (light / dark)', hint: 'theme', run: () => { theme.toggle(); close() } },
     { id: 'show-shortcuts', group: 'view', label: 'Show keyboard shortcuts', shortcut: '?', run: () => { close(); fire('red:open-shortcuts') } },
@@ -61,6 +62,7 @@
   }
 
   function onKey(e: KeyboardEvent) {
+    if (!workspace.ownsKeyboard(e)) return
     const mod = e.metaKey || e.ctrlKey
     const k = e.key.toLowerCase()
 
@@ -88,14 +90,15 @@
   }
 
   onMount(() => {
-    window.addEventListener('keydown', onKey)
+    const keyboardTarget = workspaceKeyboardTarget(workspace)
+    keyboardTarget.addEventListener('keydown', onKey as EventListener)
     const onOpen = () => {
       open = true
     }
-    window.addEventListener('red:open-palette', onOpen)
+    const stop = workspace.on('red:open-palette', onOpen)
     return () => {
-      window.removeEventListener('keydown', onKey)
-      window.removeEventListener('red:open-palette', onOpen)
+      keyboardTarget.removeEventListener('keydown', onKey as EventListener)
+      stop()
     }
   })
 

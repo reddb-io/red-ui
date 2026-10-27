@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useWorkspace } from './workspace-context'
   // Eixo 4 — the ASK chat. Starts as a centred full-screen conversation;
   // the moment an answer arrives grounded on sources, it splits into two
   // columns: the conversation (squeezed left) and the visualization of what
@@ -8,13 +9,14 @@
   import EmptyState from '$lib/EmptyState.svelte'
   import DisconnectedState from '$lib/DisconnectedState.svelte'
   import { accessLocked } from '@reddb-io/design-system/base/illustrations'
-  import { activity } from '$lib/activity.svelte'
-  import { connection } from '$lib/connections.svelte'
-  import { secureStore } from '$lib/secureStore.svelte'
+
   import { parseAnswerSegments, parseUrn, type AskResponse } from '#reddb'
   import Sparkles from '@lucide/svelte/icons/sparkles'
   import CornerDownLeft from '@lucide/svelte/icons/corner-down-left'
   import AlertTriangle from '@lucide/svelte/icons/alert-triangle'
+
+  const workspace = useWorkspace()
+  const { activity, connection, secureStore } = workspace
 
   interface ChatMessage {
     id: number

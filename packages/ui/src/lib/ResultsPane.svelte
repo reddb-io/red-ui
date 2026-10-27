@@ -1,13 +1,12 @@
 <script lang="ts">
+  import { useWorkspace } from './workspace-context'
   import { onMount, tick, untrack } from 'svelte'
   import { AlertDialog, DropdownMenu, Icon, NavigationScope, Select, Skeleton, ToggleButton } from '@reddb-io/design-system/base'
   import { WorkspaceTabs } from '@reddb-io/design-system/app'
   import { useRouter } from '$lib/router.svelte'
-  import { connection } from '$lib/connections.svelte'
-  import { secureStore } from '$lib/secureStore.svelte'
-  import { activity } from '$lib/activity.svelte'
-  import { tabs, type Tab } from '$lib/tabs.svelte'
-  import { queryTabs } from '$lib/query-tabs.svelte'
+
+  import { type Tab } from '$lib/tabs.svelte'
+
   import { defaultSubpage, subpageCapability } from '$lib/collection-pages'
   import { collectionPreviewQuery, safeCollectionName } from '$lib/collection-preview'
   import {
@@ -18,7 +17,7 @@
     formatCount,
     type CollectionCatalogMetadata,
   } from '$lib/collection-catalog'
-  import { registry } from '$lib/renderers'
+
   import type { Capability } from '$lib/renderers'
   import CollectionHistory from '$lib/CollectionHistory.svelte'
   import LiveChanges from '$lib/LiveChanges.svelte'
@@ -39,6 +38,9 @@
   import Layers3 from '@lucide/svelte/icons/layers-3'
   import ScanLine from '@lucide/svelte/icons/scan-line'
   import GitBranch from '@lucide/svelte/icons/git-branch'
+
+  const workspace = useWorkspace()
+  const { activity, connection, queryTabs, registry, secureStore, tabs } = workspace
 
   const router = useRouter()
 
@@ -392,8 +394,7 @@
 
   onMount(() => {
     const onNewQuery = () => openNewQuery()
-    window.addEventListener('red:new-query', onNewQuery)
-    return () => window.removeEventListener('red:new-query', onNewQuery)
+    return workspace.on('red:new-query', onNewQuery)
   })
 
   function pickRenderer(tab: Tab, result: QueryResult) {

@@ -11,25 +11,55 @@ import {
   skinByName,
   type Skin,
 } from "./skins";
+import type { KeyValueStorage } from "../connection-history";
 
-function readPersisted(): string | null {
-  if (typeof localStorage === "undefined") return null;
-  return localStorage.getItem(STORAGE_KEY);
+function readPersisted(
+  key: string | null,
+  storage?: KeyValueStorage
+): string | null {
+  if (!key) return null;
+  try {
+    return (
+      (
+        storage ??
+        (typeof localStorage !== "undefined" ? localStorage : undefined)
+      )?.getItem(key) ?? null
+    );
+  } catch {
+    return null;
+  }
 }
 
-function persist(name: string) {
-  if (typeof localStorage === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, name);
+function persist(name: string, key: string | null, storage?: KeyValueStorage) {
+  if (!key) return;
+  try {
+    (
+      storage ??
+      (typeof localStorage !== "undefined" ? localStorage : undefined)
+    )?.setItem(key, name);
+  } catch {
+    /* Preferences may remain in memory in a restricted host. */
+  }
 }
 
-function rootEl(target?: HTMLElement | null): HTMLElement | null {
+function rootEl(
+  target?: HTMLElement | null,
+  globalTarget = true
+): HTMLElement | null {
   return (
     target ??
-    (typeof document !== "undefined" ? document.documentElement : null)
+    (globalTarget && typeof document !== "undefined"
+      ? document.documentElement
+      : null)
   );
 }
 
-class SkinStore {
+export class SkinStore {
+  constructor(
+    private readonly storageKey: string | null = STORAGE_KEY,
+    private readonly storage?: KeyValueStorage,
+    private readonly globalTarget = true
+  ) {}
   /** The currently selected skin (reactive). */
   current = $state<Skin>(DEFAULT_SKIN);
   private target: HTMLElement | null = null;
@@ -40,8 +70,8 @@ class SkinStore {
    * store reports the default skin but leaves the inherited theme untouched.
    */
   init(target?: HTMLElement | null) {
-    this.target = rootEl(target);
-    const persisted = readPersisted();
+    this.target = rootEl(target, this.globalTarget);
+    const persisted = readPersisted(this.storageKey, this.storage);
     if (persisted) {
       this.current = skinByName(persisted);
       if (this.target) applySkin(this.current, this.target);
@@ -52,12 +82,16 @@ class SkinStore {
   select(name: string) {
     const skin = skinByName(name);
     this.current = skin;
-    const el = rootEl(this.target);
+    const el = rootEl(this.target, this.globalTarget);
     if (el) {
       this.target = el;
       applySkin(skin, el);
     }
-    persist(skin.name);
+    persist(skin.name, this.storageKey, this.storage);
+  }
+
+  dispose() {
+    this.target = null;
   }
 }
 

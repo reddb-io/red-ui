@@ -1,12 +1,15 @@
 <script lang="ts">
+  import { useWorkspace } from './workspace-context'
   import { useRouter } from './router.svelte'
-  import { connection } from './connections.svelte'
-  import { pendingChanges } from './pending-changes.svelte'
+
   import ArrowRight from '@lucide/svelte/icons/arrow-right'
   import FilePenLine from '@lucide/svelte/icons/file-pen-line'
   import Lock from '@lucide/svelte/icons/lock'
   import Terminal from '@lucide/svelte/icons/terminal'
   import { readBuildInfo } from './build-info'
+
+  const workspace = useWorkspace()
+  const { connection, pendingChanges } = workspace
 
   const build = readBuildInfo()
 
@@ -18,7 +21,7 @@
   const readOnlyReason = $derived(connection.readOnlyReason)
 
   function openPending() {
-    window.dispatchEvent(new CustomEvent('red:open-pending-changes'))
+    workspace.dispatch('red:open-pending-changes')
   }
 
   const connected = $derived(connection.connected)
@@ -48,13 +51,13 @@
   })
 
   function openConnect() {
-    window.dispatchEvent(new CustomEvent('red:open-connect'))
+    workspace.dispatch('red:open-connect')
   }
 
   // Toggle the instrumented developer console (#128). Neutral chrome — the
   // console never claims the accent, matching one-accent-per-screen.
   function toggleConsole() {
-    window.dispatchEvent(new CustomEvent('red:toggle-dev-console'))
+    workspace.dispatch('red:toggle-dev-console')
   }
 
   function openCluster(e: MouseEvent) {

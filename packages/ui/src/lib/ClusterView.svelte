@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useWorkspace } from './workspace-context'
   import { SvelteFlow, Background, BackgroundVariant, Controls, type Node, type Edge } from '@xyflow/svelte'
   import '@xyflow/svelte/dist/style.css'
   import { Badge, Card } from '@reddb-io/design-system/base'
@@ -6,10 +7,8 @@
   import EmptyState from '$lib/EmptyState.svelte'
   import { accessLocked, connectionLost } from '@reddb-io/design-system/base/illustrations'
   import ClusterNode from '$lib/ClusterNode.svelte'
-  import { PRESETS, connection } from '$lib/connections.svelte'
-  import { secureStore } from '$lib/secureStore.svelte'
-  import { activity } from '$lib/activity.svelte'
-  import { theme } from '$lib/theme.svelte'
+  import { PRESETS } from '$lib/connections.svelte'
+
   import { useRouter } from '$lib/router.svelte'
   import { POLICY_READ_CHECK } from '$lib/policies'
   import {
@@ -25,6 +24,9 @@
     maxReplicaLagSeconds,
     unavailableFields,
   } from '#reddb'
+
+  const workspace = useWorkspace()
+  const { activity, connection, secureStore, theme } = workspace
 
   interface KnownNode {
     id: string

@@ -22,8 +22,22 @@
           <input id="token" value="dev-host-token" />
         </label>
         <button id="mount">Mount red-ui</button>
+        <button id="add-workspace">Add another workspace</button>
+        <p>
+          Each workspace gets its own connection, documents, appearance and
+          console.
+        </p>
       </section>
-      <red-ui-app id="red-ui"></red-ui-app>
+      <section
+        id="workspaces"
+        class="host-workspaces"
+        aria-label="Embedded workspaces"
+      >
+        <section data-workspace-panel="1">
+          <button id="remove-first">Remove workspace 1</button>
+          <red-ui-app id="red-ui"></red-ui-app>
+        </section>
+      </section>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>

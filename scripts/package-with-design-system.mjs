@@ -60,7 +60,11 @@ function rewrite(dir) {
           const local = relative(
             dirname(path),
             join(stage, "vendor/ds", target)
-          ).replaceAll("\\", "/");
+          )
+            .replaceAll("\\", "/")
+            // Source hosts resolve TypeScript without opting into explicit
+            // .ts import suffixes. Keep .svelte and asset suffixes intact.
+            .replace(/\.ts$/, "");
           return `${quote}${local.startsWith(".") ? local : `./${local}`}${quote}`;
         }
       );

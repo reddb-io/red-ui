@@ -468,6 +468,32 @@ every test here while failing the first `svelte-check` it meets in an
 application; this is what closes that gap (issue #50), and
 `test/consumer-check.test.ts` runs it on every `test` so it cannot reopen.
 
+## Workspace sessions
+
+`createWorkspaceSession(services)` is portable lifecycle and command behavior
+shared by the native Svelte and React entrypoints. Each mount supplies fresh
+services and disposes its own session on unmount. The `/app/workspace` entry
+works in plain TypeScript hosts without loading component or framework types:
+
+```ts
+import { createWorkspaceSession } from "@reddb-io/design-system/app/workspace";
+
+const session = createWorkspaceSession({ documents: new Map() });
+const unsubscribe = session.on("new-document", openDocument);
+session.dispatch("new-document");
+session.onDispose(releaseResources);
+// Unmount: aborts session.signal, drops command listeners and runs cleanup.
+session.dispose();
+```
+
+Commands are synchronous and instance-local. `on` returns an unsubscribe;
+`onDispose` returns an unregister. Disposal aborts first and runs cleanups in
+reverse registration order, continuing through failures and then throwing one
+AggregateError. Registering cleanup after disposal runs it immediately. Commands
+after disposal are ignored. Services remain caller-owned; their cleanup must
+be registered explicitly. This foundation does not yet provide a complete
+workspace component or a database adapter (ADR 0051).
+
 ## Commands
 
 ```

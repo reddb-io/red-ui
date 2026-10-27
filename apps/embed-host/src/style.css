@@ -74,6 +74,16 @@ red-ui-app {
   background: #7c2d12;
 }
 
+.host-workspaces {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.host-panel button {
+  margin-bottom: 10px;
+}
+
 @media (max-width: 900px) {
   .host-shell {
     grid-template-columns: 1fr;

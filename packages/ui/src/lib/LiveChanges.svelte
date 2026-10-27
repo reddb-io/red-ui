@@ -1,12 +1,16 @@
 <script lang="ts">
+  import { useWorkspace } from './workspace-context'
   import { onDestroy } from 'svelte'
   import { CDCStreamClient, type ChangeEvent, type Subscription } from '#reddb'
-  import { connection } from '$lib/connections.svelte'
+
   import Pause from '@lucide/svelte/icons/pause'
   import Play from '@lucide/svelte/icons/play'
   import Activity from '@lucide/svelte/icons/activity'
   import Filter from '@lucide/svelte/icons/filter'
   import X from '@lucide/svelte/icons/x'
+
+  const workspace = useWorkspace()
+  const { connection } = workspace
 
   interface Props {
     collection?: string

@@ -1,8 +1,12 @@
 <script lang="ts">
-  import { pendingChanges, buildUpdateSql } from './pending-changes.svelte'
-  import { connection } from './connections.svelte'
+  import { useWorkspace } from './workspace-context'
+  import { buildUpdateSql } from './pending-changes.svelte'
+
   import { Alert, Button, Dialog } from '@reddb-io/design-system/base'
   import { ChangeReview } from '@reddb-io/design-system/app'
+
+  const workspace = useWorkspace()
+  const { connection, pendingChanges } = workspace
 
   // Mutations are committed against the server; block them while it reports
   // read-only (#23). The reason explains *why* the control is disabled.

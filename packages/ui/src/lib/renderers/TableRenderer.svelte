@@ -1,12 +1,11 @@
 <script lang="ts">
+  import { useWorkspace } from '../workspace-context'
   import { tick } from 'svelte'
   import { Button } from '@reddb-io/design-system/base'
   import { tableEmptyCompact, searchEmpty } from '@reddb-io/design-system/base/illustrations'
   import RendererEmptyState from './RendererEmptyState.svelte'
   import type { QueryResult } from '#reddb'
-  import { connection } from '$lib/connections.svelte'
-  import { activity } from '$lib/activity.svelte'
-  import { pendingChanges } from '$lib/pending-changes.svelte'
+
   import Columns3 from '@lucide/svelte/icons/columns-3'
   import Filter from '@lucide/svelte/icons/filter'
   import Loader2 from '@lucide/svelte/icons/loader-2'
@@ -22,6 +21,9 @@
     visibleColumns,
     visibleRows,
   } from './table-render'
+
+  const workspace = useWorkspace()
+  const { activity, connection, pendingChanges } = workspace
 
   interface Props {
     result: QueryResult
