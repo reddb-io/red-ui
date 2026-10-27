@@ -1,5 +1,20 @@
 # @reddb-io/ui
 
+## 0.5.0
+
+### Minor Changes
+
+- 8e6a683: Use the officially vendored Design System artwork for connection setup and
+  recovery, locked and empty settings, first queries, query failures and workspace
+  render crashes. Keep diagnostics and existing recovery behavior accessible, with
+  connection actions respecting host-owned authentication in embeds. Invalid web
+  routes now show an illustrated recovery page with a link back to the workspace.
+
+### Patch Changes
+
+- @reddb-io/ui-kit@0.5.0
+- @reddb-io/ui-mcp@0.5.0
+
 ## 0.4.8
 
 ### Patch Changes
