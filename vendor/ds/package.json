@@ -17,6 +17,10 @@
       "types": "./kits/app/src/core/workspace-session.ts",
       "default": "./kits/app/src/core/workspace-session.ts"
     },
+    "./app/workspace/documents": {
+      "types": "./kits/app/src/core/workspace-documents.ts",
+      "default": "./kits/app/src/core/workspace-documents.ts"
+    },
     "./base": {
       "svelte": "./kits/base/src/index.ts",
       "default": "./kits/base/src/index.ts"
