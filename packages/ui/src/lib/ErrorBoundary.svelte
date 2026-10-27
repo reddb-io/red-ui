@@ -36,7 +36,7 @@
   {#snippet failed(error, reset)}
     <div
       role="alert"
-      class="flex h-full w-full flex-col items-center justify-center gap-5 overflow-auto bg-bg-0 px-6 py-10 text-center"
+      class="relative z-[1] flex h-full w-full flex-col items-center justify-center gap-5 overflow-auto bg-bg-0 px-6 py-10 text-center"
     >
       <div class="flex flex-col items-center gap-2">
         <StateIllustration art={maintenance} size="lg" />

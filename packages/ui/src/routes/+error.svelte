@@ -14,7 +14,7 @@
   <meta name="robots" content="noindex" />
 </svelte:head>
 
-<main class="grid min-h-screen place-items-center bg-bg-0 p-6 text-fg-0">
+<main class="relative z-[1] grid min-h-screen place-items-center bg-bg-0 p-6 text-fg-0">
   <section aria-labelledby="recovery-title" class="flex w-full max-w-xl flex-col items-center gap-5 text-center">
     <StateIllustration art={missing ? pageMissing : denied ? accessLocked : maintenance} size="lg" />
     <p class="m-0 font-mono text-xs text-fg-2">{page.status}</p>
