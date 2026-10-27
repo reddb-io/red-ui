@@ -2,6 +2,8 @@ import type { StackGap } from "@reddb-io/design-system/base";
 import type { SidebarSide } from "../../composites/sidebar-layout.variants";
 import type { PrimaryNavigationItem } from "../../composites/navigation.behavior";
 
+import type { SidebarRailSizing } from "./sidebarrail";
+
 /** Portable SidebarLayout properties shared by native adapters. */
 export interface SidebarLayoutContract {
 /** Logical edge occupied by the complementary landmark. */
@@ -29,6 +31,8 @@ export interface SidebarLayoutContract {
     navigationLabel?: string;
 /** Show each primary rail destination label below its icon or initials. Mobile dock labels remain visible independently. */
     showRailLabels?: boolean;
+/** Local sizing forwarded to the built-in primary SidebarRail; overrides Density per field. A caller-supplied rail snippet owns its sizing directly. */
+    railSizing?: SidebarRailSizing;
 /** Visible name of the overflow menu when more than five primary items are supplied. Defaults to More. */
     moreLabel?: string;
 /** Externally bindable visibility of the compact navigation rail. */

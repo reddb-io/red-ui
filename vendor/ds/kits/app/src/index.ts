@@ -448,3 +448,5 @@ export { default as ShortcutHelp } from "./composites/ShortcutHelp.svelte";
 export type { WorkspaceTab } from "./core/workspace-tabs";
 export type { ReviewChange, ReviewState } from "./core/change-review";
 export type { ShortcutGroup, ShortcutCommand } from "./core/shortcut-help";
+
+export type { SidebarRailSizing } from "./core/contracts/sidebarrail";

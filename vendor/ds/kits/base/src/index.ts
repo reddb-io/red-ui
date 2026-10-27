@@ -245,6 +245,7 @@ export const BASE_COMPONENTS = [
   "Progress",
   "Prose",
   "QuoteSlide",
+  "RadialContent",
   "RadialProgress",
   "RadioGroup",
   "RangeCalendar",
@@ -393,6 +394,7 @@ export const BASE_COMPONENT_PURPOSES = {
   Prose: "Data display",
   QuoteSlide: "Layout",
   RadialProgress: "Feedback",
+  RadialContent: "Data display",
   RadioGroup: "Data input",
   RangeCalendar: "Data input",
   Rating: "Data input",
@@ -500,6 +502,7 @@ export const BASE_COMPOSITES = [
   "PhoneMockup",
   "Popover",
   "QuoteSlide",
+  "RadialContent",
   "RadioGroup",
   "RangeCalendar",
   "Rating",
@@ -1043,3 +1046,8 @@ export { observeActivity } from "./core/operational-motion";
 
 export { default as SecretValue } from "./SecretValue.svelte";
 export type { SecretValueContract, SecretHideReason } from "./core/contracts/secretvalue";
+
+export { tokenColor, type ColorToken, type ChartPalette } from "./core/color-token";
+
+export { ringThickness, type RadialReading } from "./core/radial";
+export { default as RadialContent } from "./RadialContent.svelte";

@@ -85,7 +85,9 @@
   }
 </script>
 
-<div {...rest} data-code-block class={slots.root({ class: className })}>
+<div {...rest} data-code-block data-code-block-copied-label={copiedLabel}
+  data-code-block-copy-error-label={copyErrorLabel} data-code-block-region-label={name}
+  class={slots.root({ class: className })}>
   <div class={slots.toolbar()}>
     {#if language}
       <span data-code-block-language class={slots.language()}>{language}</span>

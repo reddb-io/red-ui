@@ -637,3 +637,46 @@ editable draft and Data EventLog. The recorded sample preserves canceled drafts,
 shows explicit partial apply results, supports recovery and masks sample values
 after five seconds. Its console can collapse, filter, clear and copy safe events.
 Both native flavors share the example's transition functions and visual recipe.
+
+## SidebarRail local sizing
+
+Omitted values inherit global Density and Theme. Explicit CSS-pixel values set
+only this rail's geometry, independently of Density:
+
+```svelte
+<SidebarRail label="Workspace" {items} currentId="home"
+  itemSize={32} iconSize={18} itemGap={6} railWidth={72}
+  railPadding={8} labelSize={12} />
+```
+
+The same prop names work in React. `SidebarRailSizing` is exported from the App
+Kit for a reusable typed object. Built-in primary navigation forwards it:
+
+```svelte
+<SidebarLayout {navigation} currentId="home"
+  railSizing={{ itemSize: 32, iconSize: 18, itemGap: 6, railWidth: 72 }} />
+```
+
+A rail snippet owns its own SidebarRail props. Top/bottom content remains
+caller-owned: choose Avatar, Logo and Button sizes there explicitly. Geometry
+props override matching root style declarations; all other styles are preserved.
+No Theme, Color Scheme or Density is selected by a component.
+
+`itemSize`, `iconSize`, `railWidth` and `labelSize` accept finite positive
+numbers; `itemGap` and `railPadding` also accept zero. Invalid values refuse
+rendering. The pointer floor remains 24px for fine pointers and 44px for coarse
+pointers. A requested rail width grows when required to fit the item, inset and
+border; icons are constrained to fit. Labelled items retain automatic height so
+text can wrap. Omit individual fields to retain their global defaults.
+
+The SidebarRail Showcase includes adjustable sliders and a global/local switch.
+Browser tests check both native implementations across every Theme, Color Scheme
+and Density with fine and coarse pointers. Existing roving focus, disabled
+entries, selection and SidebarLayout composition remain tested independently.
+
+With `showLabels`, destination spacing defaults to **twice Density gap-md**.
+The icon-to-label gap stays Density gap-sm, so labels have breathing room
+without separating the icon from its own name. Explicit `itemGap` keeps its
+exact value; it is never multiplied. `labelGap` independently overrides the
+icon-to-label space in CSS pixels and accepts zero. Both values remain local
+and forward through `SidebarLayout.railSizing`.
