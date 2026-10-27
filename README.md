@@ -278,10 +278,10 @@ Svelte flavor and the Application Kit (which inherits Base). The generated
 
 The pin includes the updated SidebarRail sizing and labelled-item spacing,
 Diff rendering, RadialProgress customization, and the new RadialContent
-component. The official `fontLoading: "ui"` policy serves smaller 400–700 web
-fonts (21,240-byte Space Grotesk and 43,544-byte Latin JetBrains Mono), retaining
-the original faces as fallback for other supported characters and weights.
-The Data and Marketing Kits remain opt-in through the manifest.
+component. Font loading keeps the official complete profile: browser navigation
+through Red UI's routes also needs original-face fallback with the optional
+`ui` profile, so adding those subsets increases this flow's cold font transfer
+by 64,784 bytes. The Data and Marketing Kits remain opt-in through the manifest.
 
 ```sh
 pnpm ds:sync   # requires the sibling ../design-system checkout and GitHub access

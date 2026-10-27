@@ -6,7 +6,7 @@
     "minify": false,
     "sourcemaps": false
   },
-  "fontLoading": "ui",
+  "fontLoading": "complete",
   "framework": "svelte",
   "kits": [
     "base",
@@ -505,9 +505,7 @@
     "kits/base/vite.config.ts": "99dbbfb4280fa06248c56e5131d771e086358a19f4fb41db0d43302a7a8da60e",
     "assets/fonts/jetbrains-mono-variable.woff2": "e190ee6595a3b9bd25278613a6f5d3766ee1a708f300ed44fa63dbe84051498f",
     "assets/fonts/space-grotesk-variable.woff2": "0640890476fc1198ab4de571fb658de443c4d85b66466ec09534a8737ab1ce9d",
-    "assets/fonts.css": "5dcf040f7ba88b2be91981e6257c37b07563689b68063334ec063ad01d5dabb0",
-    "assets/web-fonts/jetbrains-mono-variable-ui.woff2": "f2ebc788c78c110f2ae61dc7a547a4a732d47a3024ad10f5718bb47c4ca15a53",
-    "assets/web-fonts/space-grotesk-variable-ui.woff2": "7ef60dfd2df4aeb2545e91337a0e016a9eb754bbbf80b64802374be1ea9415a8",
+    "assets/fonts.css": "7c4be9cfbb5e717a15c7916fbb6b7ace6ee68e65f93ff7b27bf14f185a06db04",
     "tokens/density-comfortable.css": "84a6890f62f7e602507fce49e61c1856649f5586255e5c60f1bb7a50280fc241",
     "tokens/density-compact.css": "fd386516c5c72882662b8a396eab5e308541d7fa75499f6d783135306a2c0480",
     "tokens/density-spacious.css": "bdb1db4f19647b6964d3c7df1111bbb1f402da77677d6fc0ce459a994e47fe4c",
