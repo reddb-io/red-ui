@@ -9,6 +9,7 @@
   //     fault reproduces on every render.
   // Artwork and controls inherit the surrounding DS appearance.
   import type { Snippet } from 'svelte'
+  import { ErrorBoundary as Boundary } from '@reddb-io/design-system/app'
   import { Button, Icon, StateIllustration } from '@reddb-io/design-system/base'
   import { maintenance } from '@reddb-io/design-system/base/illustrations'
   import RotateCw from '@lucide/svelte/icons/rotate-cw'
@@ -30,12 +31,11 @@
   }
 </script>
 
-<svelte:boundary>
+<Boundary title="Something crashed while rendering" class="h-full w-full">
   {@render children()}
 
-  {#snippet failed(error, reset)}
+  {#snippet fallback({ error, retry })}
     <div
-      role="alert"
       class="relative z-[1] flex h-full w-full flex-col items-center justify-center gap-5 overflow-auto bg-bg-0 px-6 py-10 text-center"
     >
       <div class="flex flex-col items-center gap-2">
@@ -63,7 +63,7 @@
       <div class="flex flex-wrap justify-center gap-2">
         <Button
           variant="primary"
-          onclick={reset}
+          onclick={retry}
         >
           <Icon icon={RotateCw} size="sm" />
           Retry render
@@ -77,4 +77,4 @@
       </div>
     </div>
   {/snippet}
-</svelte:boundary>
+</Boundary>

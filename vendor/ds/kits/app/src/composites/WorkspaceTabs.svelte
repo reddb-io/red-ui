@@ -28,6 +28,7 @@
     closeLabel = "Close",
     dirtyLabel = "Unsaved changes",
     busyLabel = "Running",
+    panelClass,
     emptyLabel = "No open documents",
     children,
     class: className,
@@ -61,9 +62,10 @@
 
 <div bind:this={root} data-workspace-tabs class={s.root({ class: className })}>
   <Bits.Root
+    class="min-h-0 flex flex-1 flex-col"
     value={active}
     onValueChange={select}
-    activationMode="automatic"
+    activationMode={documents.some(item => item.href) ? "manual" : "automatic"}
     loop
   >
     <div
@@ -105,6 +107,8 @@
               }),
             })}
           >
+            {#snippet child({ props })}
+              {#snippet identity()}
             <span>{item.label}</span>
             {#if item.dirty || item.busy}<span
                 class={s.status()}
@@ -117,6 +121,24 @@
                   .filter(Boolean)
                   .join(", ")}</span
               >{/if}
+              {/snippet}
+              {#if item.href}
+                <a {...props} class={quietControl({ ink: "foreground", class: props.class as string })} href={item.disabled ? undefined : item.href}
+                  aria-disabled={item.disabled || undefined}
+                  onclick={event => {
+                    if (item.disabled) { event.preventDefault(); return; }
+                    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                    (props.onclick as ((event: MouseEvent) => void) | undefined)?.(event);
+                  }}
+                  onkeydown={event => {
+                    if (event.key === " " && !item.disabled) { event.preventDefault(); event.currentTarget.click(); return; }
+                    // Enter belongs to the native link, including modified activation.
+                    if (event.key !== "Enter") (props.onkeydown as ((event: KeyboardEvent) => void) | undefined)?.(event);
+                  }}>
+                  {@render identity()}
+                </a>
+              {:else}<button {...props} class={quietControl({ ink: "foreground", class: props.class as string })}>{@render identity()}</button>{/if}
+            {/snippet}
           </Bits.Trigger>
         {/each}
       </Bits.List>
@@ -141,8 +163,9 @@
     </div>
     {#each documents as item (item.id)}<Bits.Content
         value={item.id}
+        hidden={active !== item.id}
         data-workspace-panel={item.id}
-        class={s.panel()}
+        class={s.panel({ class: panelClass })}
         tabindex={0}>{@render children?.({ id: item.id })}</Bits.Content
       >{/each}
   </Bits.Root>

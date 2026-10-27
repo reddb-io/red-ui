@@ -1,5 +1,7 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onMount, tick, untrack } from 'svelte'
+  import { AlertDialog, DropdownMenu, Icon, NavigationScope, Select, Skeleton, ToggleButton } from '@reddb-io/design-system/base'
+  import { WorkspaceTabs } from '@reddb-io/design-system/app'
   import { useRouter } from '$lib/router.svelte'
   import { connection } from '$lib/connections.svelte'
   import { secureStore } from '$lib/secureStore.svelte'
@@ -26,11 +28,9 @@
   import QueryFailure from './QueryFailure.svelte'
   import { projectEmpty } from '@reddb-io/design-system/base/illustrations'
   import type { CollectionMetadata, QueryResult, RedClient } from '#reddb'
-  import X from '@lucide/svelte/icons/x'
   import Activity from '@lucide/svelte/icons/activity'
   import Database from '@lucide/svelte/icons/database'
   import Plus from '@lucide/svelte/icons/plus'
-  import FileCode2 from '@lucide/svelte/icons/file-code-2'
   import EyeOff from '@lucide/svelte/icons/eye-off'
   import Eye from '@lucide/svelte/icons/eye'
   import Info from '@lucide/svelte/icons/info'
@@ -55,8 +55,17 @@
     { value: 'document', label: 'Document' },
     { value: 'json', label: 'JSON' },
   ]
-  const resultsSkeletonRows = Array.from({ length: 14 }, (_, i) => i)
-  const resultsSkeletonColumns = Array.from({ length: 6 }, (_, i) => i)
+
+  // Mount a renderer on first activation, then retain its local draft/filter state.
+  // Restored inactive canvases must not initialize against a zero-size container.
+  let mountedTabIds = $state<string[]>([])
+  $effect(() => {
+    const ids = tabs.tabs.map(tab => tab.id)
+    const active = tabs.activeId
+    untrack(() => {
+      mountedTabIds = [...new Set([...mountedTabIds.filter(id => ids.includes(id)), ...(active ? [active] : [])])]
+    })
+  })
 
   let results = $state<Record<string, QueryResult | null>>({})
   let errors = $state<Record<string, string>>({})
@@ -68,7 +77,8 @@
   let historyOpen = $state<Record<string, boolean>>({})
   let previousActiveId = $state<string | null>(null)
   let lastActiveId: string | null = null
-  let menuOpen = $state(false)
+  let pane = $state<HTMLDivElement>()
+  let closingDraft = $state<string | null>(null)
   let metadataOpen = $state(false)
 
   $effect(() => {
@@ -327,14 +337,11 @@
     }
   })
 
-  function closeTab(e: MouseEvent, id: string) {
-    e.stopPropagation()
+  function closeTab(id: string, confirmed = false) {
     const tab = tabs.tabs.find((t) => t.id === id)
-    if (tab?.kind === 'query' && queryTabs.isDirty(id)) {
-      const ok = typeof window !== 'undefined'
-        ? window.confirm('Discard unsaved query in this tab?')
-        : true
-      if (!ok) return
+    if (!confirmed && tab?.kind === 'query' && queryTabs.isDirty(id)) {
+      closingDraft = id
+      return
     }
     // If we're closing the collection that owns the current URL, the
     // /c/[collection] route would just re-open the tab on every render.
@@ -362,6 +369,18 @@
     }
   }
 
+  async function discardDraft() {
+    const id = closingDraft
+    if (id) closeTab(id, true)
+    closingDraft = null
+    await tick()
+    // The dialog's invoking close control was removed with the draft.
+    // Return to the surviving document, or the action that opens a new one.
+    const next = pane?.querySelector<HTMLElement>('[data-workspace-tab][aria-selected="true"]')
+      ?? pane?.querySelector<HTMLElement>('[aria-label="Open tab menu"]')
+    next?.focus()
+  }
+
   function openNewQuery() {
     const label = queryTabs.nextLabel()
     const tab = tabs.open(
@@ -369,7 +388,6 @@
       true,
     )
     queryTabs.ensure(tab.id)
-    menuOpen = false
   }
 
   onMount(() => {
@@ -389,7 +407,6 @@
 
   function openLiveChanges() {
     tabs.open({ kind: 'live-changes', label: 'live · global', key: 'global' })
-    menuOpen = false
   }
 
   function onOverrideChange(tab: Tab, e: Event) {
@@ -414,108 +431,42 @@
   }
 </script>
 
-<div class="h-full flex flex-col">
-  <div class="border-b border-line-1 flex items-stretch min-h-[36px] bg-bg-0">
-    {#if tabs.tabs.length === 0}
-      <div class="px-3 py-2 flex items-center gap-2 text-fg-3">
-        <Activity class="size-3.5" />
-        <span class="type-label">Results</span>
-      </div>
-    {:else}
-      <div class="flex items-stretch overflow-x-auto">
-        {#each tabs.tabs as tab (tab.id)}
-          {@const isActive = tab.id === tabs.activeId}
-          {@const cls = [
-            'group flex items-center gap-2 px-3 py-1.5 text-[12px] font-mono border-r border-line-1 whitespace-nowrap no-underline',
-            isActive
-              ? 'bg-bg-1 text-fg-1 border-b-2 border-b-accent -mb-px'
-              : 'text-fg-3 hover:text-fg-1 hover:bg-bg-1/40',
-          ].join(' ')}
-          {#if tab.kind === 'collection'}
-            {@const tabTarget = { view: 'collection' as const, collection: tab.key, subpage: tab.subpage ?? defaultSubpage(tab.capability) }}
-            <a href={router.href(tabTarget)} onclick={(e) => router.go(tabTarget, e)} class={cls} title={tab.label}>
-              <span class="truncate max-w-[180px]">{tab.label}</span>
-              <span
-                class="opacity-60 group-hover:opacity-100 hover:bg-bg-2 rounded p-0.5"
-                role="button"
-                tabindex="-1"
-                aria-label="Close tab"
-                onclick={(e) => closeTab(e as unknown as MouseEvent, tab.id)}
-                onkeydown={(e) => { if (e.key === 'Enter') closeTab(e as unknown as MouseEvent, tab.id) }}
-              >
-                <X class="size-3" />
-              </span>
-            </a>
-          {:else}
-            <button type="button" class={cls} onclick={() => tabs.focus(tab.id)} title={tab.label}>
-              <span class="truncate max-w-[180px]">{tab.label}</span>
-              <span
-                class="opacity-60 group-hover:opacity-100 hover:bg-bg-2 rounded p-0.5"
-                role="button"
-                tabindex="-1"
-                aria-label="Close tab"
-                onclick={(e) => closeTab(e as unknown as MouseEvent, tab.id)}
-                onkeydown={(e) => { if (e.key === 'Enter') closeTab(e as unknown as MouseEvent, tab.id) }}
-              >
-                <X class="size-3" />
-              </span>
-            </button>
-          {/if}
-        {/each}
-      </div>
-    {/if}
-
+<div bind:this={pane} class="h-full flex flex-col">
+  <div class="border-b border-line-1 flex flex-wrap items-stretch min-h-[36px] bg-bg-0">
+    <span class="type-label px-3 py-2">Results</span>
     {#if tabs.active && (tabs.active.kind === 'collection' || tabs.active.kind === 'query')}
       {@const activeTab = tabs.active}
       {@const activeResult = results[activeTab.id]}
-      <div class="ml-auto flex items-center gap-2 px-2 text-[11px] font-mono text-fg-3">
+      <div class="ml-auto flex min-w-0 flex-wrap items-center gap-2 px-2 text-[11px] font-mono text-fg-3">
         {#if activeTab.kind === 'collection'}
-          <button
-            type="button"
-            onclick={() => (metadataOpen = !metadataOpen)}
+          <ToggleButton
+            label="meta"
+            onpressedchange={pressed => metadataOpen = pressed}
             title={metadataOpen ? 'Hide collection metadata' : 'Show collection metadata'}
-            aria-pressed={metadataOpen}
-            class={[
-              'inline-flex items-center gap-1 h-6 px-1.5 rounded border transition-colors cursor-pointer',
-              metadataOpen
-                ? 'border-accent/40 bg-accent/10 text-primary-text'
-                : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
-            ].join(' ')}
+            pressed={metadataOpen}
           >
             <Info class="size-3" />
             <span>meta</span>
-          </button>
+          </ToggleButton>
           {#if connection.capabilities.vcs}
             <!-- VCS history is server-gated (#22): absent when the connected
                  server doesn't support version control, not shown-but-broken. -->
-            <button
-              type="button"
-              onclick={() => (historyOpen = { ...historyOpen, [activeTab.id]: !(historyOpen[activeTab.id] ?? false) })}
+            <ToggleButton
+              label="history"
+              onpressedchange={pressed => historyOpen = { ...historyOpen, [activeTab.id]: pressed }}
               title={historyOpen[activeTab.id] ? 'Hide version history' : 'Show version history and diffs'}
-              aria-pressed={historyOpen[activeTab.id] ?? false}
-              class={[
-                'inline-flex items-center gap-1 h-6 px-1.5 rounded border transition-colors cursor-pointer',
-                historyOpen[activeTab.id]
-                  ? 'border-accent/40 bg-accent/10 text-primary-text'
-                  : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
-              ].join(' ')}
-            >
+              pressed={historyOpen[activeTab.id] ?? false}
+              >
               <GitBranch class="size-3" />
               <span>history</span>
-            </button>
+            </ToggleButton>
           {/if}
         {/if}
-        <button
-          type="button"
-          onclick={() => tabs.setShowSystem(activeTab.id, !activeTab.showSystemColumns)}
+        <ToggleButton
+          label="sys"
+          onpressedchange={pressed => tabs.setShowSystem(activeTab.id, pressed)}
           title={activeTab.showSystemColumns ? 'Hide reddb system columns (rid, collection, kind, tenant, created_at, updated_at)' : 'Show reddb system columns'}
-          aria-pressed={activeTab.showSystemColumns ?? false}
-          class={[
-            'inline-flex items-center gap-1 h-6 px-1.5 rounded border transition-colors cursor-pointer',
-            activeTab.showSystemColumns
-              ? 'border-accent/40 bg-accent/10 text-primary-text'
-              : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
-          ].join(' ')}
+          pressed={activeTab.showSystemColumns ?? false}
         >
           {#if activeTab.showSystemColumns}
             <Eye class="size-3" />
@@ -523,11 +474,11 @@
             <EyeOff class="size-3" />
           {/if}
           <span>sys</span>
-        </button>
+        </ToggleButton>
         <span>{defaultCapabilityLabel(activeTab, activeResult)}</span>
         <span class="text-fg-3">· override:</span>
-        <select
-          class="bg-bg-1 text-fg-1 border border-line-1 rounded px-1 py-0.5"
+        <Select
+          class="w-auto max-w-full"
           aria-label="Renderer override"
           value={activeTab.overrideCapability ?? ''}
           onchange={(e) => onOverrideChange(activeTab, e)}
@@ -535,56 +486,34 @@
           {#each OVERRIDE_CHOICES as choice (choice.value)}
             <option value={choice.value}>{choice.label}</option>
           {/each}
-        </select>
+        </Select>
       </div>
     {/if}
 
-    <div class="relative {tabs.active && (tabs.active.kind === 'collection' || tabs.active.kind === 'query') ? '' : 'ml-auto'} flex items-stretch">
-      <button
-        type="button"
-        class="px-2 inline-flex items-center text-fg-3 hover:text-fg-1"
-        aria-label="Open tab menu"
-        onclick={() => (menuOpen = !menuOpen)}
-      >
-        <Plus class="size-3.5" />
-      </button>
-      {#if menuOpen}
-        <div
-          role="menu"
-          class="absolute right-0 top-full mt-1 z-10 min-w-[220px] rounded border border-line-1 bg-bg-1 shadow-lg p-1 text-[12px] font-mono"
-        >
-          <button
-            type="button"
-            class="w-full text-left px-2 py-1 rounded hover:bg-bg-2 text-fg-1 flex items-center gap-2"
-            onclick={openNewQuery}
-          >
-            <FileCode2 class="size-3.5 text-fg-3" />
-            <span class="flex-1">New query</span>
-            <span class="text-fg-3 text-[10px]">⌘T</span>
-          </button>
-          <button
-            type="button"
-            class="w-full text-left px-2 py-1 rounded hover:bg-bg-2 text-fg-1"
-            onclick={openLiveChanges}
-          >
-            Live changes (global)
-          </button>
-        </div>
-      {/if}
+    <div class="ml-auto flex items-center px-2">
+      <DropdownMenu triggerLabel="Open tab menu" contentLabel="Result tabs" variant="ghost" size="sm" align="end"
+        items={[
+          { id: 'query', label: 'New query', shortcut: ['⌘', 'T'], onselect: openNewQuery },
+          { id: 'live', label: 'Live changes (global)', onselect: openLiveChanges },
+        ]}>
+        {#snippet trigger()}<Icon icon={Plus} size="sm" />{/snippet}
+      </DropdownMenu>
     </div>
   </div>
 
-  <div class="flex-1 overflow-hidden bg-bg-0">
-    {#if !tabs.active}
-      <div class="h-full grid place-items-center p-6">
-        {#if connection.connected}
-          <EmptyState illustration={projectEmpty} illustrationSize="lg" title="Choose a collection" message="Your database is connected. Pick a collection from the schema browser to inspect its data." />
-        {:else}
-          <DisconnectedState />
-        {/if}
-      </div>
-    {:else}
-      {@const tab = tabs.active}
+  <NavigationScope navigate={href => {
+    const tab = tabs.tabs.find(tab => tab.kind === 'collection' && router.href({ view: 'collection', collection: tab.key, subpage: tab.subpage ?? defaultSubpage(tab.capability) }) === href)
+    if (tab) router.go({ view: 'collection', collection: tab.key, subpage: tab.subpage ?? defaultSubpage(tab.capability) })
+  }}>
+    {#if tabs.tabs.length}
+      <WorkspaceTabs label="Open results" class="min-h-0 flex-1" panelClass="overflow-hidden bg-bg-0 p-0"
+        items={tabs.tabs.map(tab => ({ id: tab.id, label: tab.label,
+          dirty: tab.kind === 'query' && queryTabs.isDirty(tab.id),
+          href: tab.kind === 'collection' ? router.href({ view: 'collection', collection: tab.key, subpage: tab.subpage ?? defaultSubpage(tab.capability) }) : undefined,
+        }))} selected={tabs.activeId} onselectedchange={id => tabs.focus(id)} oncloserequest={id => closeTab(id)}>
+        {#snippet children({ id })}
+          {@const tab = tabs.tabs.find(tab => tab.id === id)}
+          {#if tab && (id === tabs.activeId || mountedTabIds.includes(id))}<div class="h-full min-h-0 overflow-hidden">
       {#if tab.kind === 'live-changes'}
         <LiveChanges collection={undefined} />
       {:else if tab.kind === 'query'}
@@ -599,71 +528,11 @@
         {#if err}
           <QueryFailure message={err} />
         {:else if !result}
-          <div class="h-full flex flex-col" aria-busy="true" aria-label={`Loading ${tab.label} results`}>
-            <div class="border-b border-line-1 bg-bg-1/35 px-3 py-2">
-              <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
-                <div class="min-w-[180px] flex-1">
-                  <div class="flex items-center gap-2">
-                    <div class="h-[21px] w-[78px] rounded border border-line-1 bg-bg-2 motion-safe:animate-pulse"></div>
-                    <div class="h-4 w-44 max-w-[45vw] rounded bg-bg-2 motion-safe:animate-pulse"></div>
-                  </div>
-                  <div class="mt-1 flex flex-wrap gap-1">
-                    <div class="h-[21px] w-24 rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
-                    <div class="h-[21px] w-32 rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
-                    <div class="h-[21px] w-20 rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
-                  </div>
-                </div>
-
-                <div class="flex flex-wrap items-center gap-2">
-                  <div class="h-[30px] w-[94px] rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
-                  <div class="h-[30px] w-[92px] rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
-                  <div class="h-[30px] w-[92px] rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
-                  <div class="h-[30px] w-[78px] rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
-                  <div class="h-[30px] w-[78px] rounded border border-line-1 bg-bg-0/70 motion-safe:animate-pulse"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="border-b border-line-1 px-3 py-1.5 flex items-center gap-2 bg-bg-1/40">
-              <div class="h-6 w-[70px] rounded border border-line-1 bg-bg-2 motion-safe:animate-pulse"></div>
-              <div class="h-6 w-[54px] rounded border border-line-1 bg-bg-2 motion-safe:animate-pulse"></div>
-              <div class="h-4 w-px bg-line-1"></div>
-              <div class="h-6 w-[76px] rounded border border-line-1 bg-bg-2 motion-safe:animate-pulse"></div>
-              <div class="ml-auto h-3 w-[58px] rounded bg-bg-2 motion-safe:animate-pulse"></div>
-            </div>
-
-            <div class="flex-1 overflow-hidden">
-              <div class="min-w-[760px]">
-                <div class="grid h-8 grid-cols-[40px_repeat(6,minmax(96px,1fr))] border-b border-line-1 bg-bg-1">
-                  <div class="px-2 py-2">
-                    <div class="ml-auto h-3 w-4 rounded bg-bg-2 motion-safe:animate-pulse"></div>
-                  </div>
-                  {#each resultsSkeletonColumns as col (col)}
-                    <div class="px-2 py-2">
-                      <div class="h-3 rounded bg-bg-2 motion-safe:animate-pulse" style={`width: ${col % 3 === 0 ? 72 : col % 3 === 1 ? 104 : 56}px`}></div>
-                    </div>
-                  {/each}
-                </div>
-                {#each resultsSkeletonRows as row (row)}
-                  <div class="grid h-[29px] grid-cols-[40px_repeat(6,minmax(96px,1fr))] border-b border-line-1/60">
-                    <div class="px-2 py-2">
-                      <div class="ml-auto h-3 w-4 rounded bg-bg-2 motion-safe:animate-pulse"></div>
-                    </div>
-                    {#each resultsSkeletonColumns as col (col)}
-                      <div class="px-2 py-2">
-                        <div class="h-3 rounded bg-bg-2 motion-safe:animate-pulse" style={`width: ${col === 0 ? 48 : 64 + ((row + col) % 4) * 18}px`}></div>
-                      </div>
-                    {/each}
-                  </div>
-                {/each}
-              </div>
-            </div>
-
-            <div class="border-t border-line-1 px-3 py-1.5 flex items-center gap-3">
-              <div class="h-3 w-28 rounded bg-bg-2 motion-safe:animate-pulse"></div>
-              <div class="h-3 w-44 rounded bg-bg-2 motion-safe:animate-pulse"></div>
-              <div class="h-3 w-20 rounded bg-bg-2 motion-safe:animate-pulse"></div>
-            </div>
+          <div class="h-full min-h-0 p-[var(--reddb-spatial-inset-md)]" aria-busy="true" aria-label={`Loading ${tab.label} results`}>
+            <Skeleton
+              shape={tab.capability === 'graph' ? 'graph' : tab.capability === 'queue' ? 'list' : tab.capability === 'document' ? 'document' : 'table'}
+              rows={14} columns={6} class="h-full"
+            />
           </div>
         {:else}
           {@const renderer = pickRenderer(tab, result)}
@@ -816,6 +685,22 @@
           </div>
         {/if}
       {/if}
+          </div>{/if}
+        {/snippet}
+      </WorkspaceTabs>
+    {:else}
+      <div class="min-h-0 flex-1 overflow-hidden bg-bg-0">
+      <div class="h-full grid place-items-center p-6">
+        {#if connection.connected}
+          <EmptyState illustration={projectEmpty} illustrationSize="lg" title="Choose a collection" message="Your database is connected. Pick a collection from the schema browser to inspect its data." />
+        {:else}
+          <DisconnectedState />
+        {/if}
+      </div>
+      </div>
     {/if}
-  </div>
+  </NavigationScope>
 </div>
+<AlertDialog title="Discard unsaved query in this tab?" confirmLabel="Discard and close"
+  open={closingDraft !== null} onopenchange={next => { if (!next) closingDraft = null }}
+  onconfirm={discardDraft} />

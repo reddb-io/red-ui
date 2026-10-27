@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { flushSync, mount, unmount } from "svelte";
+import { flushSync, mount, unmount, tick } from "svelte";
 import Fixture from "./ErrorBoundary.fixture.svelte";
 import { crashCtrl } from "./ErrorBoundary.fixtures.svelte";
 
@@ -50,7 +50,7 @@ test("a throwing child renders the failure screen, not a black webview", () => {
   unmount(component);
 });
 
-test("retry-render recovers once the transient fault clears", () => {
+test("retry-render recovers once the transient fault clears", async () => {
   crashCtrl.crash = true;
   const { target, component } = render();
   expect(target.querySelector('[role="alert"]')).not.toBeNull();
@@ -62,6 +62,7 @@ test("retry-render recovers once the transient fault clears", () => {
   );
   expect(retry, "retry button should exist").toBeTruthy();
   retry!.click();
+  await tick();
   flushSync();
 
   expect(
@@ -76,7 +77,7 @@ test("retry-render recovers once the transient fault clears", () => {
   unmount(component);
 });
 
-test("retry-render stays on the failure screen while the fault persists", () => {
+test("retry-render stays on the failure screen while the fault persists", async () => {
   crashCtrl.crash = true;
   const { target, component } = render();
 
@@ -85,6 +86,7 @@ test("retry-render stays on the failure screen while the fault persists", () => 
     b.textContent?.includes("Retry render")
   );
   retry!.click();
+  await tick();
   flushSync();
 
   expect(

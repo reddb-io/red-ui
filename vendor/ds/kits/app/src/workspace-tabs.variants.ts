@@ -3,7 +3,7 @@ import { typeRoleMerge } from "@reddb-io/design-system/base/recipes";
 export const workspaceTabsAppearance = tv(
   {
     slots: {
-      root: "@container/workspace-tabs min-w-0 text-foreground",
+      root: "@container/workspace-tabs flex min-h-0 flex-col min-w-0 text-foreground",
       frame:
         "grid min-w-0 max-w-full gap-x-[var(--reddb-spatial-gap-sm)] overflow-x-auto border-b border-muted p-[var(--reddb-spatial-inset-sm)]",
       list: "col-span-full row-start-1 grid min-w-0 grid-cols-subgrid",
@@ -15,7 +15,7 @@ export const workspaceTabsAppearance = tv(
       closeButton:
         "pointer-events-auto w-[var(--reddb-spatial-control-height-sm)] min-w-[var(--reddb-spatial-target-min)]",
       panel:
-        "min-w-0 p-[var(--reddb-spatial-inset-md)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
+        "min-h-0 min-w-0 flex-1 p-[var(--reddb-spatial-inset-md)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
       empty: "m-0 p-[var(--reddb-spatial-inset-md)] text-body text-ink-muted",
     },
     variants: {

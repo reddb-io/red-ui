@@ -21,7 +21,8 @@ function render() {
   flushSync();
   target.querySelector<HTMLButtonElement>("button")!.click();
   flushSync();
-  return target;
+  // The canonical Popover portals its surface into the document.
+  return document.body;
 }
 
 function fill(target: HTMLElement, selector: string, value: string) {

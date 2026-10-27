@@ -7,6 +7,8 @@ export interface WorkspaceTabsContract {
   items: readonly WorkspaceTab[];
   /** Selected document; absent or removed selections fall back to the first enabled item. */
   selected?: string | null;
+  /** Additional classes on each panel for bounded application layouts. */
+  panelClass?: string;
   /** Requests selection without changing document contents. */
   onselectedchange?: (id: string) => void;
   /** Requests closing; the application confirms dirty drafts and removes accepted items. */

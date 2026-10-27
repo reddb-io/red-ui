@@ -1,7 +1,7 @@
 <script lang="ts">
   // Settings surface: a bounded pane shell backed by live SQL introspection.
   import { NavItem, Pill } from '@reddb-io/design-system/app'
-  import { Icon as DsIcon, type IconGlyph } from '@reddb-io/design-system/base'
+  import { AlertDialog, Button, Checkbox, Input, Select, Textarea, Icon as DsIcon, type IconGlyph } from '@reddb-io/design-system/base'
   import { ListRow, SectionHeading } from '@reddb-io/ui-kit'
   import AlertCircle from '@lucide/svelte/icons/alert-circle'
   import Download from '@lucide/svelte/icons/download'
@@ -48,6 +48,8 @@
     settings: Settings2,
   }
 
+  let confirmation = $state<{ title: string; run: () => unknown } | null>(null)
+
   let activePaneId = $state(SETTINGS_PANES[0].id)
   let visiblePanes = $state<SettingsPane[]>([])
   let permissions = $state<PermissionGate | null>(null)
@@ -59,7 +61,6 @@
   const activePane = $derived(resolvePane(activePaneId, visiblePanes))
 
   let queries = $state<Record<string, string>>({})
-  let searchEl = $state<HTMLInputElement | null>(null)
   const query = $derived(hasVisiblePane ? (queries[activePane.id] ?? '') : '')
 
   let configEntries = $state<ConfigEntry[]>([])
@@ -163,14 +164,6 @@
   function selectSecretKey(key: string) {
     if (selectedSecretKey !== key) clearRevealedSecret()
     selectedSecretKey = key
-  }
-
-  function onWindowKey(e: KeyboardEvent) {
-    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-      e.preventDefault()
-      searchEl?.focus()
-      searchEl?.select()
-    }
   }
 
   async function refreshPermissions() {
@@ -325,10 +318,14 @@
     }
   }
 
-  async function unsetSelectedConfig() {
+  async function unsetSelectedConfig(confirmed = false) {
     const client = connection.client
     if (!client || !selectedEntry || !canWriteConfig || writing) return
-    if (!window.confirm(`Unset ${selectedEntry.key}?`)) return
+    if (!confirmed) {
+      const key = selectedEntry.key
+      confirmation = { title: `Unset ${key}?`, run: () => selectedEntry?.key === key ? unsetSelectedConfig(true) : undefined }
+      return
+    }
 
     const key = selectedEntry.key
     writing = true
@@ -408,10 +405,14 @@
     }
   }
 
-  async function deleteSelectedSecret() {
+  async function deleteSelectedSecret(confirmed = false) {
     const client = connection.client
     if (!client || !selectedSecret || !canWriteSecrets || writing) return
-    if (!window.confirm(`Delete secret ${selectedSecret.key}?`)) return
+    if (!confirmed) {
+      const key = selectedSecret.key
+      confirmation = { title: `Delete secret ${key}?`, run: () => selectedSecret?.key === key ? deleteSelectedSecret(true) : undefined }
+      return
+    }
 
     const key = selectedSecret.key
     writing = true
@@ -567,7 +568,6 @@
   }
 </script>
 
-<svelte:window onkeydown={onWindowKey} />
 
 <div class="@container h-full min-h-0 bg-bg-0">
   <div
@@ -613,10 +613,9 @@
           <Search
             class="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-fg-3"
           />
-          <input
-            bind:this={searchEl}
+          <Input
             type="text"
-            placeholder={`Search ${activePane.label.toLowerCase()}  ⌘K`}
+            placeholder={`Search ${activePane.label.toLowerCase()}`}
             value={query}
             disabled={permissionsLoading || !hasVisiblePane || unreachable}
             oninput={(e) => setQuery(e.currentTarget.value)}
@@ -626,7 +625,7 @@
                 e.currentTarget.blur()
               }
             }}
-            class="h-7 w-full rounded-md border border-line-2 bg-bg-2 pl-8 pr-2.5 text-xs text-fg-1 placeholder:text-fg-3 outline-none transition-colors focus:border-line-3 disabled:cursor-not-allowed disabled:opacity-50"
+            class="font-mono w-full" controlSize="sm" aria-label="Search settings"
           />
         </div>
       </div>
@@ -685,15 +684,15 @@
                     : 'text-fg-1 hover:bg-bg-2',
                 ].join(' ')}
               >
-                <button
+                <Button
                   type="button"
                   aria-current={selectedSecret?.key === entry.key ? 'page' : undefined}
                   onclick={() => selectSecretKey(entry.key)}
-                  class="min-w-0 text-left"
+                  class="font-mono min-w-0 flex-col items-start" size="sm" variant="ghost"
                 >
                   <span class="block truncate text-[13px]">{control.label}</span>
                   <span class="block truncate font-mono text-[11px] text-fg-3">{entry.key}</span>
-                </button>
+                </Button>
 
                 <div class="inline-flex h-6 items-center gap-1.5 rounded border border-line-2 bg-bg-2 px-1.5 font-mono text-[11px] text-fg-2">
                   <KeyRound class="size-3" />
@@ -714,35 +713,24 @@
                     : 'text-fg-1 hover:bg-bg-2',
                 ].join(' ')}
               >
-                <button
+                <Button
                   type="button"
                   aria-current={selectedEntry?.key === entry.key ? 'page' : undefined}
                   onclick={() => (selectedConfigKey = entry.key)}
-                  class="min-w-0 text-left"
+                  class="font-mono min-w-0 flex-col items-start" size="sm" variant="ghost"
                 >
                   <span class="block truncate text-[13px]">{control.label}</span>
                   <span class="block truncate font-mono text-[11px] text-fg-3">{entry.key}</span>
-                </button>
+                </Button>
 
                 {#if control.kind === 'boolean'}
-                  <label
-                    class="inline-flex h-6 items-center gap-1.5 rounded border border-line-2 bg-bg-2 px-1.5 font-mono text-[11px] text-fg-2"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={entry.value === true}
-                      disabled
-                      tabindex="-1"
-                      class="size-3 accent-current"
-                    />
-                    {entry.value ? 'true' : 'false'}
-                  </label>
+                  <Checkbox label={entry.value ? 'true' : 'false'} aria-label={`${control.label}: ${entry.value ? 'true' : 'false'}`} checked={entry.value === true} disabled tabindex={-1} />
                 {:else if control.kind === 'enum'}
-                  <select
+                  <Select
                     disabled
-                    tabindex="-1"
+                    tabindex={-1}
                     value={String(entry.value)}
-                    class="h-6 w-28 rounded border border-line-2 bg-bg-2 px-1.5 font-mono text-[11px] text-primary-text disabled:opacity-100"
+                    class="font-mono w-28" controlSize="sm"
                     aria-label={control.label}
                   >
                     {#if !control.options?.includes(String(entry.value))}
@@ -751,14 +739,14 @@
                     {#each control.options ?? [] as option}
                       <option value={option}>{option}</option>
                     {/each}
-                  </select>
+                  </Select>
                 {:else}
-                  <input
+                  <Input
                     readonly
-                    tabindex="-1"
+                    tabindex={-1}
                     aria-label={control.label}
                     value={formatValue(entry)}
-                    class="h-6 w-28 rounded border border-line-2 bg-bg-2 px-1.5 font-mono text-[11px] text-fg-2 outline-none"
+                    class="font-mono w-28" controlSize="sm"
                   />
                 {/if}
               </div>
@@ -769,15 +757,15 @@
 
       <div class="grid gap-2 border-t border-line-1 px-3 py-2.5">
         {#if activePane.id === 'config'}
-          <button
+          <Button
             type="button"
             onclick={exportConfig}
             disabled={permissionsLoading || !hasVisiblePane || loading || configEntries.length === 0}
-            class="inline-flex h-7 items-center justify-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 transition-colors hover:border-line-3 hover:text-fg-0 disabled:cursor-not-allowed disabled:opacity-40"
+            class="font-mono" size="sm"
           >
             <Download class="size-3.5" />
             export config
-          </button>
+          </Button>
         {/if}
         <div class="truncate text-[11px] text-fg-3">
           {#if hasVisiblePane}
@@ -813,15 +801,15 @@
         {:else}
           <PageHeader eyebrow="Settings" title={activePane.label} subtitle={activePane.blurb}>
           {#snippet actions()}
-            <button
+            <Button
               type="button"
               onclick={refresh}
               disabled={loading || !connected}
-              class="inline-flex h-7 items-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 hover:border-line-3 hover:text-fg-0 disabled:cursor-not-allowed disabled:opacity-40"
+              class="font-mono" size="sm"
             >
               <RefreshCw class={loading ? 'size-3.5 animate-spin' : 'size-3.5'} />
               refresh
-            </button>
+            </Button>
           {/snippet}
           </PageHeader>
 
@@ -858,11 +846,11 @@
                       wide
                     >
                       {#snippet action()}
-                        <input
+                        <Input
                           readonly
                           value={selectedSecretPlaintext ?? selectedSecret.value}
                           aria-label={selectedSecretControl.label}
-                          class="h-8 w-full rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none"
+                          class="font-mono w-full" controlSize="sm"
                         />
                       {/snippet}
                     </ListRow>
@@ -890,24 +878,24 @@
                       <ListRow title="Break-glass reveal" description="Calls reddb's audited UNSEAL VAULT path and clears plaintext after 30 seconds.">
                         {#snippet action()}
                           {#if selectedSecretPlaintext !== null}
-                            <button
+                            <Button
                               type="button"
                               onclick={clearRevealedSecret}
-                              class="inline-flex h-8 items-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 hover:border-line-3 hover:text-fg-0"
+                              class="font-mono" size="sm"
                             >
                               <EyeOff class="size-3.5" />
                               hide
-                            </button>
+                            </Button>
                           {:else}
-                            <button
+                            <Button
                               type="button"
                               onclick={revealSelectedSecret}
                               disabled={revealing}
-                              class="inline-flex h-8 items-center gap-1.5 rounded-md border border-warn/40 bg-warn/5 px-2.5 text-[11px] font-mono text-warn hover:border-warn/70 disabled:cursor-not-allowed disabled:opacity-40"
+                              class="font-mono" size="sm" tone="warning"
                             >
                               <Eye class={revealing ? 'size-3.5 animate-pulse' : 'size-3.5'} />
                               reveal
-                            </button>
+                            </Button>
                           {/if}
                         {/snippet}
                       </ListRow>
@@ -916,15 +904,15 @@
                     {#if canWriteSecrets}
                       <ListRow title="Authoring" description="Delete the selected vault secret through DELETE SECRET.">
                         {#snippet action()}
-                          <button
+                          <Button
                             type="button"
-                            onclick={deleteSelectedSecret}
+                            onclick={() => deleteSelectedSecret()}
                             disabled={writing}
-                            class="inline-flex h-8 items-center gap-1.5 rounded-md border border-danger/30 bg-danger/5 px-2.5 text-[11px] font-mono text-danger hover:border-danger/60 disabled:cursor-not-allowed disabled:opacity-40"
+                            class="font-mono" size="sm" tone="danger"
                           >
                             <Trash2 class="size-3.5" />
                             delete
-                          </button>
+                          </Button>
                         {/snippet}
                       </ListRow>
                     {/if}
@@ -968,16 +956,16 @@
                     {#snippet icon()}<Plus class="size-3.5" />{/snippet}
                   </SectionHeading>
                   <div class="grid gap-2 rounded-lg border border-line-1 bg-bg-1 p-3">
-                    <input
+                    <Input
                       type="text"
                       value={secretWriteKey}
                       oninput={(e) => (secretWriteKey = e.currentTarget.value)}
                       placeholder="mycompany.payments.key"
                       disabled={writing}
                       aria-label="Secret key"
-                      class="h-8 rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none placeholder:text-fg-3 disabled:cursor-not-allowed disabled:opacity-50"
+                      class="font-mono" controlSize="sm"
                     />
-                    <input
+                    <Input
                       type="password"
                       value={secretWriteValue}
                       oninput={(e) => (secretWriteValue = e.currentTarget.value)}
@@ -985,18 +973,18 @@
                       disabled={writing}
                       autocomplete="new-password"
                       aria-label="New secret value"
-                      class="h-8 rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none placeholder:text-fg-3 disabled:cursor-not-allowed disabled:opacity-50"
+                      class="font-mono" controlSize="sm"
                     />
                     <div class="flex justify-end">
-                      <button
+                      <Button
                         type="button"
                         onclick={setSecretValue}
                         disabled={writing || !secretWriteKey.trim() || !secretWriteValue}
-                        class="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 hover:border-line-3 hover:text-fg-0 disabled:cursor-not-allowed disabled:opacity-40"
+                        class="font-mono shrink-0" size="sm"
                       >
                         <Save class="size-3.5" />
                         set
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </section>
@@ -1030,24 +1018,13 @@
               >
                 {#snippet action()}
                   {#if selectedControl.kind === 'boolean'}
-                    <label
-                      class="inline-flex h-8 items-center gap-2 rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={canWriteConfig ? editValue === 'true' : selectedEntry.value === true}
-                        disabled={!canWriteConfig || writing}
-                        onchange={(e) => (editValue = e.currentTarget.checked ? 'true' : 'false')}
-                        class="size-3 accent-current"
-                      />
-                      {canWriteConfig ? editValue : selectedEntry.value ? 'true' : 'false'}
-                    </label>
+                    <Checkbox label={canWriteConfig ? editValue : selectedEntry.value ? 'true' : 'false'} aria-label={`${selectedControl.label}: ${canWriteConfig ? editValue : selectedEntry.value ? 'true' : 'false'}`} checked={canWriteConfig ? editValue === 'true' : selectedEntry.value === true} disabled={!canWriteConfig || writing} oncheckedchange={checked => editValue = checked ? 'true' : 'false'} />
                   {:else if selectedControl.kind === 'enum'}
-                    <select
+                    <Select
                       disabled={!canWriteConfig || writing}
                       value={canWriteConfig ? editValue : String(selectedEntry.value)}
                       onchange={(e) => (editValue = e.currentTarget.value)}
-                      class="h-8 min-w-[12rem] rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 disabled:opacity-100"
+                      class="font-mono min-w-[12rem]" controlSize="sm" aria-label={selectedControl.label}
                     >
                       {#if !selectedControl.options?.includes(String(selectedEntry.value))}
                         <option value={String(selectedEntry.value)}>{formatValue(selectedEntry)}</option>
@@ -1055,31 +1032,31 @@
                       {#each selectedControl.options ?? [] as option}
                         <option value={option}>{option}</option>
                       {/each}
-                    </select>
+                    </Select>
                   {:else if selectedControl.kind === 'list'}
-                    <textarea
+                    <Textarea
                       readonly={!canWriteConfig}
                       disabled={writing}
-                      rows="5"
+                      rows={5}
                       value={canWriteConfig ? editValue : formatLongValue(selectedEntry.value)}
                       oninput={(e) => (editValue = e.currentTarget.value)}
-                      class="min-h-24 w-full resize-y rounded-md border border-line-2 bg-bg-2 px-2.5 py-2 font-mono text-[12px] text-fg-1 outline-none"
-                    ></textarea>
+                      class="font-mono w-full min-h-24 resize-y" aria-label={selectedControl.label}
+                    ></Textarea>
                   {:else if selectedControl.kind === 'secret-reference'}
-                    <input
+                    <Input
                       readonly
                       type="text"
                       value={formatValue(selectedEntry)}
-                      class="h-8 w-full rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none"
+                      class="font-mono w-full" controlSize="sm" aria-label={selectedControl.label}
                     />
                   {:else}
-                    <input
+                    <Input
                       readonly={!canWriteConfig}
                       disabled={writing}
                       type={selectedControl.kind === 'number' ? 'text' : 'text'}
                       value={canWriteConfig ? editValue : formatValue(selectedEntry)}
                       oninput={(e) => (editValue = e.currentTarget.value)}
-                      class="h-8 w-full rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none"
+                      class="font-mono w-full" controlSize="sm" aria-label={selectedControl.label}
                     />
                   {/if}
                 {/snippet}
@@ -1108,27 +1085,27 @@
                 <ListRow title="Authoring" description="Submit changes through SET CONFIG or unset through DELETE CONFIG.">
                   {#snippet action()}
                     <div class="flex flex-wrap justify-end gap-2">
-                      <button
+                      <Button
                         type="button"
                         onclick={saveSelectedConfig}
                         disabled={writing || selectedControl.kind === 'secret-reference'}
                         title={selectedControl.kind === 'secret-reference'
                           ? 'Secret references can be unset, but not edited as plaintext config.'
                           : 'Save config value'}
-                        class="inline-flex h-8 items-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 hover:border-line-3 hover:text-fg-0 disabled:cursor-not-allowed disabled:opacity-40"
+                        class="font-mono" size="sm"
                       >
                         <Save class="size-3.5" />
                         save
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
-                        onclick={unsetSelectedConfig}
+                        onclick={() => unsetSelectedConfig()}
                         disabled={writing}
-                        class="inline-flex h-8 items-center gap-1.5 rounded-md border border-danger/30 bg-danger/5 px-2.5 text-[11px] font-mono text-danger hover:border-danger/60 disabled:cursor-not-allowed disabled:opacity-40"
+                        class="font-mono" size="sm" tone="danger"
                       >
                         <Trash2 class="size-3.5" />
                         unset
-                      </button>
+                      </Button>
                     </div>
                   {/snippet}
                 </ListRow>
@@ -1157,72 +1134,63 @@
                 </SectionHeading>
                 <div class="grid gap-2 rounded-lg border border-line-1 bg-bg-1 p-3">
                   <div class="grid gap-2 @min-[42rem]:grid-cols-[minmax(0,1fr)_8rem]">
-                    <input
+                    <Input
                       type="text"
                       value={newConfigKey}
                       oninput={(e) => (newConfigKey = e.currentTarget.value)}
                       placeholder="red.example.key"
                       disabled={writing}
                       aria-label="New config key"
-                      class="h-8 rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none placeholder:text-fg-3 disabled:cursor-not-allowed disabled:opacity-50"
+                      class="font-mono" controlSize="sm"
                     />
-                    <select
+                    <Select
                       value={newConfigKind}
                       onchange={(e) => (newConfigKind = e.currentTarget.value as typeof newConfigKind)}
                       disabled={writing}
                       aria-label="New config value type"
-                      class="h-8 rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                      class="font-mono" controlSize="sm"
                     >
                       <option value="text">text</option>
                       <option value="number">number</option>
                       <option value="boolean">boolean</option>
                       <option value="list">list</option>
-                    </select>
+                    </Select>
                   </div>
 
                   {#if newConfigKind === 'boolean'}
-                    <label class="inline-flex h-8 w-fit items-center gap-2 rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1">
-                      <input
-                        type="checkbox"
-                        checked={newConfigValue === 'true'}
-                        disabled={writing}
-                        onchange={(e) => (newConfigValue = e.currentTarget.checked ? 'true' : 'false')}
-                        class="size-3 accent-current"
-                      />
-                      {newConfigValue === 'true' ? 'true' : 'false'}
-                    </label>
+                    <Checkbox label="New config value" checked={newConfigValue === 'true'} disabled={writing} oncheckedchange={checked => newConfigValue = checked ? 'true' : 'false'} />
                   {:else if newConfigKind === 'list'}
-                    <textarea
-                      rows="4"
+                    <Textarea
+                      rows={4}
                       value={newConfigValue}
                       oninput={(e) => (newConfigValue = e.currentTarget.value)}
                       placeholder='["main", "release"]'
                       disabled={writing}
                       aria-label="New config value"
-                      class="min-h-20 resize-y rounded-md border border-line-2 bg-bg-2 px-2.5 py-2 font-mono text-[12px] text-fg-1 outline-none placeholder:text-fg-3 disabled:cursor-not-allowed disabled:opacity-50"
-                    ></textarea>
+                      class="font-mono min-h-20 resize-y"
+                    ></Textarea>
                   {:else}
-                    <input
+                    <Input
                       type="text"
                       value={newConfigValue}
                       oninput={(e) => (newConfigValue = e.currentTarget.value)}
                       placeholder={newConfigKind === 'number' ? '1000' : 'value'}
                       disabled={writing}
                       aria-label="New config value"
-                      class="h-8 rounded-md border border-line-2 bg-bg-2 px-2.5 font-mono text-[12px] text-fg-1 outline-none placeholder:text-fg-3 disabled:cursor-not-allowed disabled:opacity-50"
+                      class="font-mono" controlSize="sm"
                     />
                   {/if}
 
                   <div class="flex justify-end">
-                    <button
+                    <Button
                       type="button"
                       onclick={setNewConfig}
                       disabled={writing || !newConfigKey.trim()}
-                      class="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 hover:border-line-3 hover:text-fg-0 disabled:cursor-not-allowed disabled:opacity-40"
+                      class="font-mono shrink-0" size="sm"
                     >
                       <Plus class="size-3.5" />
                       set
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </section>
@@ -1234,3 +1202,7 @@
     </main>
   </div>
 </div>
+
+<AlertDialog title={confirmation?.title ?? 'Confirm deletion'} description="This action cannot be undone."
+  open={confirmation !== null} onopenchange={next => { if (!next) confirmation = null }}
+  confirmLabel="Confirm" onconfirm={() => { const action = confirmation?.run; return Promise.resolve(action?.()) }} />
