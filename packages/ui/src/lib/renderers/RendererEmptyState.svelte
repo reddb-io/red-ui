@@ -16,6 +16,6 @@
 
 <div data-renderer-empty={surface} data-empty-reason={reason} class="grid min-h-0 min-w-0 flex-1 place-items-center overflow-auto p-[var(--reddb-spatial-inset-md)]">
   <EmptyState {title} {description} {actions} bordered={false} class="w-full">
-    {#snippet media()}<StateIllustration {art} size="sm" />{/snippet}
+    {#snippet media()}<StateIllustration {art} size={reason === 'filtered' ? 'sm' : 'md'} />{/snippet}
   </EmptyState>
 </div>
