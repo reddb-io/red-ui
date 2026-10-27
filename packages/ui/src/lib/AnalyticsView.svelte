@@ -2,6 +2,8 @@
   import { Card, Badge } from '@reddb-io/design-system/base'
   import PageHeader from '$lib/PageHeader.svelte'
   import EmptyState from '$lib/EmptyState.svelte'
+  import DisconnectedState from '$lib/DisconnectedState.svelte'
+  import { accessLocked, dataEmpty, maintenance } from '@reddb-io/design-system/base/illustrations'
   import MetricChart from '$lib/MetricChart.svelte'
   import { activity } from '$lib/activity.svelte'
   import { connection } from '$lib/connections.svelte'
@@ -14,8 +16,6 @@
     type NormalizedSeries,
     type ChartKind,
   } from '#reddb'
-  import LineChart from '@lucide/svelte/icons/line-chart'
-  import Lock from '@lucide/svelte/icons/lock'
   import RefreshCw from '@lucide/svelte/icons/refresh-cw'
 
   let metrics = $state<MetricDescriptor[]>([])
@@ -130,13 +130,13 @@
   </PageHeader>
 
   {#if secureStore.locked}
-    <div class="p-6"><EmptyState icon={Lock} title="Locked" message="Unlock the secure store to read the metric catalog." /></div>
+    <div class="p-6"><EmptyState illustration={accessLocked} title="Locked" message="Unlock the secure store to read the metric catalog." /></div>
   {:else if !connected}
-    <div class="p-6"><EmptyState icon={LineChart} title="Not connected" message="Connect to a reddb instance to browse its metrics." /></div>
+    <div class="grid min-h-0 flex-1 place-items-center overflow-auto p-6"><DisconnectedState message="Connect to a reddb instance to browse its live metrics." /></div>
   {:else if catalogError}
     <div class="p-6">
       <EmptyState
-        icon={LineChart}
+        illustration={maintenance}
         title="No analytics surface"
         message="This reddb didn't answer the metric catalog. Analytics needs a server with the metrics engine (red.metrics)."
         hint={catalogError}
@@ -145,7 +145,7 @@
   {:else if metrics.length === 0}
     <div class="p-6">
       <EmptyState
-        icon={LineChart}
+        illustration={dataEmpty}
         title="No metrics registered"
         message="Register one with CREATE METRIC, then feed it via Prometheus remote-write or a metrics collection."
         hint="CREATE METRIC http.latency TYPE histogram ROLE sli;"

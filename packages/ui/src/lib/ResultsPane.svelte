@@ -21,6 +21,10 @@
   import CollectionHistory from '$lib/CollectionHistory.svelte'
   import LiveChanges from '$lib/LiveChanges.svelte'
   import QueryEditor from '$lib/QueryEditor.svelte'
+  import DisconnectedState from './DisconnectedState.svelte'
+  import EmptyState from './EmptyState.svelte'
+  import QueryFailure from './QueryFailure.svelte'
+  import { projectEmpty } from '@reddb-io/design-system/base/illustrations'
   import type { CollectionMetadata, QueryResult, RedClient } from '#reddb'
   import X from '@lucide/svelte/icons/x'
   import Activity from '@lucide/svelte/icons/activity'
@@ -574,20 +578,9 @@
     {#if !tabs.active}
       <div class="h-full grid place-items-center p-6">
         {#if connection.connected}
-          <div class="text-center text-fg-3 text-[12px] font-mono">
-            Connected to <span class="text-fg-1">{connection.active.url}</span>.
-            <br />
-            Pick a collection from the left to open a tab.
-          </div>
+          <EmptyState illustration={projectEmpty} title="Choose a collection" message="Your database is connected. Pick a collection from the schema browser to inspect its data." />
         {:else}
-          <div class="text-center max-w-md">
-            <Database class="size-8 text-fg-3 mx-auto mb-3" strokeWidth={1.4} />
-            <h2 class="type-h2 m-0 mb-2">Workspace</h2>
-            <p class="text-fg-2 text-[13px] m-0">
-              Connect to a reddb instance from the topbar to start browsing
-              collections and running queries.
-            </p>
-          </div>
+          <DisconnectedState />
         {/if}
       </div>
     {:else}
@@ -604,10 +597,7 @@
         {@const result = results[tab.id]}
         {@const err = errors[tab.id]}
         {#if err}
-          <div class="p-4 text-[12px] font-mono text-warn">
-            <div class="font-semibold mb-1">Query failed</div>
-            <pre class="whitespace-pre-wrap">{err}</pre>
-          </div>
+          <QueryFailure message={err} />
         {:else if !result}
           <div class="h-full flex flex-col" aria-busy="true" aria-label={`Loading ${tab.label} results`}>
             <div class="border-b border-line-1 bg-bg-1/35 px-3 py-2">

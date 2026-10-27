@@ -4,6 +4,7 @@
   import { Badge, Card } from '@reddb-io/design-system/base'
   import { NodeBadge } from '@reddb-io/ui-kit'
   import EmptyState from '$lib/EmptyState.svelte'
+  import { accessLocked, connectionLost } from '@reddb-io/design-system/base/illustrations'
   import ClusterNode from '$lib/ClusterNode.svelte'
   import { PRESETS, connection } from '$lib/connections.svelte'
   import { secureStore } from '$lib/secureStore.svelte'
@@ -24,8 +25,6 @@
     maxReplicaLagSeconds,
     unavailableFields,
   } from '#reddb'
-  import Lock from '@lucide/svelte/icons/lock'
-  import ServerCrash from '@lucide/svelte/icons/server-crash'
 
   interface KnownNode {
     id: string
@@ -491,7 +490,7 @@
 {:else if secureStore.locked}
   <div class="p-6">
     <EmptyState
-      icon={Lock}
+      illustration={accessLocked}
       title="Locked"
       message="Unlock the secure store to probe configured nodes. Automatic probes are paused until you authenticate this session."
     />
@@ -499,7 +498,7 @@
 {:else if liveNodes.length === 0}
   <div class="p-6">
     <EmptyState
-      icon={ServerCrash}
+      illustration={connectionLost}
       title="No reachable nodes"
       message="None of the configured reddb endpoints responded. Start one and the topology will populate automatically."
       hint="docker compose -f docker/compose.yml up -d"

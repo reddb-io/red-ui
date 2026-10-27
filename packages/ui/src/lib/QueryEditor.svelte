@@ -1,4 +1,7 @@
 <script lang="ts">
+  import QueryFailure from './QueryFailure.svelte'
+  import EmptyState from './EmptyState.svelte'
+  import { documentDraft } from '@reddb-io/design-system/base/illustrations'
   import Play from '@lucide/svelte/icons/play'
   import Loader2 from '@lucide/svelte/icons/loader-2'
   import X from '@lucide/svelte/icons/x'
@@ -141,13 +144,10 @@
         </div>
       </div>
     {:else if qs?.error}
-      <div class="p-4 text-[12px] font-mono text-warn">
-        <div class="font-semibold mb-1">Query failed</div>
-        <pre class="whitespace-pre-wrap">{qs.error}</pre>
-      </div>
+      <QueryFailure message={qs.error} />
     {:else if !qs?.result}
-      <div class="h-full grid place-items-center text-fg-3 text-[12px] font-mono">
-        Run a query to see results here.
+      <div class="grid h-full place-items-center overflow-auto p-6">
+        <EmptyState illustration={documentDraft} title="Ready for your first query" message="Write a query above, then run it to inspect its results." />
       </div>
     {:else}
       {#if qs.result.truncated}
