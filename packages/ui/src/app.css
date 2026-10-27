@@ -50,7 +50,8 @@
 
 /* shadcn-svelte semantic aliases — driven by the active theme's tokens */
 @layer base {
-  :root {
+  :root,
+  [data-workspace-root] {
     --background: var(--color-bg-0);
     --foreground: var(--color-fg-0);
     --card: var(--color-bg-1);

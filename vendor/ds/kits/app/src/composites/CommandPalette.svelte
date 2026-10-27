@@ -52,7 +52,8 @@
             onkeydown={event => { if (event.key === "Escape") { event.preventDefault(); open = false; onopenchange?.(false); } }} />
           <Bits.ContentStatic id={`${uid}-commands`} aria-label={label} class={s.list()} onEscapeKeydown={event => { event.preventDefault(); open = false; onopenchange?.(false); }}
             interactOutsideBehavior="defer-otherwise-ignore">
-            <Bits.Viewport>
+            <!-- Keep one scroll container: the input controls the outer listbox. -->
+            <Bits.Viewport class="overflow-visible!">
               {#each groups as group (group.label)}
                 <Bits.Group class={s.group()}>
                   {#if group.label}<Bits.GroupHeading class={s.heading()}>{group.label}</Bits.GroupHeading>{/if}

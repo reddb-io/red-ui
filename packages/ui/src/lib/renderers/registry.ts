@@ -6,28 +6,34 @@
 // back to the renderer that `renders(result)` accepts, and finally to the
 // 'table' renderer which is the universal default.
 
-import type { QueryResult } from '#reddb'
-import type { Capability, CapabilityRenderer } from './types'
+import type { QueryResult } from "#reddb";
+import type { Capability, CapabilityRenderer } from "./types";
 
 export class RendererRegistry {
-  private renderers: CapabilityRenderer[] = []
+  private renderers: CapabilityRenderer[] = [];
 
   register(renderer: CapabilityRenderer): void {
-    const idx = this.renderers.findIndex((r) => r.capability === renderer.capability)
-    if (idx >= 0) this.renderers[idx] = renderer
-    else this.renderers.push(renderer)
+    const idx = this.renderers.findIndex(
+      (r) => r.capability === renderer.capability
+    );
+    if (idx >= 0) this.renderers[idx] = renderer;
+    else this.renderers.push(renderer);
   }
 
   unregister(capability: Capability): void {
-    this.renderers = this.renderers.filter((r) => r.capability !== capability)
+    this.renderers = this.renderers.filter((r) => r.capability !== capability);
+  }
+
+  clear(): void {
+    this.renderers = [];
   }
 
   list(): readonly CapabilityRenderer[] {
-    return this.renderers
+    return this.renderers;
   }
 
   has(capability: Capability): boolean {
-    return this.renderers.some((r) => r.capability === capability)
+    return this.renderers.some((r) => r.capability === capability);
   }
 
   /**
@@ -44,25 +50,27 @@ export class RendererRegistry {
   pick(
     capability: Capability | undefined,
     result: QueryResult,
-    override?: Capability,
+    override?: Capability
   ): CapabilityRenderer {
     if (override) {
-      const r = this.renderers.find((r) => r.capability === override)
-      if (r) return r
+      const r = this.renderers.find((r) => r.capability === override);
+      if (r) return r;
     }
     if (capability) {
-      const r = this.renderers.find((r) => r.capability === capability)
-      if (r && r.renders(result)) return r
+      const r = this.renderers.find((r) => r.capability === capability);
+      if (r && r.renders(result)) return r;
     }
-    const shapeMatch = this.renderers.find((r) => r.renders(result))
-    if (shapeMatch) return shapeMatch
-    const fallback = this.renderers.find((r) => r.capability === 'table')
+    const shapeMatch = this.renderers.find((r) => r.renders(result));
+    if (shapeMatch) return shapeMatch;
+    const fallback = this.renderers.find((r) => r.capability === "table");
     if (!fallback) {
-      throw new Error('No renderer matched and no table fallback is registered')
+      throw new Error(
+        "No renderer matched and no table fallback is registered"
+      );
     }
-    return fallback
+    return fallback;
   }
 }
 
 /** Shared singleton — renderers self-register into this from ./index.ts. */
-export const registry = new RendererRegistry()
+export const registry = new RendererRegistry();

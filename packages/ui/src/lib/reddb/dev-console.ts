@@ -113,6 +113,7 @@ export class DevConsoleStore {
   private readonly listeners = new Set<Listener>();
   private readonly sinks = new Set<ConsoleSink>();
   private nextId = 1;
+  private disposed = false;
 
   /** Cap on retained entries; oldest are dropped past this. */
   constructor(private readonly capacity = 500) {}
@@ -120,6 +121,7 @@ export class DevConsoleStore {
   /** Append one round-trip. Assigns the id, trims to capacity, notifies. */
   record(input: ConsoleEntryInput): ConsoleEntry {
     const entry: ConsoleEntry = { ...input, id: this.nextId++ };
+    if (this.disposed) return entry;
     this.entries.push(entry);
     if (this.entries.length > this.capacity) {
       this.entries.splice(0, this.entries.length - this.capacity);
@@ -162,6 +164,14 @@ export class DevConsoleStore {
     if (this.entries.length === 0) return;
     this.entries = [];
     this.emit();
+  }
+
+  /** Release only this workspace's telemetry and observers. */
+  dispose(): void {
+    this.disposed = true;
+    this.entries = [];
+    this.listeners.clear();
+    this.sinks.clear();
   }
 
   /**

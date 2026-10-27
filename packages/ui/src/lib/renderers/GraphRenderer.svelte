@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useWorkspace } from '../workspace-context'
   import { Button } from '@reddb-io/design-system/base'
   import { graphEmptyCompact, searchEmpty } from '@reddb-io/design-system/base/illustrations'
   import RendererEmptyState from './RendererEmptyState.svelte'
@@ -35,8 +36,7 @@
     supernodeCommunityOf,
   } from './graph-communities'
   import { collectionPageHref } from '$lib/collection-pages'
-  import { connection } from '$lib/connections.svelte'
-  import { activity } from '$lib/activity.svelte'
+
   import Network from '@lucide/svelte/icons/network'
   import Table2 from '@lucide/svelte/icons/table-2'
   import Search from '@lucide/svelte/icons/search'
@@ -54,6 +54,9 @@
   import Group from '@lucide/svelte/icons/group'
   import Spline from '@lucide/svelte/icons/spline'
   import Boxes from '@lucide/svelte/icons/boxes'
+
+  const workspace = useWorkspace()
+  const { activity, connection } = workspace
 
   interface Props {
     result: QueryResult
@@ -368,7 +371,7 @@
     const observer = new MutationObserver(() => {
       graphThemeVersion += 1
     })
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-color-scheme'] })
+    observer.observe(appearanceRoot(), { attributes: true, attributeFilter: ['data-theme', 'data-color-scheme', 'style'] })
     return () => observer.disconnect()
   })
 
@@ -502,7 +505,7 @@
     void graphThemeVersion
     return typeof document === 'undefined'
       ? true
-      : document.documentElement.dataset.colorScheme !== 'light'
+      : appearanceRoot().dataset.colorScheme !== 'light'
   })
 
   // Group-in-a-box geometry in layout ([0,100]) space. Shared by the SVG
@@ -717,14 +720,18 @@
 
   const graphTransform = $derived(`translate(50 50) scale(${svgZoom}) translate(-50 -50)`)
 
+  function appearanceRoot(): HTMLElement {
+    return workspace.theme.target ?? workspace.root ?? document.documentElement
+  }
+
   function cssColor(name: string, fallback: string): string {
-    const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+    const value = getComputedStyle(appearanceRoot()).getPropertyValue(name).trim()
     return value || fallback
   }
 
   // Theme-aware palette handed to the sigma reducers (dark tokens drive it).
   function sigmaThemeColors(): SigmaThemeColors {
-    const dark = document.documentElement.dataset.colorScheme !== 'light'
+    const dark = appearanceRoot().dataset.colorScheme !== 'light'
     return {
       background: cssColor('--color-bg-0', dark ? '#050607' : '#ffffff'),
       edge: cssColor('--color-line-3', dark ? '#3a424d' : '#c9cbd1'),
@@ -756,7 +763,7 @@
       layout: renderLayout,
       sizeScales: nodeSizeScales,
       orphanIds: orphanNodeIds,
-      dark: document.documentElement.dataset.colorScheme !== 'light',
+      dark: appearanceRoot().dataset.colorScheme !== 'light',
       edgeColor: sigmaThemeColors().edge,
       bundledCurvatures: bundleCurvatures ?? undefined,
     })

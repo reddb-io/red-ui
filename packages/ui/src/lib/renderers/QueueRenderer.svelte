@@ -1,11 +1,11 @@
 <script lang="ts">
+  import { useWorkspace } from '../workspace-context'
   import { tick } from 'svelte'
   import { Button } from '@reddb-io/design-system/base'
   import { queueEmptyCompact, searchEmpty } from '@reddb-io/design-system/base/illustrations'
   import RendererEmptyState from './RendererEmptyState.svelte'
   import type { QueryResult } from '#reddb'
-  import { connection } from '$lib/connections.svelte'
-  import { activity } from '$lib/activity.svelte'
+
   import Braces from '@lucide/svelte/icons/braces'
   import ClipboardList from '@lucide/svelte/icons/clipboard-list'
   import Loader2 from '@lucide/svelte/icons/loader-2'
@@ -22,6 +22,9 @@
     queueSummary,
     type QueueMessage,
   } from './queue-render'
+
+  const workspace = useWorkspace()
+  const { activity, connection } = workspace
 
   interface Props {
     result: QueryResult

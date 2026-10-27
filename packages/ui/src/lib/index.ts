@@ -30,6 +30,12 @@ export { default as StatusBar } from "./StatusBar.svelte";
 export { default as SubNav } from "./SubNav.svelte";
 export { default as Topbar } from "./Topbar.svelte";
 export { default as Workspace } from "./Workspace.svelte";
+export {
+  createWorkspaceRuntime,
+  type WorkspaceRuntime,
+  type WorkspaceRuntimeOptions,
+  type WorkspaceCommand,
+} from "./workspace-runtime.svelte";
 
 export * from "./renderers";
 export {

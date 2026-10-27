@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { useWorkspace } from './workspace-context'
   import { Button } from '@reddb-io/design-system/base'
   import { connectionLost, integrationEmpty, sessionExpired } from '@reddb-io/design-system/base/illustrations'
   import EmptyState from './EmptyState.svelte'
-  import { connection } from './connections.svelte'
-  import { secureStore } from './secureStore.svelte'
+
+  const workspace = useWorkspace()
+  const { connection, secureStore } = workspace
 
   let { message = 'Connect to a reddb instance to browse collections and run queries.' }: { message?: string } = $props()
   const interrupted = $derived(Boolean(connection.probe.error))
@@ -18,7 +20,7 @@
 >
   {#snippet actions()}
     {#if secureStore.surface !== 'embedded'}
-      <Button variant="primary" onclick={() => window.dispatchEvent(new CustomEvent('red:open-connect'))}>
+      <Button variant="primary" onclick={() => workspace.dispatch('red:open-connect')}>
         {signInRequired ? 'Sign in' : interrupted ? 'Review connection' : 'Connect to database'}
       </Button>
     {/if}

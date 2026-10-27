@@ -1,13 +1,12 @@
 <script lang="ts">
+  import { useWorkspace } from './workspace-context'
   import { Card, Badge } from '@reddb-io/design-system/base'
   import PageHeader from '$lib/PageHeader.svelte'
   import EmptyState from '$lib/EmptyState.svelte'
   import DisconnectedState from '$lib/DisconnectedState.svelte'
   import { accessLocked, dataEmpty, maintenance } from '@reddb-io/design-system/base/illustrations'
   import MetricChart from '$lib/MetricChart.svelte'
-  import { activity } from '$lib/activity.svelte'
-  import { connection } from '$lib/connections.svelte'
-  import { secureStore } from '$lib/secureStore.svelte'
+
   import {
     promQLForMetric,
     parsePromMatrix,
@@ -17,6 +16,9 @@
     type ChartKind,
   } from '#reddb'
   import RefreshCw from '@lucide/svelte/icons/refresh-cw'
+
+  const workspace = useWorkspace()
+  const { activity, connection, secureStore } = workspace
 
   let metrics = $state<MetricDescriptor[]>([])
   let selectedPath = $state<string | null>(null)

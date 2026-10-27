@@ -27,6 +27,6 @@
   <!-- Black-screen shield (#126): a render crash in the Workspace shows the
        recovery screen instead of tearing down the webview to black. -->
   <ErrorBoundary>
-    <Workspace {router} />
+    <Workspace {router} persistenceKey="default" themeTarget={typeof document !== "undefined" ? document.documentElement : null} />
   </ErrorBoundary>
 {/if}

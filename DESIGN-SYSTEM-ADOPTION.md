@@ -1,5 +1,67 @@
 # Design System adoption
 
+## Workspace consolidation: first runtime slice
+
+DS ADR 0051 establishes the destination: retire the separate red-ui repository
+after the workspace, RedDB adapter and PWA/embed/MCP/desktop delivery have
+verified replacements. The App Kit's portable `createWorkspaceSession` owns
+instance-local commands, an abort signal and deterministic cleanup. The present
+Svelte workspace binds its services to that shared lifecycle. Extracting the
+complete App workspace and its native React implementation remains a later
+stage; this change does not declare that root component ready.
+
+Every mount creates a `WorkspaceRuntime`. Connection/provider selection,
+document identities, query drafts, staged edits, activity, loading, credential
+state, appearance, renderer registrations and the developer console belong to
+that instance. Child components obtain it through context. The root also owns
+its portal destination and routes keyboard shortcuts from its own DOM scope.
+
+```svelte
+<script lang="ts">
+  import { Workspace, createWorkspaceRuntime } from "@reddb-io/ui";
+  const runtime = createWorkspaceRuntime({ connectionProvider });
+</script>
+
+<Workspace {runtime} initialRoute="/collections" />
+```
+
+Give simultaneous workspaces distinct `label` values. Embedded mounts expose
+the same option; otherwise the provider's connection label names the region.
+The standalone host owns the page's main landmark, while embedded workspaces
+are named regions inside their host's document.
+
+The Workspace owns disposal of its supplied runtime on unmount. Create a fresh
+runtime for each mount. `runtime.dispatch("red:new-query")` replaces a window
+event, and `runtime.queryTabs`, `runtime.tabs`, `runtime.connection` and
+`runtime.pendingChanges` replace module singleton access for that mount. The
+published module stores remain compatibility exports for standalone components.
+
+Persistence defaults to private memory. An explicit `persistenceKey` selects a
+profile whose history, preferences, vault and snapshots have distinct keys.
+Use different keys for independent persisted workspaces. The reserved
+`"default"` profile belongs to the standalone PWA and retains its old keys and
+launch behavior. A profile's vault wipe enumerates only its own keys, including
+when the legacy profile shares an origin with another workspace. Embedded
+providers keep their existing host-owned authentication and no-history policy.
+
+`mountRedUi` exposes the same runtime on its handle. Destroying or replacing a
+mount aborts its derived HTTP client and queries, releases its session and
+prevents delayed provider completions from reconnecting it. The host's supplied
+client and other mounts stay usable. A custom provider retains ownership of its
+own asynchronous work; the workspace refuses late adoption after disposal.
+Console taps receive only that mount's owned HTTP traffic.
+
+The embed-host example can add workspaces with separate provider instances and
+remove them independently. Runtime and mounted-component tests cover colliding
+document ids, independent drafts/edits/commands, profile storage, delayed
+completion, executor routing and disposal. Real-browser checks additionally
+exercise focus, portals, appearance and continued use of a surviving workspace.
+SDK regression coverage includes concurrent and repeated mounts, stale handles
+and closed shadow roots, with shortcuts routed inside their own root.
+After building, `node scripts/check-package-types.mjs` stages the public packages,
+verifies their copied DS bytes and compiles the staged SDK with the plain
+TypeScript host configuration, without a Svelte compiler.
+
 The Core uses the native Svelte implementation of the Design System through
 `design-system.manifest.json` and the official `pnpm ds:sync` command. Keep the
 release pinned and verify its receipt with `pnpm ds:check`. The full font profile

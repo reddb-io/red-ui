@@ -1,6 +1,7 @@
 // red-ui's light/dark choice is the DS Color Scheme axis (DS ADR 0008):
 // `data-color-scheme` carries it, while `data-theme` names the DS Theme
 // direction, which for red-ui is always "application".
+import type { KeyValueStorage } from "./connection-history";
 export type Theme = "light" | "dark";
 
 export const DS_THEME = "application";
@@ -31,32 +32,56 @@ interface ThemeInitOptions {
 function read(
   target: HTMLElement | null,
   persist: boolean,
-  initial?: Theme
+  initial?: Theme,
+  storageKey = STORAGE_KEY,
+  storage?: KeyValueStorage
 ): Theme {
   const scoped = target?.dataset.colorScheme;
   if (scoped === "dark" || scoped === "light") return scoped;
   if (!persist) return initial ?? DEFAULT;
-  if (typeof localStorage === "undefined") return initial ?? DEFAULT;
-  const v = localStorage.getItem(STORAGE_KEY);
-  return v === "dark" || v === "light" ? v : (initial ?? DEFAULT);
+  try {
+    const backend =
+      storage ??
+      (typeof localStorage !== "undefined" ? localStorage : undefined);
+    const v = backend?.getItem(storageKey);
+    return v === "dark" || v === "light" ? v : (initial ?? DEFAULT);
+  } catch {
+    return initial ?? DEFAULT;
+  }
 }
 
-function apply(t: Theme, target: HTMLElement | null) {
+function apply(t: Theme, target: HTMLElement | null, globalTarget = true) {
   if (target) {
     applyAppearance(target, t);
     return;
   }
-  if (typeof document !== "undefined")
+  if (globalTarget && typeof document !== "undefined")
     applyAppearance(document.documentElement, t);
 }
 
-function persist(t: Theme, enabled: boolean) {
+function persist(
+  t: Theme,
+  enabled: boolean,
+  storageKey: string,
+  storage?: KeyValueStorage
+) {
   if (!enabled) return;
-  if (typeof localStorage === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, t);
+  try {
+    (
+      storage ??
+      (typeof localStorage !== "undefined" ? localStorage : undefined)
+    )?.setItem(storageKey, t);
+  } catch {
+    /* Preferences may remain in memory in a restricted host. */
+  }
 }
 
-class ThemeStore {
+export class ThemeStore {
+  constructor(
+    private readonly storageKey = STORAGE_KEY,
+    private readonly storage?: KeyValueStorage,
+    private readonly globalTarget = true
+  ) {}
   current = $state<Theme>(DEFAULT);
   target: HTMLElement | null = null;
   persistTheme = true;
@@ -64,18 +89,28 @@ class ThemeStore {
   init(opts: ThemeInitOptions = {}) {
     this.target = opts.target ?? null;
     this.persistTheme = opts.persist ?? true;
-    this.current = read(this.target, this.persistTheme, opts.initial);
-    apply(this.current, this.target);
+    this.current = read(
+      this.target,
+      this.persistTheme,
+      opts.initial,
+      this.storageKey,
+      this.storage
+    );
+    apply(this.current, this.target, this.globalTarget);
   }
 
   set(t: Theme) {
     this.current = t;
-    apply(t, this.target);
-    persist(t, this.persistTheme);
+    apply(t, this.target, this.globalTarget);
+    persist(t, this.persistTheme, this.storageKey, this.storage);
   }
 
   toggle() {
     this.set(this.current === "dark" ? "light" : "dark");
+  }
+
+  dispose() {
+    this.target = null;
   }
 }
 

@@ -1,16 +1,19 @@
 <script lang="ts">
+  import { useWorkspace } from './workspace-context'
   import QueryFailure from './QueryFailure.svelte'
   import EmptyState from './EmptyState.svelte'
   import { documentDraft } from '@reddb-io/design-system/base/illustrations'
   import Play from '@lucide/svelte/icons/play'
   import Loader2 from '@lucide/svelte/icons/loader-2'
   import X from '@lucide/svelte/icons/x'
-  import { connection } from '$lib/connections.svelte'
-  import { queryTabs, deriveQueryLabel, formatElapsed } from '$lib/query-tabs.svelte'
-  import { tabs } from '$lib/tabs.svelte'
-  import { registry } from '$lib/renderers'
+
+  import { deriveQueryLabel, formatElapsed } from '$lib/query-tabs.svelte'
+
   import type { Capability } from '$lib/renderers'
   import { Kbd } from '@reddb-io/design-system/base'
+
+  const workspace = useWorkspace()
+  const { connection, queryTabs, registry, tabs } = workspace
 
   interface Props {
     tabId: string

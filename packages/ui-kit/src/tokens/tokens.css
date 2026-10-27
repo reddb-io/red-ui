@@ -1,6 +1,7 @@
 /* Compatibility names for product layouts; all materials belong to the DS. */
 :root,
-:host {
+:host,
+[data-workspace-root] {
   --color-bg-0: var(--reddb-color-background);
   --color-bg-1: var(--reddb-color-elevation-base-surface);
   --color-bg-2: var(--reddb-color-muted);

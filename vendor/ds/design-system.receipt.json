@@ -1,6 +1,6 @@
 {
-  "version": "v2026.10.41",
-  "revision": "81a80c6f8f487c054b3bdb1a681d003b3f593f83",
+  "version": "v2026.10.43",
+  "revision": "5f47ea73110c3d3a671533f0aacd36058be37766",
   "distribution": {
     "format": "source",
     "minify": false,
@@ -14,7 +14,7 @@
   ],
   "layers": [],
   "files": {
-    "kits/app/README.md": "48fa6a08816336ecb6aa54e09145c671b7e2b1df7a3a6b898669fcd00dec6e08",
+    "kits/app/README.md": "8b193ab9c85e49cc88b848b93e62df506d7159f83fe1f2e0eca39670c5d2a320",
     "kits/app/interaction-allowlist.json": "7d29216392231a4e0950b53d996d4a00b45d6272b2c0a387f45f6df58e362712",
     "kits/app/kit.json": "63edaf308e400305dab1dedf1220307cc9fe0f8dce2dfb7e0e1407933c5a96b8",
     "kits/app/src/change-review.variants.ts": "4c11a06cf19a0cbf5cdd493c43c29f954f103997f73018efbac51fd48a0d4a42",
@@ -28,7 +28,7 @@
     "kits/app/src/composites/ChangeReview.svelte": "48a5015d797e0ba4bc42a967fce37996cb54a2a054d2e5cd89c5722d85ccca26",
     "kits/app/src/composites/ChatMessage.svelte": "4482e8b942c6e601264e8ba543908cec5c4c97642bb53c0e9681b166411fb639",
     "kits/app/src/composites/CheckoutForm.svelte": "fe247e1bfa2632fb3c6943163fc3970becf16d2fff0c9cfb914bae6b05bd9e58",
-    "kits/app/src/composites/CommandPalette.svelte": "8b38e3b91d169bef3759cea3b84e1510a2860315b712919ccef52df89705e39b",
+    "kits/app/src/composites/CommandPalette.svelte": "39a2b065805ded2d5d8f59d3d79b655814e6de644fa3da9a8e37b6a97f59bb16",
     "kits/app/src/composites/ContextMenu.svelte": "120d604e6f44fc54244aa4f59cb101f682df81b3239784d0283ade8b494d90aa",
     "kits/app/src/composites/Diff.svelte": "074564313f75cb5cab9d3b8c43b7b1924d38220c36d0bd8c39daa3d989c44d18",
     "kits/app/src/composites/EntityInspector.svelte": "16c6a0fe92e55ce93b208fb57fae5e8c720d8aa92a8310f5bed5378ae06fce60",
@@ -170,11 +170,12 @@
     "kits/app/src/core/shortcut-help.ts": "47a35a51ad03481c0f9988a1d5c02eab67cf0863bd85c6f165f7d367828f40fd",
     "kits/app/src/core/sidebar-rail-sizing.ts": "3a814410db70914447919376800dfbf1aada27298121dceb7ea92d44c5460ef1",
     "kits/app/src/core/sidebar-rail.ts": "1bbe699cffbee64f06020c759d0af1bf49f5edb9ff2190bbd843e3423eea23b9",
+    "kits/app/src/core/workspace-session.ts": "d0fa2ec4823aa82ce202b2b23efcf1e5b0bce6ac4e0ef6dc6941be107e665b02",
     "kits/app/src/core/workspace-tabs.ts": "6e6d5b657551ccd9ad135c14d0379fe872f335025eb16d1ad76d98750efa53a0",
     "kits/app/src/entity-inspector.variants.ts": "5319410c213891c54b25b362af6e80ad81b49ba09533284ed98d2738d376b549",
     "kits/app/src/entity-journey.variants.ts": "15d2e75c4ba1afbd091a97b86bbf3ff81735e0dec762658e6c459885c1514848",
     "kits/app/src/error-boundary.variants.ts": "eafffb7d43581f5d2d3688f27a06d08ecb8589ee6732f25bd77416e08470cf5a",
-    "kits/app/src/index.ts": "ac496613dbc45aeb56ddb7d83ba76addcf5ed935ffa30089db7e0dadca0dc8b5",
+    "kits/app/src/index.ts": "5f4dc054ed5196b0e83a69085297bce50369e37e5fd93eef942f1bbc7952f827",
     "kits/app/src/operational.variants.ts": "31ee8e65c8debb0063db78dec7e65e8fabea65190004b10c071c64b97f1ed7dc",
     "kits/app/src/primitives/ListRow.svelte": "d095651fc9f9bd1af61133df1358f831779571538ac55bb062bef15bbe6d02b0",
     "kits/app/src/primitives/NavItem.svelte": "1c98def2bf6c28dd92cb835afbaf6705e57cca0f0e85b7802e305cd6997e64f0",
@@ -612,6 +613,6 @@
     "styles/all.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/application.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/base.css": "11bb59075a372e0d6d67dee2e338d6fbd6df76f1d91b0d21a9f0f2028b997ca4",
-    "package.json": "0b28a8fd1a354f7fe9175d35d67f67577e13a1930b3732aaa495b4b0252335e2"
+    "package.json": "d19bc97142fff1dc81399860a2408b3e771cb67877960497d98749fa1d3dc014"
   }
 }

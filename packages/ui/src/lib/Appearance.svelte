@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useWorkspace } from './workspace-context'
   // Appearance section (#75). Renders each registered skin as a live preview
   // card — a mini-mockup painted with that skin's *own* derived tokens — and
   // applies the skin on click. Selection persists across reloads via the skin
@@ -6,7 +7,9 @@
   import Check from '@lucide/svelte/icons/check'
   import PageHeader from '$lib/PageHeader.svelte'
   import { SKINS, skinToCssVars, type Skin } from '$lib/skins/skins'
-  import { skins } from '$lib/skins/skins.svelte'
+
+  const workspace = useWorkspace()
+  const { skins } = workspace
 
   // Each preview is painted with the skin's own custom properties so the card
   // is a faithful, self-contained swatch of the palette — `color-mix` ramps

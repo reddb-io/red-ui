@@ -38,7 +38,7 @@ export function formatElapsed(ms: number): string {
   return `${(clamped / 1000).toFixed(1)}s`;
 }
 
-class LoadingStore {
+export class LoadingStore {
   /** Wall-clock time the current open began; null when nothing is opening. */
   startedAt = $state<number | null>(null);
   /** Headline for what's being opened, e.g. "Opening Docker primary". */

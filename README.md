@@ -36,7 +36,7 @@ red-ui/
 └── packages/
     ├── ui/                  # @reddb-io/ui — SvelteKit app + embeddable Svelte components
     │   └── src/lib/reddb/   # UI-only RedDB HTTP adapter, connection storage, and parser glue
-    ├── ui-kit/              # @reddb-io/ui-kit — low-level design-system primitives
+    ├── ui-kit/              # @reddb-io/ui-kit — temporary compatibility facade
     └── mcp/                 # @reddb-io/ui-mcp — MCP App server
 ```
 
@@ -55,8 +55,8 @@ pnpm desktop:build    # bundle for current OS
 `@reddb-io/ui` is the primary UI package. It publishes the static standalone app
 under `build/`, plus Svelte component exports from `src/lib`. The same static app
 is deployed to https://ui.reddb.io from GitHub Pages on every push to `main`.
-The `@reddb-io/ui-kit` package is versioned with it as the lower-level design
-system surface. UI-only RedDB HTTP adapter code lives inside `@reddb-io/ui`
+The `@reddb-io/ui-kit` package is versioned with it as a temporary compatibility
+facade over canonical DS components. UI-only RedDB HTTP adapter code lives inside `@reddb-io/ui`
 instead of being published as a separate protocol package.
 
 It also ships the `red-ui` CLI:
@@ -139,6 +139,16 @@ For a plain Vite/TypeScript host example, run:
 pnpm --filter @reddb-io/ui build
 pnpm --filter @reddb-io/embed-host dev
 ```
+
+The example can add and remove simultaneous workspaces. Each mount owns its
+connection, documents, drafts, staged edits, appearance and developer console.
+Imperative handles expose `handle.runtime`; commands such as
+`handle.runtime.dispatch("red:new-query")` target that mount. A Svelte host may
+create a runtime with `createWorkspaceRuntime`, pass it to `<Workspace>` and
+control that instance through its services. The Workspace disposes the runtime
+on unmount, so each mount needs a fresh instance. Persistence is private memory
+unless a host explicitly chooses a `persistenceKey`. See
+[workspace consolidation and migration](DESIGN-SYSTEM-ADOPTION.md).
 
 `@reddb-io/ui-mcp` exposes an `open_red_ui` MCP tool. The tool advertises the UI resource
 `ui://red-ui/app.html` using the official MCP Apps MIME type

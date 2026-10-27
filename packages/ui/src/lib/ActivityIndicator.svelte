@@ -1,9 +1,14 @@
 <script lang="ts">
-  import { activity } from './activity.svelte'
+  import { useWorkspace } from './workspace-context'
+
+  import { Popover } from '@reddb-io/design-system/base'
   import Activity from '@lucide/svelte/icons/activity'
   import CheckCircle2 from '@lucide/svelte/icons/check-circle-2'
   import AlertCircle from '@lucide/svelte/icons/alert-circle'
   import Loader2 from '@lucide/svelte/icons/loader-2'
+
+  const workspace = useWorkspace()
+  const { activity } = workspace
 
   let open = $state(false)
 
@@ -21,19 +26,10 @@
   }
 </script>
 
-<div class="relative">
-  <button
-    type="button"
-    onclick={() => (open = !open)}
-    aria-pressed={open}
-    title="reddb activity"
-    class={[
-      'inline-flex items-center gap-1.5 h-7 px-2 rounded-md border text-xs font-mono transition-colors cursor-pointer',
-      activity.inflight > 0
-        ? 'border-accent/40 bg-accent/10 text-primary-text'
-        : 'border-line-2 bg-bg-2 text-fg-3 hover:text-fg-1',
-    ].join(' ')}
-  >
+<Popover bind:open contentLabel="Activity log" size="sm" align="end"
+  triggerLabel={activity.inflight > 0 ? `${activity.inflight} active requests, reddb activity` : 'idle, reddb activity'}
+  class="w-[min(360px,calc(100vw-32px))] p-0 text-[11px] font-mono">
+  {#snippet trigger()}
     {#if activity.inflight > 0}
       <Loader2 class="size-3.5 animate-spin" />
       <span>{activity.inflight}</span>
@@ -41,15 +37,7 @@
       <Activity class="size-3.5" />
       <span class="text-fg-3">idle</span>
     {/if}
-  </button>
-
-  {#if open}
-    <div class="fixed inset-0 z-40" role="presentation" onclick={() => (open = false)}></div>
-    <div
-      role="dialog"
-      aria-label="Activity log"
-      class="absolute top-[calc(100%+6px)] right-0 z-50 w-[360px] bg-bg-1 border border-line-2 rounded-lg shadow-2xl text-[11px] font-mono"
-    >
+  {/snippet}
       <header class="flex items-center justify-between px-3 py-2 border-b border-line-1">
         <span class="type-label">Recent reddb requests</span>
         <div class="flex items-center gap-2">
@@ -98,6 +86,4 @@
           {/each}
         {/if}
       </div>
-    </div>
-  {/if}
-</div>
+</Popover>

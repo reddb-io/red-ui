@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { connection } from './connections.svelte'
-  import { secureStore } from './secureStore.svelte'
-  import { activity } from './activity.svelte'
+  import { useWorkspace } from './workspace-context'
+
   import {
     CAPABILITY_GLYPHS,
     detectCapability,
@@ -15,6 +14,9 @@
   import Lock from '@lucide/svelte/icons/lock'
   import Search from '@lucide/svelte/icons/search'
   import X from '@lucide/svelte/icons/x'
+
+  const workspace = useWorkspace()
+  const { activity, connection, secureStore } = workspace
 
   const router = useRouter()
 

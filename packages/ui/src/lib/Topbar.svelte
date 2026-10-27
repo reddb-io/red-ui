@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useWorkspace } from './workspace-context'
   import { Button, Icon, Kbd, Logo } from '@reddb-io/design-system/base'
   import ConnectDropdown from './ConnectDropdown.svelte'
   import ActivityIndicator from './ActivityIndicator.svelte'
@@ -12,15 +13,18 @@
   import Settings2 from '@lucide/svelte/icons/settings-2'
   import LineChart from '@lucide/svelte/icons/line-chart'
   import Sparkles from '@lucide/svelte/icons/sparkles'
-  import { theme } from './theme.svelte'
+
   import { useRouter } from './router.svelte'
 
-  let { showConnect = true }: { showConnect?: boolean } = $props()
+  const workspace = useWorkspace()
+  const { theme } = workspace
+
+  let { showConnect = true, label = 'Workspace' }: { showConnect?: boolean; label?: string } = $props()
 
   const router = useRouter()
 
   function openPalette() {
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, ctrlKey: true, bubbles: true }))
+    workspace.dispatch('red:open-palette')
   }
 
   const onAsk = $derived(router.view === 'ask')
@@ -49,7 +53,7 @@
     {:else}
       <div class="w-px h-[18px] bg-line-2"></div>
     {/if}
-    <nav class="flex items-center gap-0.5">
+    <nav aria-label={`${label} navigation`} class="flex items-center gap-0.5">
       <a
         href={router.href({ view: 'ask' })}
         onclick={(e) => router.go({ view: 'ask' }, e)}

@@ -14,21 +14,26 @@ import {
   type EncryptedStore,
 } from "#reddb";
 import { bootGateLocked, detectSurface, type Surface } from "./surface";
+import type { KeyValueStorage } from "./connection-history";
 
 const NAMESPACE = "red-ui:secure";
 const PROBE_KEY = "__probe__";
 const PROBE_VALUE = "ok";
 
-function envelopesExist(): boolean {
-  if (typeof localStorage === "undefined") return false;
-  for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i);
-    if (k && k.startsWith(NAMESPACE + ":")) return true;
+function envelopesExist(namespace: string, storage?: KeyValueStorage): boolean {
+  if (!storage) return false;
+  for (let i = 0; i < storage.length; i++) {
+    const k = storage.key(i);
+    if (k && k.startsWith(namespace + ":")) return true;
   }
   return false;
 }
 
-class SecureStoreSvc {
+export class SecureStoreSvc {
+  private readonly namespace: string;
+  private readonly storage?: KeyValueStorage;
+  private readonly storagePrefix: string;
+  private disposed = false;
   /** The active backend, or null when locked. */
   store = $state<EncryptedStore | null>(null);
   /** True when the user must authenticate before the store can be used. */
@@ -42,12 +47,24 @@ class SecureStoreSvc {
   /** Last unlock attempt error, surface-able to the dialog. */
   error = $state<string | null>(null);
 
-  constructor() {
+  constructor(
+    options: {
+      surface?: Surface;
+      namespace?: string;
+      storage?: KeyValueStorage;
+      storagePrefix?: string;
+    } = {}
+  ) {
+    this.namespace = options.namespace ?? NAMESPACE;
+    this.storage =
+      options.storage ??
+      (typeof localStorage !== "undefined" ? localStorage : undefined);
+    this.storagePrefix = options.storagePrefix ?? "red-ui:";
     if (typeof window === "undefined") {
       this.backend = "unknown";
       return;
     }
-    this.surface = detectSurface();
+    this.surface = options.surface ?? detectSurface();
     if (this.surface === "standalone") {
       // Tauri desktop — defer to the OS keychain, which unlocks the vault.
       this.backend = "tauri";
@@ -57,7 +74,7 @@ class SecureStoreSvc {
     // embedded or web. Neither Surface restores credential secrets from
     // storage: embedded persists nothing, and web persists target labels only.
     this.backend = "web";
-    const hasSecret = envelopesExist();
+    const hasSecret = envelopesExist(this.namespace, this.storage);
     this.needsSetup = false;
     this.locked = bootGateLocked(this.surface, hasSecret);
   }
@@ -65,7 +82,11 @@ class SecureStoreSvc {
   private async bindTauri() {
     try {
       const mod = await import("@tauri-apps/api/core");
-      this.store = new TauriEncryptedStore({ invoke: mod.invoke });
+      if (this.disposed) return;
+      this.store = new TauriEncryptedStore({
+        invoke: mod.invoke,
+        service: this.namespace === NAMESPACE ? undefined : this.namespace,
+      });
       this.locked = false;
     } catch (e) {
       this.error = `Tauri keychain bridge unavailable: ${(e as Error).message}`;
@@ -85,7 +106,10 @@ class SecureStoreSvc {
     if (this.backend !== "web") return true;
     let candidate: WebEncryptedStore;
     try {
-      candidate = new WebEncryptedStore(password, { namespace: NAMESPACE });
+      candidate = new WebEncryptedStore(password, {
+        namespace: this.namespace,
+        storage: this.storage,
+      });
     } catch (e) {
       this.error = (e as Error).message;
       return false;
@@ -106,6 +130,7 @@ class SecureStoreSvc {
       this.error = (e as Error).message;
       return false;
     }
+    if (this.disposed) return false;
     this.store = candidate;
     this.locked = false;
     this.needsSetup = false;
@@ -115,7 +140,10 @@ class SecureStoreSvc {
   lock() {
     this.store = null;
     if (this.backend === "web")
-      this.locked = bootGateLocked(this.surface, envelopesExist());
+      this.locked = bootGateLocked(
+        this.surface,
+        envelopesExist(this.namespace, this.storage)
+      );
   }
 
   /**
@@ -127,21 +155,27 @@ class SecureStoreSvc {
    * only and resets when the page reloads.
    */
   wipe() {
-    if (typeof localStorage === "undefined") return;
+    if (!this.storage) return;
     const drop: string[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i);
+    for (let i = 0; i < this.storage.length; i++) {
+      const k = this.storage.key(i);
       if (!k) continue;
-      if (k.startsWith(NAMESPACE + ":")) drop.push(k);
-      else if (k.startsWith("red-ui:")) drop.push(k);
+      if (k.startsWith(this.namespace + ":")) drop.push(k);
+      else if (k.startsWith(this.storagePrefix)) drop.push(k);
     }
-    for (const k of drop) localStorage.removeItem(k);
+    for (const k of drop) this.storage.removeItem(k);
     this.store = null;
     if (this.backend === "web") {
       this.locked = bootGateLocked(this.surface, false);
       this.needsSetup = false;
     }
     this.error = null;
+  }
+
+  dispose() {
+    this.disposed = true;
+    this.store = null;
+    this.locked = true;
   }
 }
 

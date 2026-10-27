@@ -29,7 +29,7 @@ export interface ActivityEntry {
 
 const MAX_LOG = 20;
 
-class ActivityStore {
+export class ActivityStore {
   inflight = $state(0);
   active = $derived(this.inflight > 0);
   log = $state<ActivityEntry[]>([]);

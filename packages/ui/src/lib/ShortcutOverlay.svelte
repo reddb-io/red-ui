@@ -1,8 +1,11 @@
 <script lang="ts">
+  import { useWorkspace, workspaceKeyboardTarget } from "./workspace-context"
   import { onMount } from 'svelte'
   import { isEventFromModal } from '@reddb-io/design-system/base/interaction'
   import { ShortcutHelp } from '@reddb-io/design-system/app'
   import { shortcuts, shortcutContexts, type ShortcutContext } from './shortcuts'
+
+  const workspace = useWorkspace()
 
   let open = $state(false)
 
@@ -14,6 +17,7 @@
   }
 
   function onKey(e: KeyboardEvent) {
+    if (!workspace.ownsKeyboard(e)) return
     if (isEventFromModal(e)) return
     if (e.key === '?' && !e.metaKey && !e.ctrlKey && !e.altKey) {
       if (e.composedPath().some(isTypingTarget) || isTypingTarget(e.target)) return
@@ -23,12 +27,13 @@
   }
 
   onMount(() => {
-    window.addEventListener('keydown', onKey)
+    const keyboardTarget = workspaceKeyboardTarget(workspace)
+    keyboardTarget.addEventListener('keydown', onKey as EventListener)
     const onOpen = () => { open = true }
-    window.addEventListener('red:open-shortcuts', onOpen)
+    const stop = workspace.on('red:open-shortcuts', onOpen)
     return () => {
-      window.removeEventListener('keydown', onKey)
-      window.removeEventListener('red:open-shortcuts', onOpen)
+      keyboardTarget.removeEventListener('keydown', onKey as EventListener)
+      stop()
     }
   })
 

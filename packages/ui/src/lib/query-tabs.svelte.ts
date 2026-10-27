@@ -4,7 +4,7 @@
 // running flag. Stored separately from the tabs store so the Tab type
 // stays a thin identity record and switching tabs preserves state.
 
-import { activity } from "./activity.svelte";
+import { activity as defaultActivity } from "./activity.svelte";
 import type { QueryResult } from "#reddb";
 
 export interface QueryTabState {
@@ -55,7 +55,8 @@ export function formatElapsed(ms: number): string {
   return `${minutes}m ${seconds.toString().padStart(2, "0")}s`;
 }
 
-class QueryTabsStore {
+export class QueryTabsStore {
+  constructor(private readonly activity = defaultActivity) {}
   /** Per-tab state keyed by tab id. */
   states = $state<Record<string, QueryTabState>>({});
   /** Monotonic counter for "Query N" labels — survives close so numbers don't reuse. */
@@ -136,7 +137,7 @@ class QueryTabsStore {
     s.runningStartedAt = Date.now();
     s.error = null;
     try {
-      const r = await activity.track(queryActivityLabel(sql), () =>
+      const r = await this.activity.track(queryActivityLabel(sql), () =>
         this.executor!(sql, { signal: controller.signal })
       );
       if (this.inFlight.get(id)?.token !== token) return;
@@ -173,14 +174,13 @@ class QueryTabsStore {
     return true;
   }
 
-  /** Test-only reset. */
+  /** Reset state and cancel outstanding queries for this instance. */
   clear(): void {
     for (const run of this.inFlight.values()) run.controller.abort();
     this.inFlight.clear();
     this.states = {};
     this.counter = 0;
     this.executor = null;
-    this.runSeq = 0;
   }
 }
 
