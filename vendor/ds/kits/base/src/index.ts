@@ -195,6 +195,7 @@ export const BASE_COMPONENTS = [
   "Combobox",
   "Container",
   "ContentMask",
+  "ContentState",
   "ControlGroup",
   "Countdown",
   "DateField",
@@ -344,6 +345,7 @@ export const BASE_COMPONENT_PURPOSES = {
   Combobox: "Data input",
   Container: "Layout",
   ContentMask: "Layout",
+  ContentState: "Feedback",
   ControlGroup: "Layout",
   Countdown: "Data display",
   DateField: "Data input",
@@ -481,6 +483,7 @@ export const BASE_COMPOSITES = [
   "Checkbox",
   "CodeBlock",
   "Combobox",
+  "ContentState",
   "DateField",
   "DatePicker",
   "DateRangeField",
@@ -1057,3 +1060,6 @@ export { default as RadialContent } from "./RadialContent.svelte";
 export { default as StateIllustration } from "./StateIllustration.svelte";
 export { STATE_ILLUSTRATION_SIZES, type StateIllustrationSize } from "./state-illustration.variants";
 export type { StateIllustrationAsset } from "./core/state-illustration";
+
+export { default as ContentState } from "./ContentState.svelte";
+export { CONTENT_STATES, type ContentLoadState } from "./core/contracts/contentstate";

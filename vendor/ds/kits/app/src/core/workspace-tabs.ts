@@ -3,6 +3,8 @@ export interface WorkspaceTab {
   id: string;
   /** Visible tab name. */
   label: string;
+  /** Native destination. NavigationScope may intercept owned, unmodified clicks. */
+  href?: string;
   /** Whether the application accepts close requests. */
   closable?: boolean;
   /** Caller-observed unsaved changes, independent of execution. */
@@ -51,13 +53,13 @@ export function mountWorkspaceFocus(root: HTMLElement) {
       )
         return;
       focused = null;
-      const active = root.ownerDocument.activeElement;
+      const active = (root.getRootNode() as Document | ShadowRoot).activeElement;
       if (
         !active ||
         active === root.ownerDocument.body ||
         root.contains(active)
       ) {
-        [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')]
+        [...root.querySelectorAll<HTMLElement>('[role="tab"]')]
           .find((item) => item.dataset.workspaceTab === selected)
           ?.focus();
       }

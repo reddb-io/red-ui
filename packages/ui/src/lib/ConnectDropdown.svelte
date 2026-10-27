@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { Button, Field, Icon, Input, Popover } from '@reddb-io/design-system/base'
   import {
     connection,
     makeCustomConnection,
@@ -34,7 +35,6 @@
   let status = $state<'idle' | 'probing' | 'ok' | 'error'>('idle')
   let error = $state<string | null>(null)
   let rtt = $state<number | null>(null)
-  let menuEl: HTMLDivElement | undefined = $state()
   let inputEl: HTMLInputElement | undefined = $state()
 
   async function attempt(targetUrl: string, signIn = false) {
@@ -124,11 +124,6 @@
     connection.forgetById(id)
   }
 
-  function toggle() {
-    open = !open
-    if (open) setTimeout(() => inputEl?.focus(), 0)
-  }
-
   onMount(() => {
     const onOpen = () => {
       open = true
@@ -186,137 +181,77 @@
   const canOpenFile = $derived(connection.supportedTransports.includes('unix'))
 </script>
 
-<div class="relative">
-  <button
-    type="button"
-    onclick={toggle}
-    aria-haspopup="dialog"
-    aria-expanded={open}
-    title={connection.connected ? 'Switch connection' : 'Connect to reddb'}
-    class="inline-flex items-center gap-2 h-7 pl-2 pr-1.5 bg-bg-2 border border-line-2 rounded-md text-fg-1 cursor-pointer text-xs transition-colors hover:border-line-3 hover:text-fg-0"
-  >
-    <span class={['w-1.5 h-1.5 rounded-full shrink-0', dotClass].join(' ')}></span>
-    {#if !connection.connected}
-      <Plug class="size-3 text-fg-3" />
-    {/if}
+<Popover triggerLabel={`${triggerLabel} ${triggerStatus}`} contentLabel="Connect to reddb" bind:open size="sm"
+  class="w-[380px] max-w-[calc(100vw-2rem)] p-4">
+  {#snippet trigger()}
+    <span class={['size-1.5 rounded-full shrink-0', dotClass].join(' ')}></span>
+    {#if !connection.connected}<Icon icon={Plug} size="sm" />{/if}
     <span class="font-mono">{triggerLabel}</span>
-    <span class="font-mono text-[10px] text-fg-3">{triggerStatus}</span>
-    <ChevronDown class="size-3 text-fg-3" />
-  </button>
-
-  {#if open}
-    <div class="fixed inset-0 z-40" onclick={() => (open = false)} role="presentation"></div>
-    <div
-      bind:this={menuEl}
-      class="absolute top-[calc(100%+6px)] left-0 z-50 w-[380px] max-w-[calc(100vw-2rem)] bg-bg-1 border border-line-2 rounded-lg shadow-2xl p-4"
-      role="dialog"
-      aria-label="Connect to reddb"
-    >
-      <form onsubmit={submit}>
-        <label for="connect-url" class="type-label block mb-1.5">Connection string</label>
-        <input
-          id="connect-url"
-          bind:this={inputEl}
-          bind:value={url}
-          disabled={status === 'probing'}
-          oninput={() => { username = ''; password = '' }}
-          spellcheck="false"
-          placeholder="https://user:password@host or Base64"
-          class="w-full h-9 px-3 mb-1 bg-bg-0 border border-line-2 rounded-md font-mono text-[13px] text-fg-0 outline-none transition-colors focus:border-accent placeholder:text-fg-3"
-        />
-
-        <div class="mb-2 text-[10px] font-mono text-fg-3">URL or Base64-encoded URL · reachable here: {supportedHint}</div>
-
-        <details class="mb-3" bind:open={signInOpen}>
-          <summary class="cursor-pointer text-xs text-fg-2">Sign in to the database</summary>
-          <div class="grid gap-2 mt-2">
-            <label class="text-xs text-fg-2" for="connect-username">Username</label>
-            <input id="connect-username" autocomplete="username" bind:value={username} disabled={status === 'probing'} class="w-full h-9 px-3 bg-bg-0 border border-line-2 rounded-md text-fg-0 outline-none focus:border-accent" />
-            <label class="text-xs text-fg-2" for="connect-password">Password</label>
-            <input id="connect-password" type="password" autocomplete="current-password" bind:value={password} disabled={status === 'probing'} class="w-full h-9 px-3 bg-bg-0 border border-line-2 rounded-md text-fg-0 outline-none focus:border-accent" />
-            <p class="text-[11px] text-fg-3">Credentials go directly to this database. The session stays in this tab.</p>
-          </div>
-        </details>
-
-        <button
-          type="submit"
-          disabled={status === 'probing' || !url.trim() || Boolean(username.trim()) !== Boolean(password)}
-          class="w-full h-9 bg-primary text-on-primary font-medium rounded-md cursor-pointer transition-colors hover:bg-primary-active disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-[13px]"
-        >
-          {#if status === 'probing'}
-            <Loader2 class="size-3.5 animate-spin" />
-            Connecting…
-          {:else}
-            <Zap class="size-3.5" />
-            Connect
-          {/if}
-        </button>
-
-        <div aria-live="polite" class="min-h-5 mt-2 flex items-center gap-1.5 text-[11px] font-mono">
-          {#if status === 'ok'}
-            <CheckCircle2 class="size-3 text-ok" />
-            <span class="text-ok">Connected{rtt !== null ? ` · ${rtt}ms` : ''}</span>
-          {:else if status === 'error'}
-            <AlertCircle class="size-3 text-danger" />
-            <span class="text-danger break-words">{error}</span>
-          {/if}
-        </div>
-      </form>
-
-      {#if canOpenFile}
-        <button
-          type="button"
-          onclick={openFile}
-          disabled={status === 'probing'}
-          title="Open a local .rdb database file"
-          class="mt-1 w-full h-9 bg-bg-2 border border-line-2 text-fg-1 font-medium rounded-md cursor-pointer transition-colors hover:border-line-3 hover:text-fg-0 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-[13px]"
-        >
-          <FolderOpen class="size-3.5 text-fg-3" />
-          Open database file…
-        </button>
-      {/if}
-
-      {#if reachableHistory.length > 0}
-        <div class="mt-3 pt-3 border-t border-line-1">
-          <div class="flex items-center gap-1.5 mb-2">
-            <Clock class="size-3 text-fg-3" />
-            <span class="type-label">Recent</span>
-          </div>
-          <div class="grid gap-0.5 max-h-[180px] overflow-y-auto">
-            {#each reachableHistory as h}
-              <div class="group flex items-center gap-1 rounded hover:bg-bg-2 transition-colors">
-                <button
-                  type="button"
-                  onclick={() => {
-                    if (h.url) attempt(h.url)
-                    else {
-                      url = h.label
-                      setTimeout(() => inputEl?.focus(), 0)
-                    }
-                  }}
-                  disabled={status === 'probing'}
-                  title={h.url ? undefined : 'Enter credentials to reconnect'}
-                  class="flex-1 flex items-center justify-between gap-3 px-2 py-1.5 text-left cursor-pointer bg-transparent border-0 disabled:cursor-not-allowed disabled:opacity-50 min-w-0"
-                >
-                  <code class="font-mono text-[11px] text-fg-1 truncate">{h.url ?? h.label}</code>
-                  <span class="font-mono text-[10px] text-fg-3 shrink-0 flex items-center gap-1.5">
-                    {#if h.rtt_ms !== undefined}<span>{h.rtt_ms}ms</span>{/if}
-                    <span>{fmtRel(h.last_used)}</span>
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onclick={(e) => forget(e, h.id)}
-                  title="Remove from history"
-                  class="opacity-0 group-hover:opacity-100 p-1 mr-0.5 text-fg-3 hover:text-danger transition-all cursor-pointer bg-transparent border-0"
-                >
-                  <X class="size-3" />
-                </button>
-              </div>
-            {/each}
-          </div>
-        </div>
-      {/if}
+    <span class="text-caption text-ink-muted">{triggerStatus}</span>
+    <Icon icon={ChevronDown} size="sm" />
+  {/snippet}
+  <form onsubmit={submit} class="grid gap-3">
+    <Field id="connect-url" label="Connection string" help={`URL or Base64-encoded URL · reachable here: ${supportedHint}`}>
+      {#snippet children(control)}
+        <Input {...control} bind:ref={inputEl} bind:value={url} disabled={status === 'probing'}
+          oninput={() => { username = ''; password = '' }} spellcheck="false"
+          placeholder="https://user:password@host or Base64" />
+      {/snippet}
+    </Field>
+    <details bind:open={signInOpen}>
+      <summary class="cursor-pointer text-sm text-fg-2">Sign in to the database</summary>
+      <div class="mt-2 grid gap-2">
+        <Field id="connect-username" label="Username">
+          {#snippet children(control)}<Input {...control} autocomplete="username" bind:value={username} disabled={status === 'probing'} />{/snippet}
+        </Field>
+        <Field id="connect-password" label="Password">
+          {#snippet children(control)}<Input {...control} type="password" autocomplete="current-password" bind:value={password} disabled={status === 'probing'} />{/snippet}
+        </Field>
+        <p class="text-caption text-ink-muted">Credentials go directly to this database. The session stays in this tab.</p>
+      </div>
+    </details>
+    <Button type="submit" variant="primary"
+      disabled={status === 'probing' || !url.trim() || Boolean(username.trim()) !== Boolean(password)}>
+      {#if status === 'probing'}<Icon icon={Loader2} size="sm" class="animate-spin" /> Connecting…
+      {:else}<Icon icon={Zap} size="sm" /> Connect{/if}
+    </Button>
+    <div aria-live="polite" class="min-h-5 flex items-center gap-1.5 text-caption">
+      {#if status === 'ok'}<Icon icon={CheckCircle2} size="sm" class="text-ok" />
+        <span class="text-ok">Connected{rtt !== null ? ` · ${rtt}ms` : ''}</span>
+      {:else if status === 'error'}<Icon icon={AlertCircle} size="sm" class="text-danger" />
+        <span class="break-words text-danger">{error}</span>{/if}
     </div>
+  </form>
+  {#if canOpenFile}
+    <Button onclick={openFile} disabled={status === 'probing'} class="mt-2 w-full">
+      <Icon icon={FolderOpen} size="sm" /> Open database file…
+    </Button>
   {/if}
-</div>
+  {#if reachableHistory.length > 0}
+    <section aria-label="Recent connections" class="mt-3 border-t border-line-1 pt-3">
+      <h3 class="type-label mb-2 flex items-center gap-1.5"><Icon icon={Clock} size="sm" />Recent</h3>
+      <div class="grid max-h-[180px] gap-1 overflow-y-auto">
+        {#each reachableHistory as h (h.id)}
+          <div class="flex items-center gap-1">
+            <Button variant="ghost" size="sm" class="min-w-0 flex-1 justify-between" disabled={status === 'probing'}
+              title={h.url ? undefined : 'Enter credentials to reconnect'}
+              onclick={() => {
+                if (h.url) attempt(h.url)
+                else { url = h.label; setTimeout(() => inputEl?.focus(), 0) }
+              }}>
+              <code class="min-w-0 truncate">{h.url ?? h.label}</code>
+              <span class="inline-flex shrink-0 items-center gap-2 text-caption text-ink-muted">
+                {#if h.rtt_ms !== undefined}<span>{h.rtt_ms}ms</span>{/if}
+                <span>{fmtRel(h.last_used)}</span>
+              </span>
+            </Button>
+            <Button variant="ghost" size="sm" disabled={status === 'probing'}
+              aria-label={`Remove ${h.label} from history`} onclick={(e: MouseEvent) => forget(e, h.id)}>
+              <Icon icon={X} size="sm" />
+            </Button>
+          </div>
+        {/each}
+      </div>
+    </section>
+  {/if}
+</Popover>

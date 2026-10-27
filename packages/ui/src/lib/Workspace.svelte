@@ -4,7 +4,7 @@
   // writes the URL itself. Mounted standalone it falls back to an in-memory
   // state router, so a host can embed it without surrendering `window.history`.
   // The SvelteKit Surface wraps this same component with a Kit-backed router.
-  import { onMount, untrack } from 'svelte'
+  import { onMount, tick, untrack } from 'svelte'
   import Splash from './Splash.svelte'
   import LoadingOverlay from './LoadingOverlay.svelte'
   import DevConsole from './DevConsole.svelte'
@@ -128,6 +128,25 @@
 
   let booted = $state(false)
   let pendingOpen = $state(false)
+  let shell = $state<HTMLDivElement>()
+
+  async function closePending() {
+    pendingOpen = false
+    await tick()
+    // Native dialog close/focus restoration finishes after the reactive flush.
+    await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
+    if (!shell?.isConnected) return
+    const active = (shell.getRootNode() as Document | ShadowRoot).activeElement
+    const closedDialog = active?.closest('dialog')
+    const lostModalFocus = closedDialog instanceof HTMLDialogElement && !closedDialog.open
+    if (active?.isConnected && active !== shell.ownerDocument.body && !lostModalFocus) return
+    // Applying/discarding the final change removes its invoking status button.
+    // Keep keyboard navigation at the active document (or current destination).
+    const next = shell.querySelector<HTMLElement>('[data-workspace-tab][aria-selected="true"]')
+      ?? shell.querySelector<HTMLElement>('a[aria-current="page"]')
+      ?? shell.querySelector<HTMLElement>('button[aria-haspopup="dialog"]')
+    next?.focus()
+  }
 
   onMount(() => {
     const handler = () => (pendingOpen = true)
@@ -351,7 +370,7 @@
 {#if !booted}
   <Splash onDone={() => (booted = true)} />
 {:else}
-  <div class="app relative grid grid-rows-[44px_32px_1fr] h-screen">
+  <div bind:this={shell} class="app relative grid grid-rows-[44px_32px_1fr] h-screen">
     <GlobalProgressBar />
     <Topbar showConnect={showConnect} />
     <StatusBar />
@@ -381,7 +400,7 @@
     <CommandPalette />
     <ShortcutOverlay />
     <MasterPasswordDialog />
-    <PendingChangesPanel open={pendingOpen} onClose={() => (pendingOpen = false)} />
+    <PendingChangesPanel open={pendingOpen} onClose={closePending} />
   </div>
 {/if}
 

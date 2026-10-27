@@ -19,6 +19,7 @@ export interface ModalOptions {
 }
 export function createModalController(dialog: HTMLDialogElement, options: ModalOptions) {
   const document = dialog.ownerDocument;
+  const activeElement = () => (dialog.getRootNode() as Document | ShadowRoot).activeElement;
   let active = false, returnFocus: HTMLElement | null = null;
   const focusables = () => [...dialog.querySelectorAll<HTMLElement>(modalFocusable)].filter(element => !element.closest('[hidden],[inert]') && !element.matches(":disabled") && element.tabIndex >= 0 && element.closest("dialog") === dialog);
   function release(close = false) {
@@ -32,7 +33,8 @@ export function createModalController(dialog: HTMLDialogElement, options: ModalO
   }
   function sync(open: boolean) {
     if (open && !active) {
-      returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      const invoker = activeElement();
+      returnFocus = invoker instanceof HTMLElement ? invoker : null;
       if (!dialog.open) {
         if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
       }
@@ -51,13 +53,13 @@ export function createModalController(dialog: HTMLDialogElement, options: ModalO
     if (event.target instanceof Element && event.target.closest("[data-ds-focus-scope]")) return;
     const nodes = focusables(), first = nodes[0], last = nodes.at(-1);
     if (!first || !last) { event.preventDefault(); dialog.focus(); }
-    else if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    else if (event.shiftKey && activeElement() === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && activeElement() === last) { event.preventDefault(); first.focus(); }
   }
   // Managed popups arbitrate Escape on Document. Listen after them at Window
   // so one key dismisses only the innermost active layer, including portals.
   function escape(event: KeyboardEvent) {
-    if (!active || event.defaultPrevented || event.key !== "Escape" || !(event.target instanceof Element) || event.target.closest("dialog") !== dialog) return;
+    if (!active || event.defaultPrevented || event.key !== "Escape" || !event.composedPath().some(target => target instanceof Element && target.closest("dialog") === dialog)) return;
     event.preventDefault(); event.stopPropagation(); options.requestOpen(false);
   }
   function click(event: MouseEvent) {

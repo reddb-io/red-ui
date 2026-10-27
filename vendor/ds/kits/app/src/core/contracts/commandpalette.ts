@@ -2,9 +2,15 @@ import type { CommandPaletteCommand } from "../../composites/command-palette.beh
 
 /** Portable CommandPalette properties shared by native adapters. */
 export interface CommandPaletteContract {
-/** Accessible name and visible fallback for the invoking Button. */
-    triggerLabel: string;
-/** Accessible name for the Popover dialog. */
+/** Accessible trigger label. Omit in dialog presentation for caller-owned invocation. */
+    triggerLabel?: string;
+/** Presentation surface. Defaults to anchored popover; dialog uses the native modal top layer. */
+    presentation?: "popover" | "dialog";
+/** Search input placeholder. */
+    placeholder?: string;
+/** Explanation when no commands match. Defaults to "No matching commands". */
+    emptyLabel?: string;
+/** Accessible name for the palette surface. */
     contentLabel: string;
 /** Visible Field label for command search. */
     label: string;
