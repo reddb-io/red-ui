@@ -1,5 +1,17 @@
 # @reddb-io/ui
 
+## 0.6.0
+
+### Minor Changes
+
+- 87af8f1: Adopt Design System command search, native linked workspace tabs, dialogs, connection forms and settings controls. Preserve query drafts, routing, credential locking and caller-owned mutation guards while using shared accessible focus and recovery behavior.
+
+### Patch Changes
+
+- Updated dependencies [87af8f1]
+  - @reddb-io/ui-kit@0.6.0
+  - @reddb-io/ui-mcp@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes
