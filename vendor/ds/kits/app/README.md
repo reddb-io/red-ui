@@ -494,6 +494,19 @@ after disposal are ignored. Services remain caller-owned; their cleanup must
 be registered explicitly. This foundation does not yet provide a complete
 workspace component or a database adapter (ADR 0051).
 
+Document identity and selection are also available without component types:
+
+```ts
+import { openWorkspaceDocument, closeWorkspaceDocument } from "@reddb-io/design-system/app/workspace/documents";
+
+const first = openWorkspaceDocument({ items: [], activeId: null },
+  { kind: "note", key: "draft", label: "Draft" }, () => crypto.randomUUID());
+const closed = closeWorkspaceDocument(first.state, first.document.id);
+```
+
+These pure transitions preserve caller-defined metadata. The host owns reactive
+subscriptions, persistence, unsaved-change decisions and document content.
+
 ## Commands
 
 ```

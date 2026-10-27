@@ -5,10 +5,18 @@
 // id so a duplicate tab opens.
 
 import type { Capability } from "./renderers";
+import {
+  closeWorkspaceDocument,
+  focusWorkspaceDocument,
+  openWorkspaceDocument,
+  updateWorkspaceDocument,
+  type WorkspaceDocument,
+  type WorkspaceDocuments,
+} from "@reddb-io/design-system/app/workspace/documents";
 
 export type TabKind = "collection" | "query" | "live-changes" | "welcome";
 
-export interface Tab {
+export interface Tab extends WorkspaceDocument {
   /** Unique within the pane. Stable when re-focusing existing tabs. */
   id: string;
   kind: TabKind;
@@ -39,6 +47,15 @@ export class TabsStore {
 
   active = $derived(this.tabs.find((t) => t.id === this.activeId) ?? null);
 
+  private snapshot(): WorkspaceDocuments<Tab> {
+    return { items: this.tabs, activeId: this.activeId };
+  }
+
+  private apply(next: WorkspaceDocuments<Tab>): void {
+    this.tabs = next.items;
+    this.activeId = next.activeId;
+  }
+
   /**
    * Open or focus a tab.
    * - If `forceNew` is false (default) and a tab with the same (kind,key)
@@ -46,66 +63,35 @@ export class TabsStore {
    * - If `forceNew` is true, always mint a fresh tab id.
    */
   open(spec: Omit<Tab, "id">, forceNew = false): Tab {
-    if (!forceNew) {
-      const existing = this.tabs.find(
-        (t) => t.kind === spec.kind && t.key === spec.key
-      );
-      if (existing) {
-        const updated = { ...existing, ...spec, id: existing.id };
-        this.tabs = this.tabs.map((t) => (t === existing ? updated : t));
-        this.activeId = existing.id;
-        return updated;
-      }
-    }
-    const tab: Tab = { ...spec, id: uid() };
-    this.tabs = [...this.tabs, tab];
-    this.activeId = tab.id;
-    return tab;
+    const result = openWorkspaceDocument(this.snapshot(), spec, uid, forceNew);
+    this.apply(result.state);
+    return result.document;
   }
 
   focus(id: string): void {
-    if (this.tabs.some((t) => t.id === id)) this.activeId = id;
+    this.apply(focusWorkspaceDocument(this.snapshot(), id));
   }
 
-  /**
-   * Close a tab. Focus moves to the previously active tab if it still
-   * exists, otherwise to the neighbour on the left, otherwise null.
-   * `previousActiveId` lets the caller pass a remembered focus so close
-   * → reopen → close returns to whatever was focused before the closing.
-   */
+  /** Close one tab, restoring remembered focus or the adjacent tab. */
   close(id: string, previousActiveId?: string | null): void {
-    const idx = this.tabs.findIndex((t) => t.id === id);
-    if (idx < 0) return;
-    const wasActive = this.activeId === id;
-    this.tabs = this.tabs.filter((t) => t.id !== id);
-    if (wasActive) {
-      if (
-        previousActiveId &&
-        this.tabs.some((t) => t.id === previousActiveId)
-      ) {
-        this.activeId = previousActiveId;
-      } else if (this.tabs.length === 0) {
-        this.activeId = null;
-      } else {
-        const fallback = this.tabs[Math.max(0, idx - 1)];
-        this.activeId = fallback?.id ?? null;
-      }
-    }
+    this.apply(closeWorkspaceDocument(this.snapshot(), id, previousActiveId));
   }
 
   rename(id: string, label: string): void {
-    this.tabs = this.tabs.map((t) => (t.id === id ? { ...t, label } : t));
+    this.apply(updateWorkspaceDocument(this.snapshot(), id, { label }));
   }
 
   setOverride(id: string, capability: Capability | undefined): void {
-    this.tabs = this.tabs.map((t) =>
-      t.id === id ? { ...t, overrideCapability: capability } : t
+    this.apply(
+      updateWorkspaceDocument(this.snapshot(), id, {
+        overrideCapability: capability,
+      })
     );
   }
 
   setShowSystem(id: string, show: boolean): void {
-    this.tabs = this.tabs.map((t) =>
-      t.id === id ? { ...t, showSystemColumns: show } : t
+    this.apply(
+      updateWorkspaceDocument(this.snapshot(), id, { showSystemColumns: show })
     );
   }
 
