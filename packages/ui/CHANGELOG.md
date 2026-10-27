@@ -1,5 +1,18 @@
 # @reddb-io/ui
 
+## 0.4.7
+
+### Patch Changes
+
+- 42b6e91: Update the officially vendored Design System from v2026.10.30 to v2026.10.38.
+  Receive the latest Base/Application components, tokens and Brand assets while
+  retaining complete font coverage for the application's symbols and weights.
+  Update the Sync launcher for the producer's catalogue
+  dependency so the pinned release can be reproduced from a fresh checkout.
+- Updated dependencies [42b6e91]
+  - @reddb-io/ui-kit@0.4.7
+  - @reddb-io/ui-mcp@0.4.7
+
 ## 0.4.6
 
 ### Patch Changes
