@@ -1,5 +1,7 @@
 # @reddb-io/ui-kit
 
+## 0.4.8
+
 ## 0.4.7
 
 ### Patch Changes
