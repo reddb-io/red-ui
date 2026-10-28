@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.8
+
+### Patch Changes
+
+- 6118457: Use the Design System workspace change reconciliation and RedDB update adapter. Preserve edits made during a commit and target table updates by physical row ID after filtering or sorting.
+  - @reddb-io/ui-kit@0.7.8
+  - @reddb-io/ui-mcp@0.7.8
+
 ## 0.7.7
 
 ### Patch Changes
