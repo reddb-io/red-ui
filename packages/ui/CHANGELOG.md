@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.4
+
+### Patch Changes
+
+- 22abbc4: Use the App Kit workspace execution coordinator for query cancellation and stale-result protection.
+  - @reddb-io/ui-kit@0.7.4
+  - @reddb-io/ui-mcp@0.7.4
+
 ## 0.7.3
 
 ### Patch Changes
