@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.5
+
+### Patch Changes
+
+- e6d684c: Use the Design System's opt-in RedDB adapter for connection URI and Open Contract parsing while preserving existing exports.
+  - @reddb-io/ui-kit@0.7.5
+  - @reddb-io/ui-mcp@0.7.5
+
 ## 0.7.4
 
 ### Patch Changes
