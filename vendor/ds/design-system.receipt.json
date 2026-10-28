@@ -1,6 +1,6 @@
 {
-  "version": "v2026.10.45",
-  "revision": "6edaf7c54800d4265b6cda7359c3fdef56198919",
+  "version": "v2026.10.46",
+  "revision": "38a51dfc4bb8e73ffc186d5f286ac9aaeae90ee3",
   "distribution": {
     "format": "source",
     "minify": false,
@@ -14,13 +14,15 @@
   ],
   "layers": [],
   "files": {
-    "kits/app/README.md": "3e5ac26422693129267a0f5ccdde84d604cd1c80adfda153766f6c37a463c210",
+    "kits/app/README.md": "adcd2c9763b9af0ffefb2045148bba3c47df2793e762e3258526373aa7d723a1",
     "kits/app/interaction-allowlist.json": "7d29216392231a4e0950b53d996d4a00b45d6272b2c0a387f45f6df58e362712",
     "kits/app/kit.json": "63edaf308e400305dab1dedf1220307cc9fe0f8dce2dfb7e0e1407933c5a96b8",
+    "kits/app/src/application-workspace.variants.ts": "55417fc42586e7a15124251196776d8693e1490eac66d2b6065effd1446d5535",
     "kits/app/src/change-review.variants.ts": "4c11a06cf19a0cbf5cdd493c43c29f954f103997f73018efbac51fd48a0d4a42",
     "kits/app/src/composites/ActionPanel.svelte": "6a8af6485572711e95cb4fcf7e297d19fd541b7432ef9b25823f199da6b29a92",
     "kits/app/src/composites/ActivityFeed.svelte": "e047cfb0c1bdee3658b63f6b98eccdcec09901e2c7c1248c62a5f57a96830592",
     "kits/app/src/composites/ApplicationShell.svelte": "610dfd1a0f6da9eaed52705c0bb26ecb5ece43001bffa16504c6e121ad480e7a",
+    "kits/app/src/composites/ApplicationWorkspace.svelte": "36e629d6b4987fde6f591bc53490601edad0a260187c6a5e6fdebdf47ad0e4c5",
     "kits/app/src/composites/BottomNavigation.svelte": "dc120f9b3367ac5785cb4b7d6ae58f93d7852749f12ee5b4299dab6113101439",
     "kits/app/src/composites/CardHeading.svelte": "3199e8bffa86af7d03d7bcc6818b03c2eac0e455ddb0961dd725f28bec997863",
     "kits/app/src/composites/CategoryFilter.svelte": "13c41c33d59c50b8e7621415c0486fe842ab95856577739b7b7053a75c0e33c8",
@@ -112,6 +114,7 @@
     "kits/app/src/core/contracts/actionpanel.ts": "f1bd0d48ff93df525dcd4963bc8e22fd541cf186e51da70e9a3e5274e3c82a78",
     "kits/app/src/core/contracts/activityfeed.ts": "c11273afdd4983f584a7890e9e2f2ee03a53545af924351a8093bd30b5f1b4a3",
     "kits/app/src/core/contracts/applicationshell.ts": "a617dd2f1bf8cb853b1d8a0fd93e668b16ddefd850141016889576f91071357e",
+    "kits/app/src/core/contracts/applicationworkspace.ts": "a244d3d03b4e5aa617a72ed263c84089b1ed2562a77f30557b6b6d209e31cc2e",
     "kits/app/src/core/contracts/bottomnavigation.ts": "d750a602e3587c8d815dba9467dd60b777bd64e4198699dbd4bc891208408931",
     "kits/app/src/core/contracts/cardheading.ts": "e0813823d8dfeb81f15f2b9528a36dfb061821168e66c350b8ec59a6e3171985",
     "kits/app/src/core/contracts/categoryfilter.ts": "1ef318a26b465394f958a33990c8846f95d626f509acfb6b3f658d75148ce383",
@@ -177,7 +180,7 @@
     "kits/app/src/entity-inspector.variants.ts": "5319410c213891c54b25b362af6e80ad81b49ba09533284ed98d2738d376b549",
     "kits/app/src/entity-journey.variants.ts": "15d2e75c4ba1afbd091a97b86bbf3ff81735e0dec762658e6c459885c1514848",
     "kits/app/src/error-boundary.variants.ts": "eafffb7d43581f5d2d3688f27a06d08ecb8589ee6732f25bd77416e08470cf5a",
-    "kits/app/src/index.ts": "5f4dc054ed5196b0e83a69085297bce50369e37e5fd93eef942f1bbc7952f827",
+    "kits/app/src/index.ts": "eae076c5450ca39c7b738119d2e265ed3e89c817e90e0ccb85c69a5e6c1da513",
     "kits/app/src/operational.variants.ts": "31ee8e65c8debb0063db78dec7e65e8fabea65190004b10c071c64b97f1ed7dc",
     "kits/app/src/primitives/ListRow.svelte": "d095651fc9f9bd1af61133df1358f831779571538ac55bb062bef15bbe6d02b0",
     "kits/app/src/primitives/NavItem.svelte": "1c98def2bf6c28dd92cb835afbaf6705e57cca0f0e85b7802e305cd6997e64f0",
@@ -615,6 +618,6 @@
     "styles/all.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/application.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/base.css": "11bb59075a372e0d6d67dee2e338d6fbd6df76f1d91b0d21a9f0f2028b997ca4",
-    "package.json": "712add5681e0d26b21275bd8091f919d8c8c0c1e362e1be3ba7679994cbfcabd"
+    "package.json": "894cf2c67340a0782d550134a9bb66ede9a070761f0c343c1a5ef221ca8009d1"
   }
 }

@@ -738,3 +738,11 @@ the host owns the missing-renderer policy, result model and rendering adapter.
 For selective Sync, include this root as
 `{"app/workspace/renderers": ["WorkspaceRendererRegistry"]}`. The selected
 contract does not require a component framework or Data Kit.
+
+### Application workspace
+
+`ApplicationWorkspace` composes a named resource navigation region, optional
+commands, and controlled document tabs. The host supplies document contents,
+selection and close decisions; it owns state, persistence and service lifecycle.
+Both Svelte and React can instead provide a custom content region during gradual
+migration. The component does not connect to a service or import the Data Kit.

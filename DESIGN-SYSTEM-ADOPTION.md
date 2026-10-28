@@ -118,3 +118,10 @@ The workspace renderer registry now delegates its registration and resolution
 rules to the portable App Kit contract. RedDB result types, Svelte components,
 capability vocabulary and the table fallback policy stay in the client. The
 shared registry does not implement renderer UI or the RedDB adapter.
+
+Collections now use App Kit `ApplicationWorkspace` for the navigation and
+content frame. The existing SchemaTree and ResultsPane remain host-owned in the
+custom content seam, including their RedDB provider, result renderers and
+persistence. App Kit can also compose caller-controlled document tabs directly;
+that path is demonstrated with independent deterministic adapters in both
+native frameworks and is not yet the red-ui results implementation.
