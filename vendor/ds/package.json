@@ -9,6 +9,7 @@
     "./adapters/reddb/analytics": "./adapters/reddb/src/analytics.ts",
     "./adapters/reddb/ask": "./adapters/reddb/src/ask.ts",
     "./adapters/reddb/cdc-stream-client": "./adapters/reddb/src/cdc-stream-client.ts",
+    "./adapters/reddb/change-sql": "./adapters/reddb/src/change-sql.ts",
     "./adapters/reddb/client": "./adapters/reddb/src/client.ts",
     "./adapters/reddb/cluster-status": "./adapters/reddb/src/cluster-status.ts",
     "./adapters/reddb/connection-provider": "./adapters/reddb/src/connection-provider.ts",
@@ -35,6 +36,10 @@
     "./app/workspace": {
       "types": "./kits/app/src/core/workspace-session.ts",
       "default": "./kits/app/src/core/workspace-session.ts"
+    },
+    "./app/workspace/changes": {
+      "types": "./kits/app/src/core/workspace-changes.ts",
+      "default": "./kits/app/src/core/workspace-changes.ts"
     },
     "./app/workspace/documents": {
       "types": "./kits/app/src/core/workspace-documents.ts",

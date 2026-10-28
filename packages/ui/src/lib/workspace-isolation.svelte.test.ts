@@ -126,7 +126,7 @@ test("two mounted workspaces route execution, dialogs and disposal to their own 
   expect(calls.filter((call) => call.query.startsWith("UPDATE"))).toEqual([
     {
       owner: "first",
-      query: "UPDATE records SET name = 'first edit' WHERE rid = 1;",
+      query: "UPDATE records SET name = 'first edit' WHERE rid = 1",
     },
   ]);
   first.runtime.dispatch("red:open-palette");
