@@ -2,6 +2,7 @@
   import { useWorkspace } from '../workspace-context'
   import { tick } from 'svelte'
   import { Button } from '@reddb-io/design-system/base'
+  import { isSafeCellUpdateTarget } from '@reddb-io/design-system/adapters/reddb/change-sql'
   import { tableEmptyCompact, searchEmpty } from '@reddb-io/design-system/base/illustrations'
   import RendererEmptyState from './RendererEmptyState.svelte'
   import type { QueryResult } from '#reddb'
@@ -18,6 +19,7 @@
     inferPkColumn,
     isNull,
     isSystemField,
+    rowId,
     visibleColumns,
     visibleRows,
   } from './table-render'
@@ -146,28 +148,26 @@
     selectError = null
   }
 
-  let editing = $state<{ row: number; col: string } | null>(null)
+  let editing = $state<{ rid: number; col: string; original: unknown; collection: string } | null>(null)
   let editValue = $state('')
 
-  function startEdit(row: number, col: string, value: unknown) {
-    // Read-only server (#23): cells aren't editable — the mutation entry point
-    // is absent rather than letting a doomed edit stage and fail at commit.
-    if (editing || !collection || connection.readOnly) return
-    editing = { row, col }
-    const staged = pendingChanges.find(collection, row, col)
+  function startEdit(row: Record<string, unknown>, col: string, value: unknown) {
+    const rid = rowId(row)
+    // A projection without a physical row id cannot safely identify an update.
+    if (editing || !collection || connection.readOnly || rid === null || isSystemField(col) || !isSafeCellUpdateTarget({ table: collection, col, row: rid })) return
+    editing = { rid, col, original: value, collection }
+    const staged = pendingChanges.find(collection, rid, col)
     editValue = staged ? staged.newValue : String(value ?? '')
   }
 
   function commit() {
-    if (!editing || !collection) return
-    const { row, col } = editing
-    const original = rows[row]?.[col]
+    if (!editing) return
+    const { rid, col, original, collection: target } = editing
     const next = editValue
     if (String(original ?? '') !== next) {
-      pendingChanges.stage(collection, row, col, original, next)
+      pendingChanges.stage(target, rid, col, original, next)
     } else {
-      // Reverting to original value — drop any prior staged change for it.
-      const existing = pendingChanges.find(collection, row, col)
+      const existing = pendingChanges.find(target, rid, col)
       if (existing) pendingChanges.unstage(existing.id)
     }
     editing = null
@@ -182,9 +182,10 @@
     node.select()
   }
 
-  function cellDisplay(row: number, col: string, v: unknown): { value: unknown; staged: boolean } {
-    if (!collection) return { value: v, staged: false }
-    const staged = pendingChanges.find(collection, row, col)
+  function cellDisplay(row: Record<string, unknown>, col: string, v: unknown): { value: unknown; staged: boolean } {
+    const rid = rowId(row)
+    if (!collection || rid === null) return { value: v, staged: false }
+    const staged = pendingChanges.find(collection, rid, col)
     if (staged) return { value: staged.newValue, staged: true }
     return { value: v, staged: false }
   }
@@ -402,8 +403,8 @@
               <td class="px-2 py-1 text-right text-fg-3 select-none">{i + 1}</td>
               {#each columns as c}
                 {@const v = row[c]}
-                {@const display = cellDisplay(i, c, v)}
-                {@const isEditing = editing?.row === i && editing.col === c}
+                {@const display = cellDisplay(row, c, v)}
+                {@const isEditing = editing?.rid === rowId(row) && editing.col === c}
                 {@const kind = identityKind(c)}
                 {@const sys = isSystemField(c)}
                 <td
@@ -418,7 +419,7 @@
                           : '',
                     display.staged && !isEditing ? 'bg-warn/15 text-fg-1' : '',
                   ].join(' ')}
-                  ondblclick={() => startEdit(i, c, v)}
+                  ondblclick={() => startEdit(row, c, v)}
                   title={display.staged ? 'Staged change — open Pending Changes to commit' : undefined}
                 >
                   {#if isEditing}

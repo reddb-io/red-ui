@@ -2,9 +2,14 @@
 //
 // Deep module: staging, preview SQL, and transactional commit live here.
 // The Svelte component layer reads `changes`/`count` reactively and calls
-// `stage`/`unstage`/`commitAll`/`discardAll`. SQL generation is naive on
-// purpose — it assumes reddb's physical `rid` is the row identifier, which
-// matches how the TableRenderer passes `row` in from the dataset index.
+// `stage`/`unstage`/`commitAll`/`discardAll`. Table edits identify rows by
+// RedDB's physical `rid`; the adapter validates and constructs update SQL.
+
+import {
+  stageWorkspaceChange,
+  reconcileWorkspaceChanges,
+} from "@reddb-io/design-system/app/workspace/changes";
+import { buildUpdateSql as buildRedDbUpdateSql } from "@reddb-io/design-system/adapters/reddb/change-sql";
 
 export interface StagedChange {
   id: string;
@@ -14,6 +19,11 @@ export interface StagedChange {
   oldValue: unknown;
   newValue: string;
   error?: string;
+}
+
+/** Keep the existing staged-change entry point while delegating SQL to the adapter. */
+export function buildUpdateSql(change: StagedChange): string {
+  return buildRedDbUpdateSql(change);
 }
 
 export interface CommitOutcome {
@@ -26,16 +36,8 @@ export type CommitExecutor = (
   changes: StagedChange[]
 ) => Promise<CommitOutcome[]>;
 
-function quote(v: string): string {
-  return `'${v.replace(/'/g, "''")}'`;
-}
-
 function uid(): string {
   return Math.random().toString(36).slice(2, 10);
-}
-
-export function buildUpdateSql(change: StagedChange): string {
-  return `UPDATE ${change.table} SET ${change.col} = ${quote(change.newValue)} WHERE rid = ${change.row};`;
 }
 
 export class PendingChangesStore {
@@ -64,28 +66,18 @@ export class PendingChangesStore {
     newValue: string
   ): string {
     if (this.disposed) throw new Error("Workspace is disposed");
-    const idx = this.changes.findIndex(
-      (c) => c.table === table && c.row === row && c.col === col
-    );
-    if (idx >= 0) {
-      const existing = this.changes[idx];
-      const updated: StagedChange = {
+    const staged = stageWorkspaceChange(
+      this.changes,
+      { id: uid(), table, row, col, oldValue, newValue },
+      (a, b) => a.table === b.table && a.row === b.row && a.col === b.col,
+      (existing, next) => ({
         ...existing,
-        oldValue: existing.oldValue,
-        newValue,
+        newValue: next.newValue,
         error: undefined,
-      };
-      const next = this.changes.slice();
-      next[idx] = updated;
-      this.changes = next;
-      return existing.id;
-    }
-    const id = uid();
-    this.changes = [
-      ...this.changes,
-      { id, table, row, col, oldValue, newValue },
-    ];
-    return id;
+      })
+    );
+    this.changes = staged.changes;
+    return staged.id;
   }
 
   unstage(id: string): void {
@@ -117,35 +109,19 @@ export class PendingChangesStore {
 
     const snapshot = this.changes.slice();
     const outcomes = await this.executor(snapshot);
-    const outcomeById = new Map(outcomes.map((o) => [o.id, o]));
-
-    const failed: StagedChange[] = [];
-    let applied = 0;
-    for (const change of snapshot) {
-      const outcome = outcomeById.get(change.id);
-      if (outcome?.ok) {
-        applied += 1;
-      } else {
-        failed.push({ ...change, error: outcome?.error ?? "commit failed" });
-      }
-    }
-
-    // Replace the queue: drop committed changes, keep the failures (with
-    // any concurrent stages that landed during commitAll preserved).
-    if (this.disposed) return { applied, failed };
-    const survivorIds = new Set(failed.map((c) => c.id));
-    const concurrent = this.changes.filter(
-      (c) => !snapshot.some((s) => s.id === c.id)
+    const result = reconcileWorkspaceChanges(
+      this.changes,
+      snapshot,
+      outcomes,
+      (current, submitted) => current.newValue === submitted.newValue,
+      (current, submitted) => ({
+        ...current,
+        oldValue: submitted.newValue,
+        error: undefined,
+      })
     );
-    const failedById = new Map(failed.map((c) => [c.id, c]));
-    this.changes = [
-      ...this.changes
-        .filter((c) => survivorIds.has(c.id))
-        .map((c) => failedById.get(c.id) ?? c),
-      ...concurrent,
-    ];
-
-    return { applied, failed };
+    if (!this.disposed) this.changes = result.changes;
+    return { applied: result.applied, failed: result.failed };
   }
 
   discardAll(): void {
