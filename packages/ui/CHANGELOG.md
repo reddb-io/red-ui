@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.2
+
+### Patch Changes
+
+- 5135d83: Use the App Kit's portable workspace renderer registry while preserving RedDB renderer selection behavior.
+  - @reddb-io/ui-kit@0.7.2
+  - @reddb-io/ui-mcp@0.7.2
+
 ## 0.7.1
 
 ### Patch Changes
