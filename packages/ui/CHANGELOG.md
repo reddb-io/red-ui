@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.9
+
+### Patch Changes
+
+- 6d57884: Use the Design System Data Kit table for query results while preserving staged edits, filters, physical row identity and keyboard access.
+  - @reddb-io/ui-kit@0.7.9
+  - @reddb-io/ui-mcp@0.7.9
+
 ## 0.7.8
 
 ### Patch Changes
