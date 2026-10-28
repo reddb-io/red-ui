@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.7
+
+### Patch Changes
+
+- 8e2257b: Use the Design System RedDB adapter for connection providers, transport contracts and permission decisions while preserving existing exports.
+  - @reddb-io/ui-kit@0.7.7
+  - @reddb-io/ui-mcp@0.7.7
+
 ## 0.7.6
 
 ### Patch Changes
