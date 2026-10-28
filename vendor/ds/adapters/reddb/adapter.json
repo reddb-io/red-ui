@@ -8,6 +8,13 @@
     "/analytics": "./src/analytics.ts",
     "/ask": "./src/ask.ts",
     "/server-capabilities": "./src/server-capabilities.ts",
-    "/cdc-stream-client": "./src/cdc-stream-client.ts"
+    "/cdc-stream-client": "./src/cdc-stream-client.ts",
+    "/connection-provider": "./src/connection-provider.ts",
+    "/local-url-provider": "./src/local-url-provider.ts",
+    "/injected-client-provider": "./src/injected-client-provider.ts",
+    "/transports": "./src/transports.ts",
+    "/uri": "./src/uri.ts",
+    "/types": "./src/types.ts",
+    "/permission-gate": "./src/permission-gate.ts"
   }
 }

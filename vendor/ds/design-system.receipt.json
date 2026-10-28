@@ -1,6 +1,6 @@
 {
-  "version": "v2026.10.50",
-  "revision": "1cc7c8686342bce9f47c87ad9faaee0af0f38944",
+  "version": "v2026.10.51",
+  "revision": "518f40caab7cf4ee2e4714870389b9c471bce608",
   "distribution": {
     "format": "source",
     "minify": false,
@@ -608,19 +608,26 @@
     "kits/base/types/marks.d.ts": "dc84824853308f8db016725ee3a3ffbed360c08bcbc94bd726481809ddf4c40a",
     "kits/base/vite.config.ts": "6ba200eb3a302797c54169d36a564167f23e9cc93153d89264a42144fff4713b",
     "adapters/reddb/LICENSE": "9740889764f9b1a5c1c291a36c07412aa5f90c2f4e524ac2a8fc5d69fe46697d",
-    "adapters/reddb/README.md": "e97bf3d7a59dca523a08b1becc996d31d4037a69eda61e6b49e74f6e0c0f1a89",
-    "adapters/reddb/adapter.json": "85ca1a91e5f93a2906de8b46f50954cd3ffc62ae2cfc50fee19db132d53fe01b",
+    "adapters/reddb/README.md": "700b932b8c594d383718bea1f26e9641349bf4c9089f58dee46cb5552db166f6",
+    "adapters/reddb/adapter.json": "48f2eb84c4364626a815f6fcd882cfa2b218b2c7e17d0e60f174b8f803d81837",
     "adapters/reddb/src/analytics.ts": "2fca81a222d76b85683b0623a49f8947eb99cc0ad9a5ae669b7f058a81d80119",
     "adapters/reddb/src/ask.ts": "c2139ba69be123efa5fa1bf2200f9e3eaf4085312bfcb4b572be89a2d4c29121",
     "adapters/reddb/src/boot-params.ts": "b67bc0d0db8746d4a554340c1dcbfbf03988825aa242f1cf86994ca9e5342a70",
     "adapters/reddb/src/cdc-stream-client.ts": "4ea6f2825c80307053b9ccf98ec276063339fba2716c5072924d26925b97e50a",
     "adapters/reddb/src/client.ts": "ff2ddbcdb9b86f47d11230a3e66aeceb99a7676de78536ce23469a497fd862e7",
     "adapters/reddb/src/cluster-status.ts": "9b8ff6000a0a1d0cbabb63fc6f86142e696a41391aa5881f87b1147a6a0688ce",
+    "adapters/reddb/src/connection-provider.ts": "dabeb4ff9499d081f6470bdce328620bfc610a813ff8414e79121381477958f9",
     "adapters/reddb/src/connection-string.ts": "893a687cc708d567f1b2621842075ca58dc2ca6a8afa7779f005f731080e5ba8",
     "adapters/reddb/src/dev-console.ts": "6fda40f6c8fa88904b77262c28a9370da00c42580933200e9b210002785d5ee1",
     "adapters/reddb/src/index.ts": "d09cc9bcb968a141c1bd561185f28e6931decd9952f41bce13298cac7539a512",
+    "adapters/reddb/src/injected-client-provider.ts": "fd19caedd5c7bea617663f3c01cbf37a0056aeba1adf3e51288a2b477346cfb0",
+    "adapters/reddb/src/local-url-provider.ts": "e5d8755486b7e4bc290f6d5958b7a48363ee28abc41e7b92209f5a7f9211d8d2",
     "adapters/reddb/src/permission-contract.ts": "a44efd151c649365e8d9304a2a041ebe2bbe692f834b637e696768e8cfff6d61",
+    "adapters/reddb/src/permission-gate.ts": "17bd958a65e75d4ea3b38c17929b76af0adb530bac9886b71fa13e20cb956bd6",
     "adapters/reddb/src/server-capabilities.ts": "cf6d8d64e82377cc46b2eacb524f1dbc7ba6e2b55f706561955be062e8df39b9",
+    "adapters/reddb/src/transports.ts": "28baa560087b1adc9723986df17bf24f11672ce393f4f0b379eb2c0a115ea015",
+    "adapters/reddb/src/types.ts": "f5c49982e48d7ac2fd75ebb09a59283647d2fcd81c650ddddf4b94460d222a2d",
+    "adapters/reddb/src/uri.ts": "c6db6d54d4b3a45ef03af993b5a1865a831b8abb308ca684f310288a63d5f27d",
     "assets/fonts/jetbrains-mono-variable.woff2": "e190ee6595a3b9bd25278613a6f5d3766ee1a708f300ed44fa63dbe84051498f",
     "assets/fonts/space-grotesk-variable.woff2": "0640890476fc1198ab4de571fb658de443c4d85b66466ec09534a8737ab1ce9d",
     "assets/fonts.css": "7c4be9cfbb5e717a15c7916fbb6b7ace6ee68e65f93ff7b27bf14f185a06db04",
@@ -638,6 +645,6 @@
     "styles/all.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/application.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/base.css": "11bb59075a372e0d6d67dee2e338d6fbd6df76f1d91b0d21a9f0f2028b997ca4",
-    "package.json": "e7dad26a8fa11ce1e6ec64b599742359e2ee1ddcf893fc694faaf7b1c860f75a"
+    "package.json": "000423d042974fad0d95e19c24f746f5ac4ba52b81c6e6ec60c6e8c29f83a0b7"
   }
 }
