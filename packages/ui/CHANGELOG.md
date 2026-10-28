@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.6
+
+### Patch Changes
+
+- c8ab771: Use the Design System RedDB adapter for the HTTP client, CDC, diagnostics and response models while preserving existing exports.
+  - @reddb-io/ui-kit@0.7.6
+  - @reddb-io/ui-mcp@0.7.6
+
 ## 0.7.5
 
 ### Patch Changes
