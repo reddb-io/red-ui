@@ -726,3 +726,15 @@ The same default gap spaces the navigation list and direct children in the
 including zero. A bottom slot can place a collapse Tooltip beside an account
 DropdownMenu without duplicating that spacing. Nested caller-owned containers
 retain their own layout, and slot control/icon/avatar sizes remain caller-owned.
+
+### Workspace renderer registry
+
+`@reddb-io/design-system/app/workspace/renderers` provides a portable,
+instance-owned registry for host-defined renderers. `resolve` tries a registered
+explicit override, a compatible hint, the first matching renderer and an
+optional caller-selected fallback. It returns `undefined` when none is found;
+the host owns the missing-renderer policy, result model and rendering adapter.
+
+For selective Sync, include this root as
+`{"app/workspace/renderers": ["WorkspaceRendererRegistry"]}`. The selected
+contract does not require a component framework or Data Kit.

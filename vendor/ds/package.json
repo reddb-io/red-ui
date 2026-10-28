@@ -21,6 +21,10 @@
       "types": "./kits/app/src/core/workspace-documents.ts",
       "default": "./kits/app/src/core/workspace-documents.ts"
     },
+    "./app/workspace/renderers": {
+      "types": "./kits/app/src/core/workspace-renderers.ts",
+      "default": "./kits/app/src/core/workspace-renderers.ts"
+    },
     "./base": {
       "svelte": "./kits/base/src/index.ts",
       "default": "./kits/base/src/index.ts"
