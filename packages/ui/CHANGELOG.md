@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.3
+
+### Patch Changes
+
+- fcb8807: Compose the collections workspace frame using the App Kit ApplicationWorkspace.
+  - @reddb-io/ui-kit@0.7.3
+  - @reddb-io/ui-mcp@0.7.3
+
 ## 0.7.2
 
 ### Patch Changes
