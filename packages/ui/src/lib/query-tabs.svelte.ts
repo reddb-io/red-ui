@@ -4,6 +4,7 @@
 // running flag. Stored separately from the tabs store so the Tab type
 // stays a thin identity record and switching tabs preserves state.
 
+import { createWorkspaceExecution } from "@reddb-io/design-system/app/workspace/execution";
 import { activity as defaultActivity } from "./activity.svelte";
 import type { QueryResult } from "#reddb";
 
@@ -62,11 +63,7 @@ export class QueryTabsStore {
   /** Monotonic counter for "Query N" labels — survives close so numbers don't reuse. */
   private counter = 0;
   private executor: QueryExecutor | null = null;
-  private runSeq = 0;
-  private inFlight = new Map<
-    string,
-    { token: number; controller: AbortController }
-  >();
+  private readonly execution = createWorkspaceExecution<QueryResult>();
 
   setExecutor(executor: QueryExecutor | null): void {
     this.executor = executor;
@@ -130,41 +127,41 @@ export class QueryTabsStore {
       s.result = null;
       return;
     }
-    const controller = new AbortController();
-    const token = ++this.runSeq;
-    this.inFlight.set(id, { token, controller });
     s.running = true;
     s.runningStartedAt = Date.now();
     s.error = null;
-    try {
-      const r = await this.activity.track(queryActivityLabel(sql), () =>
-        this.executor!(sql, { signal: controller.signal })
-      );
-      if (this.inFlight.get(id)?.token !== token) return;
-      s.result = r;
-      s.error = r.ok ? null : (r.error ?? "Query failed.");
-    } catch (e) {
-      if (this.inFlight.get(id)?.token !== token) return;
-      if (controller.signal.aborted || isAbortError(e)) {
-        s.error = null;
-        return;
+    // Capture the executor for this run; a later connection change must not
+    // redirect an already-started execution to a different provider.
+    const executor = this.executor;
+    await this.execution.run(
+      id,
+      (signal) =>
+        this.activity.track(queryActivityLabel(sql), () =>
+          executor(sql, { signal })
+        ),
+      {
+        success: (result) => {
+          s.result = result;
+          s.error = result.ok ? null : (result.error ?? "Query failed.");
+        },
+        failure: (error) => {
+          if (isAbortError(error)) {
+            s.error = null;
+            return;
+          }
+          s.error = (error as Error).message;
+          s.result = null;
+        },
+        finish: () => {
+          s.running = false;
+          s.runningStartedAt = null;
+        },
       }
-      s.error = (e as Error).message;
-      s.result = null;
-    } finally {
-      if (this.inFlight.get(id)?.token === token) {
-        this.inFlight.delete(id);
-        s.running = false;
-        s.runningStartedAt = null;
-      }
-    }
+    );
   }
 
   cancel(id: string): boolean {
-    const run = this.inFlight.get(id);
-    if (!run) return false;
-    this.inFlight.delete(id);
-    run.controller.abort();
+    if (!this.execution.cancel(id)) return false;
     const s = this.states[id];
     if (s) {
       s.running = false;
@@ -176,8 +173,7 @@ export class QueryTabsStore {
 
   /** Reset state and cancel outstanding queries for this instance. */
   clear(): void {
-    for (const run of this.inFlight.values()) run.controller.abort();
-    this.inFlight.clear();
+    this.execution.clear();
     this.states = {};
     this.counter = 0;
     this.executor = null;

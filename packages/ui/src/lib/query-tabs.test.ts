@@ -210,6 +210,30 @@ describe("queryTabs store", () => {
     expect(s.result?.query).toBe("SELECT old");
   });
 
+  it("a late cancelled run cannot overwrite a newer run in the same tab", async () => {
+    let releaseOld!: (result: QueryResult) => void;
+    let releaseNew!: (result: QueryResult) => void;
+    queryTabs.setExecutor(
+      (sql) =>
+        new Promise<QueryResult>((resolve) => {
+          if (sql === "SELECT old") releaseOld = resolve;
+          else releaseNew = resolve;
+        })
+    );
+    queryTabs.setSql("t1", "SELECT old");
+    const oldRun = queryTabs.run("t1");
+    expect(queryTabs.cancel("t1")).toBe(true);
+    queryTabs.setSql("t1", "SELECT new");
+    const newRun = queryTabs.run("t1");
+    releaseOld(okResult("SELECT old"));
+    await oldRun;
+    expect(queryTabs.get("t1")?.running).toBe(true);
+    releaseNew(okResult("SELECT new"));
+    await newRun;
+    expect(queryTabs.get("t1")?.result?.query).toBe("SELECT new");
+    expect(queryTabs.get("t1")?.running).toBe(false);
+  });
+
   it("query runs are reflected in the global activity tracker", async () => {
     let release!: (r: QueryResult) => void;
     queryTabs.setExecutor((sql) =>
