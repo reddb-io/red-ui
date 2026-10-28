@@ -40,7 +40,9 @@ it("stages the physical row id after filtering, rather than the visual row index
     .querySelector<HTMLButtonElement>("[data-table-filter-toggle]")!
     .click();
   await flush();
-  const filter = target.querySelector<HTMLInputElement>("thead input")!;
+  const filter = target.querySelector<HTMLInputElement>(
+    "[data-table-filters] input"
+  )!;
   filter.value = "Grace";
   filter.dispatchEvent(new Event("input", { bubbles: true }));
   await flush();
@@ -70,4 +72,54 @@ it("does not allow editing when the result lacks a physical row id", async () =>
   await flush();
   expect(cell.querySelector("input")).toBeNull();
   expect(pendingChanges.changes).toEqual([]);
+});
+it("preserves other staged cells and allows keyboard edits to be reverted", async () => {
+  const target = await setup([
+    { rid: 101, name: "Ada" },
+    { rid: 1027, name: "Grace" },
+  ]);
+  pendingChanges.stage("other", 55, "name", "X", "Y");
+  pendingChanges.stage("users", 101, "name", "Ada", "Ada staged");
+  await flush();
+  const cell = target.querySelector<HTMLElement>(
+    "tbody tr:first-child td:nth-child(2)"
+  )!;
+  cell.dispatchEvent(
+    new KeyboardEvent("keydown", { key: "Enter", bubbles: true })
+  );
+  await flush();
+  let input = cell.querySelector<HTMLInputElement>("input")!;
+  expect(input.value).toBe("Ada staged");
+  input.value = "Ada";
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+  input.dispatchEvent(
+    new KeyboardEvent("keydown", { key: "Enter", bubbles: true })
+  );
+  await flush();
+  expect(pendingChanges.changes).toMatchObject([
+    { table: "other", row: 55, newValue: "Y" },
+  ]);
+});
+it("handles duplicate physical rows without losing edits outside the current result", async () => {
+  pendingChanges.stage("users", 9999, "name", "Hidden", "Preserved");
+  const target = await setup([
+    { rid: 101, name: "Ada" },
+    { rid: 101, name: "Ada" },
+  ]);
+  expect(target.querySelectorAll("tbody tr[data-table-row]")).toHaveLength(2);
+  const cell = target.querySelector<HTMLElement>(
+    "tbody tr:first-child td:nth-child(2)"
+  )!;
+  cell.dispatchEvent(new MouseEvent("dblclick", { bubbles: true }));
+  await flush();
+  const input = cell.querySelector<HTMLInputElement>("input")!;
+  input.value = "Ada B";
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+  input.dispatchEvent(new FocusEvent("blur"));
+  await flush();
+  expect(pendingChanges.changes).toMatchObject([
+    { row: 9999, newValue: "Preserved" },
+    { row: 101, newValue: "Ada B" },
+  ]);
+  expect(target.querySelectorAll("[data-table-pending]")).toHaveLength(2);
 });

@@ -47,12 +47,14 @@ it("keeps table column filters visible and clears an unmatched filter with focus
   )!;
   toggle.click();
   await flush();
-  const input = target.querySelector<HTMLInputElement>("thead input")!;
+  const input = target.querySelector<HTMLInputElement>(
+    "[data-table-filters] input"
+  )!;
   input.value = "missing";
   input.dispatchEvent(new Event("input", { bubbles: true }));
   await flush();
   expect(target.querySelector('[data-empty-reason="filtered"]')).not.toBeNull();
-  expect(target.querySelector("thead input")).not.toBeNull();
+  expect(target.querySelector("[data-table-filters] input")).not.toBeNull();
   const clear = Array.from(target.querySelectorAll("button")).find(
     (button) => button.textContent?.trim() === "Clear filters"
   )!;

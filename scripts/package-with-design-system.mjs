@@ -51,12 +51,32 @@ function rewrite(dir) {
       const content = original.replace(
         /(["'])@reddb-io\/design-system\/([^"']+)\1/g,
         (_, quote, subpath) => {
-          const contract = ds.exports[`./${subpath}`];
-          const target =
+          const exact = ds.exports[`./${subpath}`];
+          const wildcard = Object.entries(ds.exports).find(([key]) => {
+            const [prefix, suffix] = key.split("*");
+            return (
+              suffix !== undefined &&
+              `./${subpath}`.startsWith(prefix) &&
+              `./${subpath}`.endsWith(suffix)
+            );
+          });
+          const contract = exact ?? wildcard?.[1];
+          let target =
             typeof contract === "string"
               ? contract
               : (contract?.svelte ?? contract?.default);
           if (!target) throw new Error(`Unknown DS export: ${subpath}`);
+          if (!exact && wildcard) {
+            const [prefix, suffix] = wildcard[0].split("*");
+            const path = `./${subpath}`;
+            const match = path.slice(
+              prefix.length,
+              path.length - suffix.length
+            );
+            if (!match || match.includes(".."))
+              throw new Error(`Invalid DS export: ${subpath}`);
+            target = target.replace("*", match);
+          }
           const local = relative(
             dirname(path),
             join(stage, "vendor/ds", target)
