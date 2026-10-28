@@ -305,6 +305,7 @@ export type PrimitiveName = (typeof PRIMITIVES)[number];
  * the Taxonomy's other half, kept for the same reason.
  */
 export const COMPOSITES = [
+  "ApplicationWorkspace",
   "WorkspaceTabs",
   "ChangeReview",
   "ErrorBoundary",
@@ -367,6 +368,7 @@ export type ComponentName = PrimitiveName | CompositeName;
  * capabilities use the same shared purpose vocabulary.
  */
 export const COMPONENT_PURPOSES = {
+  ApplicationWorkspace: "Layout",
   WorkspaceTabs: "Navigation",
   ChangeReview: "Data display",
   ErrorBoundary: "Feedback",
@@ -436,6 +438,8 @@ export type { InspectorEntity } from "./core/entity-inspector";
 
 export { default as EntityJourney } from "./composites/EntityJourney.svelte";
 export type { JourneyStage, JourneyState } from "./core/entity-journey";
+
+export { default as ApplicationWorkspace } from "./composites/ApplicationWorkspace.svelte";
 
 export { default as WorkspaceTabs } from "./composites/WorkspaceTabs.svelte";
 

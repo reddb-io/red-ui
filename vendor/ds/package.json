@@ -9,6 +9,10 @@
       "svelte": "./kits/app/src/index.ts",
       "default": "./kits/app/src/index.ts"
     },
+    "./app/ApplicationWorkspace": {
+      "svelte": "./kits/app/src/composites/ApplicationWorkspace.svelte",
+      "default": "./kits/app/src/composites/ApplicationWorkspace.svelte"
+    },
     "./app/recipes": {
       "types": "./kits/app/src/recipes.ts",
       "default": "./kits/app/src/recipes.ts"
