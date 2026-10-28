@@ -1,6 +1,6 @@
 {
-  "version": "v2026.10.47",
-  "revision": "2b9e7857d2e77d5011c016c8ef1b284568d5811e",
+  "version": "v2026.10.49",
+  "revision": "64bbf454d48d481ddd5e649d0ddbf41402b5816f",
   "distribution": {
     "format": "source",
     "minify": false,
@@ -13,6 +13,9 @@
     "app"
   ],
   "layers": [],
+  "adapters": [
+    "reddb"
+  ],
   "files": {
     "kits/app/README.md": "adcd2c9763b9af0ffefb2045148bba3c47df2793e762e3258526373aa7d723a1",
     "kits/app/interaction-allowlist.json": "7d29216392231a4e0950b53d996d4a00b45d6272b2c0a387f45f6df58e362712",
@@ -220,7 +223,7 @@
     "kits/base/src/Card.svelte": "d1a7979610e4803a1990b6a6dd26cd0f110e2ae439f48924692f713573bb9321",
     "kits/base/src/Carousel.svelte": "68574bd386bc7fde12360702273d4569cea1d67d5c331df3471c4962a566ce84",
     "kits/base/src/Checkbox.svelte": "4a9c9945e9b2b27837e64263eaf0bf629c8697689dafe6b4e549498f2bb26492",
-    "kits/base/src/CodeBlock.svelte": "078fdfb82f169b14419af06a010296a52ffa9e78fce294fd33c24e7688270786",
+    "kits/base/src/CodeBlock.svelte": "b5b397cc06d8bd5c32f4db84a282d8a16c64ac9ef37ee98b3b41c01981608616",
     "kits/base/src/Combobox.svelte": "8354f95f46f94bf370055d587f2f3ccae507a31470cbacd05d86cf9a74d6932f",
     "kits/base/src/Container.svelte": "6773c36c5e12f1a022dbd6f08a8cc8d5e844004b9603822fa471de68ca260009",
     "kits/base/src/ContentMask.svelte": "5a76fb4bc8ec449a4ff7de8540b30be6bd112d3af13c912db3c0c4d934f4c298",
@@ -260,6 +263,7 @@
     "kits/base/src/ListContainer.svelte": "ab4518e5f4b3178b30c198ca6a06bb7aedb6c5f68f7c9fa969c2100f25816f4b",
     "kits/base/src/LoadingIndicator.svelte": "69f7a3c9cd81488a67b26564e8fc52984b452690f5d5b53c86588f847e9c4de2",
     "kits/base/src/Logo.svelte": "3b08921ca139d532981f8f9566f4041b83a83167bb85782f64e2d758f2045762",
+    "kits/base/src/MathExpression.svelte": "06b0f86e3d2466e14fcadb5f1a90b3e2b24e6417fad0519114ec7c5fd21048d1",
     "kits/base/src/MediaObject.svelte": "c427a581f1b42851ad987236b98571646af271d94cbb0c44b7fd175260bcdc0b",
     "kits/base/src/Meter.svelte": "eaaf033f4ad816ec21142a9a1423a7e8e3b2f5a978f83f87435fa99c5158ce88",
     "kits/base/src/Navbar.svelte": "01ff1e6b46319f57b090790fea1eddf93fb2b0156e93dc79ac4f32324948f765",
@@ -327,7 +331,7 @@
     "kits/base/src/card.variants.ts": "aa223ec2d905fa0c45c617a80b6002e5f4bc573e765065b67d9255f0889f4ad6",
     "kits/base/src/carousel.variants.ts": "63296ac2100234d508036f6ae4cacc68fb81a91fdbfe4ef1edc38589f4024193",
     "kits/base/src/checkbox.variants.ts": "9858467427168bc0a21da9c5127b0159cfe5de4dc6a307724ba0d88736d0c8c7",
-    "kits/base/src/code-block.variants.ts": "e8796a8faf899060619d10d2c2dbd7768b13d7d012a5892f6b6643137db4fc17",
+    "kits/base/src/code-block.variants.ts": "407f57fde3d4be1143b10463f36fdfc0953d76612916d4f5475f3ff4c8d7e24c",
     "kits/base/src/collapsible.style.ts": "29399203d4adc79ce99543ac3cab5bf36d7160de0734e70d4ab67ac935166a00",
     "kits/base/src/combobox.variants.ts": "0a8c8e99bd06d7429f1ae21ae74cc5d9a305637dadda582d0532f81299547339",
     "kits/base/src/container.variants.ts": "59b8a05849652b6bdbf7932d341d9b2e2febc381067cdfbee73f900e9ac8e696",
@@ -512,7 +516,7 @@
     "kits/base/src/illustrations/team-empty.ts": "a95817b4d3a80729b516e630bea37d9689f98b00fc185c024349e8a39acdd9a5",
     "kits/base/src/illustrations.ts": "cb803a450cd04a7f6df3956159608ebebc91f093bad558f6a6755fc1470a235b",
     "kits/base/src/image.variants.ts": "098c5f87b6a04f399828d2738d95ef97a7e48416a4d24b882e92f5ae2615c8a5",
-    "kits/base/src/index.ts": "774ade0acecd41534f01baef182dc26ae622ef303154d5c5781f955beade957a",
+    "kits/base/src/index.ts": "b51afcd03bef21e8f6d40f6cb8e3e26e7347e7337d7d7fa5d942abe700428d8f",
     "kits/base/src/indicator.variants.ts": "3e0c66f4bb20d83c2bd1e5a7799603c5a2b1591c3689a42c6801d4d9fb34f1c7",
     "kits/base/src/inline-edit.variants.ts": "9c1579d43ef4205849e1546da3a6d90483c2aa3d0be4fec91b790f0cc845829d",
     "kits/base/src/input.variants.ts": "75ef9ea6e478ed335514b007b80c3c320cf6c18b0a4673386e5a987ceda58e1e",
@@ -538,6 +542,7 @@
     "kits/base/src/marks/reddb-symbol-white.svg": "13cb197cbe56e07a4ce679da28042226dd77d2dbe349297044b09933c2e1fd8a",
     "kits/base/src/marks/reddb-wordmark-black.svg": "f0619d701d0490ad27e8187e16ad151cf2954ae1043e99f9a5ee5418b7540be4",
     "kits/base/src/marks/reddb-wordmark-white.svg": "69e1e5b0e4e7d3b45231e142e885bbfb26cfb3606015ba7d9b32108930da8b14",
+    "kits/base/src/math-expression.variants.ts": "f0afc7418e51cc739bc7ab3bbcdd94a8be8f8a1307730202ad07ea25c797bd2b",
     "kits/base/src/media-object.variants.ts": "79122e1c1d78f16fac79db3f2f9739a5f439c486b82ba07c3e8a17cab2185eab",
     "kits/base/src/meter.variants.ts": "57e9f3eb08b4d5295118c501aa73b75e6d1cd4ff03fef048bf35b3be42caca3b",
     "kits/base/src/navbar.variants.ts": "bc4729d4bcd4e65a97e9f954b3b09c562722ec0e1bd2f35045e749457a1dcee5",
@@ -560,7 +565,7 @@
     "kits/base/src/radial-progress.variants.ts": "8a38e84c4c2406bd4b407299ce8803f8dec8ca049609b66364fee57121f01ba4",
     "kits/base/src/radio-group.variants.ts": "3bcf3f996cd87897f7d1f57b3da6d83edc5e6515a210481b582c7ea42d812e21",
     "kits/base/src/rating.variants.ts": "fae1e4f508620494e9460b0c6a1c8d6d3b7b0d0eae0e2e2d8dceaa3ce6f9133b",
-    "kits/base/src/recipes.ts": "398d891e83aeb701a48d841ce6cc9890a7991c18fbe9392dde78b53e9b3d3ce2",
+    "kits/base/src/recipes.ts": "0f5752f11f5156111186240042973b533bd3509a1deff2d34d1a72f9bad1cead",
     "kits/base/src/reduced-motion.svelte.ts": "827a8cb4ed4f2982f73a75612618ef28a7c2cc4da676bcfeebdb7cfd41a2117c",
     "kits/base/src/reveal.variants.ts": "c3c1aa271c574a9c64fda349443d1dd1fae1960da29fe03cf89256e7ec354770",
     "kits/base/src/scroll-area.variants.ts": "3db796233a08fe611a4a83b2cd8dff2f3c1a79a92df05465d88c07b52a7055f2",
@@ -601,7 +606,13 @@
     "kits/base/tsconfig.json": "71b46f39e7b4dede9f43e8991cb4e19fdba77a8b583abc0c0c3dbcc8b3889c32",
     "kits/base/type-ledger.json": "53fbf2695f09c27eb79d9700ce9df8ee0b9f2ad9d281d45423287ec506f6b1cb",
     "kits/base/types/marks.d.ts": "dc84824853308f8db016725ee3a3ffbed360c08bcbc94bd726481809ddf4c40a",
-    "kits/base/vite.config.ts": "99dbbfb4280fa06248c56e5131d771e086358a19f4fb41db0d43302a7a8da60e",
+    "kits/base/vite.config.ts": "6ba200eb3a302797c54169d36a564167f23e9cc93153d89264a42144fff4713b",
+    "adapters/reddb/LICENSE": "9740889764f9b1a5c1c291a36c07412aa5f90c2f4e524ac2a8fc5d69fe46697d",
+    "adapters/reddb/README.md": "2629dbada5e12d16fbfb47aac877a7dbbf654086880f81f141c9464f593505f4",
+    "adapters/reddb/adapter.json": "acc84c8d7239afe8fdf295ddbe04224924996e89236b1ca427aa790a3a900e9a",
+    "adapters/reddb/src/boot-params.ts": "b67bc0d0db8746d4a554340c1dcbfbf03988825aa242f1cf86994ca9e5342a70",
+    "adapters/reddb/src/connection-string.ts": "893a687cc708d567f1b2621842075ca58dc2ca6a8afa7779f005f731080e5ba8",
+    "adapters/reddb/src/index.ts": "d09cc9bcb968a141c1bd561185f28e6931decd9952f41bce13298cac7539a512",
     "assets/fonts/jetbrains-mono-variable.woff2": "e190ee6595a3b9bd25278613a6f5d3766ee1a708f300ed44fa63dbe84051498f",
     "assets/fonts/space-grotesk-variable.woff2": "0640890476fc1198ab4de571fb658de443c4d85b66466ec09534a8737ab1ce9d",
     "assets/fonts.css": "7c4be9cfbb5e717a15c7916fbb6b7ace6ee68e65f93ff7b27bf14f185a06db04",
@@ -619,6 +630,6 @@
     "styles/all.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/application.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/base.css": "11bb59075a372e0d6d67dee2e338d6fbd6df76f1d91b0d21a9f0f2028b997ca4",
-    "package.json": "f37d108339d7b95e9694a5e4cccff4e5dfab575080009fe67a07db1265756b4a"
+    "package.json": "3cc7270ca436e383220cf9b318b76e52a2b92e6e715df741a2d3d84b51d2d299"
   }
 }

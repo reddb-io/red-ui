@@ -84,6 +84,10 @@ for (const kit of manifest.kits) {
   if (!receipt.kits.includes(kit))
     throw new Error(`DS receipt is missing declared Kit ${kit}`);
 }
+for (const adapter of manifest.adapters ?? []) {
+  if (!receipt.adapters?.includes(adapter))
+    throw new Error(`DS receipt is missing declared adapter ${adapter}`);
+}
 for (const [name, expected] of Object.entries(receipt.files)) {
   const actual = createHash("sha256")
     .update(readFileSync(join(dest, name)))

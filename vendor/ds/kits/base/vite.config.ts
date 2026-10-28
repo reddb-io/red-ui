@@ -1,9 +1,10 @@
+import { fileURLToPath } from "node:url";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { defineConfig } from "vite";
 import { componentFlavorResolution } from "../../scripts/flavor-resolution.ts";
 
 export default defineConfig({
-  plugins: [componentFlavorResolution(new URL("../..", import.meta.url).pathname), svelte()],
+  plugins: [componentFlavorResolution(fileURLToPath(new URL("../..", import.meta.url))), svelte()],
   // The Kit's tests mount the Logo the way a browser does — `mount()` into a
   // real element — so they need the browser build of Svelte and a document to
   // mount into. The document is not incidental here: `on` defaults from the

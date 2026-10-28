@@ -13,6 +13,7 @@ export * from "./card.variants";
 export * from "./carousel.variants";
 export * from "./checkbox.variants";
 export * from "./code-block.variants";
+export * from "./math-expression.variants";
 export * from "./combobox.variants";
 export * from "./container.variants";
 export * from "./content-mask.variants";
