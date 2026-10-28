@@ -2,6 +2,7 @@
   import { useWorkspace } from '../workspace-context'
   import { tick } from 'svelte'
   import { Button } from '@reddb-io/design-system/base'
+  import Table, { type TableChange, type TableColumn, type TableRow } from '@reddb-io/design-system/data/Table'
   import { isSafeCellUpdateTarget } from '@reddb-io/design-system/adapters/reddb/change-sql'
   import { tableEmptyCompact, searchEmpty } from '@reddb-io/design-system/base/illustrations'
   import RendererEmptyState from './RendererEmptyState.svelte'
@@ -37,7 +38,7 @@
 
   let overrideResult = $state<QueryResult | null>(null)
   const activeResult = $derived(overrideResult ?? result)
-  const allRows = $derived(visibleRows(activeResult))
+  const allRows = $derived(visibleRows(activeResult).map((row) => ({ ...row })))
   const columns = $derived(visibleColumns(activeResult, { showSystem }))
   const pkCol = $derived(inferPkColumn(columns))
   const queryableColumns = $derived(columns.filter((c) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(c)))
@@ -132,7 +133,6 @@
       }
       overrideResult = r
       filters = {}
-      editing = null
     } catch (e) {
       selectError = (e as Error).message
     } finally {
@@ -148,47 +148,66 @@
     selectError = null
   }
 
-  let editing = $state<{ rid: number; col: string; original: unknown; collection: string } | null>(null)
-  let editValue = $state('')
-
-  function startEdit(row: Record<string, unknown>, col: string, value: unknown) {
+  const numberColumnKey = $derived.by(() => {
+    let key = '__red_ui_row_number__'
+    while (columns.includes(key) || allRows.some((row) => key in row)) key += '_'
+    return key
+  })
+  const tableColumns = $derived<TableColumn[]>([
+    { key: numberColumnKey, header: '#', align: 'end' },
+    ...columns.map((key) => ({
+      key, header: `${key}${isSystemField(key) ? ' · sys' : identityKind(key) === 'id' || key === pkCol ? ' · pk' : ''}`,
+      editable: !isSystemField(key), format: formatCell,
+      // Keep the existing string-oriented RedDB editing contract.
+      parse: (input: string) => input,
+    })),
+  ])
+  // Distinct display rows may address the same database row (e.g. a join).
+  // Use source positions for the grid keys, but retain rid for mutations.
+  function keyForRow(row: TableRow): string {
+    return `row-${allRows.indexOf(row)}`
+  }
+  const tableChanges = $derived<TableChange[]>(allRows.flatMap((row) => {
     const rid = rowId(row)
-    // A projection without a physical row id cannot safely identify an update.
-    if (editing || !collection || connection.readOnly || rid === null || isSystemField(col) || !isSafeCellUpdateTarget({ table: collection, col, row: rid })) return
-    editing = { rid, col, original: value, collection }
-    const staged = pendingChanges.find(collection, rid, col)
-    editValue = staged ? staged.newValue : String(value ?? '')
+    return pendingChanges.changes
+      .filter((change) => change.table === collection && change.row === rid)
+      .map((change) => ({ rowKey: keyForRow(row), columnKey: change.col, previous: change.oldValue, value: change.newValue }))
+  }))
+
+  function editable(row: TableRow, column: TableColumn): boolean {
+    const rid = rowId(row)
+    return !!collection && !connection.readOnly && rid !== null &&
+      isSafeCellUpdateTarget({ table: collection, col: column.key, row: rid })
   }
 
-  function commit() {
-    if (!editing) return
-    const { rid, col, original, collection: target } = editing
-    const next = editValue
-    if (String(original ?? '') !== next) {
-      pendingChanges.stage(target, rid, col, original, next)
-    } else {
-      const existing = pendingChanges.find(target, rid, col)
-      if (existing) pendingChanges.unstage(existing.id)
+  function updateChanges(next: readonly TableChange[]) {
+    if (!collection) return
+    // Process only the changed grid entry, not all staged cells. Entries for
+    // rows absent from this result remain in the workspace queue untouched.
+    const before = tableChanges
+    for (const change of before) {
+      if (next.some((item) => item.rowKey === change.rowKey && item.columnKey === change.columnKey)) continue
+      const index = Number(String(change.rowKey).slice(4))
+      const rid = rowId(allRows[index] ?? {})
+      const staged = rid === null ? undefined : pendingChanges.find(collection, rid, change.columnKey)
+      if (staged) pendingChanges.unstage(staged.id)
     }
-    editing = null
+    for (const change of next) {
+      const old = before.find((item) => item.rowKey === change.rowKey && item.columnKey === change.columnKey)
+      if (old && Object.is(old.value, change.value)) continue
+      const index = Number(String(change.rowKey).slice(4))
+      const rid = rowId(allRows[index] ?? {})
+      if (rid === null) continue
+      const existing = pendingChanges.find(collection, rid, change.columnKey)
+      const value = String(change.value ?? '')
+      if (String(change.previous ?? '') === value) {
+        if (existing) pendingChanges.unstage(existing.id)
+      } else {
+        pendingChanges.stage(collection, rid, change.columnKey, change.previous, value)
+      }
+    }
   }
 
-  function cancel() {
-    editing = null
-  }
-
-  function focusOnMount(node: HTMLInputElement) {
-    node.focus()
-    node.select()
-  }
-
-  function cellDisplay(row: Record<string, unknown>, col: string, v: unknown): { value: unknown; staged: boolean } {
-    const rid = rowId(row)
-    if (!collection || rid === null) return { value: v, staged: false }
-    const staged = pendingChanges.find(collection, rid, col)
-    if (staged) return { value: staged.newValue, staged: true }
-    return { value: v, staged: false }
-  }
 </script>
 
 <div bind:this={root} data-renderer="table" class="flex h-full flex-col text-fg-1">
@@ -209,7 +228,7 @@
             'inline-flex items-center gap-1.5 h-6 px-2 rounded border transition-colors cursor-pointer',
             selectOpen
               ? 'border-accent/40 bg-accent/10 text-primary-text'
-              : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+              : 'border-line-1 text-fg-1 hover:border-line-2',
           ].join(' ')}
         >
           <Columns3 class="size-3" />
@@ -249,7 +268,7 @@
           'inline-flex items-center gap-1.5 h-6 px-2 rounded border transition-colors cursor-pointer',
           filtersOpen
             ? 'border-accent/40 bg-accent/10 text-primary-text'
-            : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
+            : 'border-line-1 text-fg-1 hover:border-line-2',
         ].join(' ')}
       >
         <Filter class="size-3" />
@@ -342,115 +361,36 @@
       </RendererEmptyState>
     {:else}
 
+    {#if filtersOpen}
+      <div class="flex flex-wrap gap-2 border-b border-line-1 bg-bg-0 px-3 py-2" data-table-filters>
+        {#each columns as c}
+          <label class="grid gap-1 text-[11px] text-fg-3">
+            <span>{c}</span>
+            <span class="relative">
+              <input type="text" bind:value={filters[c]} aria-label="Filter {c}" placeholder="filter {c}…"
+                class="h-6 w-32 rounded border border-line-1 bg-bg-1 pl-2 pr-5 text-fg-1 focus:border-accent" />
+              {#if filters[c]?.length}
+                <button type="button" onclick={() => clearFilter(c)} aria-label="Clear filter for {c}"
+                  class="absolute right-1 top-1/2 -translate-y-1/2 text-fg-3"><X class="size-3" /></button>
+              {/if}
+            </span>
+          </label>
+        {/each}
+      </div>
+    {/if}
     <div class="flex-1 overflow-auto">
-      <table class="w-full border-collapse text-[12px] font-mono">
-        <thead class="sticky top-0 bg-bg-1 z-10">
-          <tr class="border-b border-line-1 text-fg-3">
-            <th class="px-2 py-1.5 text-right w-10 font-normal">#</th>
-            {#each columns as c}
-              {@const kind = identityKind(c)}
-              {@const sys = isSystemField(c)}
-              <th
-                class={[
-                  'px-2 py-1.5 text-left font-normal whitespace-nowrap',
-                  kind === 'rid' ? 'bg-accent/5 text-fg-0' : sys ? 'bg-bg-1 text-fg-2' : kind === 'id' ? 'text-fg-1' : '',
-                ].join(' ')}
-              >
-                <span class={kind || sys ? 'font-semibold' : ''}>{c}</span>
-                {#if kind === 'rid'}
-                  <span class="ml-1 text-[9px] px-1 py-0.5 rounded bg-primary text-on-primary uppercase tracking-wider font-semibold" title="System-assigned row id — reddb's canonical address">sys</span>
-                {:else if sys}
-                  <span class="ml-1 text-[9px] px-1 py-0.5 rounded border border-line-2 text-fg-3 uppercase tracking-wider" title="Reserved system field — written by reddb">sys</span>
-                {:else if kind === 'id'}
-                  <span class="ml-1 text-[9px] px-1 py-0.5 rounded border border-line-2 text-fg-2 uppercase tracking-wider" title="User-defined identifier">pk</span>
-                {:else if c === pkCol}
-                  <span class="ml-1 text-[10px] text-fg-3 uppercase tracking-wide" title="Inferred primary key">pk</span>
-                {/if}
-              </th>
-            {/each}
-          </tr>
-          {#if filtersOpen}
-            <tr class="border-b border-line-1 bg-bg-0">
-              <th class="px-2 py-1"></th>
-              {#each columns as c}
-                <th class="px-1 py-1">
-                  <div class="relative">
-                    <input
-                      type="text"
-                      bind:value={filters[c]}
-                      placeholder="filter {c}…"
-                      class="w-full h-6 pl-2 pr-5 bg-bg-1 text-fg-1 border border-line-1 rounded text-[11px] font-mono outline-none focus:border-accent placeholder:text-fg-3"
-                    />
-                    {#if filters[c]?.length}
-                      <button
-                        type="button"
-                        onclick={() => clearFilter(c)}
-                        aria-label="Clear filter for {c}"
-                        class="absolute right-1 top-1/2 -translate-y-1/2 text-fg-3 hover:text-fg-1 cursor-pointer"
-                      >
-                        <X class="size-3" />
-                      </button>
-                    {/if}
-                  </div>
-                </th>
-              {/each}
-            </tr>
-          {/if}
-        </thead>
-        <tbody>
-          {#each rows as row, i (i)}
-            <tr class="border-b border-line-1/60 hover:bg-bg-1/40">
-              <td class="px-2 py-1 text-right text-fg-3 select-none">{i + 1}</td>
-              {#each columns as c}
-                {@const v = row[c]}
-                {@const display = cellDisplay(row, c, v)}
-                {@const isEditing = editing?.rid === rowId(row) && editing.col === c}
-                {@const kind = identityKind(c)}
-                {@const sys = isSystemField(c)}
-                <td
-                  class={[
-                    'px-2 py-1 max-w-[260px] truncate align-top',
-                    kind === 'rid'
-                      ? 'bg-accent/5 text-primary-text font-semibold'
-                      : sys
-                        ? 'bg-bg-1 text-fg-2 font-mono'
-                        : kind === 'id'
-                          ? 'text-fg-0'
-                          : '',
-                    display.staged && !isEditing ? 'bg-warn/15 text-fg-1' : '',
-                  ].join(' ')}
-                  ondblclick={() => startEdit(row, c, v)}
-                  title={display.staged ? 'Staged change — open Pending Changes to commit' : undefined}
-                >
-                  {#if isEditing}
-                    <input
-                      class="w-full bg-bg-2 text-fg-1 border border-accent/60 rounded px-1 py-0.5 outline-none"
-                      bind:value={editValue}
-                      onblur={commit}
-                      use:focusOnMount
-                      onkeydown={(e) => {
-                        if (e.key === 'Enter') commit()
-                        else if (e.key === 'Escape') cancel()
-                      }}
-                    />
-                  {:else if isNull(display.value)}
-                    <span class="text-fg-3 italic">NULL</span>
-                  {:else}
-                    <span class="block truncate">{formatCell(display.value)}</span>
-                  {/if}
-                </td>
-              {/each}
-            </tr>
-          {/each}
-          {#if !rows.length}
-            <tr><td colspan={columns.length + 1} class="p-0">
-              <RendererEmptyState surface="table" reason="filtered" art={searchEmpty} title="No rows match these filters" description="Clear the column filters to show the returned rows.">
-                {#snippet actions()}<Button onclick={clearAllFilters}>Clear filters</Button>{/snippet}
-              </RendererEmptyState>
-            </td></tr>
-          {/if}
-        </tbody>
-      </table>
+      <Table caption={collection ? `${collection} results` : 'Query results'} captionHidden
+        columns={tableColumns} {rows} rowKey={keyForRow}
+        {editable} changes={tableChanges} onchangeschange={updateChanges} pageSize={80} columnVisibility={false}>
+        {#snippet cell({ column, row, value, text })}
+          {#if column.key === numberColumnKey}<span class="text-fg-3">{rows.indexOf(row) + 1}</span>{:else if isNull(value)}<span class="italic text-fg-3">NULL</span>{:else}<span class="block max-w-[260px] truncate">{text}</span>{/if}
+        {/snippet}
+        {#snippet empty()}
+          <RendererEmptyState surface="table" reason="filtered" art={searchEmpty} title="No rows match these filters" description="Clear the column filters to show the returned rows.">
+            {#snippet actions()}<Button onclick={clearAllFilters}>Clear filters</Button>{/snippet}
+          </RendererEmptyState>
+        {/snippet}
+      </Table>
     </div>
     <div class="border-t border-line-1 px-3 py-1.5 text-[11px] font-mono text-fg-3 flex items-center gap-3">
       <span>
@@ -458,7 +398,7 @@
         {#if activeFilterCount > 0}· filtered{/if}
         {#if collection}· <span class="text-fg-2">{collection}</span>{/if}
       </span>
-      <span>· double-click a cell to stage edit</span>
+      <span>· double-click or press Enter to stage an edit</span>
       {#if pkCol}<span>· pk <code class="text-fg-2">{pkCol}</code></span>{/if}
     </div>
     {/if}

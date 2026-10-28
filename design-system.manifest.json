@@ -3,7 +3,7 @@
   "version": "v2026.10.52",
   "framework": "svelte",
   "consumer": "red-ui",
-  "kits": ["app"],
+  "kits": ["data"],
   "adapters": ["reddb"],
   "styles": ["application"],
   "dest": "vendor/ds"
