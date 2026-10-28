@@ -21,6 +21,8 @@
      * Omitted, the code renders as plain text.
      */
     grammar?: CodeTokenizer;
+    /** Show non-selectable, decorative line numbers. */
+    lineNumbers?: boolean;
     /** Accessible and visible copy labels. */
     copyLabel?: string;
     /** Label shown and announced after the code is copied. Defaults to `Copied`. */
@@ -40,6 +42,7 @@
     code,
     language,
     grammar,
+    lineNumbers = false,
     copyLabel = "Copy code",
     copiedLabel = "Copied",
     copyErrorLabel = "Copy failed. Try again.",
@@ -53,6 +56,7 @@
   const copyText = $derived(copyState === "copied" ? copiedLabel : copyState === "failed" ? copyErrorLabel : copyLabel);
   const slots = $derived(codeBlock());
   const tokens = $derived(codeTokens(code, grammar));
+  const lineNumbersText = $derived(code.split("\n").map((_, index) => index + 1).join("\n"));
 
   // A block wider than its column scrolls, and a keyboard user can only scroll
   // what they can focus (WCAG 2.1.1). The <pre> becomes a named, focusable
@@ -107,9 +111,9 @@
   <!-- svelte-ignore a11y_no_noninteractive_tabindex (an overflowing block is a named region that must be keyboard-scrollable) -->
   <pre
     bind:this={pre}
-    class={slots.pre()}
+    class={slots.pre({ class: lineNumbers ? "flex" : undefined })}
     tabindex={overflowing ? 0 : undefined}
     role={overflowing ? "region" : undefined}
     aria-label={overflowing ? name : undefined}
-    data-code-block-overflowing={overflowing ? "true" : undefined}><code class={slots.code()}>{#if grammar}{#each tokens as token, index (index)}<span data-code-token={token.kind} class={CODE_TOKEN_CLASSES[token.kind]}>{token.value}</span>{/each}{:else}{code}{/if}</code></pre>
+    data-code-block-overflowing={overflowing ? "true" : undefined}>{#if lineNumbers}<span aria-hidden="true" class={slots.gutter()}>{lineNumbersText}</span>{/if}<code class={slots.code()}>{#if grammar}{#each tokens as token, index (index)}<span data-code-token={token.kind} class={CODE_TOKEN_CLASSES[token.kind]}>{token.value}</span>{/each}{:else}{code}{/if}</code></pre>
 </div>

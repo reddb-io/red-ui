@@ -16,6 +16,7 @@ export const codeBlock = tv({
       "m-0 overflow-x-auto rounded-t-none rounded-b-lg border-0 bg-transparent p-[var(--reddb-spatial-inset-md)]",
       "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
     ].join(" "),
+    gutter: "select-none pr-[var(--reddb-spatial-gap-md)] text-right font-mono text-sm leading-relaxed text-ink-muted",
     code: "block whitespace-pre font-mono text-sm leading-relaxed text-foreground",
   },
 });

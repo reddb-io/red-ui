@@ -25,6 +25,7 @@ export { default as Calendar } from "./Calendar.svelte";
 export { default as Card } from "./Card.svelte";
 export { default as Carousel } from "./Carousel.svelte";
 export { default as Checkbox } from "./Checkbox.svelte";
+export { default as MathExpression } from "./MathExpression.svelte";
 export { default as CodeBlock } from "./CodeBlock.svelte";
 export { default as Combobox } from "./Combobox.svelte";
 export { default as Container } from "./Container.svelte";
@@ -231,6 +232,7 @@ export const BASE_COMPONENTS = [
   "ListContainer",
   "LoadingIndicator",
   "Logo",
+  "MathExpression",
   "MediaObject",
   "Meter",
   "Navbar",
@@ -342,6 +344,7 @@ export const BASE_COMPONENT_PURPOSES = {
   Carousel: "Data display",
   Checkbox: "Data input",
   CodeBlock: "Mockup",
+  MathExpression: "Data display",
   Combobox: "Data input",
   Container: "Layout",
   ContentMask: "Layout",

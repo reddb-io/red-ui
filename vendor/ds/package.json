@@ -5,6 +5,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./adapters/reddb": "./adapters/reddb/src/index.ts",
     "./app": {
       "svelte": "./kits/app/src/index.ts",
       "default": "./kits/app/src/index.ts"
@@ -54,9 +55,6 @@
     "./styles/application.css": "./styles/application.css",
     "./styles/base.css": "./styles/base.css"
   },
-  "sideEffects": [
-    "./styles/**/*.css"
-  ],
   "dependencies": {
     "@internationalized/date": "^3.12.4",
     "bits-ui": "^2.19.5",
