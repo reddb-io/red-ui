@@ -11,8 +11,15 @@
     "./adapters/reddb/cdc-stream-client": "./adapters/reddb/src/cdc-stream-client.ts",
     "./adapters/reddb/client": "./adapters/reddb/src/client.ts",
     "./adapters/reddb/cluster-status": "./adapters/reddb/src/cluster-status.ts",
+    "./adapters/reddb/connection-provider": "./adapters/reddb/src/connection-provider.ts",
     "./adapters/reddb/dev-console": "./adapters/reddb/src/dev-console.ts",
+    "./adapters/reddb/injected-client-provider": "./adapters/reddb/src/injected-client-provider.ts",
+    "./adapters/reddb/local-url-provider": "./adapters/reddb/src/local-url-provider.ts",
+    "./adapters/reddb/permission-gate": "./adapters/reddb/src/permission-gate.ts",
     "./adapters/reddb/server-capabilities": "./adapters/reddb/src/server-capabilities.ts",
+    "./adapters/reddb/transports": "./adapters/reddb/src/transports.ts",
+    "./adapters/reddb/types": "./adapters/reddb/src/types.ts",
+    "./adapters/reddb/uri": "./adapters/reddb/src/uri.ts",
     "./app": {
       "svelte": "./kits/app/src/index.ts",
       "default": "./kits/app/src/index.ts"
