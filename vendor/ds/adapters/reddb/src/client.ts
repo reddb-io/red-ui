@@ -1,0 +1,1022 @@
+// Real HTTP client for a running reddb instance.
+// Endpoints discovered from reddb/crates/reddb-server/src/server/routing.rs.
+
+import {
+  capabilitiesFromSignal,
+  EMPTY_SERVER_CAPABILITIES,
+  type RawCapabilities,
+  type ServerCapabilities,
+} from "./server-capabilities";
+import type {
+  PermissionCheck,
+  PermissionDecision,
+  PermissionResource,
+} from "./permission-contract";
+import type { ClusterStatus, ReplicationStatus } from "./cluster-status";
+import type { MetricDescriptor, PromResponse } from "./analytics";
+import type { AskResponse, AskOptions } from "./ask";
+import {
+  devConsole,
+  sanitizePayload,
+  type DevConsoleStore,
+} from "./dev-console";
+
+export interface QueryRow {
+  values: Record<string, unknown>;
+  edges?: Record<string, unknown>;
+  nodes?: Record<string, unknown>;
+  paths?: unknown[];
+  vector_results?: Array<{
+    id?: number | string;
+    collection?: string;
+    distance?: number;
+    vector?: number[];
+    metadata?: Record<string, unknown>;
+    linked_node?: string;
+    linked_row?: [string, number];
+  }>;
+}
+
+export interface QueryResult {
+  ok: boolean;
+  query: string;
+  capability?: string;
+  engine?: string;
+  mode?: string;
+  record_count: number;
+  result: { columns: string[]; records: QueryRow[] };
+  error?: string;
+  /** True when this result was assembled from the NDJSON streaming endpoint
+   *  (`POST /query/stream`) rather than the buffered `POST /query`. */
+  streamed?: boolean;
+  /** True when streaming stopped at `maxRows` and more rows remained on the
+   *  server (the cursor was cancelled). Surfaced so the UI never silently
+   *  drops rows. */
+  truncated?: boolean;
+}
+
+/** Result of collecting a read-only SELECT over the NDJSON streaming endpoint. */
+export interface StreamedQueryResult {
+  columns: string[];
+  schemaFingerprint?: string;
+  rows: Array<Record<string, unknown>>;
+  rowCount: number;
+  /** Hit the `maxRows` cap with more rows still on the server. */
+  truncated: boolean;
+  /** Opaque resume token from the `cursor` frame, if one was emitted. */
+  cursor?: string;
+}
+
+export interface CollectionMetadata {
+  ok?: boolean;
+  name: string;
+  kind?: string;
+  capability?: string;
+  capabilities?: string[];
+  schema?: Record<string, unknown>;
+  indexes?: Array<Record<string, unknown>>;
+  retention?: Record<string, unknown>;
+  tenant?: string;
+  actions?: Record<string, boolean | { allowed: boolean; reason?: string }>;
+}
+
+export interface Stats {
+  active_connections: number;
+  idle_connections: number;
+  started_at_unix_ms: number;
+  store: {
+    collection_count: number;
+    cross_ref_count: number;
+    total_entities: number;
+    total_memory_bytes: number;
+  };
+  system: {
+    arch: string;
+    cpu_cores: number;
+    hostname: string;
+    os: string;
+    pid: number;
+    total_memory_bytes: number;
+    available_memory_bytes: number;
+  };
+  kv?: {
+    gets: number;
+    puts: number;
+    deletes: number;
+    cas_success: number;
+    cas_conflict: number;
+  };
+  /**
+   * Set by the server when the store is open read-only — e.g. an embedded file
+   * already held by an active writer (lock detection is owned by reddb). Absent
+   * when the server reports no read-only signal, in which case the UI shows no
+   * badge and behaves normally (#23). `read_only_reason` is an optional
+   * human-facing explanation for the badge tooltip.
+   */
+  read_only?: boolean;
+  read_only_reason?: string;
+}
+
+export interface Whoami {
+  ok: boolean;
+  authenticated: boolean;
+  username: string;
+  role: string;
+  note?: string;
+}
+
+export interface RedClientOptions {
+  headers?: HeadersInit;
+  fetch?: typeof fetch;
+  /** Per-workspace instrumentation. Defaults to the legacy public console. */
+  console?: DevConsoleStore;
+  /** Abort requests owned by this client without affecting the host client. */
+  signal?: AbortSignal;
+}
+
+export interface AuthUser {
+  username: string;
+  role?: string;
+  created_at?: number;
+  last_active?: number;
+  mfa?: boolean;
+}
+
+export interface AuthTenant {
+  id?: string;
+  name?: string;
+  slug?: string;
+  role?: string;
+  grants?: string[];
+  created_at?: number;
+}
+
+export interface AuthPolicy {
+  id?: string;
+  name?: string;
+  tenant?: string;
+  principal?: string;
+  resource?: string;
+  action?: string;
+  effect?: "allow" | "deny" | string;
+  description?: string;
+  created_at?: number;
+}
+
+interface AuthCanResponse {
+  ok?: boolean;
+  results?: Array<Partial<PermissionDecision>>;
+  error?: string;
+}
+
+export interface ChangeEvent {
+  lsn: number;
+  timestamp: number;
+  collection: string;
+  kind: string;
+  operation: "insert" | "update" | "delete" | "refresh";
+  rid?: number;
+}
+
+export interface VcsEnvelope<T> {
+  ok: boolean;
+  result: T;
+  error?: string;
+}
+
+export interface CollectionVcsState {
+  collection: string;
+  versioned: boolean;
+}
+
+export interface VcsAuthor {
+  name: string;
+  email: string;
+}
+
+export interface VcsCommit {
+  hash: string;
+  root_xid?: number;
+  parents: string[];
+  height?: number;
+  author?: VcsAuthor;
+  committer?: VcsAuthor;
+  message: string;
+  timestamp_ms: number;
+  signature?: string;
+}
+
+export interface VcsDiffEntry {
+  collection: string;
+  entity_id: string;
+  change: "added" | "removed" | "modified" | string;
+  before?: unknown;
+  after?: unknown;
+}
+
+export interface VcsDiff {
+  from: string;
+  to: string;
+  added: number;
+  removed: number;
+  modified: number;
+  entries: VcsDiffEntry[];
+}
+
+function isUnsupportedCollectionMetadataRoute(e: unknown): boolean {
+  const message = e instanceof Error ? e.message : String(e);
+  return message.includes("route not found: GET /collections/");
+}
+
+/** Missing or unimplemented discovery routes may use compatibility probes. */
+function isUnsupportedRoute(e: unknown): boolean {
+  const message = e instanceof Error ? e.message : String(e);
+  return / → (404|405|501)\b/.test(message);
+}
+
+function unsupportedCollectionMetadataError(baseUrl: string): Error {
+  return new Error(
+    `GET /collections/:name unsupported by this reddb server (${baseUrl})`
+  );
+}
+
+function isPermissionResource(value: unknown): value is PermissionResource {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as Partial<PermissionResource>;
+  return (
+    typeof candidate.kind === "string" &&
+    candidate.kind.length > 0 &&
+    typeof candidate.name === "string" &&
+    candidate.name.length > 0 &&
+    (candidate.tenant === undefined || typeof candidate.tenant === "string")
+  );
+}
+
+/** One NDJSON frame from `POST /query/stream`. Discriminated by its single key. */
+type NdjsonFrame =
+  | {
+      descriptor: {
+        columns: Array<string | { name: string }>;
+        schema_fingerprint?: string;
+      };
+    }
+  | { cursor: { token: string; snapshot_lsn?: number; resumable?: boolean } }
+  | { row: Record<string, unknown> }
+  | { end: { row_count?: number } }
+  | { cancelled: Record<string, unknown> };
+
+/**
+ * Parse a chunked `application/x-ndjson` body into one frame per line. Buffers
+ * across chunk boundaries (a JSON object split over two TCP reads is emitted
+ * exactly once, in order) and flushes a trailing newline-less line at EOF.
+ */
+async function* parseNdjsonFrames(
+  body: ReadableStream<Uint8Array>
+): AsyncGenerator<NdjsonFrame> {
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buf = "";
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      let nl: number;
+      while ((nl = buf.indexOf("\n")) !== -1) {
+        const line = buf.slice(0, nl).trim();
+        buf = buf.slice(nl + 1);
+        if (line) yield JSON.parse(line) as NdjsonFrame;
+      }
+    }
+    const tail = buf.trim();
+    if (tail) yield JSON.parse(tail) as NdjsonFrame;
+  } finally {
+    reader.releaseLock();
+  }
+}
+
+const SELECT_RE = /^\s*select\b/i;
+
+/**
+ * Pull a row count out of a parsed response for the developer console (#128).
+ * Recognises the `/query` envelope (`record_count`, else the length of
+ * `result.records`) and a bare array; returns `undefined` when the shape
+ * carries no notion of rows. Purely structural — never throws.
+ */
+export function extractRowCount(data: unknown): number | undefined {
+  if (Array.isArray(data)) return data.length;
+  if (data && typeof data === "object") {
+    const d = data as {
+      record_count?: unknown;
+      result?: { records?: unknown };
+    };
+    if (typeof d.record_count === "number") return d.record_count;
+    if (Array.isArray(d.result?.records)) return d.result.records.length;
+  }
+  return undefined;
+}
+
+/**
+ * Extract a human-readable message from any thrown value. Tauri's `invoke` and
+ * the HTTP plugin reject with plain strings or bare objects (not `Error`), so
+ * `(e as Error).message` is often `undefined` — this never returns that.
+ */
+export function errorText(e: unknown): string {
+  if (e instanceof Error) return e.message || String(e);
+  if (typeof e === "string") return e;
+  if (e && typeof e === "object") {
+    const m = (e as { message?: unknown }).message;
+    if (typeof m === "string" && m) return m;
+    try {
+      const s = JSON.stringify(e);
+      if (s && s !== "{}") return s;
+    } catch {
+      /* circular — fall through */
+    }
+  }
+  return String(e);
+}
+
+/**
+ * Run a query, preferring the bounded-memory NDJSON stream for a plain SELECT
+ * and falling back to the buffered `POST /query` for everything else — and for
+ * any streaming failure (network, a non-SELECT 400, or an older server with no
+ * `/query/stream` route returning 404). The fallback makes this strictly safe:
+ * behaviour is identical to {@link RedClient.query} unless the server supports
+ * streaming AND the statement is a SELECT, in which case the server streams
+ * rows instead of buffering the whole result set.
+ */
+export async function runQueryPreferStream(
+  client: Pick<RedClient, "query" | "queryStreamCollect">,
+  sql: string,
+  opts: { maxRows?: number; signal?: AbortSignal } = {}
+): Promise<QueryResult> {
+  const queryOpts = opts.signal ? { signal: opts.signal } : undefined;
+  if (!SELECT_RE.test(sql))
+    return queryOpts ? client.query(sql, queryOpts) : client.query(sql);
+  try {
+    const s = await client.queryStreamCollect(sql, opts);
+    return {
+      ok: true,
+      query: sql,
+      record_count: s.rowCount,
+      result: {
+        columns: s.columns,
+        records: s.rows.map((row) =>
+          row.values &&
+          typeof row.values === "object" &&
+          ("nodes" in row ||
+            "edges" in row ||
+            "paths" in row ||
+            "vector_results" in row)
+            ? (row as unknown as QueryRow)
+            : { values: row }
+        ),
+      },
+      streamed: true,
+      truncated: s.truncated,
+    };
+  } catch (e) {
+    if (
+      opts.signal?.aborted ||
+      (e instanceof Error && e.name === "AbortError")
+    ) {
+      throw e;
+    }
+    return queryOpts ? client.query(sql, queryOpts) : client.query(sql);
+  }
+}
+
+function headerRecord(
+  headers?: HeadersInit
+): Record<string, string> | undefined {
+  if (!headers) return undefined;
+  return headers instanceof Headers || Array.isArray(headers)
+    ? Object.fromEntries(new Headers(headers))
+    : headers;
+}
+
+export class RedClient {
+  readonly baseUrl: string;
+  private readonly headers: HeadersInit | undefined;
+  private readonly fetcher: typeof fetch;
+  private readonly transport: typeof fetch;
+  private readonly console: DevConsoleStore;
+  private readonly unsupportedCollectionMetadata = new Set<string>();
+  private readonly collectionMetadataSupportProbe = new Map<
+    string,
+    Promise<boolean>
+  >();
+
+  constructor(baseUrl: string, opts: RedClientOptions = {}) {
+    this.baseUrl = baseUrl.replace(/\/$/, "");
+    this.headers = opts.headers;
+    this.transport = opts.fetch ?? globalThis.fetch.bind(globalThis);
+    this.console = opts.console ?? devConsole;
+    this.fetcher = opts.signal
+      ? (input, init) =>
+          this.transport(input, {
+            ...init,
+            signal: init?.signal
+              ? AbortSignal.any([opts.signal!, init.signal])
+              : opts.signal,
+          })
+      : this.transport;
+  }
+
+  /** Derive an HTTP client with the same auth/transport and its own lifecycle. */
+  scoped(options: Pick<RedClientOptions, "console" | "signal">): RedClient {
+    return new RedClient(this.baseUrl, {
+      headers: this.headers,
+      fetch: this.transport,
+      ...options,
+    });
+  }
+
+  private async json<T>(path: string, init?: RequestInit): Promise<T> {
+    const url = `${this.baseUrl}${path}`;
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    Object.assign(headers, headerRecord(this.headers));
+    Object.assign(headers, headerRecord(init?.headers));
+
+    // Developer console instrumentation (#128). Every HTTP call the client
+    // makes is timed and logged from this single seam, so every Surface is
+    // covered without touching each caller. The request body is sanitized
+    // before it lands in an entry — a copy action can never leak a secret.
+    const verb = init?.method ?? "GET";
+    const startedAt = Date.now();
+    const start = performance.now();
+    const payload = sanitizePayload(init?.body);
+    const elapsed = () => Math.round(performance.now() - start);
+
+    let res: Response;
+    try {
+      res = await this.fetcher(url, { ...init, headers });
+    } catch (e) {
+      this.console.record({
+        kind: "http",
+        verb,
+        target: path,
+        startedAt,
+        durationMs: elapsed(),
+        ok: false,
+        payload,
+        error: errorText(e),
+      });
+      throw e;
+    }
+
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      const message =
+        res.status === 401
+          ? "Database credentials required (HTTP 401). Sign in with a database username and password."
+          : `${verb} ${path} → ${res.status} ${body.slice(0, 200)}`;
+      this.console.record({
+        kind: "http",
+        verb,
+        target: path,
+        startedAt,
+        durationMs: elapsed(),
+        ok: false,
+        status: res.status,
+        payload,
+        error: message,
+      });
+      throw new Error(message);
+    }
+
+    const data = (await res.json()) as T;
+    const rowCount = extractRowCount(data);
+    this.console.record({
+      // A response carrying a row count is a query round-trip; everything else
+      // is a plain HTTP call. This is how `/query` entries mark themselves.
+      kind: rowCount === undefined ? "http" : "query",
+      verb,
+      target: path,
+      startedAt,
+      durationMs: elapsed(),
+      ok: true,
+      status: res.status,
+      ...(rowCount === undefined ? {} : { rowCount }),
+      payload,
+    });
+    return data;
+  }
+
+  /** Exchange credentials for a session token. Neither value is persisted. */
+  async login(username: string, password: string): Promise<string> {
+    const endpoint = new URL(this.baseUrl);
+    if (
+      endpoint.username ||
+      endpoint.password ||
+      endpoint.search ||
+      endpoint.hash ||
+      (endpoint.protocol !== "https:" &&
+        !(
+          endpoint.protocol === "http:" &&
+          ["localhost", "127.0.0.1", "[::1]"].includes(endpoint.hostname)
+        ))
+    ) {
+      throw new Error("Use HTTPS to sign in to a remote database.");
+    }
+    // Bypass query instrumentation: credentials and the session response must
+    // never enter the developer console, including an authentication failure.
+    const response = await this.fetcher(`${this.baseUrl}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "omit",
+      redirect: "error",
+      body: JSON.stringify({ username, password }),
+    });
+    if (!response.ok)
+      throw new Error(
+        "Database sign-in failed. Check your credentials and try again."
+      );
+    const session = await response.json();
+    if (
+      session.ok !== true ||
+      typeof session.token !== "string" ||
+      !session.token
+    ) {
+      throw new Error("The database did not return a session token.");
+    }
+    return session.token;
+  }
+
+  async stats(): Promise<Stats> {
+    return this.json<Stats>("/stats");
+  }
+
+  async clusterStatus(): Promise<ClusterStatus> {
+    return this.json<ClusterStatus>("/cluster/status");
+  }
+
+  /**
+   * List registered metric descriptors from the typed `red.metrics`
+   * projection (reddb #747). One row per `CREATE METRIC`, carrying the
+   * `kind` (counter|gauge|histogram|ratio|derived) the UI uses to auto-select
+   * a chart. Returns `[]` when the server has no analytics surface.
+   */
+  async metricsCatalog(): Promise<MetricDescriptor[]> {
+    const r = await this.query(
+      "SELECT path, kind, role, unit, supports_prometheus_query, created_at_ms FROM red.metrics"
+    );
+    return r.result.records.map((rec) => {
+      const v = rec.values;
+      return {
+        path: String(v.path ?? ""),
+        kind: v.kind as MetricDescriptor["kind"],
+        role: String(v.role ?? "metric"),
+        unit: (v.unit as string | null) ?? null,
+        supports_prometheus_query: v.supports_prometheus_query !== false,
+        created_at_ms:
+          typeof v.created_at_ms === "number" ? v.created_at_ms : undefined,
+      } satisfies MetricDescriptor;
+    });
+  }
+
+  /**
+   * Prometheus instant query (`GET /api/v1/query`). Returns the raw
+   * Prometheus-shaped envelope; callers normalise with `parsePromVector`.
+   */
+  async promQuery(query: string, time?: number): Promise<PromResponse> {
+    const qs = new URLSearchParams({ query });
+    if (time !== undefined) qs.set("time", String(time));
+    return this.json<PromResponse>(`/api/v1/query?${qs}`);
+  }
+
+  /**
+   * Prometheus range query (`GET /api/v1/query_range`). `start`/`end` are unix
+   * seconds, `step` is the resolution in seconds. Normalise with
+   * `parsePromMatrix`.
+   */
+  async promQueryRange(
+    query: string,
+    start: number,
+    end: number,
+    step: number
+  ): Promise<PromResponse> {
+    const qs = new URLSearchParams({
+      query,
+      start: String(start),
+      end: String(end),
+      step: String(step),
+    });
+    return this.json<PromResponse>(`/api/v1/query_range?${qs}`);
+  }
+
+  async ping(): Promise<
+    { ok: true; rtt_ms: number } | { ok: false; error: string }
+  > {
+    const start = performance.now();
+    try {
+      await this.json("/stats");
+      return { ok: true, rtt_ms: Math.round(performance.now() - start) };
+    } catch (e) {
+      return { ok: false, error: errorText(e) };
+    }
+  }
+
+  /**
+   * Resolve the server's capability map (#22). Prefers the stable
+   * `/capabilities` signal; when that route is absent or returns structured
+   * discovery without UI feature flags, infers from lightweight, side-effect-free
+   * GET probes. Compatibility follows working APIs, not the server version.
+   * Other failures (network, authentication, unexpected HTTP status) fail safe
+   * to the empty map, so the UI hides controls
+   * rather than showing ones the server can't honour.
+   */
+  async capabilities(): Promise<ServerCapabilities> {
+    try {
+      const raw = await this.json<RawCapabilities>("/capabilities");
+      if (
+        !raw ||
+        typeof raw !== "object" ||
+        Array.isArray(raw) ||
+        raw.ok === false
+      )
+        return { ...EMPTY_SERVER_CAPABILITIES };
+      // A flat declaration is authoritative, including explicit false/empty
+      // flags. Structured discovery reports build/deployment state instead;
+      // prove optional UI routes with read-only probes before enabling them.
+      if ("features" in raw || "capabilities" in raw)
+        return capabilitiesFromSignal(raw);
+    } catch (e) {
+      // Only an absent/unimplemented route falls through; anything else (a
+      // flaky network, an auth wall, a 5xx) hides everything.
+      if (!isUnsupportedRoute(e)) return { ...EMPTY_SERVER_CAPABILITIES };
+    }
+    const [vcs, clusterStatus] = await Promise.all([
+      this.probeGet("/repo/commits?limit=1"),
+      this.probeGet("/cluster/status"),
+    ]);
+    return { ...EMPTY_SERVER_CAPABILITIES, vcs, clusterStatus };
+  }
+
+  /** True iff a GET to `path` succeeds; any failure (404/auth/5xx/network) is
+   *  treated as unsupported — the fail-safe-to-hide rule of #22. */
+  private async probeGet(path: string): Promise<boolean> {
+    try {
+      await this.json(path);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async collections(): Promise<string[]> {
+    const r = await this.json<{ collections: string[] }>("/collections");
+    return r.collections;
+  }
+
+  async collection(name: string): Promise<CollectionMetadata> {
+    if (this.unsupportedCollectionMetadata.has(this.baseUrl)) {
+      throw unsupportedCollectionMetadataError(this.baseUrl);
+    }
+
+    const path = `/collections/${encodeURIComponent(name)}`;
+    const inFlightProbe = this.collectionMetadataSupportProbe.get(this.baseUrl);
+    if (inFlightProbe) {
+      const supported = await inFlightProbe;
+      if (!supported) throw unsupportedCollectionMetadataError(this.baseUrl);
+      return this.json<CollectionMetadata>(path);
+    }
+
+    let resolveProbe: (supported: boolean) => void;
+    const probe = new Promise<boolean>((resolve) => {
+      resolveProbe = resolve;
+    });
+    this.collectionMetadataSupportProbe.set(this.baseUrl, probe);
+
+    try {
+      const metadata = await this.json<CollectionMetadata>(path);
+      resolveProbe!(true);
+      return metadata;
+    } catch (e) {
+      if (isUnsupportedCollectionMetadataRoute(e)) {
+        this.unsupportedCollectionMetadata.add(this.baseUrl);
+        resolveProbe!(false);
+      } else {
+        resolveProbe!(true);
+      }
+      throw e;
+    } finally {
+      this.collectionMetadataSupportProbe.delete(this.baseUrl);
+    }
+  }
+
+  async createCollection(name: string): Promise<void> {
+    await this.json("/collections", {
+      method: "POST",
+      body: JSON.stringify({ name }),
+    });
+  }
+
+  async insertDocument(
+    collection: string,
+    doc: Record<string, unknown>
+  ): Promise<{ id: number }> {
+    return this.json<{ id: number }>(
+      `/collections/${encodeURIComponent(collection)}/documents`,
+      {
+        method: "POST",
+        body: JSON.stringify(doc),
+      }
+    );
+  }
+
+  async query(
+    query: string,
+    opts: { signal?: AbortSignal } = {}
+  ): Promise<QueryResult> {
+    return this.json<QueryResult>("/query", {
+      method: "POST",
+      body: JSON.stringify({ query }),
+      signal: opts.signal,
+    });
+  }
+
+  /**
+   * Stream a read-only SELECT through `POST /query/stream` (NDJSON, chunked).
+   * The server emits rows through a bounded-memory channel — it never buffers
+   * the whole result — and we collect up to `maxRows` (default 10 000) before
+   * cancelling the server cursor. The NDJSON frame order is fixed
+   * (`descriptor` → `cursor` → `row`* → `end`|`cancelled`), verified against
+   * ../reddb/docs/api/query-streaming.md.
+   *
+   * Throws for a non-SELECT (server `400 stream_unsupported_statement`) and for
+   * an absent route on an older server (`404`) — callers fall back to
+   * {@link query}. Browser-reachable: this is `fetch` + `ReadableStream`, not
+   * `EventSource` (the endpoint is POST-based).
+   */
+  async queryStreamCollect(
+    query: string,
+    opts: { maxRows?: number; signal?: AbortSignal } = {}
+  ): Promise<StreamedQueryResult> {
+    const maxRows = opts.maxRows ?? 10_000;
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      Accept: "application/x-ndjson",
+    };
+    Object.assign(headers, headerRecord(this.headers));
+
+    // Developer console instrumentation (#128). The streaming endpoint skips
+    // `json()`, so it logs its own query round-trip here (verb `POST`, target
+    // `/query/stream`) with the collected row count.
+    const startedAt = Date.now();
+    const start = performance.now();
+    const body = JSON.stringify({ query });
+    const payload = sanitizePayload(body);
+    const elapsed = () => Math.round(performance.now() - start);
+
+    let res: Response;
+    try {
+      res = await this.fetcher(`${this.baseUrl}/query/stream`, {
+        method: "POST",
+        headers,
+        body,
+        signal: opts.signal,
+      });
+    } catch (e) {
+      this.console.record({
+        kind: "query",
+        verb: "POST",
+        target: "/query/stream",
+        startedAt,
+        durationMs: elapsed(),
+        ok: false,
+        payload,
+        error: errorText(e),
+      });
+      throw e;
+    }
+    if (!res.ok || !res.body) {
+      const errBody = res.body ? await res.text().catch(() => "") : "";
+      const message = `POST /query/stream → ${res.status} ${errBody.slice(0, 200)}`;
+      this.console.record({
+        kind: "query",
+        verb: "POST",
+        target: "/query/stream",
+        startedAt,
+        durationMs: elapsed(),
+        ok: false,
+        status: res.status,
+        payload,
+        error: message,
+      });
+      throw new Error(message);
+    }
+
+    const out: StreamedQueryResult = {
+      columns: [],
+      rows: [],
+      rowCount: 0,
+      truncated: false,
+    };
+
+    for await (const frame of parseNdjsonFrames(res.body)) {
+      if ("descriptor" in frame) {
+        out.columns = (frame.descriptor.columns ?? []).map((column) =>
+          typeof column === "string" ? column : column.name
+        );
+        out.schemaFingerprint = frame.descriptor.schema_fingerprint;
+      } else if ("cursor" in frame) {
+        out.cursor = frame.cursor.token;
+      } else if ("row" in frame) {
+        if (out.rows.length >= maxRows) {
+          out.truncated = true;
+          break;
+        }
+        out.rows.push(frame.row);
+        out.rowCount = out.rows.length;
+      } else if ("end" in frame || "cancelled" in frame) {
+        break;
+      }
+    }
+
+    this.console.record({
+      kind: "query",
+      verb: "POST",
+      target: "/query/stream",
+      startedAt,
+      durationMs: elapsed(),
+      ok: true,
+      status: res.status,
+      rowCount: out.rowCount,
+      payload,
+    });
+
+    // We stopped early with more rows on the server — release the pinned cursor.
+    if (out.truncated && out.cursor) {
+      await this.cancelQueryStream(out.cursor).catch(() => {
+        // best-effort: the cursor TTL reclaims it anyway.
+      });
+    }
+    return out;
+  }
+
+  /** Cancel a streaming-query cursor server-side (`POST /query/stream/cancel`). */
+  async cancelQueryStream(cursor: string): Promise<void> {
+    await this.json("/query/stream/cancel", {
+      method: "POST",
+      body: JSON.stringify({ cursor }),
+    }).catch(() => undefined);
+  }
+
+  async collectionVcs(name: string): Promise<CollectionVcsState> {
+    const r = await this.json<VcsEnvelope<CollectionVcsState>>(
+      `/collections/${encodeURIComponent(name)}/vcs`
+    );
+    return r.result;
+  }
+
+  async setCollectionVcs(
+    name: string,
+    versioned: boolean
+  ): Promise<CollectionVcsState> {
+    const r = await this.json<VcsEnvelope<CollectionVcsState>>(
+      `/collections/${encodeURIComponent(name)}/vcs`,
+      {
+        method: "PUT",
+        body: JSON.stringify({ versioned }),
+      }
+    );
+    return r.result;
+  }
+
+  async commits(
+    opts: {
+      from?: string;
+      to?: string;
+      branch?: string;
+      limit?: number;
+      skip?: number;
+      noMerges?: boolean;
+    } = {}
+  ): Promise<VcsCommit[]> {
+    const qs = new URLSearchParams();
+    if (opts.from) qs.set("from", opts.from);
+    if (opts.to) qs.set("to", opts.to);
+    if (opts.branch) qs.set("branch", opts.branch);
+    if (opts.limit !== undefined) qs.set("limit", String(opts.limit));
+    if (opts.skip !== undefined) qs.set("skip", String(opts.skip));
+    if (opts.noMerges !== undefined) qs.set("no_merges", String(opts.noMerges));
+    const suffix = qs.toString() ? `?${qs}` : "";
+    const r = await this.json<VcsEnvelope<VcsCommit[]>>(
+      `/repo/commits${suffix}`
+    );
+    return r.result;
+  }
+
+  async commitDiff(
+    from: string,
+    to: string,
+    opts: { collection?: string; summary?: boolean } = {}
+  ): Promise<VcsDiff> {
+    const qs = new URLSearchParams();
+    if (opts.collection) qs.set("collection", opts.collection);
+    if (opts.summary !== undefined) qs.set("summary", String(opts.summary));
+    const suffix = qs.toString() ? `?${qs}` : "";
+    const r = await this.json<VcsEnvelope<VcsDiff>>(
+      `/repo/commits/${encodeURIComponent(from)}/diff/${encodeURIComponent(to)}${suffix}`
+    );
+    return r.result;
+  }
+
+  async replication(): Promise<ReplicationStatus> {
+    return this.json<ReplicationStatus>("/replication/status").catch(() => ({
+      ok: false,
+      role: "standalone" as const,
+    }));
+  }
+
+  async whoami(): Promise<Whoami> {
+    return this.json<Whoami>("/auth/whoami");
+  }
+
+  /**
+   * Grounded natural-language query (`POST /ai/ask`, ADR 0013). Returns the
+   * synthesised answer plus the `sources_flat` it was grounded on and the
+   * `[^N]` citations linking claims to sources. Requires the server's AI
+   * provider to be configured; an unconfigured server answers with an error
+   * status (surfaced by `json()`).
+   */
+  async ask(question: string, opts: AskOptions = {}): Promise<AskResponse> {
+    return this.json<AskResponse>("/ai/ask", {
+      method: "POST",
+      body: JSON.stringify({ question, ...opts }),
+    });
+  }
+
+  async users(): Promise<AuthUser[]> {
+    const r = await this.json<{ ok: boolean; users: AuthUser[] }>(
+      "/auth/users"
+    );
+    return r.users;
+  }
+
+  async tenants(): Promise<AuthTenant[]> {
+    const r = await this.json<{ ok: boolean; tenants: AuthTenant[] }>(
+      "/auth/tenants"
+    );
+    return r.tenants ?? [];
+  }
+
+  async policies(): Promise<AuthPolicy[]> {
+    const r = await this.json<{ ok: boolean; policies: AuthPolicy[] }>(
+      "/auth/policies"
+    );
+    return r.policies ?? [];
+  }
+
+  async authCan(checks: PermissionCheck[]): Promise<PermissionDecision[]> {
+    const r = await this.json<AuthCanResponse>("/auth/can", {
+      method: "POST",
+      body: JSON.stringify({ checks }),
+    });
+    if (!Array.isArray(r.results)) {
+      throw new Error(r.error ?? "POST /auth/can returned no results");
+    }
+    return checks.map((check, index) => {
+      const result = r.results?.[index] ?? {};
+      const resource = isPermissionResource(result.resource)
+        ? result.resource
+        : check.resource;
+      return {
+        action:
+          typeof result.action === "string" ? result.action : check.action,
+        resource,
+        current_tenant:
+          typeof result.current_tenant === "string"
+            ? result.current_tenant
+            : check.current_tenant,
+        allowed: result.allowed === true,
+        reason: typeof result.reason === "string" ? result.reason : undefined,
+      };
+    });
+  }
+
+  async changes(
+    sinceLsn?: number,
+    opts: { collection?: string; limit?: number } = {}
+  ): Promise<ChangeEvent[]> {
+    const qs = new URLSearchParams();
+    if (sinceLsn !== undefined) qs.set("since_lsn", String(sinceLsn));
+    if (opts.limit !== undefined) qs.set("limit", String(opts.limit));
+    const suffix = qs.toString() ? `?${qs}` : "";
+    const r = await this.json<{ events: ChangeEvent[] }>("/changes" + suffix);
+    const events = r.events ?? [];
+    return opts.collection
+      ? events.filter((e) => e.collection === opts.collection)
+      : events;
+  }
+
+  // Convenience: turn a /query response into plain row objects.
+  async rows(query: string): Promise<Array<Record<string, unknown>>> {
+    const r = await this.query(query);
+    return r.result.records.map((rec) => rec.values);
+  }
+}

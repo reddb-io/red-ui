@@ -1,1 +1,13 @@
-{"name":"reddb","audience":"*"}
+{
+  "name": "reddb",
+  "audience": "*",
+  "exports": {
+    "/client": "./src/client.ts",
+    "/dev-console": "./src/dev-console.ts",
+    "/cluster-status": "./src/cluster-status.ts",
+    "/analytics": "./src/analytics.ts",
+    "/ask": "./src/ask.ts",
+    "/server-capabilities": "./src/server-capabilities.ts",
+    "/cdc-stream-client": "./src/cdc-stream-client.ts"
+  }
+}

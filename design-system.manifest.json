@@ -1,6 +1,6 @@
 {
   "source": "reddb-io/design-system",
-  "version": "v2026.10.49",
+  "version": "v2026.10.50",
   "framework": "svelte",
   "consumer": "red-ui",
   "kits": ["app"],
