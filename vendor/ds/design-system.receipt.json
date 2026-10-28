@@ -1,6 +1,6 @@
 {
-  "version": "v2026.10.46",
-  "revision": "38a51dfc4bb8e73ffc186d5f286ac9aaeae90ee3",
+  "version": "v2026.10.47",
+  "revision": "2b9e7857d2e77d5011c016c8ef1b284568d5811e",
   "distribution": {
     "format": "source",
     "minify": false,
@@ -174,6 +174,7 @@
     "kits/app/src/core/sidebar-rail-sizing.ts": "3a814410db70914447919376800dfbf1aada27298121dceb7ea92d44c5460ef1",
     "kits/app/src/core/sidebar-rail.ts": "1bbe699cffbee64f06020c759d0af1bf49f5edb9ff2190bbd843e3423eea23b9",
     "kits/app/src/core/workspace-documents.ts": "4ca55020f544e802979e59b5a53c3363aef74b578c9dedc49dd178b0c51505b9",
+    "kits/app/src/core/workspace-execution.ts": "74a30e14bf348f7e9f7e1e90fcf22b387a96f1ff9a1846283f997e2064d1a821",
     "kits/app/src/core/workspace-renderers.ts": "2014cddc9914c38b5cf5abda7fd9523a9fe9b7e8e3ec0bd041e007c25e7d3548",
     "kits/app/src/core/workspace-session.ts": "d0fa2ec4823aa82ce202b2b23efcf1e5b0bce6ac4e0ef6dc6941be107e665b02",
     "kits/app/src/core/workspace-tabs.ts": "6e6d5b657551ccd9ad135c14d0379fe872f335025eb16d1ad76d98750efa53a0",
@@ -618,6 +619,6 @@
     "styles/all.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/application.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/base.css": "11bb59075a372e0d6d67dee2e338d6fbd6df76f1d91b0d21a9f0f2028b997ca4",
-    "package.json": "894cf2c67340a0782d550134a9bb66ede9a070761f0c343c1a5ef221ca8009d1"
+    "package.json": "f37d108339d7b95e9694a5e4cccff4e5dfab575080009fe67a07db1265756b4a"
   }
 }

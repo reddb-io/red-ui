@@ -25,6 +25,10 @@
       "types": "./kits/app/src/core/workspace-documents.ts",
       "default": "./kits/app/src/core/workspace-documents.ts"
     },
+    "./app/workspace/execution": {
+      "types": "./kits/app/src/core/workspace-execution.ts",
+      "default": "./kits/app/src/core/workspace-execution.ts"
+    },
     "./app/workspace/renderers": {
       "types": "./kits/app/src/core/workspace-renderers.ts",
       "default": "./kits/app/src/core/workspace-renderers.ts"
