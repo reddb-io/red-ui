@@ -113,3 +113,8 @@ A raw native-element count is not an adoption percentage: native controls can be
 implementation details inside canonical DS components, and local ui-kit exports
 already delegate several capabilities to the DS. Track concrete interactions and
 public contracts, then validate the hosted PWA and Shadow DOM Embeddable Lib.
+
+The workspace renderer registry now delegates its registration and resolution
+rules to the portable App Kit contract. RedDB result types, Svelte components,
+capability vocabulary and the table fallback policy stay in the client. The
+shared registry does not implement renderer UI or the RedDB adapter.

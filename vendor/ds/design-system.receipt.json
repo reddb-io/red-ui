@@ -1,6 +1,6 @@
 {
-  "version": "v2026.10.44",
-  "revision": "5159657c3e2865e3e775bcd4b5a3492c6c65be94",
+  "version": "v2026.10.45",
+  "revision": "6edaf7c54800d4265b6cda7359c3fdef56198919",
   "distribution": {
     "format": "source",
     "minify": false,
@@ -14,7 +14,7 @@
   ],
   "layers": [],
   "files": {
-    "kits/app/README.md": "7cb6fd4ec6bd861b2d9bb5985439aad53f2d6b64783448267489e85098af4654",
+    "kits/app/README.md": "3e5ac26422693129267a0f5ccdde84d604cd1c80adfda153766f6c37a463c210",
     "kits/app/interaction-allowlist.json": "7d29216392231a4e0950b53d996d4a00b45d6272b2c0a387f45f6df58e362712",
     "kits/app/kit.json": "63edaf308e400305dab1dedf1220307cc9fe0f8dce2dfb7e0e1407933c5a96b8",
     "kits/app/src/change-review.variants.ts": "4c11a06cf19a0cbf5cdd493c43c29f954f103997f73018efbac51fd48a0d4a42",
@@ -171,6 +171,7 @@
     "kits/app/src/core/sidebar-rail-sizing.ts": "3a814410db70914447919376800dfbf1aada27298121dceb7ea92d44c5460ef1",
     "kits/app/src/core/sidebar-rail.ts": "1bbe699cffbee64f06020c759d0af1bf49f5edb9ff2190bbd843e3423eea23b9",
     "kits/app/src/core/workspace-documents.ts": "4ca55020f544e802979e59b5a53c3363aef74b578c9dedc49dd178b0c51505b9",
+    "kits/app/src/core/workspace-renderers.ts": "2014cddc9914c38b5cf5abda7fd9523a9fe9b7e8e3ec0bd041e007c25e7d3548",
     "kits/app/src/core/workspace-session.ts": "d0fa2ec4823aa82ce202b2b23efcf1e5b0bce6ac4e0ef6dc6941be107e665b02",
     "kits/app/src/core/workspace-tabs.ts": "6e6d5b657551ccd9ad135c14d0379fe872f335025eb16d1ad76d98750efa53a0",
     "kits/app/src/entity-inspector.variants.ts": "5319410c213891c54b25b362af6e80ad81b49ba09533284ed98d2738d376b549",
@@ -614,6 +615,6 @@
     "styles/all.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/application.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/base.css": "11bb59075a372e0d6d67dee2e338d6fbd6df76f1d91b0d21a9f0f2028b997ca4",
-    "package.json": "677d915caed7225f7a9f77e8415a54e54878e3b0621d5556388c51b169ca5dfe"
+    "package.json": "712add5681e0d26b21275bd8091f919d8c8c0c1e362e1be3ba7679994cbfcabd"
   }
 }
