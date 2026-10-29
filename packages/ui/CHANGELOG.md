@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.17
+
+### Patch Changes
+
+- e57f74f: Use App Kit storage isolation for independent workspace instances.
+  - @reddb-io/ui-kit@0.7.17
+  - @reddb-io/ui-mcp@0.7.17
+
 ## 0.7.16
 
 ### Patch Changes
