@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.10
+
+### Patch Changes
+
+- 9d11ee8: Use the Design System Data Kit DocumentViewer for document results while retaining RedDB body, fields, raw records, search and recovery.
+  - @reddb-io/ui-kit@0.7.10
+  - @reddb-io/ui-mcp@0.7.10
+
 ## 0.7.9
 
 ### Patch Changes
