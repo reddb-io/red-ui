@@ -1,6 +1,6 @@
 {
-  "version": "v2026.10.60",
-  "revision": "ead0979fe2841445bc2de8439fce8e7e8d572dad",
+  "version": "v2026.10.61",
+  "revision": "e6f81007c775d1b5b0c535139e05e22b0e338d41",
   "distribution": {
     "format": "source",
     "minify": false,
@@ -16,6 +16,9 @@
   "layers": [],
   "adapters": [
     "reddb"
+  ],
+  "hosts": [
+    "mcp"
   ],
   "files": {
     "kits/app/README.md": "adcd2c9763b9af0ffefb2045148bba3c47df2793e762e3258526373aa7d723a1",
@@ -823,6 +826,16 @@
     "adapters/reddb/src/transports.ts": "28baa560087b1adc9723986df17bf24f11672ce393f4f0b379eb2c0a115ea015",
     "adapters/reddb/src/types.ts": "f5c49982e48d7ac2fd75ebb09a59283647d2fcd81c650ddddf4b94460d222a2d",
     "adapters/reddb/src/uri.ts": "c6db6d54d4b3a45ef03af993b5a1865a831b8abb308ca684f310288a63d5f27d",
+    "hosts/mcp/LICENSE": "9740889764f9b1a5c1c291a36c07412aa5f90c2f4e524ac2a8fc5d69fe46697d",
+    "hosts/mcp/README.md": "1a84f7cccefcf18b3b4a1928d8d3649e1d134535872076974a1f2fd5a775d531",
+    "hosts/mcp/host.json": "4121f7593c3fac5db8a95e70dc371b8d97e3555533da268219a2a83db1d57e3f",
+    "hosts/mcp/src/connection.ts": "1b03e16dec9724395f1ecfd35620ae64158d276b10334067a8c0090af240e1d9",
+    "hosts/mcp/src/data-tools.ts": "9afeba2d1e755ee75342bbf05b4d40cf75312fe11e92e44caca493bd93c3000e",
+    "hosts/mcp/src/embed-server.ts": "c3e323c7806fbc671a1665918af86d2cbea34c065173806de1aadc43ad102ba6",
+    "hosts/mcp/src/index.ts": "264756a19a5722f7e01ec9aa36def3931e8892070be747b4a74be0eef3be3e8e",
+    "hosts/mcp/src/local-server.ts": "e2aa29f5e81c51167b9e2634b0104fd0d54b66a240a4297ad144a04ace2063cd",
+    "hosts/mcp/src/red-client.ts": "01e03126fa779f8f192bf8f33873e7e769cc5e42dfec221ab849df9998fb29ce",
+    "hosts/mcp/src/target-mode.ts": "04678db6d0dbd59928944cbaa607510e0ef2273fb3ecec84345fc819d3f533e7",
     "assets/fonts/jetbrains-mono-variable.woff2": "e190ee6595a3b9bd25278613a6f5d3766ee1a708f300ed44fa63dbe84051498f",
     "assets/fonts/space-grotesk-variable.woff2": "0640890476fc1198ab4de571fb658de443c4d85b66466ec09534a8737ab1ce9d",
     "assets/fonts.css": "7c4be9cfbb5e717a15c7916fbb6b7ace6ee68e65f93ff7b27bf14f185a06db04",

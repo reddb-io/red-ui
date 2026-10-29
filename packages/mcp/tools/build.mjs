@@ -15,6 +15,7 @@ import { fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const vendor = resolve(root, "../../vendor/ds");
 const adapter = join(vendor, "adapters/reddb");
+const host = join(vendor, "hosts/mcp");
 const receipt = JSON.parse(
   readFileSync(join(vendor, "design-system.receipt.json"), "utf8")
 );
@@ -29,6 +30,9 @@ const names = [
 ];
 const files = names.map((name) => `adapters/reddb/src/${name}.ts`);
 files.push("adapters/reddb/LICENSE");
+for (const entry of readdirSync(join(host, "src")))
+  files.push(`hosts/mcp/src/${entry}`);
+files.push("hosts/mcp/LICENSE", "hosts/mcp/host.json");
 for (const file of files) {
   const data = readFileSync(join(vendor, file));
   const hash = createHash("sha256").update(data).digest("hex");
@@ -39,7 +43,7 @@ const tempRoot = join(root, ".red/tmp");
 mkdirSync(tempRoot, { recursive: true });
 const stage = mkdtempSync(join(tempRoot, "mcp-build-"));
 try {
-  cpSync(join(root, "src"), stage, { recursive: true });
+  cpSync(join(host, "src"), stage, { recursive: true });
   const stagedAdapter = join(stage, "vendor-adapter");
   mkdirSync(stagedAdapter);
   for (const name of names) {
@@ -104,6 +108,10 @@ try {
     for (const name of names)
       cpSync(join(adapter, "src", `${name}.ts`), join(source, `${name}.ts`));
     cpSync(join(adapter, "LICENSE"), join(root, "dist/vendor-adapter/LICENSE"));
+    cpSync(join(host, "src"), join(root, "dist/host-source"), {
+      recursive: true,
+    });
+    cpSync(join(host, "LICENSE"), join(root, "dist/host-source/LICENSE"));
   }
 } finally {
   rmSync(stage, { recursive: true, force: true });

@@ -31,4 +31,6 @@ await assert.rejects(
 assert.equal(fallback, false);
 assert(existsSync(join(dir, "dist/vendor-adapter/source/client.ts")));
 assert(existsSync(join(dir, "dist/vendor-adapter/LICENSE")));
-console.log("MCP Design System adapter packaging and cancellation passed");
+assert(existsSync(join(dir, "dist/host-source/index.ts")));
+assert(existsSync(join(dir, "dist/host-source/LICENSE")));
+console.log("MCP Design System source packaging and cancellation passed");

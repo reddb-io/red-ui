@@ -88,6 +88,10 @@ for (const adapter of manifest.adapters ?? []) {
   if (!receipt.adapters?.includes(adapter))
     throw new Error(`DS receipt is missing declared adapter ${adapter}`);
 }
+for (const host of manifest.hosts ?? []) {
+  if (!receipt.hosts?.includes(host))
+    throw new Error(`DS receipt is missing declared host ${host}`);
+}
 for (const [name, expected] of Object.entries(receipt.files)) {
   const actual = createHash("sha256")
     .update(readFileSync(join(dest, name)))
