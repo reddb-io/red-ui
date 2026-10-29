@@ -794,6 +794,8 @@ export {
   type QuietControlVariants,
 } from "./quiet-control.variants";
 
+export { jsonCodeGrammar } from "./core/json-code";
+
 export { checkbox, type CheckboxVariants } from "./checkbox.variants";
 export {
   CODE_TOKEN_CLASSES,
