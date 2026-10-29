@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.19
+
+### Patch Changes
+
+- e004d6f: Use the RedDB adapter for connection bootstrap and credential cleanup.
+  - @reddb-io/ui-kit@0.7.19
+  - @reddb-io/ui-mcp@0.7.19
+
 ## 0.7.18
 
 ### Patch Changes
