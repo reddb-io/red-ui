@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.20
+
+### Patch Changes
+
+- Updated dependencies [22358eb]
+  - @reddb-io/ui-mcp@0.7.20
+  - @reddb-io/ui-kit@0.7.20
+
 ## 0.7.19
 
 ### Patch Changes

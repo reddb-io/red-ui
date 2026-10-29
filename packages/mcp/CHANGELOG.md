@@ -1,5 +1,11 @@
 # @reddb-io/ui-mcp
 
+## 0.7.20
+
+### Patch Changes
+
+- 22358eb: Use the pinned Design System RedDB client in the MCP host.
+
 ## 0.7.19
 
 ## 0.7.18
