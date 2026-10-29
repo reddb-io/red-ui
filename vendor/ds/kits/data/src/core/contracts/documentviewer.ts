@@ -1,4 +1,4 @@
-import type { DocumentMode, DocumentValue } from "../../document";
+import type { DocumentMode, DocumentPresenter, DocumentValue } from "../../document";
 /** Portable DocumentViewer properties shared by native adapters. */
 export interface DocumentViewerContract {
     /**
@@ -7,6 +7,8 @@ export interface DocumentViewerContract {
          * The search field above the list filters them.
          */
     documents: readonly DocumentValue[];
+    /** Optional projection of caller-owned documents into summary, body, fields and raw views. */
+    present?: DocumentPresenter;
     /** Accessible name for the complete master-detail surface. */
     label?: string;
     /** Controlled document index or extracted id; null intentionally selects nothing. */

@@ -77,7 +77,7 @@ it("clears an unmatched document search and returns focus to its input", async (
     )
   );
   const input = target.querySelector<HTMLInputElement>(
-    "[data-document-filter]"
+    '[aria-label="Filter documents"]'
   )!;
   expect(input).not.toBeNull();
   input.value = "missing";

@@ -7,8 +7,12 @@
     extractDocumentSummary,
     filterDocuments,
     formatDocumentValue,
+    visibleDocumentIndex,
+    presentDocument,
   } from "./document";
   export type {
+    DocumentPresentation,
+    DocumentPresenter,
     DocumentField,
     DocumentItem,
     DocumentSummary,
@@ -20,20 +24,21 @@
 
 <script lang="ts">
   import type { DocumentViewerContract } from "./core/contracts/documentviewer";
-  import { Heading, Input, Tabs } from "@reddb-io/design-system/base";
+  import { Button, Heading, Input, Tabs } from "@reddb-io/design-system/base";
+  import { tick, type Snippet } from "svelte";
   import { quietControl, warnDeprecated } from "@reddb-io/design-system/base";
   import {
-    documentBody,
-    documentFields,
-    documentRaw,
-    extractDocumentSummary,
     filterDocuments,
+    presentDocument,
+    visibleDocumentIndex,
     type DocumentMode,
     type DocumentItem,
     type DocumentValue,
   } from "./document";
 
   interface Props extends DocumentViewerContract {
+    /** Custom recovery content when no document matches; receives a clear-and-focus action. */
+    empty?: Snippet<[{ clear: () => void }]>;
     /** Item activation (ADR 0026's sanctioned `onselect`): the document chosen from the list. */
     onselect?: (document: DocumentValue, index: number) => void;
     /** @deprecated Renamed `onselect` (ADR 0026); removed next release. */
@@ -50,6 +55,7 @@
 
   let {
     documents,
+    present = presentDocument,
     label = "Documents",
     selected: controlledSelected,
     onselect,
@@ -57,26 +63,25 @@
     mode: controlledMode,
     onmodechange,
     onMode,
+    empty,
     class: className = "",
   }: Props = $props();
 
   let query = $state("");
+  let filterInput = $state<HTMLInputElement>();
   let localSelected = $state<number | null>(0);
   let localMode = $state<DocumentMode>("body");
 
-  const items = $derived(filterDocuments(documents, query));
+  const items = $derived(filterDocuments(documents, query, present));
   const activeMode = $derived(controlledMode ?? localMode);
   const activeIndex = $derived(
-    resolveSelectedIndex(controlledSelected === undefined ? localSelected : controlledSelected),
+    visibleDocumentIndex(items, resolveSelectedIndex(controlledSelected === undefined ? localSelected : controlledSelected)),
   );
   const activeDocument = $derived(
     activeIndex === null ? undefined : documents[activeIndex],
   );
-  const activeSummary = $derived(
-    activeDocument && activeIndex !== null
-      ? extractDocumentSummary(activeDocument, activeIndex)
-      : undefined,
-  );
+  const activePresentation = $derived(activeDocument && activeIndex !== null ? present(activeDocument, activeIndex) : undefined);
+  const activeSummary = $derived(activePresentation?.summary);
 
   function resolveSelectedIndex(selected: number | string | null): number | null {
     if (selected === null) return null;
@@ -84,9 +89,14 @@
       return selected >= 0 && selected < documents.length ? selected : null;
     }
     const index = documents.findIndex(
-      (document, documentIndex) => extractDocumentSummary(document, documentIndex).id === selected,
+      (document, documentIndex) => present(document, documentIndex).summary.id === selected,
     );
     return index < 0 ? null : index;
+  }
+
+  function clearFilter(): void {
+    query = "";
+    void tick().then(() => filterInput?.focus());
   }
 
   function select(item: DocumentItem): void {
@@ -126,6 +136,7 @@
     <div class="border-b border-muted p-[var(--reddb-spatial-inset-sm)]">
       <Input
         bind:value={query}
+        bind:ref={filterInput}
         aria-label="Filter documents"
         type="search"
         placeholder="Filter documents"
@@ -133,6 +144,7 @@
       />
     </div>
 
+    {#if items.length}
     <div role="listbox" aria-label={`${label} list`} class="max-h-full overflow-y-auto p-[var(--reddb-spatial-inset-sm)]">
       {#each items as item (item.index)}
         <button
@@ -151,12 +163,16 @@
             <span class="block truncate text-sm text-ink-muted">{item.summary.subtitle}</span>
           {/if}
         </button>
-      {:else}
-        <p class="m-0 px-[var(--reddb-spatial-inset-sm)] py-[var(--reddb-spatial-inset-md)] text-sm text-ink-muted">
-          No documents match.
-        </p>
       {/each}
     </div>
+    {:else}
+        <div data-document-empty class="px-[var(--reddb-spatial-inset-sm)] py-[var(--reddb-spatial-inset-md)] text-sm text-ink-muted">
+          {#if empty}{@render empty({ clear: clearFilter })}{:else}
+            <p class="m-0">No documents match.</p>
+            {#if query}<Button size="sm" onclick={clearFilter}>Clear filter</Button>{/if}
+          {/if}
+        </div>
+    {/if}
   </div>
 
   <div class="min-w-0">
@@ -181,15 +197,15 @@
       {#snippet children({ value })}
         {#if activeDocument}
           {#if value === "body"}
-            <div data-document-body class="whitespace-pre-wrap break-words">{documentBody(activeDocument)}</div>
+            <div data-document-body class="whitespace-pre-wrap break-words">{activePresentation!.body}</div>
           {:else if value === "fields"}
             <dl class="m-0 grid gap-[var(--reddb-spatial-gap-sm)]">
-              {#each documentFields(activeDocument) as field (field.key)}
-                <div data-document-field class="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-[var(--reddb-spatial-gap-md)] border-b border-muted py-[var(--reddb-spatial-inset-sm)]"><dt class="font-medium">{field.key}</dt><dd class="m-0 min-w-0 break-words font-mono text-sm">{field.text}</dd></div>
+              {#each activePresentation!.fields as field (field.key)}
+                <div data-document-field class="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-[var(--reddb-spatial-gap-md)] border-b border-muted py-[var(--reddb-spatial-inset-sm)]"><dt class="font-medium">{field.key}</dt><dd class="m-0 min-w-0 whitespace-pre-wrap break-words font-mono text-sm">{field.text}</dd></div>
               {/each}
             </dl>
           {:else}
-            <pre data-document-raw class="m-0 min-w-max whitespace-pre font-mono text-sm">{documentRaw(activeDocument)}</pre>
+            <pre data-document-raw class="m-0 min-w-max whitespace-pre font-mono text-sm">{activePresentation!.raw}</pre>
           {/if}
         {:else}
           <p class="m-0 text-ink-muted">Select a document to inspect it.</p>

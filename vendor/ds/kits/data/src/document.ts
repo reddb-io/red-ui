@@ -20,6 +20,17 @@ export interface DocumentField {
   text: string;
 }
 
+/** Caller-supplied document views keep domain-specific representation outside the Kit. */
+export interface DocumentPresentation {
+  summary: DocumentSummary;
+  body: string;
+  fields: readonly DocumentField[];
+  raw: string;
+  /** Optional searchable content; title and subtitle are always included. */
+  searchText?: string;
+}
+export type DocumentPresenter = (document: DocumentValue, index: number) => DocumentPresentation;
+
 const TITLE_FIELDS = ["title", "name", "label", "subject"] as const;
 const SUBTITLE_FIELDS = ["subtitle", "description", "summary"] as const;
 const BODY_FIELDS = ["body", "content", "text", "markdown"] as const;
@@ -98,28 +109,44 @@ export function documentRaw(document: DocumentValue): string {
   }
 }
 
+/** Default projection for JSON-like documents. */
+export function presentDocument(document: DocumentValue, index: number): DocumentPresentation {
+  return { summary: extractDocumentSummary(document, index), body: documentBody(document), fields: documentFields(document), raw: documentRaw(document) };
+}
+
 /** Filter documents without changing their original indexes or caller-owned values. */
 export function filterDocuments(
   documents: readonly DocumentValue[],
   query: string,
+  present: DocumentPresenter = presentDocument,
 ): readonly DocumentItem[] {
   const needle = query.trim().toLocaleLowerCase();
   return documents
-    .map((document, index): DocumentItem => ({
+    .map((document, index) => ({
       document,
       index,
-      summary: extractDocumentSummary(document, index),
+      // The default list only needs a summary; avoid serializing every raw
+      // document before a search or detail view actually needs it.
+      presentation: present === presentDocument ? undefined : present(document, index),
     }))
-    .filter((item) => {
+    .map(({ document, index, presentation }) => ({
+      document, index, presentation,
+      summary: presentation?.summary ?? extractDocumentSummary(document, index),
+    }))
+    .filter(({ document, summary, presentation }) => {
       if (!needle) return true;
-      const haystack = [
-        item.summary.title,
-        item.summary.subtitle,
-        ...documentFields(item.document).map((field) => `${field.key} ${field.text}`),
-      ].join("\n").toLocaleLowerCase();
-      return haystack.includes(needle);
-    });
+      const searchable = presentation?.searchText ?? (presentation?.fields ?? documentFields(document))
+        .map(field => `${field.key} ${field.text}`).join("\n");
+      return [summary.title, summary.subtitle, searchable].join("\n").toLocaleLowerCase().includes(needle);
+    })
+    .map(({ document, index, summary }): DocumentItem => ({ document, index, summary }));
 }
 
 /** Master-detail presentation modes shared by native renderers. */
 export type DocumentMode = "body" | "fields" | "raw";
+
+/** Resolve selection within filtered results without changing the caller's selection. */
+export function visibleDocumentIndex(items: readonly DocumentItem[], selected: number | null): number | null {
+  if (selected === null) return null;
+  return items.some(item => item.index === selected) ? selected : items[0]?.index ?? null;
+}
