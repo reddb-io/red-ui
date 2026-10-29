@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.18
+
+### Patch Changes
+
+- 58762ba: Use App Kit persistence for workspace snapshots.
+  - @reddb-io/ui-kit@0.7.18
+  - @reddb-io/ui-mcp@0.7.18
+
 ## 0.7.17
 
 ### Patch Changes
