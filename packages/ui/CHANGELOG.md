@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.22
+
+### Patch Changes
+
+- 09e0a86: Use the Design System change explorer and RedDB diff adapter for query results.
+  - @reddb-io/ui-kit@0.7.22
+  - @reddb-io/ui-mcp@0.7.22
+
 ## 0.7.21
 
 ### Patch Changes

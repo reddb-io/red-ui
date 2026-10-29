@@ -1,5 +1,7 @@
 # @reddb-io/ui-mcp
 
+## 0.7.22
+
 ## 0.7.21
 
 ### Patch Changes
