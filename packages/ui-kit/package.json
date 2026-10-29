@@ -1,6 +1,6 @@
 {
   "name": "@reddb-io/ui-kit",
-  "version": "0.7.12",
+  "version": "0.7.13",
   "private": false,
   "description": "Compatibility facade for legacy RedDB UI component exports.",
   "type": "module",

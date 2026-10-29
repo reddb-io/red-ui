@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.13
+
+### Patch Changes
+
+- ad7db0d: Use the Design System CodeBlock and shared JSON grammar for raw results, retaining exact JSON and adding an accessible copy action. Open JSON collection routes in the JSON renderer even when results are nonempty.
+  - @reddb-io/ui-kit@0.7.13
+  - @reddb-io/ui-mcp@0.7.13
+
 ## 0.7.12
 
 ### Patch Changes
