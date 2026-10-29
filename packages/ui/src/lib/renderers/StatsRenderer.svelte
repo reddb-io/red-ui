@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { QueryResult } from '#reddb'
+  import KpiCard from '@reddb-io/design-system/data/KpiCard'
+  import Table, { type TableColumn } from '@reddb-io/design-system/data/Table'
   import Gauge from '@lucide/svelte/icons/gauge'
   import List from '@lucide/svelte/icons/list'
   import Table2 from '@lucide/svelte/icons/table-2'
@@ -14,6 +16,14 @@
 
   let mode = $state<'kpi' | 'gauge' | 'table'>('kpi')
   const metrics = $derived(extractStats(result))
+  const columns: TableColumn[] = [
+    { key: 'label', header: 'metric' },
+    { key: 'value', header: 'value', align: 'end' },
+    { key: 'unit', header: 'unit' },
+  ]
+  const tableRows = $derived(metrics.map((metric, index) => ({
+    id: index, label: metric.label, value: metric.value.toLocaleString(), unit: metric.unit || '-',
+  })))
   const max = $derived(Math.max(1, ...metrics.map((m) => Math.abs(m.value))))
 
   function percent(value: number): number {
@@ -68,10 +78,7 @@
       <div class="flex-1 overflow-auto p-3">
         <div class="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-2">
           {#each metrics as metric, i (`${metric.key}-${i}`)}
-            <div class="rounded border border-line-1 bg-bg-1 px-3 py-2">
-              <div class="type-label truncate">{metric.label}</div>
-              <div class="mt-1 font-mono text-[20px] font-semibold text-fg-0">{formatMetric(metric.value, metric.unit)}</div>
-            </div>
+            <KpiCard label={metric.label} value={formatMetric(metric.value, metric.unit)} />
           {/each}
         </div>
       </div>
@@ -101,24 +108,8 @@
       </div>
     {:else}
       <div class="flex-1 overflow-auto">
-        <table class="w-full border-collapse text-[12px] font-mono">
-          <thead class="sticky top-0 bg-bg-1 z-10">
-            <tr class="border-b border-line-1 text-fg-3">
-              <th class="px-2 py-1.5 text-left font-normal">metric</th>
-              <th class="px-2 py-1.5 text-right font-normal">value</th>
-              <th class="px-2 py-1.5 text-left font-normal">unit</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each metrics as metric, i (`${metric.key}-${i}`)}
-              <tr class="border-b border-line-1/60 hover:bg-bg-1/40">
-                <td class="px-2 py-1 text-fg-0">{metric.label}</td>
-                <td class="px-2 py-1 text-right text-primary-text">{metric.value.toLocaleString()}</td>
-                <td class="px-2 py-1 text-fg-3">{metric.unit || '-'}</td>
-              </tr>
-            {/each}
-          </tbody>
-        </table>
+        <Table caption={collection ? `${collection} statistics` : 'Statistics'} captionHidden
+          {columns} rows={tableRows} rowKey="id" pageSize={Math.max(1, tableRows.length)} columnVisibility={false} />
       </div>
     {/if}
   {/if}
