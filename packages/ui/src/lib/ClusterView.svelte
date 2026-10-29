@@ -3,7 +3,6 @@
   import { SvelteFlow, Background, BackgroundVariant, Controls, type Node, type Edge } from '@xyflow/svelte'
   import '@xyflow/svelte/dist/style.css'
   import { Badge, Card } from '@reddb-io/design-system/base'
-  import { NodeBadge } from '@reddb-io/ui-kit'
   import EmptyState from '$lib/EmptyState.svelte'
   import { accessLocked, connectionLost } from '@reddb-io/design-system/base/illustrations'
   import ClusterNode from '$lib/ClusterNode.svelte'
@@ -602,7 +601,7 @@
           </div>
           <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
             <span class="text-fg-3">role</span>
-            <span><NodeBadge role={selected.role === 'primary' ? 'primary' : selected.role === 'replica' ? 'replica' : 'embedded'} label={selected.role} /></span>
+            <span><Badge tone="neutral">{selected.role}</Badge></span>
           </div>
           <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
             <span class="text-fg-3">replicas</span>
