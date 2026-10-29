@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.12
+
+### Patch Changes
+
+- ef91241: Use the Design System Badge directly for cluster role labels.
+  - @reddb-io/ui-kit@0.7.12
+  - @reddb-io/ui-mcp@0.7.12
+
 ## 0.7.11
 
 ### Patch Changes
