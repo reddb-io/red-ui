@@ -1,9 +1,8 @@
 <script lang="ts">
   import { useWorkspace } from './workspace-context'
   // Settings surface: a bounded pane shell backed by live SQL introspection.
-  import { NavItem, Pill } from '@reddb-io/design-system/app'
-  import { AlertDialog, Button, Checkbox, Input, Select, Textarea, Icon as DsIcon, type IconGlyph } from '@reddb-io/design-system/base'
-  import { ListRow, SectionHeading } from '@reddb-io/ui-kit'
+  import { NavItem, Pill, SettingsRow } from '@reddb-io/design-system/app'
+  import { AlertDialog, Button, Checkbox, Input, Select, Textarea, Icon as DsIcon, SectionHeading, type IconGlyph } from '@reddb-io/design-system/base'
   import AlertCircle from '@lucide/svelte/icons/alert-circle'
   import Download from '@lucide/svelte/icons/download'
   import KeyRound from '@lucide/svelte/icons/key-round'
@@ -779,7 +778,7 @@
       </div>
     </section>
 
-    <main class="min-h-0 min-w-0 overflow-auto bg-bg-0">
+    <div class="min-h-0 min-w-0 overflow-auto bg-bg-0">
       <div class="p-6">
         {#if permissionsLoading}
           <PageHeader eyebrow="Settings" title="Settings" subtitle="Checking Settings grants." />
@@ -835,19 +834,19 @@
                 />
               {:else}
                 <section>
-                  <SectionHeading title={selectedSecretControl.label} class="mb-2">
-                    {#snippet icon()}<KeyRound class="size-3.5" />{/snippet}
-                    {#snippet meta()}<Pill>masked</Pill>{/snippet}
+                  <SectionHeading size="sm" rule={false} title={selectedSecretControl.label} class="mb-2">
+                    {#snippet leading()}<DsIcon icon={KeyRound} size="sm" />{/snippet}
+                    {#snippet actions()}<Pill>masked</Pill>{/snippet}
                   </SectionHeading>
 
                   <div class="divide-y divide-line-1 overflow-hidden rounded-lg border border-line-1 bg-bg-1">
-                    <ListRow
-                      title={selectedSecretControl.label}
+                    <SettingsRow
+                      label={selectedSecretControl.label}
                       description="Vault metadata row; plaintext is masked unless break-glass reveal is granted."
                       hint={selectedSecret.key}
                       wide
                     >
-                      {#snippet action()}
+                      {#snippet actions()}
                         <Input
                           readonly
                           value={selectedSecretPlaintext ?? selectedSecret.value}
@@ -855,16 +854,16 @@
                           class="font-mono w-full" controlSize="sm"
                         />
                       {/snippet}
-                    </ListRow>
+                    </SettingsRow>
 
-                    <ListRow title="Key" hint={selectedSecret.key}>
-                      {#snippet action()}
+                    <SettingsRow label="Key" hint={selectedSecret.key}>
+                      {#snippet actions()}
                         <span class="font-mono text-[12px] text-fg-1">{selectedSecret.key}</span>
                       {/snippet}
-                    </ListRow>
+                    </SettingsRow>
 
-                    <ListRow title="Metadata">
-                      {#snippet action()}
+                    <SettingsRow label="Metadata">
+                      {#snippet actions()}
                         <div class="flex flex-wrap justify-end gap-1.5">
                           <Pill>{selectedSecret.status ?? 'status unknown'}</Pill>
                           <Pill
@@ -874,11 +873,11 @@
                           >
                         </div>
                       {/snippet}
-                    </ListRow>
+                    </SettingsRow>
 
                     {#if canRevealSecrets}
-                      <ListRow title="Break-glass reveal" description="Calls reddb's audited UNSEAL VAULT path and clears plaintext after 30 seconds.">
-                        {#snippet action()}
+                      <SettingsRow label="Break-glass reveal" description="Calls reddb's audited UNSEAL VAULT path and clears plaintext after 30 seconds.">
+                        {#snippet actions()}
                           {#if selectedSecretPlaintext !== null}
                             <Button
                               type="button"
@@ -900,12 +899,12 @@
                             </Button>
                           {/if}
                         {/snippet}
-                      </ListRow>
+                      </SettingsRow>
                     {/if}
 
                     {#if canWriteSecrets}
-                      <ListRow title="Authoring" description="Delete the selected vault secret through DELETE SECRET.">
-                        {#snippet action()}
+                      <SettingsRow label="Authoring" description="Delete the selected vault secret through DELETE SECRET.">
+                        {#snippet actions()}
                           <Button
                             type="button"
                             onclick={() => deleteSelectedSecret()}
@@ -916,7 +915,7 @@
                             delete
                           </Button>
                         {/snippet}
-                      </ListRow>
+                      </SettingsRow>
                     {/if}
                   </div>
                 </section>
@@ -954,8 +953,8 @@
                 {/if}
 
                 <section>
-                  <SectionHeading title="Set secret" class="mb-2">
-                    {#snippet icon()}<Plus class="size-3.5" />{/snippet}
+                  <SectionHeading size="sm" rule={false} title="Set secret" class="mb-2">
+                    {#snippet leading()}<DsIcon icon={Plus} size="sm" />{/snippet}
                   </SectionHeading>
                   <div class="grid gap-2 rounded-lg border border-line-1 bg-bg-1 p-3">
                     <Input
@@ -1000,25 +999,25 @@
           />
           {:else}
           <section>
-            <SectionHeading title={selectedControl.label} class="mb-2">
-              {#snippet icon()}
+            <SectionHeading size="sm" rule={false} title={selectedControl.label} class="mb-2">
+              {#snippet leading()}
                 {#if selectedControl.kind === 'secret-reference'}
-                  <Link2 class="size-3.5" />
+                  <DsIcon icon={Link2} size="sm" />
                 {:else}
-                  <SlidersHorizontal class="size-3.5" />
+                  <DsIcon icon={SlidersHorizontal} size="sm" />
                 {/if}
               {/snippet}
-              {#snippet meta()}<Pill>{selectedControl.kind}</Pill>{/snippet}
+              {#snippet actions()}<Pill>{selectedControl.kind}</Pill>{/snippet}
             </SectionHeading>
 
             <div class="divide-y divide-line-1 overflow-hidden rounded-lg border border-line-1 bg-bg-1">
-              <ListRow
-                title={selectedControl.label}
+              <SettingsRow
+                label={selectedControl.label}
                 description={selectedControl.description}
                 hint={selectedEntry.key}
                 wide
               >
-                {#snippet action()}
+                {#snippet actions()}
                   {#if selectedControl.kind === 'boolean'}
                     <Checkbox label={canWriteConfig ? editValue : selectedEntry.value ? 'true' : 'false'} aria-label={`${selectedControl.label}: ${canWriteConfig ? editValue : selectedEntry.value ? 'true' : 'false'}`} checked={canWriteConfig ? editValue === 'true' : selectedEntry.value === true} disabled={!canWriteConfig || writing} oncheckedchange={checked => editValue = checked ? 'true' : 'false'} />
                   {:else if selectedControl.kind === 'enum'}
@@ -1062,16 +1061,16 @@
                     />
                   {/if}
                 {/snippet}
-              </ListRow>
+              </SettingsRow>
 
-              <ListRow title="Key" hint={selectedEntry.key}>
-                {#snippet action()}
+              <SettingsRow label="Key" hint={selectedEntry.key}>
+                {#snippet actions()}
                   <span class="font-mono text-[12px] text-fg-1">{selectedEntry.key}</span>
                 {/snippet}
-              </ListRow>
+              </SettingsRow>
 
-              <ListRow title="Schema">
-                {#snippet action()}
+              <SettingsRow label="Schema">
+                {#snippet actions()}
                   <div class="flex flex-wrap justify-end gap-1.5">
                     <Pill>{selectedControl.valueType ?? 'runtime type'}</Pill>
                     <Pill
@@ -1081,11 +1080,11 @@
                     >
                   </div>
                 {/snippet}
-              </ListRow>
+              </SettingsRow>
 
               {#if canWriteConfig}
-                <ListRow title="Authoring" description="Submit changes through SET CONFIG or unset through DELETE CONFIG.">
-                  {#snippet action()}
+                <SettingsRow label="Authoring" description="Submit changes through SET CONFIG or unset through DELETE CONFIG.">
+                  {#snippet actions()}
                     <div class="flex flex-wrap justify-end gap-2">
                       <Button
                         type="button"
@@ -1110,7 +1109,7 @@
                       </Button>
                     </div>
                   {/snippet}
-                </ListRow>
+                </SettingsRow>
               {/if}
             </div>
 
@@ -1131,8 +1130,8 @@
               {/if}
 
               <section class="mt-4 border-t border-line-1 pt-4">
-                <SectionHeading title="Set config key" class="mb-2">
-                  {#snippet icon()}<Plus class="size-3.5" />{/snippet}
+                <SectionHeading size="sm" rule={false} title="Set config key" class="mb-2">
+                  {#snippet leading()}<DsIcon icon={Plus} size="sm" />{/snippet}
                 </SectionHeading>
                 <div class="grid gap-2 rounded-lg border border-line-1 bg-bg-1 p-3">
                   <div class="grid gap-2 @min-[42rem]:grid-cols-[minmax(0,1fr)_8rem]">
@@ -1201,7 +1200,7 @@
           {/if}
         {/if}
       </div>
-    </main>
+    </div>
   </div>
 </div>
 

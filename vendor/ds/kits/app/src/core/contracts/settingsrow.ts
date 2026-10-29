@@ -2,6 +2,10 @@
 export interface SettingsRowContract {
   /** Visible setting name, used to label the field when a control snippet is supplied. */
   label: string;
+  /** Optional short identifier shown beside the setting name. */
+  hint?: string;
+  /** Place independent actions below the field row, spanning its width. */
+  wide?: boolean;
   /** Supporting text, associated as a description rather than included in the control name. */
   description?: string;
   /** Validation message associated with the field and announced as an alert. */
