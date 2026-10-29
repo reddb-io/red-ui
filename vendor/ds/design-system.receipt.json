@@ -1,6 +1,6 @@
 {
-  "version": "v2026.10.57",
-  "revision": "be0f3828e7bddc0a1acee6cb08419ba9be717605",
+  "version": "v2026.10.58",
+  "revision": "cac9db20cb58a375fd9706dc8164d0b1cd4b76b3",
   "distribution": {
     "format": "source",
     "minify": false,
@@ -182,6 +182,7 @@
     "kits/app/src/core/workspace-execution.ts": "74a30e14bf348f7e9f7e1e90fcf22b387a96f1ff9a1846283f997e2064d1a821",
     "kits/app/src/core/workspace-renderers.ts": "2014cddc9914c38b5cf5abda7fd9523a9fe9b7e8e3ec0bd041e007c25e7d3548",
     "kits/app/src/core/workspace-session.ts": "d0fa2ec4823aa82ce202b2b23efcf1e5b0bce6ac4e0ef6dc6941be107e665b02",
+    "kits/app/src/core/workspace-storage.ts": "1af440a49e1b9e041c2751c65ec671fb199d228cff649b779a417f2c0ca0ad94",
     "kits/app/src/core/workspace-tabs.ts": "6e6d5b657551ccd9ad135c14d0379fe872f335025eb16d1ad76d98750efa53a0",
     "kits/app/src/entity-inspector.variants.ts": "5319410c213891c54b25b362af6e80ad81b49ba09533284ed98d2738d376b549",
     "kits/app/src/entity-journey.variants.ts": "15d2e75c4ba1afbd091a97b86bbf3ff81735e0dec762658e6c459885c1514848",
@@ -838,6 +839,6 @@
     "styles/all.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/application.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/base.css": "11bb59075a372e0d6d67dee2e338d6fbd6df76f1d91b0d21a9f0f2028b997ca4",
-    "package.json": "b67d13b2fcb31b96ada784e25a07afffedd7f9853937776f09810dedf4a5b803"
+    "package.json": "c250e1b3419e6f2a97cf8e7b874ecf0c9399c16ef819ef86154824dc3fddcd96"
   }
 }

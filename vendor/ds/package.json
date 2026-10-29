@@ -54,6 +54,10 @@
       "types": "./kits/app/src/core/workspace-renderers.ts",
       "default": "./kits/app/src/core/workspace-renderers.ts"
     },
+    "./app/workspace/storage": {
+      "types": "./kits/app/src/core/workspace-storage.ts",
+      "default": "./kits/app/src/core/workspace-storage.ts"
+    },
     "./base": {
       "svelte": "./kits/base/src/index.ts",
       "default": "./kits/base/src/index.ts"
