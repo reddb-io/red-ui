@@ -18,6 +18,7 @@
     "./adapters/reddb/local-url-provider": "./adapters/reddb/src/local-url-provider.ts",
     "./adapters/reddb/permission-gate": "./adapters/reddb/src/permission-gate.ts",
     "./adapters/reddb/server-capabilities": "./adapters/reddb/src/server-capabilities.ts",
+    "./adapters/reddb/settings-authoring": "./adapters/reddb/src/settings-authoring.ts",
     "./adapters/reddb/transports": "./adapters/reddb/src/transports.ts",
     "./adapters/reddb/types": "./adapters/reddb/src/types.ts",
     "./adapters/reddb/uri": "./adapters/reddb/src/uri.ts",
