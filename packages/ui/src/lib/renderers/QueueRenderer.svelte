@@ -2,6 +2,7 @@
   import { useWorkspace } from '../workspace-context'
   import { tick } from 'svelte'
   import { Button } from '@reddb-io/design-system/base'
+  import Table, { type TableColumn } from '@reddb-io/design-system/data/Table'
   import { queueEmptyCompact, searchEmpty } from '@reddb-io/design-system/base/illustrations'
   import RendererEmptyState from './RendererEmptyState.svelte'
   import type { QueryResult } from '#reddb'
@@ -83,6 +84,16 @@
       return String(v)
     }
   }
+
+  const eventColumns: TableColumn[] = [
+    { key: 'ts', header: 'time', format: (value) => fmtTs(typeof value === 'number' ? value : null) },
+    { key: 'collection', header: 'source' },
+    { key: 'op', header: 'op' },
+    { key: 'entityId', header: 'entity' },
+    { key: 'lsn', header: 'lsn', align: 'end', format: (value) => value == null ? '-' : String(value) },
+    { key: 'after', header: 'after', format: (value) => display(value) ?? '' },
+  ]
+  const eventRows = $derived(events.map((event) => ({ ...event })))
 
   function parsePayload(): unknown {
     const text = payload.trim()
@@ -233,30 +244,15 @@
           {#snippet actions()}<Button onclick={() => chooseMode('messages')}>View messages</Button>{/snippet}
         </RendererEmptyState>
       {:else}
-        <table class="w-full border-collapse text-[12px] font-mono">
-          <thead class="sticky top-0 bg-bg-1 z-10">
-            <tr class="border-b border-line-1 text-fg-3">
-              <th class="px-2 py-1.5 text-left font-normal">time</th>
-              <th class="px-2 py-1.5 text-left font-normal">source</th>
-              <th class="px-2 py-1.5 text-left font-normal">op</th>
-              <th class="px-2 py-1.5 text-left font-normal">entity</th>
-              <th class="px-2 py-1.5 text-right font-normal">lsn</th>
-              <th class="px-2 py-1.5 text-left font-normal">after</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each events as event (`${event.messageId}-${event.lsn ?? event.entityId}`)}
-              <tr class="border-b border-line-1/60 hover:bg-bg-1/40">
-                <td class="px-2 py-1 text-fg-2">{fmtTs(event.ts)}</td>
-                <td class="px-2 py-1 text-fg-0">{event.collection}</td>
-                <td class="px-2 py-1"><span class="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-primary-text">{event.op}</span></td>
-                <td class="px-2 py-1 text-fg-1">{event.entityId}</td>
-                <td class="px-2 py-1 text-right text-fg-3">{event.lsn ?? '-'}</td>
-                <td class="px-2 py-1 text-fg-2 truncate max-w-[520px]">{display(event.after)}</td>
-              </tr>
-            {/each}
-          </tbody>
-        </table>
+        <Table caption={collection ? `${collection} events` : 'Queue events'} captionHidden
+          columns={eventColumns} rows={eventRows} rowKey={(_, index) => index}
+          pageSize={Math.max(1, eventRows.length)} columnVisibility={false}>
+          {#snippet cell({ column, text })}
+            {#if column.key === 'op'}<span class="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-primary-text">{text}</span>
+            {:else if column.key === 'after'}<span class="block max-w-[520px] truncate">{text}</span>
+            {:else}{text}{/if}
+          {/snippet}
+        </Table>
       {/if}
     </div>
   {:else if mode === 'commands'}
