@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.11
+
+### Patch Changes
+
+- 897c701: Use the Design System Data Kit table to display queue event envelopes while preserving queue commands, filtering and message insertion.
+  - @reddb-io/ui-kit@0.7.11
+  - @reddb-io/ui-mcp@0.7.11
+
 ## 0.7.10
 
 ### Patch Changes
