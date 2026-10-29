@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.25
+
+### Patch Changes
+
+- 6233898: Build PWA, embedded workspace and CLI from the explicitly selected Design System workspace host. Remove local screen, renderer and ui-kit implementations; preserve existing public entrypoints as source facades and carry receipted source, assets and licenses in public packages.
+- Updated dependencies [6233898]
+  - @reddb-io/ui-mcp@0.7.25
+
 ## 0.7.24
 
 ### Patch Changes
