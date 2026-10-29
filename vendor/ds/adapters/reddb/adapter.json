@@ -17,6 +17,7 @@
     "/types": "./src/types.ts",
     "/permission-gate": "./src/permission-gate.ts",
     "/change-sql": "./src/change-sql.ts",
-    "/settings-authoring": "./src/settings-authoring.ts"
+    "/settings-authoring": "./src/settings-authoring.ts",
+    "/connection-bootstrap": "./src/connection-bootstrap.ts"
   }
 }
