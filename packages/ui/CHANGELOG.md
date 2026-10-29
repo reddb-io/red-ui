@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.15
+
+### Patch Changes
+
+- b6fd1e2: Use Design System KPI cards and table for statistics results.
+  - @reddb-io/ui-kit@0.7.15
+  - @reddb-io/ui-mcp@0.7.15
+
 ## 0.7.14
 
 ### Patch Changes
