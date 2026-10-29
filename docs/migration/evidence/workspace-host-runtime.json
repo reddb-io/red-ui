@@ -1,0 +1,167 @@
+{
+  "surface": "DS workspace host consumed by public facades",
+  "checks": [
+    {
+      "collection": "table",
+      "renderer": "table",
+      "authenticated": true,
+      "credentialInUrl": false
+    },
+    {
+      "collection": "kv",
+      "renderer": "kv",
+      "authenticated": true,
+      "credentialInUrl": false
+    },
+    {
+      "collection": "series",
+      "renderer": "hypertable",
+      "authenticated": true,
+      "credentialInUrl": false
+    },
+    {
+      "collection": "vector",
+      "renderer": "vector",
+      "authenticated": true,
+      "credentialInUrl": false
+    },
+    {
+      "collection": "queue",
+      "renderer": "queue",
+      "authenticated": true,
+      "credentialInUrl": false
+    },
+    {
+      "realRedDB": true,
+      "nodeInspection": true,
+      "filterRecovery": true,
+      "matchLabels": true,
+      "centrality": true,
+      "pathMetrics": true,
+      "errorDraftPreserved": true,
+      "axe": []
+    },
+    {
+      "width": 390,
+      "scheme": "light",
+      "violations": [],
+      "geometry": {
+        "width": 390,
+        "scroll": 390,
+        "main": {
+          "x": 0,
+          "y": 172.125,
+          "width": 390,
+          "height": 727.875,
+          "top": 172.125,
+          "right": 390,
+          "bottom": 900,
+          "left": 0
+        },
+        "header": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 109,
+          "top": 0,
+          "right": 390,
+          "bottom": 109,
+          "left": 0
+        }
+      }
+    },
+    {
+      "width": 390,
+      "scheme": "dark",
+      "violations": [],
+      "geometry": {
+        "width": 390,
+        "scroll": 390,
+        "main": {
+          "x": 0,
+          "y": 172.125,
+          "width": 390,
+          "height": 727.875,
+          "top": 172.125,
+          "right": 390,
+          "bottom": 900,
+          "left": 0
+        },
+        "header": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 109,
+          "top": 0,
+          "right": 390,
+          "bottom": 109,
+          "left": 0
+        }
+      }
+    },
+    {
+      "width": 1280,
+      "scheme": "light",
+      "violations": [],
+      "geometry": {
+        "width": 1280,
+        "scroll": 1280,
+        "main": {
+          "x": 0,
+          "y": 87.25,
+          "width": 1280,
+          "height": 812.75,
+          "top": 87.25,
+          "right": 1280,
+          "bottom": 900,
+          "left": 0
+        },
+        "header": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 47.75,
+          "top": 0,
+          "right": 1280,
+          "bottom": 47.75,
+          "left": 0
+        }
+      }
+    },
+    {
+      "width": 1280,
+      "scheme": "dark",
+      "violations": [],
+      "geometry": {
+        "width": 1280,
+        "scroll": 1280,
+        "main": {
+          "x": 0,
+          "y": 87.25,
+          "width": 1280,
+          "height": 812.75,
+          "top": 87.25,
+          "right": 1280,
+          "bottom": 900,
+          "left": 0
+        },
+        "header": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 47.75,
+          "top": 0,
+          "right": 1280,
+          "bottom": 47.75,
+          "left": 0
+        }
+      }
+    },
+    {
+      "realRedDB": true,
+      "independentDrafts": true,
+      "queryAfterSiblingUnmount": true,
+      "errors": []
+    }
+  ]
+}

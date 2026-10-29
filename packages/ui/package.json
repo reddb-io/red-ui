@@ -8,12 +8,6 @@
     "red-ui": "./bin/red-ui.js"
   },
   "svelte": "./src/lib/index.ts",
-  "imports": {
-    "#reddb": {
-      "types": "./src/lib/reddb/index.ts",
-      "default": "./src/lib/reddb/index.ts"
-    }
-  },
   "exports": {
     ".": {
       "svelte": "./src/lib/index.ts",
@@ -58,7 +52,6 @@
     "@aflsolutions/graphology-communities-leiden": "^1.1.1",
     "@lucide/svelte": "^1.0.1",
     "@reddb-io/design-system": "workspace:*",
-    "@reddb-io/ui-kit": "workspace:*",
     "@reddb-io/ui-mcp": "workspace:*",
     "@tauri-apps/api": "^2.5.0",
     "@tauri-apps/plugin-dialog": "^2.5.0",

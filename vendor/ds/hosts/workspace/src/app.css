@@ -1,0 +1,134 @@
+@import "tailwindcss";
+/* The ds-sync pin's entry carries the Brand fonts, Tokens, the
+   Base + Application Theme, both Color Schemes, print rules and every Density
+   stop. The DS reads its axes from <html data-theme="application"
+   data-color-scheme="light|dark"> (ADR 0008). vendor/ds sits outside this
+   package, so Tailwind is pointed at the vendored Kit sources explicitly. */
+@import "@reddb-io/design-system/styles.css";
+@source "../../../kits";
+@source "./lib";
+@source "./routes";
+@source "./compat";
+@import "./compat/tokens/tokens.css";
+
+@theme inline {
+  --color-bg-0: var(--reddb-color-background);
+  --color-bg-1: var(--reddb-color-elevation-base-surface);
+  --color-bg-2: var(--reddb-color-muted);
+  --color-bg-3: var(--reddb-color-elevation-raised-surface);
+  --color-fg-0: var(--reddb-color-foreground);
+  --color-fg-1: var(--reddb-color-foreground);
+  --color-fg-2: var(--reddb-color-ink-muted);
+  --color-fg-3: var(--reddb-color-ink-muted);
+  --color-line-1: var(--reddb-color-border-subtle);
+  --color-line-2: var(--reddb-color-control-edge);
+  --color-line-3: var(--reddb-color-border-strong);
+  --color-accent: var(--reddb-color-primary);
+  --color-ok: var(--reddb-color-feedback-success-foreground);
+  --color-warn: var(--reddb-color-feedback-warning-foreground);
+  --color-danger: var(--reddb-color-feedback-danger-foreground);
+  --color-info: var(--reddb-color-feedback-info-foreground);
+  --color-role-primary: var(--reddb-color-primary-text);
+  --color-role-replica: var(--reddb-color-feedback-info-foreground);
+  --color-role-embedded: var(--reddb-color-feedback-success-foreground);
+  --color-accent-soft: color-mix(
+    in srgb,
+    var(--reddb-color-primary) 12%,
+    transparent
+  );
+  --color-accent-glow: color-mix(
+    in srgb,
+    var(--reddb-color-primary) 30%,
+    transparent
+  );
+  --color-ambient-glow: color-mix(
+    in srgb,
+    var(--reddb-color-primary) 4%,
+    transparent
+  );
+  --text-md: var(--reddb-font-size-base);
+  --ease-out: var(--reddb-easing-entrance);
+  --ease-snap: var(--reddb-easing-entrance);
+}
+
+/* shadcn-svelte semantic aliases — driven by the active theme's tokens */
+@layer base {
+  :root,
+  [data-workspace-root] {
+    --background: var(--color-bg-0);
+    --foreground: var(--color-fg-0);
+    --card: var(--color-bg-1);
+    --card-foreground: var(--color-fg-0);
+    --popover: var(--color-bg-1);
+    --popover-foreground: var(--color-fg-0);
+    --primary: var(--color-accent);
+    --primary-foreground: var(--reddb-color-on-primary);
+    --secondary: var(--color-bg-2);
+    --secondary-foreground: var(--color-fg-1);
+    --muted: var(--color-bg-2);
+    --muted-foreground: var(--color-fg-2);
+    --accent: var(--color-bg-3);
+    --accent-foreground: var(--color-fg-0);
+    --destructive: var(--color-danger);
+    --destructive-foreground: var(--reddb-color-feedback-danger-on-fill);
+    --border: var(--color-line-2);
+    --input: var(--color-line-2);
+    --ring: var(--color-accent);
+    --radius: var(--radius-md);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    background: var(--color-bg-0);
+    color: var(--color-fg-0);
+    font-family: var(--font-sans);
+    font-size: var(--reddb-type-body-font-size);
+    line-height: var(--reddb-type-body-line-height);
+    font-feature-settings: "cv11", "ss01", "ss03";
+    letter-spacing: -0.005em;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .type-h1 {
+    font-size: var(--reddb-type-heading-font-size);
+    font-weight: var(--reddb-type-heading-font-weight);
+    letter-spacing: var(--reddb-type-heading-letter-spacing);
+    line-height: var(--reddb-type-heading-line-height);
+    color: var(--reddb-color-foreground);
+  }
+  .type-h2 {
+    font-size: var(--reddb-type-title-font-size);
+    font-weight: var(--reddb-type-title-font-weight);
+    letter-spacing: var(--reddb-type-title-letter-spacing);
+    line-height: var(--reddb-type-title-line-height);
+    color: var(--reddb-color-foreground);
+  }
+  .type-label {
+    font-size: var(--reddb-type-eyebrow-font-size);
+    font-weight: var(--reddb-type-eyebrow-font-weight);
+    letter-spacing: var(--reddb-type-eyebrow-letter-spacing);
+    line-height: var(--reddb-type-eyebrow-line-height);
+    color: var(--reddb-color-ink-muted);
+  }
+  .type-caption {
+    font-size: var(--reddb-type-caption-font-size);
+    font-weight: var(--reddb-type-caption-font-weight);
+    letter-spacing: var(--reddb-type-caption-letter-spacing);
+    line-height: var(--reddb-type-caption-line-height);
+    color: var(--reddb-color-ink-muted);
+  }
+  .type-code {
+    font-size: var(--reddb-type-body-font-size);
+    font-weight: var(--reddb-type-body-font-weight);
+    letter-spacing: var(--reddb-type-body-letter-spacing);
+    line-height: var(--reddb-type-body-line-height);
+    color: var(--reddb-color-foreground);
+  }
+  .type-code { font-family: var(--reddb-font-family-mono); }
+}

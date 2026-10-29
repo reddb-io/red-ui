@@ -2,7 +2,7 @@
 
 Universal client for [reddb](https://github.com/reddb-io/reddb) — connect to embedded, server (TCP/TLS), Docker, or replicated clusters from one app.
 
-Ships as both a desktop app (Tauri 2) and a PWA built from the same Svelte source.
+Ships as both a desktop app (Tauri 2) and a PWA built from the same Design System workspace host. This repository publishes compatibility packages and installers; UI implementation lives in the DS. See [ownership and migration](docs/migration/ownership.md).
 
 ## Install
 
@@ -24,7 +24,7 @@ Releases carry Linux x86_64 and aarch64, a universal macOS build, and Windows x8
 
 - **SvelteKit** + `adapter-static` — single bundle, deployable as PWA or wrapped by Tauri.
 - **Tauri 2** — native desktop shell (Rust). Tiny binary, system webview, deep-link support.
-- **@xyflow/svelte** — topology diagram with live primary/replica stats.
+- **Design System App/Data Kits** — workspace, explorers, topology and all visual controls, selected through pinned Sync.
 - **pnpm workspace** — public packages under the `@reddb-io/*` npm scope, matching the main `reddb` repo release shape.
 
 ## Layout
@@ -34,10 +34,13 @@ red-ui/
 ├── apps/
 │   └── desktop/             # Tauri 2 shell (Rust)
 └── packages/
-    ├── ui/                  # @reddb-io/ui — SvelteKit app + embeddable Svelte components
-    │   └── src/lib/reddb/   # UI-only RedDB HTTP adapter, connection storage, and parser glue
+    ├── ui/                  # @reddb-io/ui — public source facades + PWA/embed build
     ├── ui-kit/              # @reddb-io/ui-kit — temporary compatibility facade
-    └── mcp/                 # @reddb-io/ui-mcp — MCP App server
+    └── mcp/                 # @reddb-io/ui-mcp — public MCP facade
+
+vendor/ds/hosts/workspace/    # canonical PWA, embedded runtime and CLI
+vendor/ds/hosts/mcp/          # canonical MCP host
+vendor/ds/adapters/reddb/     # canonical RedDB operations
 ```
 
 ## Develop
@@ -56,8 +59,8 @@ pnpm desktop:build    # bundle for current OS
 under `build/`, plus Svelte component exports from `src/lib`. The same static app
 is deployed to https://ui.reddb.io from GitHub Pages on every push to `main`.
 The `@reddb-io/ui-kit` package is versioned with it as a temporary compatibility
-facade over canonical DS components. UI-only RedDB HTTP adapter code lives inside `@reddb-io/ui`
-instead of being published as a separate protocol package.
+facade over canonical DS components. Both packages carry the selected DS source,
+including the explicitly routed RedDB adapter and workspace host.
 
 It also ships the `red-ui` CLI:
 
@@ -286,24 +289,25 @@ the workspace. HTTP status delivery remains the hosting server's responsibility.
 The current pin adds `SecretValue` from `@reddb-io/design-system/base` and
 `WorkspaceTabs`, `ChangeReview`, `ErrorBoundary`, and `ShortcutHelp` from
 `@reddb-io/design-system/app`. They are available through the canonical imports;
-application-specific state, authorization, commands, and persistence remain
-owned by Red UI.
+portable workspace state, commands and persistence belong to App, with RedDB
+operations in the adapter and product orchestration in the workspace host.
 
 The Core vendors `reddb-io/design-system` through its official `ds-sync`
-producer. `design-system.manifest.json` pins **v2026.10.38**, selects the native
-Svelte flavor and the Application Kit (which inherits Base). The generated
+producer. `design-system.manifest.json` pins **v2026.10.67**, selects the native
+Svelte flavor and the Data Kit (which inherits App and Base). The generated
 `vendor/ds/design-system.receipt.json` records the revision and file hashes.
 
-The pin includes the updated SidebarRail sizing and labelled-item spacing,
-Diff rendering, RadialProgress customization, and the new RadialContent
-component. Font loading keeps the official complete profile: browser navigation
-through Red UI's routes also needs original-face fallback with the optional
-`ui` profile, so adding those subsets increases this flow's cold font transfer
-by 64,784 bytes. The Data and Marketing Kits remain opt-in through the manifest.
+The pin selects the Data Kit (with its App/Base parents), the RedDB adapter,
+and the MCP/workspace hosts. PWA routing, embedded mounting, CLI behavior and
+legacy ui-kit exports come from that exact receipted source. All production
+controls and artwork belong to the canonical Kits; no local component or
+workspace implementation remains in the public package source directories.
+Marketing remains opt-in. The official complete font profile is preserved.
 
 ```sh
 pnpm ds:sync   # requires the sibling ../design-system checkout and GitHub access
 pnpm ds:check  # verifies the pin and every received file; also runs in CI
+pnpm ds:audit:strict  # rejects local UI/runtime implementations outside the DS
 ```
 
 The Sync launcher runs the producer from the pinned release in a disposable
@@ -321,10 +325,10 @@ The Core declares `data-theme="application"`, a separate light/dark
 `data-color-scheme`, and compact Density by default. The embed host may choose
 its own Density. Both standalone and Shadow DOM consume the same DS CSS;
 legacy layout color names reference DS roles instead of a second palette.
-Brand fonts come from the vendored DS. Nocturne remains an explicit local
-appearance extension; returning to Reddb restores the canonical DS cascade.
-Database renderers, topology behavior, and connection/auth ownership remain
-product-specific compositions.
+Brand fonts come from the vendored DS. Legacy custom palettes migrate to the
+canonical application theme. Database renderers and topology belong to Data;
+connection and authentication operations belong to the explicit RedDB adapter.
+Host-specific composition lives in the selected workspace host.
 
 Public npm source exports also carry their received DS files and assets. The
 `prepack` step stages portable source imports and public runtime dependencies;

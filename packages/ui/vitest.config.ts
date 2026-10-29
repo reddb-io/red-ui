@@ -22,7 +22,7 @@ export default defineConfig({
     // test resolver doesn't apply — alias the package to its source entry so
     // tests can import the kit's primitives and helpers directly.
     alias: {
-      $lib: resolve(__dirname, "src/lib"),
+      $lib: resolve(__dirname, "../../vendor/ds/hosts/workspace/src/lib"),
       "@reddb-io/ui-kit": resolve(__dirname, "../ui-kit/src/lib/index.ts"),
     },
   },

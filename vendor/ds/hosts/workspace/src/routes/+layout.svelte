@@ -1,0 +1,32 @@
+<script lang="ts">
+  // The full SvelteKit Surface: it wraps the same Mountable Root used for
+  // embedding, but injects a Kit-backed router so the URL, deep links,
+  // refresh, and the back button keep working. The route `+page.svelte`
+  // files exist only to make each URL a valid route — the Root reads the
+  // location from the Kit router and renders the matching view itself.
+  import type { Snippet } from 'svelte'
+  import { base } from '$app/paths'
+  import { page } from '$app/state'
+  import '../app.css'
+  import Workspace from '../lib/Workspace.svelte'
+  import ErrorBoundary from '../lib/ErrorBoundary.svelte'
+  import { createKitRouter } from './kit-router.svelte'
+
+  let { children }: { children: Snippet } = $props()
+
+  const router = createKitRouter()
+  const path = $derived(page.url.pathname.slice(base.length) || '/')
+  const renderRouteContent = $derived(
+    Boolean(page.error) || path === '/graph' || path === '/shadow-dom-spike' || path === '/redwire-ws-spike',
+  )
+</script>
+
+{#if renderRouteContent}
+  {@render children()}
+{:else}
+  <!-- Black-screen shield (#126): a render crash in the Workspace shows the
+       recovery screen instead of tearing down the webview to black. -->
+  <ErrorBoundary>
+    <Workspace {router} persistenceKey="default" themeTarget={typeof document !== "undefined" ? document.documentElement : null} />
+  </ErrorBoundary>
+{/if}

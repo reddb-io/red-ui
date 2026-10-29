@@ -46,7 +46,7 @@ function rewrite(dir) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const path = join(dir, entry.name);
     if (entry.isDirectory()) rewrite(path);
-    else if (/\.(ts|svelte|css)$/.test(entry.name)) {
+    else if (/\.(ts|m?js|svelte|css)$/.test(entry.name)) {
       const original = readFileSync(path, "utf8");
       const content = original.replace(
         /(["'])@reddb-io\/design-system\/([^"']+)\1/g,
@@ -103,6 +103,7 @@ function rewrite(dir) {
   }
 }
 rewrite(join(stage, "src"));
+if (existsSync(join(stage, "bin"))) rewrite(join(stage, "bin"));
 manifest.dependencies = { ...manifest.dependencies, ...ds.dependencies };
 delete manifest.dependencies[ds.name];
 for (const group of ["dependencies", "peerDependencies"]) {

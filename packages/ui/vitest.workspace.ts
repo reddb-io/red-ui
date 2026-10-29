@@ -15,8 +15,8 @@ export default defineWorkspace([
     test: {
       name: "node",
       environment: "node",
-      include: ["src/**/*.test.ts"],
-      exclude: ["src/**/*.svelte.test.ts"],
+      include: ["../../vendor/ds/hosts/workspace/src/**/*.test.ts"],
+      exclude: ["../../vendor/ds/hosts/workspace/src/**/*.svelte.test.ts"],
     },
   },
   {
@@ -25,7 +25,7 @@ export default defineWorkspace([
     test: {
       name: "browser",
       environment: "happy-dom",
-      include: ["src/**/*.svelte.test.ts"],
+      include: ["../../vendor/ds/hosts/workspace/src/**/*.svelte.test.ts"],
     },
   },
 ]);

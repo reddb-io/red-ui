@@ -1,57 +1,62 @@
-# Red-ui presentation ownership
+# Red-ui presentation and workspace ownership
 
-The Design System owns all result explorers, their rendering engines, charts,
-illustrations, navigation and interactive primitives. Product files adapt
-RedDB state, permissions and routing into those contracts.
+All production presentation and workspace implementation is maintained in the
+Design System. The red-ui `packages/ui/src` and `packages/ui-kit/src` directories
+contain only public export/style facades and SvelteKit ambient declarations.
+There are no local components, routes, renderers, themes or workspace services.
 
-| Consumer responsibility                                            | Canonical owner                                                            |
-| ------------------------------------------------------------------ | -------------------------------------------------------------------------- |
-| Table queries and filters                                          | Data TableExplorer, RedDB table-results                                    |
-| Key/value inspection and search                                    | Data KeyValueExplorer, RedDB kv-results                                    |
-| Event series and buckets                                           | Data EventSeriesExplorer, RedDB time-series-results                        |
-| Vectors and search composition                                     | Data VectorExplorer, RedDB vector-results                                  |
-| Queue events and message composition                               | Data QueueExplorer, RedDB queue-results                                    |
-| Graph canvas/SVG, communities, bundling, inspection and algorithms | Data GraphExplorer and Graph, RedDB graph-results                          |
-| Documents, JSON, diffs and statistics                              | Existing Data explorers                                                    |
-| Cluster topology and navigation                                    | Data Diagram and PanZoomViewport                                           |
-| Metrics                                                            | Data TimeSeries and KpiCard, Base Progress                                 |
-| Navigation and settings                                            | App NavItem, ApplicationWorkspace, SettingsRow                             |
-| Positive/negative outcomes and errors                              | App OutcomeScreen and ErrorBoundary; Base artwork                          |
-| Loading, activity and recovery controls                            | Base LoadingIndicator, Progress, Card, Badge, Disclosure; App ActivityFeed |
-| Forms, tables, icons and code                                      | Base controls, Icon and CodeBlock; Data Table                              |
+| Responsibility                                                                                | Canonical owner                                              |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Portable sessions, documents, commands, execution, storage and workspace frame                | App Kit workspace contracts and native Svelte/React adapters |
+| Tables, key/value, event series, vectors, queue, graph, documents, JSON, diffs and statistics | Data Kit explorers and engines                               |
+| Navigation, forms, charts, loading, recovery and positive/negative artwork                    | App/Data components composed from Base controls and assets   |
+| HTTP, authentication, permissions, RedDB responses, queries and CDC                           | Explicit RedDB adapter                                       |
+| RedDB workspace screens, routing, runtime, PWA and embedded mounting                          | Explicit workspace host                                      |
+| CLI serving/opening and MCP delegation                                                        | Workspace host CLI                                           |
+| MCP implementation                                                                            | Explicit MCP host                                            |
+| Historical ui-kit prop/token contracts                                                        | Workspace host compatibility exports                         |
 
-The old graph engines and XYFlow dependency are removed. The retained public
-ClusterNode export composes DS Card/StatusIndicator/Badge. The ui-kit package
-remains a compatibility facade; it owns no separate visual primitive.
-Legacy custom seed palettes resolve to the canonical application theme.
-The Appearance page selects the DS light/dark Color Scheme. Host Density is
-preserved. Global decorative effects and fixed typography have been removed.
-The mobile resource list opens through a canonical Popover; it no longer
-reserves a desktop-width sidebar in a narrow workspace.
+SvelteKit routes, library source, HTML template and static assets point directly
+to `vendor/ds/hosts/workspace`. The embedded bundle uses the same source. The CLI
+is a short invocation of the DS host with the public package's artifact folder.
+The selected host composes App, Data and RedDB explicitly; importing a generic
+App component does not pull in the database client, graph engines or Tauri.
 
-## Executed evidence
+## Public compatibility
 
-- Consumer type check: no errors or warnings; web and embed builds pass.
-- 627 consumer tests, with targeted reruns after disclosure and layout changes.
-  Migrated graph model tests execute in the producer repository.
-- Real disposable RedDB: table query/filter/reset, key search/recovery, event
-  buckets, vector search, queue insertion and graph MATCH/centrality/path metrics.
-- Graph query errors retain the input and previous result. The adapter handles
-  real MATCH `edge_type` and scalar algorithm responses. Path metrics never
-  masquerade as returned path geometry.
-- Production browser: security, analytics, cluster and appearance; both color
-  schemes at 390 and 1280 pixels; query error artwork; no horizontal document
-  overflow or axe violations in those exercised states.
-- Source audit in CI rejects local native controls/navigation/tables/SVG/code
-  blocks/disclosures, direct icon rendering, component CSS and legacy classes.
-  The only named exception is the intentionally hostile Shadow DOM test host.
-  `ui-ownership.json` is the reproducible inventory, not a percentage estimate.
+Existing `@reddb-io/ui`, `@reddb-io/ui/embed`, `/renderers`, `/app.css` and
+`@reddb-io/ui-kit` entrypoints remain supported. Their replacements are
+`@reddb-io/design-system/hosts/workspace`, `/embed`, `/renderers`, `/styles.css`
+and `/compat`, selected through official pinned Sync. Source consumers choose
+`framework: "svelte"`, `kits: ["data"]`, `adapters: ["reddb"]`,
+`hosts: ["workspace"]`, `styles: ["application"]`.
 
-## Remaining repository cutover
+The facades remain supported throughout 0.8.x. Removal requires an announced
+breaking release no earlier than 0.9.0 and verified migration guidance.
+Public npm artifacts include the exact selected DS source, receipt, assets and
+Apache-2.0 licenses, with no dependency on a private registry.
 
-A zero primitive audit is necessary, not sufficient, for repository retirement.
-The DS-owned workspace host is being validated separately. PWA/embed/desktop
-build and publication responsibility, installer/update paths, public entrypoint
-compatibility and release evidence must move before the red-ui repository can
-be retired. See DS ADR 0051. The producer's source, receipt and public package
-licensing must remain verifiable through that transition.
+## Enforced evidence
+
+- `ds:check` verifies every vendored byte against the official receipt.
+- `ds:audit:strict` rejects any source implementation in the public facade
+  directories, including new components, routes, scripts or CSS declarations.
+- The DS host separately audits its production composition against canonical
+  controls; the intentionally hostile Shadow DOM fixture is its only exception.
+- All 627 runtime/interaction tests execute against the vendored host source.
+- Svelte checking, PWA/embed builds and a plain TypeScript SDK consumer pass.
+- Real disposable RedDB browser journeys cover all six result explorers,
+  filters, query recovery and graph algorithms. Mobile/desktop light/dark error
+  states have no axe violations or horizontal document overflow.
+- Two embedded workspaces keep independent drafts; the second still queries
+  the real server after the first is unmounted.
+- Staged public packages preserve all DS receipt hashes and licenses.
+
+## Distribution boundary
+
+The public red-ui repository still provides package/installer publication,
+Pages hosting, version metadata and the native Tauri shell. These are delivery
+responsibilities, not a parallel component system. Desktop uses the same built
+DS workspace. Archiving the repository is a later, distinct operation under
+DS ADR 0051: it requires migrating release infrastructure and satisfying the
+published facade window. Source/UI absorption does not claim that retirement.

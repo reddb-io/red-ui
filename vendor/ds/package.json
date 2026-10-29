@@ -135,6 +135,16 @@
       "types": "./kits/data/src/vector-explorer.ts",
       "default": "./kits/data/src/vector-explorer.ts"
     },
+    "./hosts/mcp": "./hosts/mcp/src/index.ts",
+    "./hosts/workspace": "./hosts/workspace/src/index.ts",
+    "./hosts/workspace/cli": "./hosts/workspace/src/cli.mjs",
+    "./hosts/workspace/compat": "./hosts/workspace/src/compat/lib/index.ts",
+    "./hosts/workspace/compat.css": "./hosts/workspace/src/compat/tokens/styles.css",
+    "./hosts/workspace/embed": "./hosts/workspace/src/lib/embed/index.ts",
+    "./hosts/workspace/renderers": "./hosts/workspace/src/lib/renderers/index.ts",
+    "./hosts/workspace/styles.css": "./hosts/workspace/src/app.css",
+    "./hosts/workspace/tokens": "./hosts/workspace/src/compat/tokens/index.ts",
+    "./hosts/workspace/tokens.css": "./hosts/workspace/src/compat/tokens/tokens.css",
     "./styles.css": "./styles/all.css",
     "./styles/all.css": "./styles/all.css",
     "./styles/application.css": "./styles/application.css",
@@ -142,11 +152,16 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.12.4",
+    "@tauri-apps/api": "^2.5.0",
+    "@tauri-apps/plugin-dialog": "^2.5.0",
+    "@tauri-apps/plugin-http": "^2.5.9",
     "@types/d3-hierarchy": "^3.1.7",
     "@types/d3-sankey": "0.12.5",
     "@types/d3-shape": "^3.2.0",
     "bits-ui": "^2.19.5",
+    "clsx": "^2.1.1",
     "libphonenumber-js": "1.13.15",
+    "tailwind-merge": "^3.6.0",
     "tailwind-variants": "^3.1.1"
   },
   "peerDependencies": {

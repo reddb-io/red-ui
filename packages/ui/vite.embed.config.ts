@@ -12,8 +12,11 @@ export default defineConfig({
   define: versionDefines(),
   resolve: {
     alias: {
-      "#reddb": resolve(__dirname, "src/lib/reddb/index.ts"),
-      $lib: resolve(__dirname, "src/lib"),
+      "#reddb": resolve(
+        __dirname,
+        "../../vendor/ds/hosts/workspace/src/lib/reddb/index.ts"
+      ),
+      $lib: resolve(__dirname, "../../vendor/ds/hosts/workspace/src/lib"),
     },
   },
   build: {

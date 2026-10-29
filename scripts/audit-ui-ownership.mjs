@@ -38,15 +38,43 @@ async function files(dir) {
   ).flat();
 }
 const findings = [];
+const ts = createRequire(import.meta.url)("typescript");
+const localImplementation = [];
+for (const sourceRoot of ["packages/ui/src", "packages/ui-kit/src"]) {
+  for (const path of await files(resolve(root, sourceRoot))) {
+    if (relative(root, path) === "packages/ui/src/app.d.ts") continue;
+    const source = await readFile(path, "utf8");
+    let facade = false;
+    if (path.endsWith(".ts")) {
+      const ast = ts.createSourceFile(
+        path,
+        source,
+        ts.ScriptTarget.Latest,
+        true
+      );
+      facade =
+        ast.statements.length > 0 &&
+        ast.statements.every(
+          (node) =>
+            ts.isExportDeclaration(node) &&
+            node.moduleSpecifier &&
+            ts.isStringLiteral(node.moduleSpecifier) &&
+            node.moduleSpecifier.text.startsWith("@reddb-io/design-system/")
+        );
+    } else if (path.endsWith(".css")) {
+      facade = /^@import "@reddb-io\/design-system\/[^"\n]+";\s*$/.test(source);
+    }
+    if (!facade) localImplementation.push(relative(root, path));
+  }
+}
+const manifest = JSON.parse(
+  await readFile(resolve(root, "design-system.manifest.json"), "utf8")
+);
+const workspaceHostSelected = manifest.hosts?.includes("workspace") === true;
+
 // This route deliberately attacks Shadow DOM isolation with hostile host CSS.
 // It is test infrastructure, never a workspace component or presentation source.
-const testFixtures = [
-  {
-    file: "packages/ui/src/routes/shadow-dom-spike/+page.svelte",
-    reason:
-      "Deliberately hostile host styles for Shadow DOM isolation verification.",
-  },
-];
+const testFixtures = [];
 for (const sourceRoot of ["packages/ui/src", "packages/ui-kit/src"]) {
   for (const path of (await files(resolve(root, sourceRoot)))
     .filter(
@@ -95,6 +123,10 @@ for (const sourceRoot of ["packages/ui/src", "packages/ui-kit/src"]) {
 }
 findings.sort((a, b) => a.file.localeCompare(b.file));
 const report = {
+  sourceFacadeComplete:
+    workspaceHostSelected && localImplementation.length === 0,
+  workspaceHostSelected,
+  localImplementation,
   primitivesComplete: findings.length === 0,
   filesWithLocalPresentation: findings.length,
   findings,
@@ -123,5 +155,8 @@ if (process.argv.includes("--check")) {
   }
 }
 console.log(JSON.stringify(report, null, 2));
-if (process.argv.includes("--strict") && !report.primitivesComplete)
+if (
+  process.argv.includes("--strict") &&
+  (!report.primitivesComplete || !report.sourceFacadeComplete)
+)
   process.exitCode = 1;
