@@ -15,6 +15,7 @@
     "./adapters/reddb/connection-bootstrap": "./adapters/reddb/src/connection-bootstrap.ts",
     "./adapters/reddb/connection-provider": "./adapters/reddb/src/connection-provider.ts",
     "./adapters/reddb/dev-console": "./adapters/reddb/src/dev-console.ts",
+    "./adapters/reddb/diff-results": "./adapters/reddb/src/diff-results.ts",
     "./adapters/reddb/injected-client-provider": "./adapters/reddb/src/injected-client-provider.ts",
     "./adapters/reddb/local-url-provider": "./adapters/reddb/src/local-url-provider.ts",
     "./adapters/reddb/permission-gate": "./adapters/reddb/src/permission-gate.ts",
@@ -78,6 +79,10 @@
     "./data/*": {
       "svelte": "./kits/data/src/*.svelte",
       "default": "./kits/data/src/*.svelte"
+    },
+    "./data/diff-explorer": {
+      "types": "./kits/data/src/diff-explorer.ts",
+      "default": "./kits/data/src/diff-explorer.ts"
     },
     "./data/recipes": {
       "types": "./kits/data/src/recipes.ts",

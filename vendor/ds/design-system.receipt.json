@@ -1,6 +1,6 @@
 {
-  "version": "v2026.10.61",
-  "revision": "e6f81007c775d1b5b0c535139e05e22b0e338d41",
+  "version": "v2026.10.62",
+  "revision": "ce482fa92cdb32bb1919cbff16964a758ed4ef7b",
   "distribution": {
     "format": "source",
     "minify": false,
@@ -625,6 +625,7 @@
     "kits/data/src/CompositeChart.svelte": "09b6fe0e59a332617216b3efae12cf331c56da98c877b50efda4189a28ab9781",
     "kits/data/src/Diagram.svelte": "645c41d5305a3484610699abd7d5d40d5e13ba6a2f0e35b814d8a46a5d4b9b05",
     "kits/data/src/Diff.svelte": "1c0c4e49098ebbd8b97638d714493e5838d458e178dc1fdbd2213a594a4b48d6",
+    "kits/data/src/DiffExplorer.svelte": "809afcd5c53524f8b03a69ac3a5937c3d22262c80b8aba7204b8d70260a1f9f6",
     "kits/data/src/DocumentViewer.svelte": "d55aff5b397d57276e2e3b25500ed9475c1aa76d13dfd1a68790660fdbe063d5",
     "kits/data/src/DonutChart.svelte": "e641d1acb33905a4dbd5022e8a3e7c09e2f68498f9c105a1042a8112df14ea8f",
     "kits/data/src/EntityRelationship.svelte": "9706954e1aed29a73f8e09fd332a6def5f1d3dbec864456998017108b4ef3b89",
@@ -692,6 +693,7 @@
     "kits/data/src/core/contracts/compositechart.ts": "2f586ff3cde4a1b936ccea57fbe6a531e913e515af4e79f65a0e7db13eb51716",
     "kits/data/src/core/contracts/diagram.ts": "61c73e6e073d079968e44d29c46ab15c1266c64abf092a33e82021aa82926f3e",
     "kits/data/src/core/contracts/diff.ts": "ff3522884878a84800630b03af41a4295fd126d5bdedcd20d907c424bacd43b7",
+    "kits/data/src/core/contracts/diffexplorer.ts": "2f7af915cf356ead3eaae926727309cf64e264f51392df330182a0301c59c232",
     "kits/data/src/core/contracts/documentviewer.ts": "ff0fddbd620278def9f3fe745f5695377e0c2cbe69fd7fe891a9a59c15c21202",
     "kits/data/src/core/contracts/donutchart.ts": "4fd3cd7b44a0bff53068cbe5cd9a5e80d1fb2316a694af88427a873faec154ee",
     "kits/data/src/core/contracts/entityrelationship.ts": "a546b2a1f51541032b13562bb3172873f1a8e8793491bbdb2fcae16c03f1f6bf",
@@ -744,6 +746,8 @@
     "kits/data/src/core/schedule-overlays.ts": "9f8c49f2a6b6b56f79fdf1652a3297a202bfdd3a52b8c9662dfc74d3ec9040e4",
     "kits/data/src/core/status-breakdown.ts": "59e992d79ad2bbce82bb9a0508e69fdad1dd3b1f2f20fac24bd447d0a91adae3",
     "kits/data/src/diagram.ts": "8a353ce59545d8e70f8c6610c984bc44ed4924704664e4518410cf9b2241b011",
+    "kits/data/src/diff-explorer.ts": "029431edb86b2da77af12a24b1afaf184436354902caf96765209c8ba9b262f0",
+    "kits/data/src/diff-explorer.variants.ts": "111491f3a6d9909c6ea42fcbe162c2de7ee5529d9ccb375651b22364e05c6afe",
     "kits/data/src/diff.ts": "d65a897b33b09574646cf3de2494d5d016163251581ffbdc9a6f5445520ca667",
     "kits/data/src/document.ts": "e6458326f5fc4a640aaa065b515fefa477d62b51c9fd25601319735018940462",
     "kits/data/src/exploded-layers.ts": "39655dd600c4c83aa9cf6b54bcca6f6fea5202cd1737ae53ea7d992162759f26",
@@ -804,7 +808,7 @@
     "kits/data/vite.config.ts": "046d4da47b078a2560686fa56a19127b109aee2ef2f7c0ddfea793e092d9f877",
     "adapters/reddb/LICENSE": "9740889764f9b1a5c1c291a36c07412aa5f90c2f4e524ac2a8fc5d69fe46697d",
     "adapters/reddb/README.md": "006e1cdc93dc7ab1382a12f454a1497fda6d2d7245c75bbf76c60bda366ad53d",
-    "adapters/reddb/adapter.json": "14be11dd820796f63c1f3f642e815fc7f0d30a9035c604f8d54e59bf028c126a",
+    "adapters/reddb/adapter.json": "dbbd31d46a4011b22bfac42dd6fb6217639e7c9df51d275a45891610221ff556",
     "adapters/reddb/src/analytics.ts": "2fca81a222d76b85683b0623a49f8947eb99cc0ad9a5ae669b7f058a81d80119",
     "adapters/reddb/src/ask.ts": "c2139ba69be123efa5fa1bf2200f9e3eaf4085312bfcb4b572be89a2d4c29121",
     "adapters/reddb/src/boot-params.ts": "b67bc0d0db8746d4a554340c1dcbfbf03988825aa242f1cf86994ca9e5342a70",
@@ -816,6 +820,7 @@
     "adapters/reddb/src/connection-provider.ts": "dabeb4ff9499d081f6470bdce328620bfc610a813ff8414e79121381477958f9",
     "adapters/reddb/src/connection-string.ts": "893a687cc708d567f1b2621842075ca58dc2ca6a8afa7779f005f731080e5ba8",
     "adapters/reddb/src/dev-console.ts": "6fda40f6c8fa88904b77262c28a9370da00c42580933200e9b210002785d5ee1",
+    "adapters/reddb/src/diff-results.ts": "10671a95e8c4eb3fc01965f54277e3e7dd63c004ec34a882866386f34874a750",
     "adapters/reddb/src/index.ts": "d09cc9bcb968a141c1bd561185f28e6931decd9952f41bce13298cac7539a512",
     "adapters/reddb/src/injected-client-provider.ts": "fd19caedd5c7bea617663f3c01cbf37a0056aeba1adf3e51288a2b477346cfb0",
     "adapters/reddb/src/local-url-provider.ts": "e5d8755486b7e4bc290f6d5958b7a48363ee28abc41e7b92209f5a7f9211d8d2",
@@ -853,6 +858,6 @@
     "styles/all.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/application.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/base.css": "11bb59075a372e0d6d67dee2e338d6fbd6df76f1d91b0d21a9f0f2028b997ca4",
-    "package.json": "36b06cd8242592da9bd97e34607a17a1717373125433aaba60b0c01c2739ec55"
+    "package.json": "aa0b5b2fda9071783af5c9c37df4130f548e77008faff2ad7c1122fa71ccd9a7"
   }
 }
