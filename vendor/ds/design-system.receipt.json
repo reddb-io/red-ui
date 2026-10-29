@@ -1,6 +1,6 @@
 {
-  "version": "v2026.10.59",
-  "revision": "77ce741a85edcdf2ccf85f20b1182f6623c17678",
+  "version": "v2026.10.60",
+  "revision": "ead0979fe2841445bc2de8439fce8e7e8d572dad",
   "distribution": {
     "format": "source",
     "minify": false,
@@ -800,8 +800,8 @@
     "kits/data/type-ledger.json": "e6f1834a474514daf079401fd5d11d7c2a96a648e20b82e18c7df96d385da82a",
     "kits/data/vite.config.ts": "046d4da47b078a2560686fa56a19127b109aee2ef2f7c0ddfea793e092d9f877",
     "adapters/reddb/LICENSE": "9740889764f9b1a5c1c291a36c07412aa5f90c2f4e524ac2a8fc5d69fe46697d",
-    "adapters/reddb/README.md": "ce514b08daa58ba20b79be1ae853196c4274f487554475970b9a0eebf65828ad",
-    "adapters/reddb/adapter.json": "215c7826b89fe683b60589c6bc73f79cd436d65a5b754a9671fc2f5548777fe2",
+    "adapters/reddb/README.md": "006e1cdc93dc7ab1382a12f454a1497fda6d2d7245c75bbf76c60bda366ad53d",
+    "adapters/reddb/adapter.json": "14be11dd820796f63c1f3f642e815fc7f0d30a9035c604f8d54e59bf028c126a",
     "adapters/reddb/src/analytics.ts": "2fca81a222d76b85683b0623a49f8947eb99cc0ad9a5ae669b7f058a81d80119",
     "adapters/reddb/src/ask.ts": "c2139ba69be123efa5fa1bf2200f9e3eaf4085312bfcb4b572be89a2d4c29121",
     "adapters/reddb/src/boot-params.ts": "b67bc0d0db8746d4a554340c1dcbfbf03988825aa242f1cf86994ca9e5342a70",
@@ -809,6 +809,7 @@
     "adapters/reddb/src/change-sql.ts": "72917c7583995013b4a8c0719106f2db06341ab8ff0f7496afca8f2806f0fb92",
     "adapters/reddb/src/client.ts": "ff2ddbcdb9b86f47d11230a3e66aeceb99a7676de78536ce23469a497fd862e7",
     "adapters/reddb/src/cluster-status.ts": "9b8ff6000a0a1d0cbabb63fc6f86142e696a41391aa5881f87b1147a6a0688ce",
+    "adapters/reddb/src/connection-bootstrap.ts": "4d65280f1096c927b02986c9a20fd0fbc9025ff40456a9a5ab0192c202cc04e2",
     "adapters/reddb/src/connection-provider.ts": "dabeb4ff9499d081f6470bdce328620bfc610a813ff8414e79121381477958f9",
     "adapters/reddb/src/connection-string.ts": "893a687cc708d567f1b2621842075ca58dc2ca6a8afa7779f005f731080e5ba8",
     "adapters/reddb/src/dev-console.ts": "6fda40f6c8fa88904b77262c28a9370da00c42580933200e9b210002785d5ee1",
@@ -839,6 +840,6 @@
     "styles/all.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/application.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/base.css": "11bb59075a372e0d6d67dee2e338d6fbd6df76f1d91b0d21a9f0f2028b997ca4",
-    "package.json": "c250e1b3419e6f2a97cf8e7b874ecf0c9399c16ef819ef86154824dc3fddcd96"
+    "package.json": "36b06cd8242592da9bd97e34607a17a1717373125433aaba60b0c01c2739ec55"
   }
 }

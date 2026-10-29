@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   DEFAULT_PERSISTED_CONNECTION_KEY,
   readInjectedGlobalBootstrap,
+  readTauriIpcBootstrap,
   readPersistedLocalBootstrap,
   readUrlOpenContractBootstrap,
   resolveConnectionBootstrap,
@@ -240,5 +241,21 @@ describe("connection string consumption", () => {
     });
     expect(result).toMatchObject({ target: null, error: expect.any(String) });
     expect(readPersisted).not.toHaveBeenCalled();
+  });
+});
+
+describe("native bootstrap bridge", () => {
+  it("invokes the native handoff when supplied and tolerates failures", async () => {
+    const invoke = vi.fn(async () => ({
+      target: "http://127.0.0.1:5055",
+    })) as unknown as Parameters<typeof readTauriIpcBootstrap>[0];
+    await expect(readTauriIpcBootstrap(invoke)).resolves.toEqual({
+      target: "http://127.0.0.1:5055",
+    });
+    expect(invoke).toHaveBeenCalledWith("connection_bootstrap");
+    const failed = vi.fn(async () => {
+      throw new Error("unavailable");
+    }) as unknown as Parameters<typeof readTauriIpcBootstrap>[0];
+    await expect(readTauriIpcBootstrap(failed)).resolves.toBeNull();
   });
 });
