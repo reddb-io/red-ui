@@ -27,6 +27,8 @@
     size?: SectionHeadingSize;
     /** Whether a divider is drawn under the heading and its spacing kept. Defaults to `true`. */
     rule?: boolean;
+    /** Decorative content placed before the heading text. */
+    leading?: Snippet;
     /** Trailing controls, such as Buttons, placed at the inline end of the heading. */
     actions?: Snippet;
     /** Extra classes, merged over the root slot's own. */
@@ -40,6 +42,7 @@
     level = 2,
     size = "md",
     rule = true,
+    leading,
     actions,
     class: className,
     ...rest
@@ -49,10 +52,13 @@
 </script>
 
 <div {...rest} data-section-heading class={slots.root({ class: className })}>
-  <div class={slots.text()}>
-    <svelte:element this={`h${level}`} id={titleId} data-section-heading-title class={slots.title()}>{title}</svelte:element>
-    {#if description}<p data-section-heading-description class={slots.description()}>{description}</p>{/if}
-  </div>
+  {#snippet headingText()}
+    <div class={slots.text()}>
+      <svelte:element this={`h${level}`} id={titleId} data-section-heading-title class={slots.title()}>{title}</svelte:element>
+      {#if description}<p data-section-heading-description class={slots.description()}>{description}</p>{/if}
+    </div>
+  {/snippet}
+  {#if leading}<div class={slots.group()}><span aria-hidden="true" class={slots.leading()}>{@render leading()}</span>{@render headingText()}</div>{:else}{@render headingText()}{/if}
   {#if actions}
     <div class={slots.actions()}>{@render actions()}</div>
   {/if}

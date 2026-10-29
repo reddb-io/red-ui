@@ -23,6 +23,8 @@ const RULE = {
 export const sectionHeading = tv({
   slots: {
     root: "@container/section-heading flex flex-wrap items-end justify-between gap-[var(--reddb-spatial-gap-lg)]",
+    group: "flex min-w-0 items-start gap-[var(--reddb-spatial-gap-md)]",
+    leading: "shrink-0 text-ink-muted",
     text: "flex flex-col gap-[var(--reddb-spatial-gap-sm)]",
     // Weight and line height come with each size: the display role bundles
     // its own, which a shared class here would override.
