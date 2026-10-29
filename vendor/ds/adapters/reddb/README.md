@@ -16,5 +16,5 @@ No module connects to a server on import.
 The source originated in the Apache-2.0 licensed reddb-io/red-ui project; the
 license is included here and in the distributed source. This extraction includes
 the HTTP and CDC clients, connection providers, transport/URI contracts and
-permission decisions. Platform bootstrap, hosts and UI interactions remain in
+permission decisions. The `settings-authoring` entry owns configuration and vault SQL construction and response parsing; callers own authorization, secret presentation and runtime lifecycle. Platform bootstrap, hosts and UI interactions remain in
 red-ui.

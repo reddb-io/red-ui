@@ -16,6 +16,7 @@
     "/uri": "./src/uri.ts",
     "/types": "./src/types.ts",
     "/permission-gate": "./src/permission-gate.ts",
-    "/change-sql": "./src/change-sql.ts"
+    "/change-sql": "./src/change-sql.ts",
+    "/settings-authoring": "./src/settings-authoring.ts"
   }
 }
