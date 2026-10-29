@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.16
+
+### Patch Changes
+
+- 6e2859b: Delegate RedDB configuration and secret authoring to the Design System adapter.
+  - @reddb-io/ui-kit@0.7.16
+  - @reddb-io/ui-mcp@0.7.16
+
 ## 0.7.15
 
 ### Patch Changes
