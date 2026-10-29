@@ -1,6 +1,6 @@
 {
-  "version": "v2026.10.62",
-  "revision": "ce482fa92cdb32bb1919cbff16964a758ed4ef7b",
+  "version": "v2026.10.63",
+  "revision": "d06956bc714e7a306599809c367e7557bfc63bfa",
   "distribution": {
     "format": "source",
     "minify": false,
@@ -657,6 +657,7 @@
     "kits/data/src/SequenceDiagram.svelte": "efd6caa4d0384257bc62298390a20e4069f7461c6ba42ab1496eafa59fdfcfe9",
     "kits/data/src/Sparkline.svelte": "8a68a3aa5b68768d5b7fafa46ec34c7326ea70ff997fd7e9c5dbcbd6e982e7db",
     "kits/data/src/StateGrid.svelte": "c94334de208661137ff7df12c1cf6e883ab4f6a7838f47295f4eed5cc3c4be0e",
+    "kits/data/src/StatsExplorer.svelte": "41ee36d065956fd121b7750ef96f8151c1a52fca38495594eabaf0108afe4e5a",
     "kits/data/src/StatusBreakdown.svelte": "c7ce612eaff954c5a0492cf0b5042f61511ca0022a5543ce1a594e4fb03458a1",
     "kits/data/src/Table.svelte": "9418576541776e48319b408d42d70d5f22f3674ee95c272c104363b72fe419e1",
     "kits/data/src/TerminalSession.svelte": "14e109155ac0eb0e2869b2cfc0bec41891a422d13558026140aad70c643ae14b",
@@ -727,6 +728,7 @@
     "kits/data/src/core/contracts/sequencediagram.ts": "8d7d5f8beb8540f0f40d3e42052aa94964104322a55d7b30822e02d1f1b932d7",
     "kits/data/src/core/contracts/sparkline.ts": "4ee27327ac1c3889201d2b276bdd2acc62b58de5b219f0373bca75c13e16b26a",
     "kits/data/src/core/contracts/stategrid.ts": "4281776b55ec78e40754f225d602bc406fb281dcf4f1677023347eab4f690862",
+    "kits/data/src/core/contracts/statsexplorer.ts": "90cb9de585648f3f51ee67338de4530d0a8ba985bc3dbae3313b37345c707f8f",
     "kits/data/src/core/contracts/statusbreakdown.ts": "22639dd37cc730829a97862b29cf7acd5c968b487f29d35abeceb4d46ffdc843",
     "kits/data/src/core/contracts/table.ts": "a1babe9ae987d0e29aad1cd6cfd9bc4c1cd9e60771ebf215620962125b057261",
     "kits/data/src/core/contracts/terminalsession.ts": "0203450535a3ebd54b5c690839c07f73256af40597f5e76f5e5d5ea159c838c2",
@@ -787,6 +789,8 @@
     "kits/data/src/schema-diagram.ts": "59ee72f82741c3e0f067c3b5c375047ab04950edd99257184445654fb0e7d5ef",
     "kits/data/src/sequence-diagram.ts": "446b1064be085b7acee4196fcfaf99e5d8c287628e6dc461eedf6164e1a61184",
     "kits/data/src/static.server.ts": "f031a6f18474053ffda81142ef402b262f211418f31d1a18039530d7efee799a",
+    "kits/data/src/stats-explorer.ts": "b79fd6437bbce4b42466168e7f5f7376ced547946e131c6dc31f2d41647f886f",
+    "kits/data/src/stats-explorer.variants.ts": "53e3206920cb5090458eb1313d6c4cd76aa9cbcf30bdec60d9b339b0cdbf4955",
     "kits/data/src/status-breakdown.variants.ts": "3b8481324f17de73ae1611863b6bb7ee38d912a680e649c7e119205d78fc4697",
     "kits/data/src/table.ts": "734daeac9a9559ffd08e3c0b1cbd736aae6c3aaf73aae3105ed1848ded8e4463",
     "kits/data/src/terminal-session.ts": "2189127e5f27b946abab5210b0bef488e95b30988d9f5ac258bfb996b0bad699",
@@ -808,7 +812,7 @@
     "kits/data/vite.config.ts": "046d4da47b078a2560686fa56a19127b109aee2ef2f7c0ddfea793e092d9f877",
     "adapters/reddb/LICENSE": "9740889764f9b1a5c1c291a36c07412aa5f90c2f4e524ac2a8fc5d69fe46697d",
     "adapters/reddb/README.md": "006e1cdc93dc7ab1382a12f454a1497fda6d2d7245c75bbf76c60bda366ad53d",
-    "adapters/reddb/adapter.json": "dbbd31d46a4011b22bfac42dd6fb6217639e7c9df51d275a45891610221ff556",
+    "adapters/reddb/adapter.json": "8557636db313b27a029d9571a3087bb5054ac0acffdeba829f55f1addf294f37",
     "adapters/reddb/src/analytics.ts": "2fca81a222d76b85683b0623a49f8947eb99cc0ad9a5ae669b7f058a81d80119",
     "adapters/reddb/src/ask.ts": "c2139ba69be123efa5fa1bf2200f9e3eaf4085312bfcb4b572be89a2d4c29121",
     "adapters/reddb/src/boot-params.ts": "b67bc0d0db8746d4a554340c1dcbfbf03988825aa242f1cf86994ca9e5342a70",
@@ -828,6 +832,7 @@
     "adapters/reddb/src/permission-gate.ts": "17bd958a65e75d4ea3b38c17929b76af0adb530bac9886b71fa13e20cb956bd6",
     "adapters/reddb/src/server-capabilities.ts": "cf6d8d64e82377cc46b2eacb524f1dbc7ba6e2b55f706561955be062e8df39b9",
     "adapters/reddb/src/settings-authoring.ts": "8e0c91a092f7ccdbe9bdcfb4292985c83485f0f99d1477bc2a9c27976534ef01",
+    "adapters/reddb/src/stats-results.ts": "223490492a0354f829663736a88a73287af861072327e905dd6f6fcb43a1a11f",
     "adapters/reddb/src/transports.ts": "28baa560087b1adc9723986df17bf24f11672ce393f4f0b379eb2c0a115ea015",
     "adapters/reddb/src/types.ts": "f5c49982e48d7ac2fd75ebb09a59283647d2fcd81c650ddddf4b94460d222a2d",
     "adapters/reddb/src/uri.ts": "c6db6d54d4b3a45ef03af993b5a1865a831b8abb308ca684f310288a63d5f27d",
@@ -858,6 +863,6 @@
     "styles/all.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/application.css": "7d850230ee9cc8d49cf7e642e8754bcd0be09e799758f99907d9d33cd4e8361f",
     "styles/base.css": "11bb59075a372e0d6d67dee2e338d6fbd6df76f1d91b0d21a9f0f2028b997ca4",
-    "package.json": "aa0b5b2fda9071783af5c9c37df4130f548e77008faff2ad7c1122fa71ccd9a7"
+    "package.json": "52354d727f3e73195d8d5429adbf67a1aea52704ff2f805cde52be953750c392"
   }
 }

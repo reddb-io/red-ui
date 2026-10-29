@@ -1,11 +1,19 @@
 {
   "source": "reddb-io/design-system",
-  "version": "v2026.10.62",
+  "version": "v2026.10.63",
   "framework": "svelte",
   "consumer": "red-ui",
-  "kits": ["data"],
-  "adapters": ["reddb"],
-  "styles": ["application"],
+  "kits": [
+    "data"
+  ],
+  "adapters": [
+    "reddb"
+  ],
+  "styles": [
+    "application"
+  ],
   "dest": "vendor/ds",
-  "hosts": ["mcp"]
+  "hosts": [
+    "mcp"
+  ]
 }
