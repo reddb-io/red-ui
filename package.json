@@ -33,7 +33,8 @@
     "lint-staged": "^17.0.7",
     "prettier": "^3.8.3",
     "tsx": "^4.22.3",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.9"
   },
   "description": "Universal client for [reddb](https://github.com/reddb-io/reddb) — connect to embedded, server (TCP/TLS), Docker, or replicated clusters from one app.",
   "main": "index.js",

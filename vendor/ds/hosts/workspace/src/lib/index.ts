@@ -1,0 +1,132 @@
+export { RED_UI_VERSION, readBuildInfo, type BuildInfo } from "./build-info";
+export { default as ActivityIndicator } from "./ActivityIndicator.svelte";
+export { default as ClusterNode } from "./ClusterNode.svelte";
+export { default as ClusterView } from "./ClusterView.svelte";
+export { default as CollectionsView } from "./CollectionsView.svelte";
+export { default as CollectionHistory } from "./CollectionHistory.svelte";
+export { default as CommandPalette } from "./CommandPalette.svelte";
+export { default as ConnectDropdown } from "./ConnectDropdown.svelte";
+export { default as EmptyState } from "./EmptyState.svelte";
+export { default as GlobalProgressBar } from "./GlobalProgressBar.svelte";
+export { default as LiveChanges } from "./LiveChanges.svelte";
+export { default as LoadingOverlay } from "./LoadingOverlay.svelte";
+export {
+  loading,
+  formatElapsed,
+  type LoadingStep,
+  type LoadingStepStatus,
+} from "./loading.svelte";
+export { default as MasterPasswordDialog } from "./MasterPasswordDialog.svelte";
+export { default as PageHeader } from "./PageHeader.svelte";
+export { default as PendingChangesPanel } from "./PendingChangesPanel.svelte";
+export { default as QueryEditor } from "./QueryEditor.svelte";
+export { default as ResultsPane } from "./ResultsPane.svelte";
+export { default as SchemaTree } from "./SchemaTree.svelte";
+export { default as SecurityView } from "./SecurityView.svelte";
+export { default as SettingsView } from "./SettingsView.svelte";
+export { default as ShortcutOverlay } from "./ShortcutOverlay.svelte";
+export { default as Splash } from "./Splash.svelte";
+export { default as StatusBar } from "./StatusBar.svelte";
+export { default as SubNav } from "./SubNav.svelte";
+export { default as Topbar } from "./Topbar.svelte";
+export { default as Workspace } from "./Workspace.svelte";
+export {
+  createWorkspaceRuntime,
+  type WorkspaceRuntime,
+  type WorkspaceRuntimeOptions,
+  type WorkspaceCommand,
+} from "./workspace-runtime.svelte";
+
+export * from "./renderers";
+export {
+  capabilityFromCatalogModel,
+  detectCapability,
+  pickCapability,
+  tagsFromCollectionMetadata,
+} from "./capability";
+export type { Capability as CollectionCapability } from "./capability";
+export * from "./collection-catalog";
+export * from "./collection-pages";
+export * from "./router.svelte";
+export * from "./settings-sections";
+export * from "./settings-authoring-client";
+export * from "./permission-gate";
+export * from "./cn";
+export * from "./connections.svelte";
+export * from "./shortcuts";
+export * from "./tabs.svelte";
+export * from "./query-tabs.svelte";
+export * from "../compat/lib/index";
+export {
+  BROWSER_TRANSPORTS,
+  CDCStreamClient,
+  DESKTOP_TRANSPORTS,
+  DEFAULT_PERSISTED_CONNECTION_KEY,
+  EMPTY_SERVER_CAPABILITIES,
+  InjectedClientProvider,
+  LocalUrlProvider,
+  NotConnectedError,
+  OpenContractError,
+  capabilitiesFromSignal,
+  encodeOpenContract,
+  hasBootEndpoint,
+  hasBootRoute,
+  isUrlReachable,
+  parseOpenContract,
+  parseBootParams,
+  readInjectedGlobalBootstrap,
+  readPersistedLocalBootstrap,
+  readTauriIpcBootstrap,
+  readUrlOpenContractBootstrap,
+  resolveConnectionBootstrap,
+  transportForUrl,
+  RedClient,
+  SecureStoreError,
+  TauriEncryptedStore,
+  UnknownConnectionError,
+  UnreachableConnectionError,
+  WebEncryptedStore,
+  localStorageHistory,
+  parseRedUri,
+} from "./reddb/index";
+export type {
+  ActiveConnection,
+  AuthPolicy,
+  AuthTenant,
+  AuthUser,
+  BootParams,
+  CDCStreamClientOptions,
+  ChangeEvent,
+  ClusterStatus,
+  CollectionMetadata,
+  Connection,
+  ConnectionBootstrap,
+  ConnectionBootstrapPayload,
+  ConnectionBootstrapResolverOptions,
+  ConnectionProvider,
+  ConnectionRole,
+  ConnectionTarget,
+  EncryptedStore,
+  EventSourceLike,
+  Identity,
+  InjectedClientOptions,
+  NodeRole,
+  NodeStats,
+  OpenContract,
+  OpenContractErrorCode,
+  QueryResult,
+  QueryRow,
+  RawCapabilities,
+  RedClientOptions,
+  ReplicationStatus,
+  ServerCapabilities,
+  SseFactory,
+  Stats,
+  SubscribeOpts,
+  Subscription,
+  Topology,
+  Transport,
+  VcsCommit,
+  VcsDiff,
+  VcsEnvelope,
+} from "./reddb/index";

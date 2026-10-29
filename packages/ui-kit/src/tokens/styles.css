@@ -1,4 +1,1 @@
-@import "@reddb-io/design-system/styles.css";
-@import "./tokens.css";
-@source "../lib";
-@source "../../../../vendor/ds/kits";
+@import "@reddb-io/design-system/hosts/workspace/compat.css";

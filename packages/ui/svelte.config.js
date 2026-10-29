@@ -12,6 +12,12 @@ const config = {
   preprocess: vitePreprocess(),
   kit: {
     paths: { base },
+    files: {
+      assets: "../../vendor/ds/hosts/workspace/static",
+      routes: "../../vendor/ds/hosts/workspace/src/routes",
+      lib: "../../vendor/ds/hosts/workspace/src/lib",
+      appTemplate: "../../vendor/ds/hosts/workspace/src/app.html",
+    },
     adapter: adapter({
       pages: "build",
       assets: "build",
