@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.14
+
+### Patch Changes
+
+- 8e3d4d6: Use the Design System SettingsRow and SectionHeading directly for configuration and secret details.
+  - @reddb-io/ui-kit@0.7.14
+  - @reddb-io/ui-mcp@0.7.14
+
 ## 0.7.13
 
 ### Patch Changes
