@@ -1,5 +1,11 @@
 # @reddb-io/ui-mcp
 
+## 0.7.21
+
+### Patch Changes
+
+- 388734c: Build the MCP server from the pinned Design System host source while preserving its public entrypoint and license.
+
 ## 0.7.20
 
 ### Patch Changes
