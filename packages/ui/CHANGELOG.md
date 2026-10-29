@@ -1,5 +1,14 @@
 # @reddb-io/ui
 
+## 0.7.24
+
+### Patch Changes
+
+- dc62fa0: Adopt the canonical Design System result explorers, topology, navigation, forms, activity and outcome artwork. Remove duplicate graph/XYFlow rendering and custom palette overrides, preserve recovery and query interactions, and keep the workspace usable on narrow screens.
+- Updated dependencies [dc62fa0]
+  - @reddb-io/ui-kit@0.7.24
+  - @reddb-io/ui-mcp@0.7.24
+
 ## 0.7.23
 
 ### Patch Changes
