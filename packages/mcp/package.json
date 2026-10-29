@@ -11,17 +11,19 @@
     "node": ">=20"
   },
   "files": [
-    "dist"
+    "dist",
+    "tools/prestart.mjs"
   ],
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "prepack": "pnpm build",
-    "build": "tsc -p tsconfig.json",
-    "check": "tsc -p tsconfig.json --noEmit",
-    "test": "pnpm build && node test/mcp-app-smoke.mjs && node test/target-mode.test.mjs && node test/local-server.test.mjs && node test/embed-server.test.mjs && node test/data-tools.test.mjs",
-    "start": "tsx src/index.ts --stdio"
+    "build": "node tools/build.mjs",
+    "check": "node tools/build.mjs --check",
+    "test": "pnpm build && node test/mcp-app-smoke.mjs && node test/target-mode.test.mjs && node test/local-server.test.mjs && node test/embed-server.test.mjs && node test/data-tools.test.mjs && node test/adapter-client.test.mjs",
+    "prestart": "node tools/prestart.mjs",
+    "start": "node dist/index.js --stdio"
   },
   "dependencies": {
     "@modelcontextprotocol/ext-apps": "^1.7.2",
