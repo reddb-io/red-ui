@@ -19,6 +19,7 @@
     "/change-sql": "./src/change-sql.ts",
     "/settings-authoring": "./src/settings-authoring.ts",
     "/connection-bootstrap": "./src/connection-bootstrap.ts",
-    "/diff-results": "./src/diff-results.ts"
+    "/diff-results": "./src/diff-results.ts",
+    "/stats-results": "./src/stats-results.ts"
   }
 }
