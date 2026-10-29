@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.23
+
+### Patch Changes
+
+- c1aad6c: Use the Design System statistics explorer and RedDB statistics adapter for query results.
+  - @reddb-io/ui-kit@0.7.23
+  - @reddb-io/ui-mcp@0.7.23
+
 ## 0.7.22
 
 ### Patch Changes
