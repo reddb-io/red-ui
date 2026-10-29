@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Badge, Card, LoadingIndicator, StatusIndicator } from '@reddb-io/design-system/base'
   import { useWorkspace } from "./workspace-context"
   // Step-logged loading overlay (#127). While a connection open is in flight it
   // shows an elapsed badge and a scrolling log of the real steps the connect
@@ -56,61 +57,43 @@
   <div
     class:fixed={!contained}
     class:absolute={contained}
-    class="inset-0 z-[9998] grid place-items-center bg-bg-0/85 backdrop-blur-sm"
+    class="inset-0 z-[9998] grid place-items-center bg-background/95"
     role="status"
     aria-live="polite"
     aria-busy="true"
     data-testid="loading-overlay"
   >
-    <div class="w-[min(460px,90vw)] rounded-lg border border-line-2 bg-bg-1 p-5 shadow-2xl">
-      <div class="flex items-center justify-between gap-3">
-        <div class="flex items-center gap-2 min-w-0">
-          <span
-            class="h-2 w-2 shrink-0 animate-pulse rounded-full bg-accent shadow-[0_0_12px_var(--color-accent-glow)] motion-reduce:animate-none"
-          ></span>
-          <span class="truncate font-mono text-[13px] font-semibold text-fg-0">
-            {store.label ?? 'Opening connection'}
-          </span>
+    <Card class="w-[min(460px,90vw)]" raised>
+      {#snippet header()}
+        <div class="flex items-center justify-between gap-3">
+          <LoadingIndicator label={store.label ?? 'Opening connection'} />
+          <Badge data-testid="loading-elapsed">{formatElapsed(elapsed)}</Badge>
         </div>
-        <span
-          class="shrink-0 rounded bg-bg-2 px-1.5 py-0.5 font-mono text-[12px] tabular-nums text-fg-2"
-          data-testid="loading-elapsed"
-        >
-          {formatElapsed(elapsed)}
-        </span>
-      </div>
-
+      {/snippet}
       <ol class="mt-4 max-h-[220px] space-y-1.5 overflow-y-auto" data-testid="loading-steps">
         {#each store.steps as step (step.id)}
           <li class="flex items-start gap-2 font-mono text-[12px]" data-testid="loading-step">
-            <span
-              class="mt-[3px] h-1.5 w-1.5 shrink-0 rounded-full"
-              class:bg-accent={step.status === 'active'}
-              class:animate-pulse={step.status === 'active'}
-              class:motion-reduce:animate-none={step.status === 'active'}
-              class:bg-ok={step.status === 'done'}
-              class:bg-danger={step.status === 'error'}
-              aria-hidden="true"
-            ></span>
+            <StatusIndicator label={step.status === 'active' ? 'In progress' : step.status === 'done' ? 'Completed' : 'Failed'}
+              showLabel={false} tone={step.status === 'active' ? 'info' : step.status === 'done' ? 'success' : 'danger'} />
             <span class="min-w-0 flex-1">
               <span
-                class="text-fg-1"
-                class:text-fg-0={step.status === 'active'}
-                class:text-danger={step.status === 'error'}
+                class="text-foreground"
+                class:text-foreground={step.status === 'active'}
+                class:text-feedback-danger-foreground={step.status === 'error'}
               >{step.label}</span>
               {#if step.detail}
-                <span class="ml-1 text-fg-3">{step.detail}</span>
+                <span class="ml-1 text-ink-muted">{step.detail}</span>
               {/if}
               {#if step.error}
-                <span class="ml-1 text-danger">— {step.error}</span>
+                <span class="ml-1 text-feedback-danger-foreground">— {step.error}</span>
               {/if}
             </span>
-            <span class="shrink-0 tabular-nums text-fg-3" data-testid="loading-step-elapsed">
+            <span class="shrink-0 tabular-nums text-ink-muted" data-testid="loading-step-elapsed">
               {formatElapsed(stepElapsed(step))}
             </span>
           </li>
         {/each}
       </ol>
-    </div>
+    </Card>
   </div>
 {/if}

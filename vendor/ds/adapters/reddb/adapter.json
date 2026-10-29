@@ -20,6 +20,12 @@
     "/settings-authoring": "./src/settings-authoring.ts",
     "/connection-bootstrap": "./src/connection-bootstrap.ts",
     "/diff-results": "./src/diff-results.ts",
-    "/stats-results": "./src/stats-results.ts"
+    "/stats-results": "./src/stats-results.ts",
+    "/kv-results": "./src/kv-results.ts",
+    "/time-series-results": "./src/time-series-results.ts",
+    "/vector-results": "./src/vector-results.ts",
+    "/queue-results": "./src/queue-results.ts",
+    "/table-results": "./src/table-results.ts",
+    "/graph-results": "./src/graph-results.ts"
   }
 }

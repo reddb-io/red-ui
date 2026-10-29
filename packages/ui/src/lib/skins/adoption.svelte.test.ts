@@ -22,13 +22,13 @@ describe("DS appearance adoption", () => {
     host.style.setProperty("--host-custom", "retained");
     applyAppearance(host, "dark");
     expect(host.dataset.density).toBe("compact");
+    host.style.setProperty("--reddb-color-background", "#0a0b14");
+    host.style.setProperty("--color-bg-0", "#0a0b14");
     applySkin(skinByName("nocturne"), host);
-    expect(host.style.getPropertyValue("--reddb-color-background")).toBe(
-      "#0a0b14"
-    );
     applySkin(DEFAULT_SKIN, host);
     expect(host.style.getPropertyValue("--reddb-color-background")).toBe("");
     expect(host.style.getPropertyValue("--color-bg-0")).toBe("");
     expect(host.style.getPropertyValue("--host-custom")).toBe("retained");
+    expect(host.dataset.colorScheme).toBe("dark");
   });
 });

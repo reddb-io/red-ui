@@ -1,4 +1,8 @@
 <script lang="ts">
+  import { CodeBlock } from "@reddb-io/design-system/base"
+  import Table from "@reddb-io/design-system/data/Table"
+  import { Button as DSButton } from '@reddb-io/design-system/base'
+  import { Icon as DSIcon } from '@reddb-io/design-system/base'
   import { useWorkspace } from './workspace-context'
   import { Card, Badge } from '@reddb-io/design-system/base'
   import PageHeader from '$lib/PageHeader.svelte'
@@ -130,22 +134,22 @@
   })
 </script>
 
-<div class="h-full overflow-auto bg-bg-0 p-6 text-fg-1">
+<div class="h-full overflow-auto bg-background p-6 text-foreground">
   <PageHeader
     eyebrow="Admin"
     title="Security"
     subtitle="Tenants, users, and policy surfaces are permission-aware. Controls only appear when reddb exposes the grant."
   >
     {#snippet actions()}
-      <button
+      <DSButton variant="secondary" size="sm"
         type="button"
         onclick={refresh}
         disabled={loading || secureStore.locked || !connected}
-        class="inline-flex h-7 items-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 hover:border-line-3 hover:text-fg-0 disabled:cursor-not-allowed disabled:opacity-40"
+
       >
-        <RefreshCw class={loading ? 'size-3.5 animate-spin' : 'size-3.5'} />
+        <DSIcon icon={RefreshCw} color="current" class={loading ? ' animate-spin' : ''} />
         refresh
-      </button>
+      </DSButton>
     {/snippet}
   </PageHeader>
 
@@ -158,46 +162,46 @@
       <div class="grid gap-3 content-start">
         <Card title="session">
           {#if whoamiError}
-            <div class="text-[12px] font-mono text-warn break-words">{whoamiError}</div>
+            <div class="text-[12px] font-mono text-feedback-warning-foreground break-words">{whoamiError}</div>
           {:else if whoami}
             <div class="grid grid-cols-[110px_1fr] gap-x-3 gap-y-2 text-[12px] font-mono">
-              <span class="text-fg-3">authenticated</span>
+              <span class="text-ink-muted">authenticated</span>
               <span>{#if whoami.authenticated}<Badge tone="success">yes</Badge>{:else}<Badge tone="warning">no</Badge>{/if}</span>
-              <span class="text-fg-3">username</span>
-              <span class="text-fg-0">{whoami.username}</span>
-              <span class="text-fg-3">role</span>
+              <span class="text-ink-muted">username</span>
+              <span class="text-foreground">{whoami.username}</span>
+              <span class="text-ink-muted">role</span>
               <span class="text-primary-text">{whoami.role}</span>
               {#if whoami.note}
-                <span class="text-fg-3">note</span>
-                <span class="text-fg-1">{whoami.note}</span>
+                <span class="text-ink-muted">note</span>
+                <span class="text-foreground">{whoami.note}</span>
               {/if}
             </div>
           {:else}
-            <div class="text-[12px] font-mono text-fg-3">Loading session…</div>
+            <div class="text-[12px] font-mono text-ink-muted">Loading session…</div>
           {/if}
         </Card>
 
         <Card title="tenants">
           {#if tenantsError}
-            <div class="mb-2 inline-flex items-center gap-1.5 rounded border border-warn/40 bg-bg-0 px-2 py-1 text-[11px] font-mono text-warn">
-              <ShieldAlert class="size-3.5" />
+            <div class="mb-2 inline-flex items-center gap-1.5 rounded border border-feedback-warning-border/40 bg-background px-2 py-1 text-[11px] font-mono text-feedback-warning-foreground">
+              <DSIcon icon={ShieldAlert} color="current" class="" />
               tenants endpoint denied or unavailable
             </div>
-            <pre class="whitespace-pre-wrap break-words text-[12px] font-mono text-fg-3">{tenantsError}</pre>
+            <CodeBlock code={tenantsError} />
           {:else if tenants.length === 0}
-            <div class="flex items-center gap-2 text-[12px] font-mono text-fg-3">
-              <Building2 class="size-4" />
+            <div class="flex items-center gap-2 text-[12px] font-mono text-ink-muted">
+              <DSIcon icon={Building2} color="current" class="" />
               <span>No tenants returned for this principal.</span>
             </div>
           {:else}
             <div class="grid gap-1 text-[12px] font-mono">
               {#each tenants as tenant, i (`${tenant.id ?? tenant.slug ?? tenant.name ?? i}`)}
-                <div class="rounded border border-line-1 bg-bg-0 px-2 py-1.5">
+                <div class="rounded border border-muted bg-background px-2 py-1.5">
                   <div class="flex items-center gap-2">
-                    <span class="text-fg-0">{tenant.name ?? tenant.slug ?? tenant.id ?? 'tenant'}</span>
+                    <span class="text-foreground">{tenant.name ?? tenant.slug ?? tenant.id ?? 'tenant'}</span>
                     {#if tenant.role}<Badge tone="neutral">{tenant.role}</Badge>{/if}
                   </div>
-                  <div class="mt-1 text-fg-3">
+                  <div class="mt-1 text-ink-muted">
                     {tenant.id ?? tenant.slug ?? '-'}
                     {#if tenant.grants?.length} · {tenant.grants.join(', ')}{/if}
                   </div>
@@ -210,32 +214,32 @@
         {#if showPolicyPane}
           <Card title="policies">
             {#if policiesError}
-              <div class="mb-2 inline-flex items-center gap-1.5 rounded border border-warn/40 bg-bg-0 px-2 py-1 text-[11px] font-mono text-warn">
-                <ShieldAlert class="size-3.5" />
+              <div class="mb-2 inline-flex items-center gap-1.5 rounded border border-feedback-warning-border/40 bg-background px-2 py-1 text-[11px] font-mono text-feedback-warning-foreground">
+                <DSIcon icon={ShieldAlert} color="current" class="" />
                 policies endpoint denied or unavailable
               </div>
-              <pre class="whitespace-pre-wrap break-words text-[12px] font-mono text-fg-3">{policiesError}</pre>
+              <CodeBlock code={policiesError} />
             {:else if policies.length === 0}
-              <div class="flex items-center gap-2 text-[12px] font-mono text-fg-3">
-                <ScrollText class="size-4" />
+              <div class="flex items-center gap-2 text-[12px] font-mono text-ink-muted">
+                <DSIcon icon={ScrollText} color="current" class="" />
                 <span>No policies returned for this principal.</span>
               </div>
             {:else}
               <div class="grid gap-1 text-[12px] font-mono">
                 {#each policies.slice(0, 6) as policy, i (`${policy.id ?? policy.name ?? i}`)}
-                  <div class="rounded border border-line-1 bg-bg-0 px-2 py-1.5">
+                  <div class="rounded border border-muted bg-background px-2 py-1.5">
                     <div class="flex items-center gap-2">
-                      <span class="text-fg-0">{policy.name ?? policy.id ?? 'policy'}</span>
+                      <span class="text-foreground">{policy.name ?? policy.id ?? 'policy'}</span>
                       {#if policy.effect}<Badge tone={policy.effect === 'deny' ? 'danger' : 'success'}>{policy.effect}</Badge>{/if}
                     </div>
-                    <div class="mt-1 text-fg-3">
+                    <div class="mt-1 text-ink-muted">
                       {policy.action ?? '*'} · {policy.resource ?? '*'}
                       {#if policy.tenant} · tenant {policy.tenant}{/if}
                     </div>
                   </div>
                 {/each}
                 {#if policies.length > 6}
-                  <div class="text-[11px] text-fg-3">{policies.length - 6} more policies in the table.</div>
+                  <div class="text-[11px] text-ink-muted">{policies.length - 6} more policies in the table.</div>
                 {/if}
               </div>
             {/if}
@@ -246,40 +250,21 @@
       <div class="grid gap-3 content-start">
         <Card title="users">
           {#if usersError}
-            <div class="mb-3 inline-flex items-center gap-1.5 rounded border border-warn/40 bg-bg-0 px-2 py-1 text-[11px] font-mono text-warn">
-              <ShieldAlert class="size-3.5" />
+            <div class="mb-3 inline-flex items-center gap-1.5 rounded border border-feedback-warning-border/40 bg-background px-2 py-1 text-[11px] font-mono text-feedback-warning-foreground">
+              <DSIcon icon={ShieldAlert} color="current" class="" />
               users endpoint denied or unavailable
             </div>
-            <pre class="whitespace-pre-wrap break-words text-[12px] font-mono text-fg-3">{usersError}</pre>
+            <CodeBlock code={usersError} />
           {:else if users.length === 0}
-            <div class="flex items-center gap-2 text-[12px] font-mono text-fg-3">
-              <Users class="size-4" />
+            <div class="flex items-center gap-2 text-[12px] font-mono text-ink-muted">
+              <DSIcon icon={Users} color="current" class="" />
               <span>No users returned for this principal.</span>
             </div>
           {:else}
             <div class="overflow-auto">
-              <table class="w-full border-collapse text-[12px] font-mono">
-                <thead class="sticky top-0 bg-bg-1">
-                  <tr class="border-b border-line-1 text-fg-3">
-                    <th class="px-2 py-1.5 text-left font-normal">user</th>
-                    <th class="px-2 py-1.5 text-left font-normal">role</th>
-                    <th class="px-2 py-1.5 text-left font-normal">mfa</th>
-                    <th class="px-2 py-1.5 text-left font-normal">created</th>
-                    <th class="px-2 py-1.5 text-left font-normal">last active</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {#each users as user (user.username)}
-                    <tr class="border-b border-line-1/60 hover:bg-bg-1/40">
-                      <td class="px-2 py-1 text-fg-0">{user.username}</td>
-                      <td class="px-2 py-1 text-primary-text">{user.role ?? '-'}</td>
-                      <td class="px-2 py-1">{#if user.mfa}<Badge tone="success">on</Badge>{:else}<span class="text-fg-3">-</span>{/if}</td>
-                      <td class="px-2 py-1 text-fg-2">{fmtTime(user.created_at)}</td>
-                      <td class="px-2 py-1 text-fg-2">{fmtTime(user.last_active)}</td>
-                    </tr>
-                  {/each}
-                </tbody>
-              </table>
+              <Table caption="Users" captionHidden rowKey="username" pageSize={80} rows={users.map(user => ({...user, role: user.role ?? '-', created: fmtTime(user.created_at), active: fmtTime(user.last_active)}))} columns={[{key:'username',header:'user'},{key:'role',header:'role'},{key:'mfa',header:'mfa'},{key:'created',header:'created'},{key:'active',header:'last active'}]}>
+{#snippet cell({column,value,text})}{#if column.key === 'mfa'}<Badge tone={value ? 'success' : 'neutral'}>{value ? 'on' : '-'}</Badge>{:else}{text}{/if}{/snippet}
+</Table>
             </div>
           {/if}
         </Card>
@@ -287,86 +272,32 @@
         {#if showPolicyPane}
           <Card title="policy table">
             {#if policiesError}
-              <div class="text-[12px] font-mono text-fg-3">Policy table unavailable for this principal.</div>
+              <div class="text-[12px] font-mono text-ink-muted">Policy table unavailable for this principal.</div>
             {:else if policies.length === 0}
-              <div class="text-[12px] font-mono text-fg-3">No policies to tabulate.</div>
+              <div class="text-[12px] font-mono text-ink-muted">No policies to tabulate.</div>
             {:else}
               <div class="overflow-auto">
-                <table class="w-full border-collapse text-[12px] font-mono">
-                  <thead class="sticky top-0 bg-bg-1">
-                    <tr class="border-b border-line-1 text-fg-3">
-                      <th class="px-2 py-1.5 text-left font-normal">effect</th>
-                      <th class="px-2 py-1.5 text-left font-normal">principal</th>
-                      <th class="px-2 py-1.5 text-left font-normal">action</th>
-                      <th class="px-2 py-1.5 text-left font-normal">resource</th>
-                      <th class="px-2 py-1.5 text-left font-normal">tenant</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {#each policies as policy, i (`${policy.id ?? policy.name ?? i}`)}
-                      <tr class="border-b border-line-1/60 hover:bg-bg-1/40">
-                        <td class="px-2 py-1">{#if policy.effect}<Badge tone={policy.effect === 'deny' ? 'danger' : 'success'}>{policy.effect}</Badge>{:else}<span class="text-fg-3">-</span>{/if}</td>
-                        <td class="px-2 py-1 text-fg-1">{policy.principal ?? '-'}</td>
-                        <td class="px-2 py-1 text-primary-text">{policy.action ?? '*'}</td>
-                        <td class="px-2 py-1 text-fg-1">{policy.resource ?? '*'}</td>
-                        <td class="px-2 py-1 text-fg-2">{policy.tenant ?? '-'}</td>
-                      </tr>
-                    {/each}
-                  </tbody>
-                </table>
+                <Table caption="Policies" captionHidden rowKey="key" pageSize={80} rows={policies.map((policy,index) => ({key:`${index}:${policy.id ?? policy.name ?? ''}`, effect:policy.effect ?? '-', principal:policy.principal ?? '-', action:policy.action ?? '*', resource:policy.resource ?? '*', tenant:policy.tenant ?? '-'}))} columns={[{key:'effect',header:'effect'},{key:'principal',header:'principal'},{key:'action',header:'action'},{key:'resource',header:'resource'},{key:'tenant',header:'tenant'}]}>
+{#snippet cell({column,value,text})}{#if column.key === 'effect' && value !== '-'}<Badge tone={value === 'deny' ? 'danger' : 'success'}>{text}</Badge>{:else}{text}{/if}{/snippet}
+</Table>
               </div>
             {/if}
           </Card>
 
           <Card title="my capabilities">
             {#if capabilityError}
-              <div class="mb-2 inline-flex items-center gap-1.5 rounded border border-warn/40 bg-bg-0 px-2 py-1 text-[11px] font-mono text-warn">
-                <ShieldAlert class="size-3.5" />
+              <div class="mb-2 inline-flex items-center gap-1.5 rounded border border-feedback-warning-border/40 bg-background px-2 py-1 text-[11px] font-mono text-feedback-warning-foreground">
+                <DSIcon icon={ShieldAlert} color="current" class="" />
                 capability matrix unavailable
               </div>
-              <pre class="whitespace-pre-wrap break-words text-[12px] font-mono text-fg-3">{capabilityError}</pre>
+              <CodeBlock code={capabilityError} />
             {:else if capabilityRows.length === 0}
-              <div class="text-[12px] font-mono text-fg-3">No capability checks returned.</div>
+              <div class="text-[12px] font-mono text-ink-muted">No capability checks returned.</div>
             {:else}
               <div class="overflow-auto">
-                <table class="w-full border-collapse text-[12px] font-mono">
-                  <thead class="sticky top-0 bg-bg-1">
-                    <tr class="border-b border-line-1 text-fg-3">
-                      <th class="px-2 py-1.5 text-left font-normal">can</th>
-                      <th class="px-2 py-1.5 text-left font-normal">action</th>
-                      <th class="px-2 py-1.5 text-left font-normal">resource</th>
-                      <th class="px-2 py-1.5 text-left font-normal">policy effect</th>
-                      <th class="px-2 py-1.5 text-left font-normal">reason</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {#each capabilityRows as row (row.id)}
-                      <tr class="border-b border-line-1/60 hover:bg-bg-1/40">
-                        <td class="px-2 py-1">
-                          {#if row.allowed}
-                            <span class="inline-flex items-center gap-1 text-ok"><CheckCircle2 class="size-3.5" /> yes</span>
-                          {:else}
-                            <span class="inline-flex items-center gap-1 text-danger"><XCircle class="size-3.5" /> no</span>
-                          {/if}
-                        </td>
-                        <td class="px-2 py-1 text-primary-text">{row.action}</td>
-                        <td class="px-2 py-1 text-fg-1">{row.resourceLabel}</td>
-                        <td class="px-2 py-1">
-                          {#if row.effects.length === 0}
-                            <span class="text-fg-3">-</span>
-                          {:else}
-                            <span class="inline-flex flex-wrap gap-1">
-                              {#each row.effects as effect}
-                                <Badge tone={effect === 'deny' ? 'danger' : 'success'}>{effect}</Badge>
-                              {/each}
-                            </span>
-                          {/if}
-                        </td>
-                        <td class="max-w-[320px] px-2 py-1 text-fg-3">{row.reason ?? '-'}</td>
-                      </tr>
-                    {/each}
-                  </tbody>
-                </table>
+                <Table caption="My capabilities" captionHidden rowKey="id" pageSize={80} rows={capabilityRows.map(row => ({...row,reason:row.reason ?? '-'}))} columns={[{key:'allowed',header:'can'},{key:'action',header:'action'},{key:'resourceLabel',header:'resource'},{key:'effects',header:'policy effect'},{key:'reason',header:'reason'}]}>
+{#snippet cell({column,value,text})}{#if column.key === 'allowed'}<Badge tone={value ? 'success' : 'danger'}>{value ? 'yes' : 'no'}</Badge>{:else if column.key === 'effects'}{#each (Array.isArray(value) ? value : []) as effect}<Badge tone={effect === 'deny' ? 'danger' : 'success'}>{effect}</Badge>{:else}-{/each}{:else}{text}{/if}{/snippet}
+</Table>
               </div>
             {/if}
           </Card>

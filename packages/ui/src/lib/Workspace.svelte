@@ -377,16 +377,16 @@
 <svelte:element this={workspace.persistenceKey === 'default' ? 'div' : 'section'}
   bind:this={workspace.root} data-workspace-root={workspace.id}
   aria-label={workspace.persistenceKey === 'default' ? undefined : (label ?? `${connection.active.label} workspace`)}
-  class={`relative isolate h-full bg-bg-0 text-fg-0 ${workspace.persistenceKey === 'default' ? 'min-h-screen' : 'min-h-[720px]'}`} tabindex="-1">
+  class={`relative isolate h-full bg-background text-foreground ${workspace.persistenceKey === 'default' ? 'min-h-screen' : 'min-h-[720px]'}`} tabindex="-1">
 <BitsConfig defaultPortalTo={injectedPortalTarget ?? portalTarget}>
 {#if !booted}
   <Splash contained onDone={() => (booted = true)} />
 {:else}
-  <div bind:this={shell} class="app relative grid grid-rows-[44px_32px_1fr] h-screen">
+  <div bind:this={shell} class="app relative grid min-w-0 grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto_minmax(0,1fr)] h-screen">
     <GlobalProgressBar />
     <Topbar showConnect={showConnect} label={label ?? connection.active.label} />
     <StatusBar />
-    <svelte:element this={workspace.persistenceKey === 'default' ? 'main' : 'div'} class="relative overflow-hidden z-[1]">
+    <svelte:element this={workspace.persistenceKey === 'default' ? 'main' : 'div'} class="relative min-w-0 overflow-hidden z-[1]">
       {#if router.view === 'ask'}
         <AskView />
       {:else if router.view === 'cluster'}
@@ -397,7 +397,7 @@
         <!-- Lazy: LayerChart + d3 are heavy, so the charting bundle only
              loads when the user actually opens Analytics. -->
         {#await import('./AnalyticsView.svelte')}
-          <div class="flex h-full items-center justify-center font-mono text-[12px] text-fg-3">loading analytics…</div>
+          <div class="flex h-full items-center justify-center font-mono text-[12px] text-ink-muted">loading analytics…</div>
         {:then { default: AnalyticsView }}
           <AnalyticsView />
         {/await}

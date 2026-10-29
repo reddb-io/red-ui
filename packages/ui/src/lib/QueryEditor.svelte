@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { CodeBlock } from "@reddb-io/design-system/base"
+  import { Button as DSButton, Textarea as DSTextarea } from '@reddb-io/design-system/base'
+  import { Icon as DSIcon } from '@reddb-io/design-system/base'
   import { useWorkspace } from './workspace-context'
   import QueryFailure from './QueryFailure.svelte'
   import EmptyState from './EmptyState.svelte'
@@ -75,74 +78,75 @@
 </script>
 
 <div class="flex h-full flex-col">
-  <div class="flex flex-col border-b border-line-1 bg-bg-0" style="height: 40%;">
-    <div class="flex items-center justify-between px-3 py-1.5 border-b border-line-1">
-      <div class="flex items-center gap-2 text-fg-3 type-label">
+  <div class="flex flex-col border-b border-muted bg-background" style="height: 40%;">
+    <div class="flex flex-wrap items-center justify-between gap-2 px-3 py-1.5 border-b border-muted">
+      <div class="flex items-center gap-2 text-ink-muted type-label">
         <span>SQL</span>
         {#if connection.connected}
-          <span class="text-fg-3">·</span>
-          <span class="text-fg-2 font-mono text-[11px] truncate max-w-[280px]">{connection.active.url}</span>
+          <span class="text-ink-muted">·</span>
+          <span class="text-ink-muted font-mono text-[11px] truncate max-w-[280px]">{connection.active.url}</span>
         {:else}
-          <span class="text-warn font-mono text-[11px]">disconnected</span>
+          <span class="text-feedback-warning-foreground font-mono text-[11px]">disconnected</span>
         {/if}
       </div>
       <div class="flex items-center gap-2">
-        <span class="text-fg-3 font-mono text-[11px] hidden sm:inline">Run with <Kbd>⌘</Kbd><Kbd>↵</Kbd></span>
-        <button
+        <span class="text-ink-muted font-mono text-[11px] hidden sm:inline">Run with <Kbd>⌘</Kbd><Kbd>↵</Kbd></span>
+        <DSButton variant="ghost" size="sm"
           type="button"
-          class="inline-flex items-center gap-1 rounded border border-accent/60 bg-accent/10 px-2 py-1 text-[12px] font-mono text-primary-text hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed"
+
           onclick={run}
           disabled={qs?.running || !connection.connected}
-          aria-label="Run query"
+          aria-label={qs?.running ? "Running query" : "Run query"}
         >
           {#if qs?.running}
-            <Loader2 class="size-3.5 animate-spin" />
+            <DSIcon icon={Loader2} color="current" class=" animate-spin" />
             <span>Running…</span>
           {:else}
-            <Play class="size-3.5" />
+            <DSIcon icon={Play} color="current" class="" />
             <span>Run</span>
           {/if}
-        </button>
+        </DSButton>
       </div>
     </div>
-    <textarea
-      bind:this={textareaEl}
-      class="flex-1 resize-none bg-bg-0 px-3 py-2 font-mono text-[13px] text-fg-1 outline-none placeholder:text-fg-3"
+    <DSTextarea
+      bind:ref={textareaEl}
+      aria-label="SQL query"
+      class="flex-1 resize-none"
       spellcheck="false"
       autocapitalize="off"
       placeholder={'SELECT * FROM users LIMIT 100'}
       value={qs?.sql ?? ''}
       oninput={(e) => setSql((e.currentTarget as HTMLTextAreaElement).value)}
       onkeydown={onKey}
-    ></textarea>
+    ></DSTextarea>
   </div>
 
-  <div class="flex-1 overflow-hidden bg-bg-0">
+  <div class="flex-1 overflow-hidden bg-background">
     {#if qs?.running}
       <div class="h-full grid place-items-center p-6" aria-live="polite" aria-busy="true">
-        <div class="w-full max-w-md rounded border border-line-1 bg-bg-1 p-4 font-mono">
+        <div class="w-full max-w-md rounded border border-muted bg-elevation-base-surface p-4 font-mono">
           <div class="flex items-start justify-between gap-4">
             <div class="min-w-0">
-              <div class="flex items-center gap-2 text-fg-1 text-[13px]">
-                <Loader2 class="size-4 animate-spin text-primary-text" />
+              <div class="flex items-center gap-2 text-foreground text-[13px]">
+                <DSIcon icon={Loader2} color="current" class=" animate-spin text-primary-text" />
                 <span>Running query</span>
               </div>
-              <div class="mt-2 text-[11px] text-fg-3">
-                elapsed <span class="tabular-nums text-fg-2">{elapsed}</span>
+              <div class="mt-2 text-[11px] text-ink-muted">
+                elapsed <span class="tabular-nums text-ink-muted">{elapsed}</span>
               </div>
             </div>
-            <button
+            <DSButton variant="secondary" size="sm"
               type="button"
-              class="inline-flex h-7 items-center gap-1 rounded border border-line-2 px-2 text-[11px] text-fg-2 hover:border-danger/50 hover:text-danger cursor-pointer"
+
               onclick={cancel}
               aria-label="Cancel running query"
             >
-              <X class="size-3.5" />
+              <DSIcon icon={X} color="current" class="" />
               <span>Cancel</span>
-            </button>
+            </DSButton>
           </div>
-          <div class="mt-3 max-h-24 overflow-hidden rounded bg-bg-0 px-2 py-1.5 text-[11px] text-fg-3">
-            <pre class="m-0 whitespace-pre-wrap break-words">{qs.sql.trim()}</pre>
+          <div class="mt-3 max-h-24 overflow-hidden rounded bg-background px-2 py-1.5 text-[11px] text-ink-muted">
+            <CodeBlock code={qs.sql.trim()} />
           </div>
         </div>
       </div>
@@ -154,8 +158,8 @@
       </div>
     {:else}
       {#if qs.result.truncated}
-        <div class="px-3 py-1.5 border-b border-line-1 bg-bg-1 text-[11px] font-mono text-fg-3">
-          Streamed first {qs.result.record_count.toLocaleString()} rows — more remain on the server. Add a <span class="text-fg-2">LIMIT</span> to narrow.
+        <div class="px-3 py-1.5 border-b border-muted bg-elevation-base-surface text-[11px] font-mono text-ink-muted">
+          Streamed first {qs.result.record_count.toLocaleString()} rows — more remain on the server. Add a <span class="text-ink-muted">LIMIT</span> to narrow.
         </div>
       {/if}
       {@const renderer = pickRenderer()}

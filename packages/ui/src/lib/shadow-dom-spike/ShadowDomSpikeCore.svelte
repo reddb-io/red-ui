@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Input as DSInput } from '@reddb-io/design-system/base'
   import { onMount, tick } from 'svelte'
   import { BitsConfig, Dialog, Popover } from 'bits-ui'
   import Workspace from '../Workspace.svelte'
@@ -17,7 +18,7 @@
   let popoverTrigger: HTMLButtonElement | null = $state(null)
   let popoverContent: HTMLDivElement | null = $state(null)
   let dialogContent: HTMLDivElement | null = $state(null)
-  let dialogInput: HTMLInputElement | null = $state(null)
+  let dialogInput: HTMLInputElement | undefined = $state()
   let findings = $state<Record<'portals' | 'focus' | 'measurement', Finding>>({
     portals: { state: 'pending', detail: 'waiting for automated probe' },
     focus: { state: 'pending', detail: 'waiting for automated probe' },
@@ -25,9 +26,9 @@
   })
 
   const statusClass: Record<FindingState, string> = {
-    pending: 'border-line-2 bg-bg-2 text-fg-2',
-    working: 'border-ok/40 bg-ok/10 text-ok',
-    blocked: 'border-danger/40 bg-danger/10 text-danger',
+    pending: 'border-control-edge bg-muted text-ink-muted',
+    working: 'border-ok/40 bg-feedback-success-fill/10 text-feedback-success-foreground',
+    blocked: 'border-feedback-danger-border/40 bg-feedback-danger-fill/10 text-feedback-danger-foreground',
   }
 
   function ownerShadowRoot(node: Node | null) {
@@ -114,16 +115,16 @@
 </script>
 
 <BitsConfig defaultPortalTo={portalTarget}>
-  <section class="min-h-[720px] bg-bg-0 text-fg-0 font-sans">
+  <section class="min-h-[720px] bg-background text-foreground font-sans">
     <div class="grid min-h-[720px] grid-cols-[minmax(0,1fr)_360px]">
-      <div class="relative overflow-hidden border-r border-line-2">
+      <div class="relative overflow-hidden border-r border-control-edge">
         <Workspace />
       </div>
 
-      <aside class="flex flex-col gap-4 bg-bg-1 p-4">
+      <aside class="flex flex-col gap-4 bg-elevation-base-surface p-4">
         <div>
           <p class="type-label">Shadow DOM spike</p>
-          <h1 class="mt-2 text-lg font-semibold text-fg-0">Svelte 5 + Tailwind v4 + bits-ui</h1>
+          <h1 class="mt-2 text-lg font-semibold text-foreground">Svelte 5 + Tailwind v4 + bits-ui</h1>
         </div>
 
         <div class="space-y-2">
@@ -133,7 +134,7 @@
                 <span class="font-mono text-[11px] uppercase tracking-[0.08em]">{key}</span>
                 <span class="font-mono text-[10px] uppercase tracking-[0.08em]">{finding.state}</span>
               </div>
-              <p class="mt-2 text-xs leading-5 text-fg-1">{finding.detail}</p>
+              <p class="mt-2 text-xs leading-5 text-foreground">{finding.detail}</p>
             </div>
           {/each}
         </div>
@@ -142,7 +143,7 @@
           <Popover.Trigger
             bind:ref={popoverTrigger}
             data-spike-popover-trigger
-            class="h-9 rounded-md border border-line-2 bg-bg-2 px-3 text-left text-sm text-fg-0 hover:bg-bg-3"
+            class="h-9 rounded-md border border-control-edge bg-muted px-3 text-left text-sm text-foreground hover:bg-elevation-raised-surface"
           >
             Open popover
           </Popover.Trigger>
@@ -153,17 +154,17 @@
               side="bottom"
               align="start"
               sideOffset={8}
-              class="z-50 w-[260px] rounded-md border border-line-2 bg-bg-1 p-3 text-sm text-fg-1 shadow-lg"
+              class="z-50 w-[260px] rounded-md border border-control-edge bg-elevation-base-surface p-3 text-sm text-foreground shadow-lg"
             >
-              <p class="font-medium text-fg-0">Portalled inside shadow root</p>
-              <p class="mt-1 text-xs text-fg-2">Floating UI measured this against the trigger.</p>
+              <p class="font-medium text-foreground">Portalled inside shadow root</p>
+              <p class="mt-1 text-xs text-ink-muted">Floating UI measured this against the trigger.</p>
               <Popover.Arrow class="fill-bg-1" />
             </Popover.Content>
           </Popover.Portal>
         </Popover.Root>
 
         <Dialog.Root bind:open={dialogOpen}>
-          <Dialog.Trigger class="h-9 rounded-md border border-line-2 bg-bg-2 px-3 text-left text-sm text-fg-0 hover:bg-bg-3">
+          <Dialog.Trigger class="h-9 rounded-md border border-control-edge bg-muted px-3 text-left text-sm text-foreground hover:bg-elevation-raised-surface">
             Open dialog
           </Dialog.Trigger>
           <Dialog.Portal>
@@ -172,20 +173,20 @@
               bind:ref={dialogContent}
               data-spike-dialog-content
               trapFocus
-              class="fixed left-1/2 top-1/2 z-50 w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-line-2 bg-bg-1 p-4 shadow-lg"
+              class="fixed left-1/2 top-1/2 z-50 w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-control-edge bg-elevation-base-surface p-4 shadow-lg"
             >
-              <Dialog.Title class="text-sm font-semibold text-fg-0">Focus probe</Dialog.Title>
-              <Dialog.Description class="mt-1 text-xs text-fg-2">
+              <Dialog.Title class="text-sm font-semibold text-foreground">Focus probe</Dialog.Title>
+              <Dialog.Description class="mt-1 text-xs text-ink-muted">
                 Active focus is checked through shadowRoot.activeElement.
               </Dialog.Description>
-              <input
-                bind:this={dialogInput}
+              <DSInput
+                bind:ref={dialogInput}
                 data-spike-dialog-input
-                class="mt-3 h-9 w-full rounded-md border border-line-2 bg-bg-2 px-3 text-sm text-fg-0 outline-none focus:border-accent"
+                class="mt-3 w-full"
                 value="shadow-root focus target"
               />
               <div class="mt-4 flex justify-end">
-                <Dialog.Close class="h-8 rounded-md border border-line-2 bg-bg-2 px-3 text-xs text-fg-0 hover:bg-bg-3">
+                <Dialog.Close class="h-8 rounded-md border border-control-edge bg-muted px-3 text-xs text-foreground hover:bg-elevation-raised-surface">
                   Close
                 </Dialog.Close>
               </div>

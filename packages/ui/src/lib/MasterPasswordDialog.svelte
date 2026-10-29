@@ -88,13 +88,13 @@
       {:else}{needsSetup ? 'Set password' : 'Unlock'}{/if}
     </Button>
     {#if error}<Alert tone="danger" title={error} />{/if}
-    <div class="border-t border-line-1 pt-3">
+    <div class="border-t border-muted pt-3">
       {#if !confirmingWipe}
         <Button variant="ghost" tone="danger" size="sm" onclick={startWipe}>
           <Icon icon={Trash2} size="sm" /> Start fresh — wipe this browser
         </Button>
       {:else}
-        <p class="text-sm text-danger">Erase the encrypted store and all saved connections?</p>
+        <p class="text-sm text-feedback-danger-foreground">Erase the encrypted store and all saved connections?</p>
         <div class="mt-2 flex gap-2">
           <Button tone="danger" size="sm" onclick={doWipe}>Yes, wipe</Button>
           <Button size="sm" onclick={cancelWipe}>Cancel</Button>

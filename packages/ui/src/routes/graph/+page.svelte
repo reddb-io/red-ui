@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Button as DSButton, Input as DSInput } from '@reddb-io/design-system/base'
+  import { Icon as DSIcon } from '@reddb-io/design-system/base'
   import { onMount } from 'svelte'
   import { page } from '$app/state'
   import ArrowLeft from '@lucide/svelte/icons/arrow-left'
@@ -32,7 +34,7 @@
   let selectedComponentId = $state<string | null>(null)
 
   let srcInput = $state('')
-  let fileInput = $state<HTMLInputElement | null>(null)
+  let fileInput = $state<HTMLInputElement>()
 
   const drilldown = $derived(loaded ? buildGraphDrilldown(loaded.model) : null)
   const selectedLayer = $derived(
@@ -162,42 +164,42 @@
 <div class="flex h-screen w-full flex-col">
   {#if loaded}
     <div
-      class="flex items-center justify-between gap-4 px-3 py-2 border-b border-line-1 bg-bg-1 shrink-0"
+      class="flex items-center justify-between gap-4 px-3 py-2 border-b border-muted bg-elevation-base-surface shrink-0"
     >
-      <span class="flex items-center gap-2 min-w-0 text-fg-2 text-[13px]">
-        <FileJson size={14} />
-        <span class="font-mono text-fg-1 truncate max-w-[38vw]">{sourceLabel}</span>
-        <span class="text-fg-3 whitespace-nowrap">
+      <span class="flex items-center gap-2 min-w-0 text-ink-muted text-[13px]">
+        <DSIcon icon={FileJson} color="current" size="sm" />
+        <span class="font-mono text-foreground truncate max-w-[38vw]">{sourceLabel}</span>
+        <span class="text-ink-muted whitespace-nowrap">
           {loaded.model.nodes.length} nodes · {loaded.model.edges.length} edges{#if loaded.model.communities.length}
             · {loaded.model.communities.length} communities{/if}
         </span>
       </span>
-      <button
+      <DSButton variant="ghost" size="sm"
         type="button"
-        class="flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-line-1 text-fg-2 text-[12px] hover:border-fg-3 hover:text-fg-1"
+
         onclick={clear}
       >
-        <RotateCw size={13} /> Load another
-      </button>
+        <DSIcon icon={RotateCw} color="current" size="sm" /> Load another
+      </DSButton>
     </div>
     <div class="flex-1 min-h-0 flex">
       <aside
-        class="w-[min(320px,48vw)] shrink-0 border-r border-line-1 bg-bg-1/80 flex flex-col min-h-0"
+        class="w-[min(320px,48vw)] shrink-0 border-r border-muted bg-elevation-base-surface/80 flex flex-col min-h-0"
       >
-        <div class="px-3 py-2 border-b border-line-1">
-          <div class="flex items-center gap-2 text-fg-1">
+        <div class="px-3 py-2 border-b border-muted">
+          <div class="flex items-center gap-2 text-foreground">
             {#if selectedLayer}
-              <button
+              <DSButton variant="secondary" size="sm"
                 type="button"
                 aria-label="Back"
-                class="inline-flex size-6 items-center justify-center rounded border border-line-1 text-fg-3 hover:border-line-2 hover:text-fg-1"
+
                 onclick={goBack}
               >
-                <ArrowLeft size={13} />
-              </button>
+                <DSIcon icon={ArrowLeft} color="current" size="sm" />
+              </DSButton>
             {:else}
-              <span class="inline-flex size-6 items-center justify-center rounded border border-line-1 text-fg-3">
-                <Layers3 size={13} />
+              <span class="inline-flex size-6 items-center justify-center rounded border border-muted text-ink-muted">
+                <DSIcon icon={Layers3} color="current" size="sm" />
               </span>
             {/if}
             <div class="min-w-0">
@@ -210,39 +212,39 @@
                   overview
                 {/if}
               </div>
-              <div class="truncate text-[12px] font-medium text-fg-0">
+              <div class="truncate text-[12px] font-medium text-foreground">
                 {selectedComponent?.label ?? selectedLayer?.label ?? 'Layers and communities'}
               </div>
             </div>
           </div>
 
-          <nav class="mt-2 flex min-w-0 items-center gap-1 text-[11px] font-mono text-fg-3">
-            <button
+          <nav class="mt-2 flex min-w-0 items-center gap-1 text-[11px] font-mono text-ink-muted">
+            <DSButton variant="ghost"
               type="button"
               class={[
-                'truncate rounded px-1.5 py-0.5 hover:bg-bg-2 hover:text-fg-1',
-                !selectedLayer ? 'text-fg-0 bg-bg-2' : '',
+                'truncate rounded px-1.5 py-0.5 hover:bg-muted hover:text-foreground',
+                !selectedLayer ? 'text-foreground bg-muted' : '',
               ].join(' ')}
               onclick={resetDrilldown}
             >
               overview
-            </button>
+            </DSButton>
             {#if selectedLayer}
-              <ChevronRight size={12} class="shrink-0" />
-              <button
+              <DSIcon icon={ChevronRight} color="current" size="sm" class="shrink-0" />
+              <DSButton variant="ghost"
                 type="button"
                 class={[
-                  'truncate rounded px-1.5 py-0.5 hover:bg-bg-2 hover:text-fg-1',
-                  selectedLayer && !selectedComponent ? 'text-fg-0 bg-bg-2' : '',
+                  'truncate rounded px-1.5 py-0.5 hover:bg-muted hover:text-foreground',
+                  selectedLayer && !selectedComponent ? 'text-foreground bg-muted' : '',
                 ].join(' ')}
                 onclick={() => (selectedComponentId = null)}
               >
                 {selectedLayer.label}
-              </button>
+              </DSButton>
             {/if}
             {#if selectedComponent}
-              <ChevronRight size={12} class="shrink-0" />
-              <span class="truncate rounded bg-bg-2 px-1.5 py-0.5 text-fg-0">
+              <DSIcon icon={ChevronRight} color="current" size="sm" class="shrink-0" />
+              <span class="truncate rounded bg-muted px-1.5 py-0.5 text-foreground">
                 {selectedComponent.label}
               </span>
             {/if}
@@ -252,7 +254,7 @@
         {#if drilldown}
           <div class="flex-1 min-h-0 overflow-auto">
             {#if !selectedLayer}
-              <div class="px-3 py-2 text-[11px] font-mono text-fg-3 border-b border-line-1">
+              <div class="px-3 py-2 text-[11px] font-mono text-ink-muted border-b border-muted">
                 {countLabel(drilldown.layers.length, 'group')} · {countLabel(
                   loaded.model.nodes.length,
                   'node',
@@ -260,9 +262,9 @@
               </div>
               <div class="divide-y divide-line-1">
                 {#each drilldown.layers as layer}
-                  <button
+                  <DSButton variant="ghost" size="sm"
                     type="button"
-                    class="w-full px-3 py-2.5 text-left hover:bg-bg-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                    class="w-full text-left"
                     onclick={() => selectLayer(layer)}
                   >
                     <div class="flex items-start gap-2.5">
@@ -272,24 +274,24 @@
                       ></span>
                       <span class="min-w-0 flex-1">
                         <span class="flex items-center gap-2">
-                          <span class="truncate text-[13px] font-medium text-fg-0">
+                          <span class="truncate text-[13px] font-medium text-foreground">
                             {layer.label}
                           </span>
-                          <span class="font-mono text-[10px] text-fg-3">
+                          <span class="font-mono text-[10px] text-ink-muted">
                             {countLabel(layer.componentCount, 'component')}
                           </span>
                         </span>
-                        <span class="mt-1 block font-mono text-[11px] text-fg-3">
+                        <span class="mt-1 block font-mono text-[11px] text-ink-muted">
                           {countLabel(layer.nodeCount, 'node')} · {connectionLabel(layer)}
                         </span>
                       </span>
-                      <ChevronRight size={14} class="mt-1 shrink-0 text-fg-3" />
+                      <DSIcon icon={ChevronRight} color="current" size="sm" class="mt-1 shrink-0 text-ink-muted" />
                     </div>
-                  </button>
+                  </DSButton>
                 {/each}
               </div>
             {:else if !selectedComponent}
-              <div class="px-3 py-2 text-[11px] font-mono text-fg-3 border-b border-line-1">
+              <div class="px-3 py-2 text-[11px] font-mono text-ink-muted border-b border-muted">
                 {countLabel(
                   selectedLayer.components.length,
                   'component',
@@ -297,28 +299,28 @@
               </div>
               <div class="divide-y divide-line-1">
                 {#each selectedLayer.components as component}
-                  <button
+                  <DSButton variant="ghost" size="sm"
                     type="button"
-                    class="w-full px-3 py-2.5 text-left hover:bg-bg-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                    class="w-full text-left"
                     onclick={() => selectComponent(component)}
                   >
                     <div class="flex items-start gap-2.5">
-                      <span class="mt-1 text-fg-3"><Box size={14} /></span>
+                      <span class="mt-1 text-ink-muted"><DSIcon icon={Box} color="current" size="sm" /></span>
                       <span class="min-w-0 flex-1">
-                        <span class="block truncate text-[13px] font-medium text-fg-0">
+                        <span class="block truncate text-[13px] font-medium text-foreground">
                           {component.label}
                         </span>
-                        <span class="mt-1 block font-mono text-[11px] text-fg-3">
+                        <span class="mt-1 block font-mono text-[11px] text-ink-muted">
                           {countLabel(component.nodeCount, 'node')} · {connectionLabel(component)}
                         </span>
                       </span>
-                      <ChevronRight size={14} class="mt-1 shrink-0 text-fg-3" />
+                      <DSIcon icon={ChevronRight} color="current" size="sm" class="mt-1 shrink-0 text-ink-muted" />
                     </div>
-                  </button>
+                  </DSButton>
                 {/each}
               </div>
             {:else}
-              <div class="px-3 py-2 text-[11px] font-mono text-fg-3 border-b border-line-1">
+              <div class="px-3 py-2 text-[11px] font-mono text-ink-muted border-b border-muted">
                 {countLabel(selectedComponent.nodes.length, 'node')} · {connectionLabel(
                   selectedComponent,
                 )}
@@ -327,12 +329,12 @@
                 {#each selectedComponent.nodes as node}
                   <div class="px-3 py-2.5">
                     <div class="flex items-start gap-2.5">
-                      <span class="mt-1 text-fg-3"><CircleDot size={13} /></span>
+                      <span class="mt-1 text-ink-muted"><DSIcon icon={CircleDot} color="current" size="sm" /></span>
                       <span class="min-w-0 flex-1">
-                        <span class="block truncate text-[13px] font-medium text-fg-0">
+                        <span class="block truncate text-[13px] font-medium text-foreground">
                           {node.label}
                         </span>
-                        <span class="mt-1 block truncate font-mono text-[11px] text-fg-3">
+                        <span class="mt-1 block truncate font-mono text-[11px] text-ink-muted">
                           {node.type} · degree {node.degree.toLocaleString()} · {node.id}
                         </span>
                       </span>
@@ -364,9 +366,9 @@
           <div class="flex flex-col gap-3 w-[min(34rem,90vw)] text-left">
             <form class="flex gap-2" onsubmit={onSubmit}>
               <div class="relative flex-1 flex items-center">
-                <Link2 size={15} class="absolute left-2.5 text-fg-3 pointer-events-none" />
-                <input
-                  class="w-full pl-8 pr-2.5 py-2 bg-bg-2 border border-line-1 rounded-md text-fg-1 text-[13px] font-mono focus:outline-none focus:border-accent"
+                <DSIcon icon={Link2} color="current" size="sm" class="absolute left-2.5 text-ink-muted pointer-events-none" />
+                <DSInput
+                  class="w-full"
                   type="text"
                   placeholder="https://host/graph.json  or  /exports/memory.json"
                   bind:value={srcInput}
@@ -376,31 +378,31 @@
                   autocorrect="off"
                 />
               </div>
-              <button
-                class="px-4 py-2 bg-primary text-on-primary rounded-md text-[13px] font-medium whitespace-nowrap disabled:opacity-50"
+              <DSButton variant="primary" size="sm"
+
                 type="submit"
                 disabled={loading || !srcInput.trim()}
               >
                 {loading ? 'Loading…' : 'Load'}
-              </button>
+              </DSButton>
             </form>
 
-            <div class="flex items-center gap-2 text-fg-3 text-[11px] uppercase tracking-wide">
+            <div class="flex items-center gap-2 text-ink-muted text-[11px] uppercase tracking-wide">
               <span class="flex-1 h-px bg-line-1"></span>
               or
               <span class="flex-1 h-px bg-line-1"></span>
             </div>
 
-            <button
+            <DSButton variant="ghost" size="sm"
               type="button"
-              class="flex items-center justify-center gap-2 px-3 py-2 bg-bg-2 border border-line-1 rounded-md text-fg-1 text-[13px] hover:border-fg-3 disabled:opacity-50"
+
               disabled={loading}
               onclick={() => fileInput?.click()}
             >
-              <Upload size={15} /> Choose a local graph.json
-            </button>
-            <input
-              bind:this={fileInput}
+              <DSIcon icon={Upload} color="current" size="sm" /> Choose a local graph.json
+            </DSButton>
+            <DSInput
+              bind:ref={fileInput}
               type="file"
               accept="application/json,.json"
               class="hidden"
@@ -409,7 +411,7 @@
 
             {#if error}
               <p
-                class="m-0 px-3 py-2 rounded-md text-primary-text text-[12px] leading-relaxed border border-accent/35 bg-accent/10"
+                class="m-0 px-3 py-2 rounded-md text-primary-text text-[12px] leading-relaxed border border-primary/35 bg-primary/10"
               >
                 {error}
               </p>

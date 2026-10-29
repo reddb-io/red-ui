@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { NavItem } from '@reddb-io/design-system/app'
+  import { Icon as DSIcon } from '@reddb-io/design-system/base'
   import { useWorkspace } from './workspace-context'
   import { Button, Icon, Kbd, Logo } from '@reddb-io/design-system/base'
   import ConnectDropdown from './ConnectDropdown.svelte'
@@ -36,8 +38,8 @@
   const onSettings = $derived(router.view === 'settings')
 </script>
 
-<header class="h-11 flex items-center justify-between px-3.5 bg-bg-1/80 backdrop-blur-md border-b border-line-1 relative z-10">
-  <div class="flex items-center gap-2.5">
+<header class="flex flex-wrap items-center justify-between gap-2 p-[var(--reddb-spatial-inset-sm)] bg-elevation-base-surface border-b border-muted relative z-10">
+  <div class="flex min-w-0 flex-1 basis-full flex-wrap items-center gap-2.5 sm:basis-0 sm:flex-nowrap">
     <Logo
       layout="horizontal"
       size={16}
@@ -47,104 +49,41 @@
       onclick={(e) => router.go({ view: 'collections' }, e)}
     />
     {#if showConnect}
-      <div class="w-px h-[18px] bg-line-2"></div>
+      <div class="w-px h-[18px] bg-control-edge"></div>
       <ConnectDropdown />
-      <div class="w-px h-[18px] bg-line-2 ml-1"></div>
+      <div class="w-px h-[18px] bg-control-edge ml-1"></div>
     {:else}
-      <div class="w-px h-[18px] bg-line-2"></div>
+      <div class="w-px h-[18px] bg-control-edge"></div>
     {/if}
-    <nav aria-label={`${label} navigation`} class="flex items-center gap-0.5">
-      <a
-        href={router.href({ view: 'ask' })}
-        onclick={(e) => router.go({ view: 'ask' }, e)}
-        title="Ask — grounded natural-language query"
-        aria-current={onAsk ? 'page' : undefined}
-        class={[
-          'inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs no-underline transition-colors',
-          onAsk ? 'bg-bg-2 text-primary-text' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
-        ].join(' ')}
-      >
-        <Sparkles class="size-3.5" />
-        <span>Ask</span>
-      </a>
-      <a
-        href={router.href({ view: 'query' })}
-        onclick={(e) => router.go({ view: 'query' }, e)}
-        title="Query"
-        aria-current={onQuery ? 'page' : undefined}
-        class={[
-          'inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs no-underline transition-colors',
-          onQuery ? 'bg-bg-2 text-fg-0' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
-        ].join(' ')}
-      >
-        <FileCode2 class="size-3.5" />
-        <span>Query</span>
-      </a>
-      <a
-        href={router.href({ view: 'collections' })}
-        onclick={(e) => router.go({ view: 'collections' }, e)}
-        title="Collections"
-        aria-current={onCollections ? 'page' : undefined}
-        class={[
-          'inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs no-underline transition-colors',
-          onCollections ? 'bg-bg-2 text-fg-0' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
-        ].join(' ')}
-      >
-        <Database class="size-3.5" />
-        <span>Collections</span>
-      </a>
-      <a
-        href={router.href({ view: 'cluster' })}
-        onclick={(e) => router.go({ view: 'cluster' }, e)}
-        title="Cluster topology"
-        aria-current={onCluster ? 'page' : undefined}
-        class={[
-          'inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs no-underline transition-colors',
-          onCluster ? 'bg-bg-2 text-fg-0' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
-        ].join(' ')}
-      >
-        <Network class="size-3.5" />
-        <span>Cluster</span>
-      </a>
-      <a
-        href={router.href({ view: 'security' })}
-        onclick={(e) => router.go({ view: 'security' }, e)}
-        title="Security"
-        aria-current={onSecurity ? 'page' : undefined}
-        class={[
-          'inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs no-underline transition-colors',
-          onSecurity ? 'bg-bg-2 text-fg-0' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
-        ].join(' ')}
-      >
-        <Shield class="size-3.5" />
-        <span>Security</span>
-      </a>
-      <a
-        href={router.href({ view: 'analytics' })}
-        onclick={(e) => router.go({ view: 'analytics' }, e)}
-        title="Analytics"
-        aria-current={onAnalytics ? 'page' : undefined}
-        class={[
-          'inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs no-underline transition-colors',
-          onAnalytics ? 'bg-bg-2 text-fg-0' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
-        ].join(' ')}
-      >
-        <LineChart class="size-3.5" />
-        <span>Analytics</span>
-      </a>
-      <a
-        href={router.href({ view: 'settings' })}
-        onclick={(e) => router.go({ view: 'settings' }, e)}
-        title="Settings"
-        aria-current={onSettings ? 'page' : undefined}
-        class={[
-          'inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs no-underline transition-colors',
-          onSettings ? 'bg-bg-2 text-fg-0' : 'text-fg-2 hover:text-fg-0 hover:bg-bg-2',
-        ].join(' ')}
-      >
-        <Settings2 class="size-3.5" />
-        <span>Settings</span>
-      </a>
+    <nav aria-label={`${label} navigation`} class="flex min-w-0 basis-full items-center gap-[var(--reddb-spatial-gap-sm)] overflow-x-auto sm:basis-auto">
+      <NavItem href={router.href({ view: 'ask' })} label="Ask" current={onAsk}
+        onclick={(event) => router.go({ view: 'ask' }, event)} class="w-auto shrink-0">
+        {#snippet icon()}<Icon icon={Sparkles} />{/snippet}
+      </NavItem>
+      <NavItem href={router.href({ view: 'query' })} label="Query" current={onQuery}
+        onclick={(event) => router.go({ view: 'query' }, event)} class="w-auto shrink-0">
+        {#snippet icon()}<Icon icon={FileCode2} />{/snippet}
+      </NavItem>
+      <NavItem href={router.href({ view: 'collections' })} label="Collections" current={onCollections}
+        onclick={(event) => router.go({ view: 'collections' }, event)} class="w-auto shrink-0">
+        {#snippet icon()}<Icon icon={Database} />{/snippet}
+      </NavItem>
+      <NavItem href={router.href({ view: 'cluster' })} label="Cluster" current={onCluster}
+        onclick={(event) => router.go({ view: 'cluster' }, event)} class="w-auto shrink-0">
+        {#snippet icon()}<Icon icon={Network} />{/snippet}
+      </NavItem>
+      <NavItem href={router.href({ view: 'security' })} label="Security" current={onSecurity}
+        onclick={(event) => router.go({ view: 'security' }, event)} class="w-auto shrink-0">
+        {#snippet icon()}<Icon icon={Shield} />{/snippet}
+      </NavItem>
+      <NavItem href={router.href({ view: 'analytics' })} label="Analytics" current={onAnalytics}
+        onclick={(event) => router.go({ view: 'analytics' }, event)} class="w-auto shrink-0">
+        {#snippet icon()}<Icon icon={LineChart} />{/snippet}
+      </NavItem>
+      <NavItem href={router.href({ view: 'settings' })} label="Settings" current={onSettings}
+        onclick={(event) => router.go({ view: 'settings' }, event)} class="w-auto shrink-0">
+        {#snippet icon()}<Icon icon={Settings2} />{/snippet}
+      </NavItem>
     </nav>
   </div>
 

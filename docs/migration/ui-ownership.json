@@ -1,0 +1,11 @@
+{
+  "primitivesComplete": true,
+  "filesWithLocalPresentation": 0,
+  "findings": [],
+  "testFixtures": [
+    {
+      "file": "packages/ui/src/routes/shadow-dom-spike/+page.svelte",
+      "reason": "Deliberately hostile host styles for Shadow DOM isolation verification."
+    }
+  ]
+}

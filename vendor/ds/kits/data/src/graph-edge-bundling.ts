@@ -84,26 +84,27 @@ function midpoint(s: BundlePoint, t: BundlePoint): BundlePoint {
  * at the start of every cycle so the spring forces stay balanced.
  */
 function resample(points: BundlePoint[], interior: number): BundlePoint[] {
+  if (!points.length) return [];
   const count = interior + 2;
   const cum: number[] = [0];
   for (let i = 1; i < points.length; i++) {
-    cum.push(cum[i - 1] + distance(points[i], points[i - 1]));
+    cum.push(cum[i - 1]! + distance(points[i]!, points[i - 1]!));
   }
-  const total = cum[cum.length - 1];
+  const total = cum[cum.length - 1]!;
   if (total < EPS) {
-    return Array.from({ length: count }, () => ({ ...points[0] }));
+    return Array.from({ length: count }, () => ({ ...points[0]! }));
   }
   const out: BundlePoint[] = [];
   let seg = 1;
   for (let k = 0; k < count; k++) {
     const target = (total * k) / (count - 1);
-    while (seg < points.length - 1 && cum[seg] < target) seg++;
-    const t0 = cum[seg - 1];
-    const span = cum[seg] - t0 || 1;
+    while (seg < points.length - 1 && cum[seg]! < target) seg++;
+    const t0 = cum[seg - 1]!;
+    const span = cum[seg]! - t0 || 1;
     const pct = Math.max(0, Math.min(1, (target - t0) / span));
     out.push({
-      x: points[seg - 1].x + pct * (points[seg].x - points[seg - 1].x),
-      y: points[seg - 1].y + pct * (points[seg].y - points[seg - 1].y),
+      x: points[seg - 1]!.x + pct * (points[seg]!.x - points[seg - 1]!.x),
+      y: points[seg - 1]!.y + pct * (points[seg]!.y - points[seg - 1]!.y),
     });
   }
   return out;
@@ -163,14 +164,14 @@ function compatibilityScore(p: Segment, q: Segment): number {
 
 function compatibilityLists(
   segments: Segment[],
-  threshold: number
+  threshold: number,
 ): number[][] {
   const lists: number[][] = segments.map(() => []);
   for (let i = 0; i < segments.length; i++) {
     for (let j = i + 1; j < segments.length; j++) {
-      if (compatibilityScore(segments[i], segments[j]) >= threshold) {
-        lists[i].push(j);
-        lists[j].push(i);
+      if (compatibilityScore(segments[i]!, segments[j]!) >= threshold) {
+        lists[i]!.push(j);
+        lists[j]!.push(i);
       }
     }
   }
@@ -186,9 +187,21 @@ function compatibilityLists(
 export function bundleEdges(
   nodes: BundleNodePosition[],
   edges: BundleEdgeInput[],
-  options: Partial<BundleOptions> = {}
+  options: Partial<BundleOptions> = {},
 ): Map<string, BundlePoint[]> {
   const opts = { ...DEFAULT_BUNDLE_OPTIONS, ...options };
+  for (const key of Object.keys(opts) as Array<keyof BundleOptions>) {
+    if (!Number.isFinite(opts[key]) || opts[key] <= 0)
+      opts[key] = DEFAULT_BUNDLE_OPTIONS[key];
+  }
+  opts.cycles = Math.min(6, Math.floor(opts.cycles));
+  opts.iterations = Math.min(100, Math.floor(opts.iterations));
+  opts.subdivisionRate = Math.max(
+    1,
+    Math.min(2, Math.floor(opts.subdivisionRate)),
+  );
+  opts.iterationRate = Math.min(1, opts.iterationRate);
+
   const pos = new Map(nodes.map((n) => [n.id, { x: n.x, y: n.y }]));
   const result = new Map<string, BundlePoint[]>();
 
@@ -205,7 +218,7 @@ export function bundleEdges(
     segments.push({ id: e.id, s: { ...s }, t: { ...t }, len });
   }
 
-  if (segments.length < 2) return result;
+  if (segments.length < 2 || edges.length > BUNDLE_EDGE_LIMIT) return result;
 
   const subdivisions: BundlePoint[][] = segments.map((seg) => [
     { ...seg.s },
@@ -218,7 +231,7 @@ export function bundleEdges(
   let iterations = opts.iterations;
 
   for (let i = 0; i < subdivisions.length; i++) {
-    subdivisions[i] = resample(subdivisions[i], p);
+    subdivisions[i]! = resample(subdivisions[i]!, p);
   }
 
   for (let cycle = 0; cycle < opts.cycles; cycle++) {
@@ -229,16 +242,16 @@ export function bundleEdges(
           ei,
           subdivisions,
           compat,
-          segments[ei].len,
+          segments[ei]!.len,
           p,
           step,
-          opts.stiffness
-        )
+          opts.stiffness,
+        ),
       );
       for (let ei = 0; ei < segments.length; ei++) {
         for (let i = 1; i <= p; i++) {
-          subdivisions[ei][i].x += forces[ei][i].x;
-          subdivisions[ei][i].y += forces[ei][i].y;
+          subdivisions[ei]![i]!.x += forces[ei]![i]!.x;
+          subdivisions[ei]![i]!.y += forces[ei]![i]!.y;
         }
       }
     }
@@ -246,14 +259,14 @@ export function bundleEdges(
     p *= opts.subdivisionRate;
     iterations *= opts.iterationRate;
     for (let i = 0; i < subdivisions.length; i++) {
-      subdivisions[i] = resample(subdivisions[i], p);
+      subdivisions[i]! = resample(subdivisions[i]!, p);
     }
   }
 
   for (let ei = 0; ei < segments.length; ei++) {
     result.set(
-      segments[ei].id,
-      subdivisions[ei].map((pt) => ({ x: pt.x, y: pt.y }))
+      segments[ei]!.id,
+      subdivisions[ei]!.map((pt) => ({ x: pt.x, y: pt.y })),
     );
   }
   return result;
@@ -266,21 +279,21 @@ function computeForces(
   edgeLen: number,
   p: number,
   step: number,
-  stiffness: number
+  stiffness: number,
 ): BundlePoint[] {
   const kp = stiffness / (edgeLen * (p + 1));
-  const points = subdivisions[ei];
+  const points = subdivisions[ei]!;
   const forces: BundlePoint[] = [{ x: 0, y: 0 }];
   for (let i = 1; i <= p; i++) {
-    const prev = points[i - 1];
-    const cur = points[i];
-    const next = points[i + 1];
+    const prev = points[i - 1]!;
+    const cur = points[i]!;
+    const next = points[i + 1]!;
     // Spring force keeps the subdivision points evenly distributed.
     let fx = kp * (prev.x - 2 * cur.x + next.x);
     let fy = kp * (prev.y - 2 * cur.y + next.y);
     // Electrostatic force pulls toward the matching point of compatible edges.
-    for (const oe of compat[ei]) {
-      const other = subdivisions[oe][i];
+    for (const oe of compat[ei]!) {
+      const other = subdivisions[oe]![i]!;
       const dx = other.x - cur.x;
       const dy = other.y - cur.y;
       if (Math.abs(dx) > EPS || Math.abs(dy) > EPS) {
@@ -306,8 +319,8 @@ function computeForces(
  */
 export function edgeCurvature(points: BundlePoint[]): number {
   if (points.length < 3) return 0;
-  const s = points[0];
-  const t = points[points.length - 1];
+  const s = points[0]!;
+  const t = points[points.length - 1]!;
   const dx = t.x - s.x;
   const dy = t.y - s.y;
   const len = Math.hypot(dx, dy);
@@ -315,8 +328,8 @@ export function edgeCurvature(points: BundlePoint[]): number {
   // Signed distance to the source→target line along the left normal (-dy, dx).
   let maxDev = 0;
   for (let i = 1; i < points.length - 1; i++) {
-    const px = points[i].x - s.x;
-    const py = points[i].y - s.y;
+    const px = points[i]!.x - s.x;
+    const py = points[i]!.y - s.y;
     const dev = (px * -dy + py * dx) / len;
     if (Math.abs(dev) > Math.abs(maxDev)) maxDev = dev;
   }
@@ -334,7 +347,7 @@ function segmentsCross(
   p1: BundlePoint,
   p2: BundlePoint,
   p3: BundlePoint,
-  p4: BundlePoint
+  p4: BundlePoint,
 ): boolean {
   const d1 = cross(p3, p4, p1);
   const d2 = cross(p3, p4, p2);
@@ -358,12 +371,12 @@ function segmentsCross(
 export function countEdgeCrossings(polylines: BundlePoint[][]): number {
   let crossings = 0;
   for (let a = 0; a < polylines.length; a++) {
-    const A = polylines[a];
+    const A = polylines[a]!;
     for (let b = a + 1; b < polylines.length; b++) {
-      const B = polylines[b];
+      const B = polylines[b]!;
       for (let i = 1; i < A.length; i++) {
         for (let j = 1; j < B.length; j++) {
-          if (segmentsCross(A[i - 1], A[i], B[j - 1], B[j])) crossings++;
+          if (segmentsCross(A[i - 1]!, A[i]!, B[j - 1]!, B[j]!)) crossings++;
         }
       }
     }
@@ -379,15 +392,17 @@ export function countEdgeCrossings(polylines: BundlePoint[][]): number {
  * thus the visible crossing clutter) drops measurably. Lower is tighter.
  */
 export function edgeInk(polylines: BundlePoint[][], cellSize: number): number {
+  if (!Number.isFinite(cellSize) || cellSize <= 0)
+    throw new Error("cellSize must be positive and finite.");
   const cells = new Set<string>();
   const half = cellSize / 2;
   for (const poly of polylines) {
     for (let i = 1; i < poly.length; i++) {
-      const a = poly[i - 1];
-      const b = poly[i];
+      const a = poly[i - 1]!;
+      const b = poly[i]!;
       const steps = Math.max(
         1,
-        Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / half)
+        Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / half),
       );
       for (let s = 0; s <= steps; s++) {
         const u = s / steps;

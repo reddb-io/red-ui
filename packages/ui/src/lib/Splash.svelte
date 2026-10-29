@@ -1,49 +1,17 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-
-  interface Props {
-    onDone?: () => void
-    contained?: boolean
-  }
-  let { onDone, contained = false }: Props = $props()
-
+  import { LoadingIndicator } from '@reddb-io/design-system/base'
+  let { onDone, contained = false }: { onDone?: () => void; contained?: boolean } = $props()
   let visible = $state(true)
-  let stage = $state(0) // 0: pre, 1: in, 2: out
-
   onMount(() => {
-    const inT = setTimeout(() => (stage = 1), 20)
-    const outT = setTimeout(() => (stage = 2), 800)
-    const closeT = setTimeout(() => {
-      visible = false
-      onDone?.()
-    }, 1000)
-    return () => {
-      clearTimeout(inT)
-      clearTimeout(outT)
-      clearTimeout(closeT)
-    }
+    // Yield one paint while the workspace mounts; no artificial branding delay.
+    const frame = requestAnimationFrame(() => { visible = false; onDone?.() })
+    return () => cancelAnimationFrame(frame)
   })
 </script>
 
 {#if visible}
-  <div
-    class="inset-0 z-[9999] grid place-items-center bg-bg-0 transition-opacity duration-200 ease-out"
-    class:fixed={!contained}
-    class:absolute={contained}
-    class:opacity-0={stage === 2}
-    class:opacity-100={stage === 1}
-    class:pointer-events-none={stage === 2}
-    style:opacity={stage === 0 ? 0 : undefined}
-  >
-    <div class="flex items-center gap-2">
-      <div class="w-2 h-2 rounded-full bg-accent shadow-[0_0_12px_var(--color-accent-glow)]"></div>
-      <span class="font-mono font-semibold text-fg-0 text-[15px] tracking-tight">red<span class="text-primary-text mx-px">·</span>ui</span>
-    </div>
+  <div class="inset-0 z-[9999] grid place-items-center bg-background" class:fixed={!contained} class:absolute={contained}>
+    <LoadingIndicator label="Opening workspace" />
   </div>
 {/if}
-
-<style>
-  @media (prefers-reduced-motion: reduce) {
-    div { transition: none !important; }
-  }
-</style>

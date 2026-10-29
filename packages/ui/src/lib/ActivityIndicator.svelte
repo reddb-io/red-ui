@@ -1,89 +1,20 @@
 <script lang="ts">
+  import { Button, EmptyState, Popover, StatusIndicator } from '@reddb-io/design-system/base'
+  import { ActivityFeed } from '@reddb-io/design-system/app'
   import { useWorkspace } from './workspace-context'
-
-  import { Popover } from '@reddb-io/design-system/base'
-  import Activity from '@lucide/svelte/icons/activity'
-  import CheckCircle2 from '@lucide/svelte/icons/check-circle-2'
-  import AlertCircle from '@lucide/svelte/icons/alert-circle'
-  import Loader2 from '@lucide/svelte/icons/loader-2'
-
-  const workspace = useWorkspace()
-  const { activity } = workspace
-
+  const { activity } = useWorkspace()
   let open = $state(false)
-
-  function fmtDuration(ms: number | null): string {
-    if (ms === null) return '…'
-    if (ms < 1000) return `${ms}ms`
-    return `${(ms / 1000).toFixed(1)}s`
-  }
-
-  function fmtRel(at: number): string {
-    const d = Date.now() - at
-    if (d < 1000) return 'just now'
-    if (d < 60_000) return `${Math.round(d / 1000)}s ago`
-    return `${Math.round(d / 60_000)}m ago`
-  }
+  const status = $derived(activity.inflight > 0 ? `${activity.inflight} active requests` : 'idle')
+  const items = $derived(activity.log.map(entry => ({
+    id: String(entry.id), title: entry.label,
+    datetime: new Date(entry.startedAt).toISOString(),
+    time: entry.durationMs === null ? 'In progress' : entry.durationMs < 1000 ? `${entry.durationMs}ms` : `${(entry.durationMs / 1000).toFixed(1)}s`,
+    description: entry.status === 'error' ? `Failed: ${entry.error ?? 'Request failed'}` : entry.status === 'pending' ? 'Request running' : 'Completed',
+  })))
 </script>
 
-<Popover bind:open contentLabel="Activity log" size="sm" align="end"
-  triggerLabel={activity.inflight > 0 ? `${activity.inflight} active requests, reddb activity` : 'idle, reddb activity'}
-  class="w-[min(360px,calc(100vw-32px))] p-0 text-[11px] font-mono">
-  {#snippet trigger()}
-    {#if activity.inflight > 0}
-      <Loader2 class="size-3.5 animate-spin" />
-      <span>{activity.inflight}</span>
-    {:else}
-      <Activity class="size-3.5" />
-      <span class="text-fg-3">idle</span>
-    {/if}
-  {/snippet}
-      <header class="flex items-center justify-between px-3 py-2 border-b border-line-1">
-        <span class="type-label">Recent reddb requests</span>
-        <div class="flex items-center gap-2">
-          <span class="text-fg-3">{activity.inflight} active</span>
-          {#if activity.inflight > 0}
-            <button
-              type="button"
-              onclick={() => activity.reset()}
-              title="Force-clear the in-flight counter (use when a request hangs)"
-              class="px-1.5 py-0.5 rounded border border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2 cursor-pointer text-[10px]"
-            >
-              reset
-            </button>
-          {/if}
-        </div>
-      </header>
-      <div class="max-h-[320px] overflow-y-auto py-1">
-        {#if activity.log.length === 0}
-          <div class="px-3 py-3 text-fg-3">No activity yet.</div>
-        {:else}
-          {#each activity.log as e (e.id)}
-            <div class="px-3 py-1.5 border-b border-line-1/50 last:border-0 grid grid-cols-[16px_1fr_auto] items-center gap-2">
-              <span aria-hidden="true">
-                {#if e.status === 'pending'}
-                  <Loader2 class="size-3 animate-spin text-primary-text" />
-                {:else if e.status === 'ok'}
-                  <CheckCircle2 class="size-3 text-ok" />
-                {:else}
-                  <AlertCircle class="size-3 text-danger" />
-                {/if}
-              </span>
-              <div class="min-w-0">
-                <div class="text-fg-1 truncate">{e.label}</div>
-                {#if e.status === 'error' && e.error}
-                  <div class="text-danger text-[10px] truncate">{e.error}</div>
-                {/if}
-              </div>
-              <div class="text-fg-3 text-[10px] tabular-nums whitespace-nowrap">
-                {#if e.status === 'pending'}
-                  {fmtRel(e.startedAt)}
-                {:else}
-                  {fmtDuration(e.durationMs)}
-                {/if}
-              </div>
-            </div>
-          {/each}
-        {/if}
-      </div>
+<Popover bind:open contentLabel="Activity log" size="sm" align="end" triggerLabel={`${status}, reddb activity`}>
+  {#snippet trigger()}<StatusIndicator label={status} tone={activity.inflight > 0 ? 'info' : 'neutral'} />{/snippet}
+  {#if activity.inflight > 0}<Button variant="ghost" size="sm" onclick={() => activity.reset()} title="Force-clear the in-flight counter when a request hangs">Reset active requests</Button>{/if}
+  {#if items.length}<ActivityFeed {items} label="Recent RedDB requests" />{:else}<EmptyState title="No activity yet" bordered={false} />{/if}
 </Popover>

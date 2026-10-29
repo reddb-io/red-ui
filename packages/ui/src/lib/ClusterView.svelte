@@ -1,11 +1,12 @@
 <script lang="ts">
+  import { Button as DSButton } from '@reddb-io/design-system/base'
   import { useWorkspace } from './workspace-context'
-  import { SvelteFlow, Background, BackgroundVariant, Controls, type Node, type Edge } from '@xyflow/svelte'
-  import '@xyflow/svelte/dist/style.css'
+  import Diagram, { type DiagramData } from '@reddb-io/design-system/data/Diagram'
+  import PanZoomViewport from '@reddb-io/design-system/data/PanZoomViewport'
+  import { LoadingIndicator } from '@reddb-io/design-system/base'
   import { Badge, Card } from '@reddb-io/design-system/base'
   import EmptyState from '$lib/EmptyState.svelte'
   import { accessLocked, connectionLost } from '@reddb-io/design-system/base/illustrations'
-  import ClusterNode from '$lib/ClusterNode.svelte'
   import { PRESETS } from '$lib/connections.svelte'
 
   import { useRouter } from '$lib/router.svelte'
@@ -25,7 +26,7 @@
   } from '#reddb'
 
   const workspace = useWorkspace()
-  const { activity, connection, secureStore, theme } = workspace
+  const { activity, connection, secureStore } = workspace
 
   interface KnownNode {
     id: string
@@ -55,12 +56,6 @@
   let known = $state<KnownNode[]>([])
   let loading = $state(true)
   let selectedId = $state<string | null>(null)
-  const clusterSkeletonNodes = [
-    { id: 'primary', x: '50%', y: '38%', role: 'primary', label: 92 },
-    { id: 'replica', x: '68%', y: '54%', role: 'replica', label: 112 },
-    { id: 'embedded', x: '32%', y: '54%', role: 'embedded', label: 104 },
-  ]
-  const clusterSkeletonRows = Array.from({ length: 3 }, (_, i) => i)
   // Per-preset failure tracking. Dead nodes back off to one probe per ~60s
   // instead of one per 5s so unreachable presets (e.g. embedded with no
   // local file-backed reddb running) don't flood DevTools with native
@@ -70,25 +65,13 @@
   const lastAttempt = new Map<string, number>()
   const DEAD_BACKOFF_MS = 60_000
 
-  const nodeTypes = { cluster: ClusterNode as any }
-
-  // Theme-aware palette for things xyflow renders as literal SVG attrs
-  // (it cannot read CSS variables for `style`/`labelStyle`/`patternColor`).
-  const palette = $derived.by(() => {
-    const dark = theme.current === 'dark'
-    return {
-      ok: dark ? '#4ade80' : '#16a34a',
-      warn: dark ? '#fbbf24' : '#b45309',
-      pattern: dark ? '#1c2027' : '#d4d4d8',
-      labelBg: dark ? '#0d0f13' : '#fafafa',
-      labelStroke: dark ? '#2a2e36' : '#d4d4d8',
-    }
-  })
-
   async function probeAll() {
+    const active = connection.connected ? connection.active : null
+    const activeClient = connection.client
+    const presets = active ? [active, ...PRESETS.filter(p => p.url !== active.url)] : PRESETS
     const now = Date.now()
     const results = await Promise.all(
-      PRESETS.map(async (p) => {
+      presets.map(async (p) => {
         const fails = failCount.get(p.id) ?? 0
         const last = lastAttempt.get(p.id) ?? 0
         // After 2 consecutive failures, only retry once per DEAD_BACKOFF_MS.
@@ -99,7 +82,7 @@
           }
         }
         lastAttempt.set(p.id, now)
-        const client = new RedClient(p.url)
+        const client = activeClient && p.url === active?.url ? activeClient : new RedClient(p.url)
         try {
           const [stats, replication, cluster] = await Promise.all([
             activity.track(`cluster · ${p.label} stats`, () => client.stats()),
@@ -144,51 +127,21 @@
 
   const liveNodes = $derived(known.filter((k) => k.reachable))
 
-  const flowNodes = $derived<Node[]>(
-    liveNodes.map((k) => {
-      const slot = k.role === 'primary' ? 0 : k.role === 'replica' ? 1 : -1
-      return {
-        id: k.id,
-        type: 'cluster',
-        position: { x: 320 + slot * 320, y: 200 },
-        data: {
-          label: k.preset.label,
-          role: k.role,
-          collections: k.stats?.store.collection_count ?? 0,
-          entities: k.stats?.store.total_entities ?? 0,
-          url: k.preset.url,
-        },
-      }
+  const diagram = $derived<DiagramData>({
+    nodes: liveNodes.map(node => ({
+      id: node.id, label: node.preset.label, kind: 'store', series: node.role === 'primary' ? 1 : node.role === 'replica' ? 2 : 3,
+      description: `${node.role} · ${(node.stats?.store.total_entities ?? 0).toLocaleString()} entities`,
+    })),
+    edges: liveNodes.filter(node => node.role === 'replica').flatMap(replica => {
+      const primary = liveNodes.find(node => node.role === 'primary')
+      if (!primary) return []
+      const replication = replica.replication
+      const lag = replication?.last_applied_lsn !== undefined && replication.last_seen_primary_lsn !== undefined
+        ? replication.last_seen_primary_lsn - replication.last_applied_lsn : null
+      return [{ id: `${primary.id}-${replica.id}`, source: primary.id, target: replica.id,
+        label: lag === null ? 'Lag not exposed' : lag === 0 ? 'In sync' : `Lag ${lag}`, dashed: lag !== 0 }]
     }),
-  )
-
-  const flowEdges = $derived<Edge[]>(
-    liveNodes
-      .filter((k) => k.role === 'replica')
-      .map((replica) => {
-        const primary = liveNodes.find((p) => p.role === 'primary')
-        if (!primary) return null
-        const lag = replica.replication?.last_applied_lsn !== undefined && replica.replication?.last_seen_primary_lsn !== undefined
-          ? replica.replication.last_seen_primary_lsn - replica.replication.last_applied_lsn
-          : null
-        const inSync = lag === 0
-        const stroke = inSync ? palette.ok : palette.warn
-        return {
-          id: `${primary.id}-${replica.id}`,
-          source: primary.id,
-          target: replica.id,
-          type: 'smoothstep',
-          animated: true,
-          style: `stroke:${stroke};stroke-width:1.5;opacity:0.7`,
-          label: lag === null ? '' : inSync ? '✓ in sync' : `lag ${lag}`,
-          labelStyle: `fill:${stroke};font-family:JetBrains Mono Variable;font-size:10px;font-weight:500`,
-          labelBgStyle: `fill:${palette.labelBg};stroke:${palette.labelStroke};stroke-width:1`,
-          labelBgPadding: [6, 4],
-          labelBgBorderRadius: 4,
-        } as Edge
-      })
-      .filter((e): e is Edge => e !== null),
-  )
+  })
 
   const selected = $derived(known.find((k) => k.id === selectedId))
   // Hoisted out of the template: `{@const}` can't be a child of a plain
@@ -438,56 +391,7 @@
 </script>
 
 {#if loading}
-  <div class="absolute inset-0 overflow-hidden bg-bg-0" aria-busy="true" aria-label="Loading cluster topology">
-    <div class="absolute inset-0 cluster-skeleton-grid"></div>
-
-    <svg class="absolute inset-0 h-full w-full" aria-hidden="true">
-      <line x1="50%" y1="38%" x2="32%" y2="54%" class="cluster-skeleton-edge motion-safe:animate-pulse" />
-      <line x1="50%" y1="38%" x2="68%" y2="54%" class="cluster-skeleton-edge motion-safe:animate-pulse" />
-    </svg>
-
-    {#each clusterSkeletonNodes as node (node.id)}
-      <div
-        class="absolute w-[220px] rounded border border-line-2 bg-bg-1 p-3 shadow-md motion-safe:animate-pulse"
-        style={`left: ${node.x}; top: ${node.y}; transform: translate(-50%, -50%);`}
-      >
-        <div class="mb-3 flex items-center gap-2">
-          <div class={[
-            'h-2 w-2 rounded-full',
-            node.role === 'primary' ? 'bg-role-primary' : node.role === 'replica' ? 'bg-role-replica' : 'bg-role-embedded',
-          ].join(' ')}></div>
-          <div class="h-3 rounded bg-bg-3" style={`width: ${node.label}px`}></div>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div class="h-9 rounded border border-line-1 bg-bg-2"></div>
-          <div class="h-9 rounded border border-line-1 bg-bg-2"></div>
-        </div>
-      </div>
-    {/each}
-
-    <div class="absolute top-4 left-4 z-10 w-64 rounded border border-line-2 bg-bg-1 p-3 shadow-md">
-      <div class="mb-3 h-3 w-16 rounded bg-bg-2 motion-safe:animate-pulse"></div>
-      <div class="mb-3 grid grid-cols-2 gap-3 border-b border-line-1 pb-3">
-        <div>
-          <div class="mb-2 h-3 w-16 rounded bg-bg-2 motion-safe:animate-pulse"></div>
-          <div class="h-6 w-12 rounded bg-bg-2 motion-safe:animate-pulse"></div>
-        </div>
-        <div>
-          <div class="mb-2 h-3 w-14 rounded bg-bg-2 motion-safe:animate-pulse"></div>
-          <div class="h-6 w-20 rounded bg-bg-2 motion-safe:animate-pulse"></div>
-        </div>
-      </div>
-      <div class="grid gap-1">
-        {#each clusterSkeletonRows as row (row)}
-          <div class="flex h-[30px] items-center gap-2.5 rounded px-2">
-            <div class="h-1.5 w-1.5 rounded-full bg-bg-2 motion-safe:animate-pulse"></div>
-            <div class="h-3 flex-1 rounded bg-bg-2 motion-safe:animate-pulse"></div>
-            <div class="h-3 rounded bg-bg-2 motion-safe:animate-pulse" style={`width: ${row === 0 ? 36 : 24}px`}></div>
-          </div>
-        {/each}
-      </div>
-    </div>
-  </div>
+  <div class="grid h-full place-items-center p-6"><LoadingIndicator label="Loading cluster topology" /></div>
 {:else if secureStore.locked}
   <div class="p-6">
     <EmptyState
@@ -506,31 +410,18 @@
     />
   </div>
 {:else}
-  <div class="absolute inset-0">
-    <SvelteFlow
-      nodes={flowNodes}
-      edges={flowEdges}
-      {nodeTypes}
-      fitView
-      fitViewOptions={{ padding: 0.25, maxZoom: 1 }}
-      proOptions={{ hideAttribution: true }}
-      nodesDraggable={false}
-      nodesConnectable={false}
-      onnodeclick={(e) => (selectedId = e.node.id)}
-    >
-      <Background variant={BackgroundVariant.Dots} bgColor="transparent" patternColor={palette.pattern} gap={32} size={1} />
-      <Controls position="bottom-right" />
-    </SvelteFlow>
-  </div>
-
-  <!-- Floating summary (top-left) -->
-  <div class="absolute top-4 left-4 z-10 w-64">
+  <div class="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,26rem)]">
+  <div class="min-w-0 space-y-4">
+    <PanZoomViewport label="Cluster topology viewport" contentWidth={900} contentHeight={380} showControls>
+      <Diagram data={diagram} label="Cluster topology" width={900} height={380}
+        selected={selectedId ?? ''} onselectedchange={id => { if (liveNodes.some(node => node.id === id)) selectedId = id }} />
+    </PanZoomViewport>
     <Card title="cluster">
-      <div class="grid grid-cols-2 gap-3 mb-3 pb-3 border-b border-line-1">
+      <div class="grid grid-cols-2 gap-3 mb-3 pb-3 border-b border-muted">
         <div>
           <div class="type-label">reachable</div>
-          <div class="font-mono text-fg-0 text-[18px] font-semibold mt-0.5">
-            {liveNodes.length}<span class="text-fg-3 text-[11px] font-normal ml-1">of {known.length}</span>
+          <div class="font-mono text-foreground text-[18px] font-semibold mt-0.5">
+            {liveNodes.length}<span class="text-ink-muted text-[11px] font-normal ml-1">of {known.length}</span>
           </div>
         </div>
         <div>
@@ -541,54 +432,51 @@
 
       <div class="grid gap-1">
         {#each liveNodes as k}
-          <button
-            class={[
-              'flex items-center gap-2.5 px-2 py-1.5 rounded text-left bg-transparent border-0 cursor-pointer transition-colors',
-              selectedId === k.id ? 'bg-bg-2' : 'hover:bg-bg-2'
-            ].join(' ')}
+          <DSButton variant="ghost" size="sm" aria-pressed={selectedId === k.id}
+             class="text-left"
             onclick={() => (selectedId = k.id)}
           >
             <span class={[
               'w-1.5 h-1.5 rounded-full shrink-0',
               k.role === 'primary' ? 'bg-role-primary' : k.role === 'replica' ? 'bg-role-replica' : 'bg-role-embedded'
             ].join(' ')}></span>
-            <span class="font-mono text-[11px] text-fg-1 flex-1 truncate">{k.preset.label}</span>
-            <span class="font-mono text-[10px] text-fg-3">{k.stats?.store.total_entities.toLocaleString() ?? 0}</span>
-          </button>
+            <span class="font-mono text-[11px] text-foreground flex-1 truncate">{k.preset.label}</span>
+            <span class="font-mono text-[10px] text-ink-muted">{k.stats?.store.total_entities.toLocaleString() ?? 0}</span>
+          </DSButton>
         {/each}
       </div>
     </Card>
   </div>
 
-  <!-- Floating inspector (top-right) -->
+  <!-- Selection details remain reachable on narrow screens. -->
   {#if selected}
-    <div class="absolute top-4 right-4 z-10 w-[420px] max-h-[calc(100vh-96px)] overflow-auto">
+    <div class="min-w-0">
       <Card title="node · {selected.id}" raised>
         <div class="grid gap-2 font-mono text-[11px]">
           {#if selectedHero}
-            <div class="mb-1 rounded border border-line-1 bg-bg-2 p-3">
+            <div class="mb-1 rounded border border-muted bg-muted p-3">
               <div class="type-label">{selectedHero.label}</div>
               <div class={[
                 'font-mono text-[22px] font-semibold mt-0.5 leading-none',
-                selectedHero.tone === 'success' ? 'text-feedback-success-foreground' : selectedHero.tone === 'warning' ? 'text-feedback-warning-foreground' : selectedHero.tone === 'danger' ? 'text-feedback-danger-foreground' : 'text-fg-0',
+                selectedHero.tone === 'success' ? 'text-feedback-success-foreground' : selectedHero.tone === 'warning' ? 'text-feedback-warning-foreground' : selectedHero.tone === 'danger' ? 'text-feedback-danger-foreground' : 'text-foreground',
               ].join(' ')}>{selectedHero.value}</div>
-              {#if selectedHero.sub}<div class="text-[10px] text-fg-3 mt-1">{selectedHero.sub}</div>{/if}
+              {#if selectedHero.sub}<div class="text-[10px] text-ink-muted mt-1">{selectedHero.sub}</div>{/if}
             </div>
           {/if}
           <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-            <span class="text-fg-3">topology</span>
+            <span class="text-ink-muted">topology</span>
             <span><Badge tone={deploymentTone(selected)}>{TOPOLOGY_LABEL[selectedTopology]}</Badge></span>
           </div>
           <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-            <span class="text-fg-3">label</span>
-            <span class="text-fg-0">{selected.preset.label}</span>
+            <span class="text-ink-muted">label</span>
+            <span class="text-foreground">{selected.preset.label}</span>
           </div>
           <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-            <span class="text-fg-3">url</span>
-            <code class="text-fg-0 break-all">{selected.preset.url}</code>
+            <span class="text-ink-muted">url</span>
+            <code class="text-foreground break-all">{selected.preset.url}</code>
           </div>
           <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-            <span class="text-fg-3">deployment</span>
+            <span class="text-ink-muted">deployment</span>
             <span>
               <Badge tone={deploymentTone(selected)}>
                 {deploymentLabel(selected)}
@@ -596,16 +484,16 @@
             </span>
           </div>
           <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-            <span class="text-fg-3">evidence</span>
-            <span class="text-fg-1">{deploymentEvidence(selected)}</span>
+            <span class="text-ink-muted">evidence</span>
+            <span class="text-foreground">{deploymentEvidence(selected)}</span>
           </div>
           <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-            <span class="text-fg-3">role</span>
+            <span class="text-ink-muted">role</span>
             <span><Badge tone="neutral">{selected.role}</Badge></span>
           </div>
           <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-            <span class="text-fg-3">replicas</span>
-            <span class="text-fg-0">
+            <span class="text-ink-muted">replicas</span>
+            <span class="text-foreground">
               {#if selected.replication?.role === 'primary'}
                 {selected.replication.replica_count ?? 0}
               {:else if selected.replication?.role === 'replica'}
@@ -616,105 +504,105 @@
             </span>
           </div>
           {#if selected.stats}
-            <div class="pt-2 mt-1 border-t border-line-1"></div>
+            <div class="pt-2 mt-1 border-t border-muted"></div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-              <span class="text-fg-3">host</span>
-              <span class="text-fg-0">{selected.stats.system.hostname} · {selected.stats.system.os}/{selected.stats.system.arch}</span>
+              <span class="text-ink-muted">host</span>
+              <span class="text-foreground">{selected.stats.system.hostname} · {selected.stats.system.os}/{selected.stats.system.arch}</span>
             </div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-              <span class="text-fg-3">process</span>
-              <span class="text-fg-0">pid {selected.stats.system.pid}</span>
+              <span class="text-ink-muted">process</span>
+              <span class="text-foreground">pid {selected.stats.system.pid}</span>
             </div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-              <span class="text-fg-3">connections</span>
-              <span class="text-fg-0">{selected.stats.active_connections} active <span class="text-fg-3">/ {selected.stats.idle_connections} idle</span></span>
+              <span class="text-ink-muted">connections</span>
+              <span class="text-foreground">{selected.stats.active_connections} active <span class="text-ink-muted">/ {selected.stats.idle_connections} idle</span></span>
             </div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-              <span class="text-fg-3">collections</span>
-              <span class="text-fg-0">{selected.stats.store.collection_count}</span>
+              <span class="text-ink-muted">collections</span>
+              <span class="text-foreground">{selected.stats.store.collection_count}</span>
             </div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-              <span class="text-fg-3">entities</span>
+              <span class="text-ink-muted">entities</span>
               <span class="text-primary-text">{selected.stats.store.total_entities.toLocaleString()}</span>
             </div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-              <span class="text-fg-3">cross refs</span>
-              <span class="text-fg-0">{selected.stats.store.cross_ref_count.toLocaleString()}</span>
+              <span class="text-ink-muted">cross refs</span>
+              <span class="text-foreground">{selected.stats.store.cross_ref_count.toLocaleString()}</span>
             </div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-              <span class="text-fg-3">store memory</span>
-              <span class="text-fg-0">{fmtBytes(selected.stats.store.total_memory_bytes)}</span>
+              <span class="text-ink-muted">store memory</span>
+              <span class="text-foreground">{fmtBytes(selected.stats.store.total_memory_bytes)}</span>
             </div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-              <span class="text-fg-3">storage</span>
-              <span class="text-fg-0">{storageLine(selected)}</span>
+              <span class="text-ink-muted">storage</span>
+              <span class="text-foreground">{storageLine(selected)}</span>
             </div>
             {@const totalMem = measured(selected.cluster?.system?.total_memory_bytes) ?? selected.stats.system.total_memory_bytes}
             {@const availMem = measured(selected.cluster?.system?.available_memory_bytes) ?? selected.stats.system.available_memory_bytes}
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-              <span class="text-fg-3">ram</span>
-              <span class="text-fg-0">
+              <span class="text-ink-muted">ram</span>
+              <span class="text-foreground">
                 {fmtBytes(totalMem - availMem)} used
-                <span class="text-fg-3">/ {fmtBytes(totalMem)} ({fmtPct(totalMem - availMem, totalMem)})</span>
+                <span class="text-ink-muted">/ {fmtBytes(totalMem)} ({fmtPct(totalMem - availMem, totalMem)})</span>
               </span>
             </div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-              <span class="text-fg-3">cpu</span>
-              <span class="text-fg-0">
+              <span class="text-ink-muted">cpu</span>
+              <span class="text-foreground">
                 {selected.stats.system.cpu_cores} cores
                 {#if measured(selected.cluster?.system?.cpu_usage) !== undefined}
-                  <span class="text-fg-3">· {measured(selected.cluster?.system?.cpu_usage)}%</span>
+                  <span class="text-ink-muted">· {measured(selected.cluster?.system?.cpu_usage)}%</span>
                 {:else}
-                  <span class="text-fg-3">· usage not exposed</span>
+                  <span class="text-ink-muted">· usage not exposed</span>
                 {/if}
               </span>
             </div>
             {@const tp = measured(selected.cluster?.throughput)}
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-              <span class="text-fg-3">throughput</span>
-              <span class="text-fg-0">
+              <span class="text-ink-muted">throughput</span>
+              <span class="text-foreground">
                 {#if tp}
-                  {fmtRate(tp.requests_per_second)} <span class="text-fg-3">· r {fmtRate(tp.reads_per_second)} / w {fmtRate(tp.writes_per_second)}</span>
+                  {fmtRate(tp.requests_per_second)} <span class="text-ink-muted">· r {fmtRate(tp.reads_per_second)} / w {fmtRate(tp.writes_per_second)}</span>
                 {:else}
-                  <span class="text-fg-3">not sampled</span>
+                  <span class="text-ink-muted">not sampled</span>
                 {/if}
               </span>
             </div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-              <span class="text-fg-3">avg response</span>
-              <span class="text-fg-0">{fmtMs(measured(selected.cluster?.latency)?.avg_response_ms)}</span>
+              <span class="text-ink-muted">avg response</span>
+              <span class="text-foreground">{fmtMs(measured(selected.cluster?.latency)?.avg_response_ms)}</span>
             </div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-              <span class="text-fg-3">uptime</span>
-              <span class="text-fg-0">{selected.cluster?.uptime_secs !== undefined ? uptime(Date.now() - selected.cluster.uptime_secs * 1000) : uptime(selected.stats.started_at_unix_ms)}</span>
+              <span class="text-ink-muted">uptime</span>
+              <span class="text-foreground">{selected.cluster?.uptime_secs !== undefined ? uptime(Date.now() - selected.cluster.uptime_secs * 1000) : uptime(selected.stats.started_at_unix_ms)}</span>
             </div>
           {/if}
           {#if selected.replication}
-            <div class="pt-2 mt-1 border-t border-line-1"></div>
+            <div class="pt-2 mt-1 border-t border-muted"></div>
             {#if selected.replication.role === 'primary'}
               <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-                <span class="text-fg-3">wal lsn</span>
-                <span class="text-fg-0">{selected.cluster?.wal?.current_lsn ?? selected.replication.wal_lsn ?? 'not exposed'}</span>
+                <span class="text-ink-muted">wal lsn</span>
+                <span class="text-foreground">{selected.cluster?.wal?.current_lsn ?? selected.replication.wal_lsn ?? 'not exposed'}</span>
               </div>
               {#if selected.replication.commit_watermark !== undefined}
                 <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-                  <span class="text-fg-3">commit mark</span>
-                  <span class="text-fg-0">{selected.replication.commit_watermark} <span class="text-fg-3">· {selected.cluster?.replication?.commit_policy ?? ''}</span></span>
+                  <span class="text-ink-muted">commit mark</span>
+                  <span class="text-foreground">{selected.replication.commit_watermark} <span class="text-ink-muted">· {selected.cluster?.replication?.commit_policy ?? ''}</span></span>
                 </div>
               {/if}
               <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-                <span class="text-fg-3">archive lag</span>
-                <span class="text-fg-0">{selected.cluster?.wal?.archive_lag_records ?? 'not exposed'} <span class="text-fg-3">records</span></span>
+                <span class="text-ink-muted">archive lag</span>
+                <span class="text-foreground">{selected.cluster?.wal?.archive_lag_records ?? 'not exposed'} <span class="text-ink-muted">records</span></span>
               </div>
               {#if (selected.replication.full_resync_count ?? 0) > 0 || (selected.replication.partial_resync_count ?? 0) > 0}
                 <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-                  <span class="text-fg-3">resyncs</span>
-                  <span class="text-fg-0">{selected.replication.full_resync_count ?? 0} full <span class="text-fg-3">/ {selected.replication.partial_resync_count ?? 0} partial</span></span>
+                  <span class="text-ink-muted">resyncs</span>
+                  <span class="text-foreground">{selected.replication.full_resync_count ?? 0} full <span class="text-ink-muted">/ {selected.replication.partial_resync_count ?? 0} partial</span></span>
                 </div>
               {/if}
               <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-                <span class="text-fg-3">replicas</span>
-                <span class="text-fg-0">{selected.replication.replica_count ?? selected.cluster?.replication?.replica_count ?? 0}</span>
+                <span class="text-ink-muted">replicas</span>
+                <span class="text-foreground">{selected.replication.replica_count ?? selected.cluster?.replication?.replica_count ?? 0}</span>
               </div>
               {#if selected.replication.replicas?.length}
                 <div class="grid gap-1 pl-1">
@@ -722,80 +610,80 @@
                     <div class="flex items-center gap-2 text-[10px]">
                       <span class={[
                         'w-1.5 h-1.5 rounded-full shrink-0',
-                        r.lag_seconds === 0 ? 'bg-role-replica' : r.lag_seconds < 5 ? 'bg-amber-400' : 'bg-accent',
+                        r.lag_seconds === 0 ? 'bg-role-replica' : r.lag_seconds < 5 ? 'bg-amber-400' : 'bg-primary',
                       ].join(' ')}></span>
-                      <span class="text-fg-1 flex-1 truncate">{r.id}{#if r.rebootstrapping} <span class="text-amber-400">↻</span>{/if}</span>
-                      <span class="text-fg-3">{r.lag_lsn} lsn</span>
-                      <span class={r.lag_seconds === 0 ? 'text-role-replica' : 'text-fg-0'}>{r.lag_seconds === 0 ? '✓ sync' : fmtLagSeconds(r.lag_seconds)}</span>
+                      <span class="text-foreground flex-1 truncate">{r.id}{#if r.rebootstrapping} <span class="text-amber-400">↻</span>{/if}</span>
+                      <span class="text-ink-muted">{r.lag_lsn} lsn</span>
+                      <span class={r.lag_seconds === 0 ? 'text-role-replica' : 'text-foreground'}>{r.lag_seconds === 0 ? '✓ sync' : fmtLagSeconds(r.lag_seconds)}</span>
                     </div>
                   {/each}
                 </div>
               {/if}
             {:else if selected.replication.role === 'replica'}
               <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-                <span class="text-fg-3">primary</span>
-                <span class="text-fg-0 break-all">{selected.replication.primary_addr ?? selected.replication.leader ?? 'unknown'}</span>
+                <span class="text-ink-muted">primary</span>
+                <span class="text-foreground break-all">{selected.replication.primary_addr ?? selected.replication.leader ?? 'unknown'}</span>
               </div>
               <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-                <span class="text-fg-3">applied</span>
-                <span class="text-fg-0">{selected.replication.last_applied_lsn} <span class="text-fg-3">/ {selected.replication.last_seen_primary_lsn}</span></span>
+                <span class="text-ink-muted">applied</span>
+                <span class="text-foreground">{selected.replication.last_applied_lsn} <span class="text-ink-muted">/ {selected.replication.last_seen_primary_lsn}</span></span>
               </div>
               {@const lag = replicaLagRecords(selected)}
               {#if lag !== null}
                 <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-                  <span class="text-fg-3">lag</span>
+                  <span class="text-ink-muted">lag</span>
                   <span>
                     {#if lag === 0}<Badge tone="success">in sync</Badge>{:else}<Badge tone="warning">{lag.toLocaleString()} lsn</Badge>{/if}
-                    {#if selected.replication.state}<span class="text-fg-3 ml-1">{selected.replication.state}</span>{/if}
+                    {#if selected.replication.state}<span class="text-ink-muted ml-1">{selected.replication.state}</span>{/if}
                   </span>
                 </div>
               {/if}
               {#if selected.replication.last_error}
                 <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-                  <span class="text-fg-3">last error</span>
+                  <span class="text-ink-muted">last error</span>
                   <span class="text-primary-text break-all">{selected.replication.last_error}</span>
                 </div>
               {/if}
             {/if}
           {/if}
-          <div class="pt-2 mt-1 border-t border-line-1"></div>
+          <div class="pt-2 mt-1 border-t border-muted"></div>
           {#if isConnectedNode}
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-              <span class="text-fg-3">metalanguage</span>
-              <span class="text-fg-0">
-                {#if meta?.username}you are <span class="text-primary-text">{meta.username}</span> <span class="text-fg-3">· {meta.role}</span>{:else if meta?.error}<span class="text-fg-3">{meta.error}</span>{:else}<span class="text-fg-3">…</span>{/if}
+              <span class="text-ink-muted">metalanguage</span>
+              <span class="text-foreground">
+                {#if meta?.username}you are <span class="text-primary-text">{meta.username}</span> <span class="text-ink-muted">· {meta.role}</span>{:else if meta?.error}<span class="text-ink-muted">{meta.error}</span>{:else}<span class="text-ink-muted">…</span>{/if}
               </span>
             </div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-start">
-              <span class="text-fg-3"></span>
+              <span class="text-ink-muted"></span>
               <span class="flex flex-wrap items-center gap-1.5">
-                {#if meta?.users !== undefined}<span class="rounded border border-line-1 px-1.5 py-0.5 text-[10px] text-fg-1">{meta.users} users</span>{/if}
-                {#if meta?.tenants !== undefined}<span class="rounded border border-line-1 px-1.5 py-0.5 text-[10px] text-fg-1">{meta.tenants} tenants</span>{/if}
+                {#if meta?.users !== undefined}<span class="rounded border border-muted px-1.5 py-0.5 text-[10px] text-foreground">{meta.users} users</span>{/if}
+                {#if meta?.tenants !== undefined}<span class="rounded border border-muted px-1.5 py-0.5 text-[10px] text-foreground">{meta.tenants} tenants</span>{/if}
                 {#if meta?.policyAllowed && meta?.policies !== undefined}
-                  <span class="rounded border border-line-1 px-1.5 py-0.5 text-[10px] text-fg-1">{meta.policies} policies</span>
+                  <span class="rounded border border-muted px-1.5 py-0.5 text-[10px] text-foreground">{meta.policies} policies</span>
                 {:else if meta && meta.policyAllowed === false}
-                  <span class="rounded border border-line-1 px-1.5 py-0.5 text-[10px] text-fg-3" title="reddb did not grant policy:read to this principal">policies · no grant</span>
+                  <span class="rounded border border-muted px-1.5 py-0.5 text-[10px] text-ink-muted" title="reddb did not grant policy:read to this principal">policies · no grant</span>
                 {/if}
-                <button
+                <DSButton variant="secondary" size="sm"
                   type="button"
-                  onclick={(e) => router.go({ view: 'security' }, e)}
-                  class="rounded border border-line-2 bg-bg-2 px-1.5 py-0.5 text-[10px] text-fg-1 hover:border-line-3 hover:text-fg-0"
-                >Security →</button>
+                  onclick={(e: MouseEvent) => router.go({ view: 'security' }, e)}
+
+                >Security →</DSButton>
               </span>
             </div>
           {:else}
             <div class="grid grid-cols-[120px_1fr] gap-3 items-baseline">
-              <span class="text-fg-3">metalanguage</span>
-              <span class="text-fg-3">connect to this node to inspect users · tenants · policies</span>
+              <span class="text-ink-muted">metalanguage</span>
+              <span class="text-ink-muted">connect to this node to inspect users · tenants · policies</span>
             </div>
           {/if}
           {#if selectedMissing.length}
-            <div class="pt-2 mt-1 border-t border-line-1"></div>
+            <div class="pt-2 mt-1 border-t border-muted"></div>
             <div class="grid grid-cols-[120px_1fr] gap-3 items-start">
-              <span class="text-fg-3">not exposed</span>
+              <span class="text-ink-muted">not exposed</span>
               <span class="flex flex-wrap gap-1">
                 {#each selectedMissing as item}
-                  <span class="rounded border border-line-1 px-1.5 py-0.5 text-[10px] text-fg-3">{item}</span>
+                  <span class="rounded border border-muted px-1.5 py-0.5 text-[10px] text-ink-muted">{item}</span>
                 {/each}
               </span>
             </div>
@@ -804,60 +692,5 @@
       </Card>
     </div>
   {/if}
+  </div>
 {/if}
-
-<!-- xyflow chrome — keep handles invisible and route control colors through tokens
-     so light/dark themes both look right. -->
-<style>
-  :global(.svelte-flow) {
-    background-color: var(--color-bg-0) !important;
-    --xy-background-color-default: var(--color-bg-0);
-  }
-  :global(.svelte-flow__handle) {
-    opacity: 0 !important;
-    pointer-events: none !important;
-    width: 1px !important;
-    height: 1px !important;
-  }
-  :global(.svelte-flow__node-cluster) {
-    background: transparent !important;
-    border: 0 !important;
-    padding: 0 !important;
-  }
-  :global(.svelte-flow__edge-path) {
-    stroke-linecap: round;
-  }
-  :global(.svelte-flow__edge-textbg) {
-    fill: var(--color-bg-1) !important;
-    stroke: var(--color-line-2) !important;
-  }
-  :global(.svelte-flow__controls) {
-    box-shadow: var(--shadow-md) !important;
-    border: 1px solid var(--color-line-2) !important;
-    border-radius: 6px !important;
-    overflow: hidden;
-    background: var(--color-bg-1) !important;
-  }
-  :global(.svelte-flow__controls button) {
-    background: var(--color-bg-1) !important;
-    border-bottom: 1px solid var(--color-line-1) !important;
-    color: var(--color-fg-2) !important;
-    fill: var(--color-fg-2) !important;
-  }
-  :global(.svelte-flow__controls button:hover) {
-    background: var(--color-bg-2) !important;
-    color: var(--color-fg-0) !important;
-    fill: var(--color-fg-0) !important;
-  }
-  .cluster-skeleton-grid {
-    background-image: radial-gradient(var(--color-line-2) 1px, transparent 1px);
-    background-size: 32px 32px;
-    opacity: 0.55;
-  }
-  .cluster-skeleton-edge {
-    stroke: var(--color-line-2);
-    stroke-width: 1.5;
-    stroke-linecap: round;
-    opacity: 0.7;
-  }
-</style>

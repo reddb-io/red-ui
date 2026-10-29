@@ -1,18 +1,5 @@
-// Skin-as-data theming (#75).
-//
-// A skin is *plain data*: a name, human labels, a handful of colour seeds
-// (dark), and a type pairing. Adding a skin is a single entry in `SKINS` —
-// no render code changes. The pure `skinToCssVars` mapping turns those seeds
-// into the full `--color-*` custom-property set the app already consumes,
-// deriving the `--color-bg-0..bg-3` surface ramp (and the `fg`/`line` ramps)
-// via CSS `color-mix` so the steps stay perceptually monotonic without
-// hand-tuning every level. The DOM application + persistence below is a thin
-// shell over that pure core.
-//
-// Dark-only by design: every seed is a dark surface, and there is no
-// `light` / `system` branch. The default skin restores the canonical DS
-// appearance rather than maintaining a second Brand palette.
-
+// Compatibility for persisted skin preferences. Appearance is owned by DS Theme
+// and Color Scheme; legacy seed palettes no longer override canonical roles.
 export interface SkinSeeds {
   /** Darkest surface — becomes `--color-bg-0`; every other surface ramps up from it. */
   bg: string;
@@ -42,166 +29,82 @@ export interface Skin {
   typography: SkinTypography;
 }
 
-const FONT_SANS = "var(--reddb-font-family-sans)";
-const FONT_MONO = "var(--reddb-font-family-mono)";
-
-/**
- * The registry. Two curated dark skins — the mechanism, not a buffet.
- * The first entry is the default.
- */
-export const SKINS: readonly Skin[] = [
-  {
-    name: "reddb",
-    label: "Reddb",
-    description: "The canonical Design System application appearance.",
-    colors: {
-      bg: "var(--reddb-color-background)",
-      accent: "var(--reddb-color-primary)",
-      fg: "var(--reddb-color-foreground)",
-    },
-    typography: { sans: FONT_SANS, mono: FONT_MONO },
-  },
-  {
-    name: "nocturne",
-    label: "Nocturne",
-    description: "Indigo-tinted midnight with a violet accent.",
-    colors: { bg: "#0a0b14", accent: "#7c5cff", fg: "#f5f6fb" },
-    typography: { sans: FONT_SANS, mono: FONT_MONO },
-  },
-] as const;
-
-export const DEFAULT_SKIN = SKINS[0];
-
 export const STORAGE_KEY = "red-ui-skin";
-
-/** Look a skin up by name, falling back to the default. */
-export function skinByName(name: string | null | undefined): Skin {
-  return SKINS.find((s) => s.name === name) ?? DEFAULT_SKIN;
+export const DEFAULT_SKIN: Skin = {
+  name: "reddb",
+  label: "Reddb",
+  description: "Design System application appearance.",
+  colors: {
+    bg: "var(--reddb-color-background)",
+    accent: "var(--reddb-color-primary)",
+    fg: "var(--reddb-color-foreground)",
+  },
+  typography: {
+    sans: "var(--reddb-font-family-sans)",
+    mono: "var(--reddb-font-family-mono)",
+  },
+};
+export const SKINS: readonly Skin[] = [DEFAULT_SKIN];
+export function skinByName(_name: string | null | undefined): Skin {
+  return DEFAULT_SKIN;
 }
 
-// ─── pure mapping (the unit-testable core) ──────────────────────────────────
-
-/**
- * `color-mix(in srgb, <lift> P%, <base>)`. In the sRGB space this is a linear
- * interpolation, so a strictly increasing `pct` of a lighter `lift` yields a
- * strictly lighter result — which is what keeps the surface ramp monotonic.
- */
-function mix(lift: string, pct: number, base: string): string {
-  return `color-mix(in srgb, ${lift} ${pct}%, ${base})`;
-}
-
-/** `color-mix(in srgb, <color> P%, transparent)` — a translucent wash of `color`. */
-function alpha(color: string, pct: number): string {
-  return `color-mix(in srgb, ${color} ${pct}%, transparent)`;
-}
-
-/**
- * Surface ramp `bg-0..bg-3`, lightened from the `bg` seed by an increasing
- * fraction of white. `bg-0` is the pure seed (0% lift); the lift percentages
- * are strictly increasing, so the ramp is monotonic by construction.
- */
-const SURFACE_LIFT = [0, 4, 9, 15] as const;
-/** Hairline ramp `line-1..3`, also lightened from `bg` with white. */
-const LINE_LIFT = [6, 13, 22] as const;
-/**
- * Text ramp `fg-0..fg-3`, faded from the `fg` seed toward `bg` by a
- * decreasing fraction of `fg`. `fg-0` is the pure seed (100%); the
- * percentages decrease, so readability steps down monotonically.
- */
-const TEXT_MIX = [100, 78, 58, 45] as const;
-
-/**
- * Pure seed → CSS-var mapping. Returns the complete custom-property set the
- * app's tokens expect, with the `bg`/`fg`/`line` ramps derived via `color-mix`
- * and the accent washes derived from the accent seed. No DOM, no I/O — this is
- * what the unit tests exercise.
- */
-export function skinToCssVars(skin: Skin): Record<string, string> {
-  const { bg, accent, fg } = skin.colors;
-  const white = "#ffffff";
-
-  const vars: Record<string, string> = {
-    // Surfaces — monotonic ramp from the bg seed.
-    "--color-bg-0":
-      SURFACE_LIFT[0] === 0 ? bg : mix(white, SURFACE_LIFT[0], bg),
-    "--color-bg-1": mix(white, SURFACE_LIFT[1], bg),
-    "--color-bg-2": mix(white, SURFACE_LIFT[2], bg),
-    "--color-bg-3": mix(white, SURFACE_LIFT[3], bg),
-
-    // Text — monotonic ramp fading toward the bg seed.
-    "--color-fg-0": fg,
-    "--color-fg-1": mix(fg, TEXT_MIX[1], bg),
-    "--color-fg-2": mix(fg, TEXT_MIX[2], bg),
-    "--color-fg-3": mix(fg, TEXT_MIX[3], bg),
-
-    // Hairlines.
-    "--color-line-1": mix(white, LINE_LIFT[0], bg),
-    "--color-line-2": mix(white, LINE_LIFT[1], bg),
-    "--color-line-3": mix(white, LINE_LIFT[2], bg),
-
-    // Surgical accent + washes derived from the accent seed.
-    "--color-accent": accent,
-    "--color-accent-soft": alpha(accent, 12),
-    "--color-accent-glow": alpha(accent, 45),
-    "--color-ambient-glow": alpha(accent, 6),
-
-    // Node roles — primary tracks the accent; replica/embedded stay legible
-    // semantic hues that read on any dark surface.
-    "--color-role-primary": accent,
-    "--color-role-replica": "var(--reddb-color-feedback-info-foreground)",
-    "--color-role-embedded": "var(--reddb-color-feedback-success-foreground)",
-
-    // Semantic — dark-tuned, shared across skins.
-    "--color-ok": "var(--reddb-color-feedback-success-foreground)",
-    "--color-warn": "var(--reddb-color-feedback-warning-foreground)",
-    "--color-danger": "var(--reddb-color-feedback-danger-foreground)",
-    "--color-info": "var(--reddb-color-feedback-info-foreground)",
-
-    // Typography.
-    "--font-sans": skin.typography.sans,
-    "--font-mono": skin.typography.mono,
+const roles: Record<string, string> = {
+  "bg-0": "background",
+  "bg-1": "elevation-base-surface",
+  "bg-2": "muted",
+  "bg-3": "elevation-raised-surface",
+  "fg-0": "foreground",
+  "fg-1": "foreground",
+  "fg-2": "ink-muted",
+  "fg-3": "ink-muted",
+  "line-1": "border-subtle",
+  "line-2": "control-edge",
+  "line-3": "border-strong",
+  accent: "primary",
+  "role-primary": "primary-text",
+  "role-replica": "feedback-info-foreground",
+  "role-embedded": "feedback-success-foreground",
+  ok: "feedback-success-foreground",
+  warn: "feedback-warning-foreground",
+  danger: "feedback-danger-foreground",
+  info: "feedback-info-foreground",
+};
+/** @deprecated Read canonical DS roles directly in new consumers. */
+export function skinToCssVars(_skin: Skin): Record<string, string> {
+  return {
+    ...Object.fromEntries(
+      Object.entries(roles).map(([alias, role]) => [
+        `--color-${alias}`,
+        `var(--reddb-color-${role})`,
+      ])
+    ),
+    "--font-sans": DEFAULT_SKIN.typography.sans,
+    "--font-mono": DEFAULT_SKIN.typography.mono,
   };
-
-  return vars;
 }
-
-/**
- * Apply a skin's derived custom properties to a DOM element as inline styles.
- * Inline styles win over the stylesheet's `:root` rules, so this overrides the
- * active theme tokens regardless of `data-color-scheme`. The thin shell
- * (`skins.svelte.ts`) wires this to mount + persistence.
- */
-export function applySkin(skin: Skin, target: HTMLElement) {
-  const roles: Record<string, string> = {
-    background: "--color-bg-0",
-    "elevation-base-surface": "--color-bg-1",
-    muted: "--color-bg-2",
-    "elevation-raised-surface": "--color-bg-3",
-    foreground: "--color-fg-0",
-    "ink-muted": "--color-fg-2",
-    "border-subtle": "--color-line-1",
-    "control-edge": "--color-line-2",
-    "border-strong": "--color-line-3",
-    primary: "--color-accent",
-    "primary-text": "--color-accent",
-  };
-  // Returning to the canonical skin restores the DS cascade, including its
-  // Color Scheme. Remove only properties this skin mechanism owns.
-  for (const key of Object.keys(skinToCssVars(skin)))
+/** Remove only the properties owned by the retired skin mechanism. */
+export function applySkin(_skin: Skin, target: HTMLElement) {
+  for (const key of [
+    ...Object.keys(skinToCssVars(DEFAULT_SKIN)),
+    "--color-accent-soft",
+    "--color-accent-glow",
+    "--color-ambient-glow",
+  ])
     target.style.removeProperty(key);
-  for (const role of Object.keys(roles))
+  for (const role of [
+    "background",
+    "elevation-base-surface",
+    "muted",
+    "elevation-raised-surface",
+    "foreground",
+    "ink-muted",
+    "border-subtle",
+    "control-edge",
+    "border-strong",
+    "primary",
+    "primary-text",
+  ])
     target.style.removeProperty(`--reddb-color-${role}`);
-  if (skin.name !== DEFAULT_SKIN.name) {
-    const vars = skinToCssVars(skin);
-    for (const [key, value] of Object.entries(vars))
-      target.style.setProperty(key, value);
-    for (const [role, key] of Object.entries(roles)) {
-      target.style.setProperty(`--reddb-color-${role}`, vars[key]);
-    }
-  }
-  // Skins are dark-only; pin the dark Color Scheme so the shadcn semantic
-  // aliases and the DS roles that key off it stay consistent with the inline
-  // surface ramp.
   target.dataset.theme = "application";
-  target.dataset.colorScheme = "dark";
 }

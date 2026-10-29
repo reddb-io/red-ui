@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Icon as DSIcon } from '@reddb-io/design-system/base'
   import { useWorkspace } from './workspace-context'
   // Settings surface: a bounded pane shell backed by live SQL introspection.
   import { NavItem, Pill, SettingsRow } from '@reddb-io/design-system/app'
@@ -570,16 +571,16 @@
   }
 </script>
 
-<div class="@container h-full min-h-0 bg-bg-0">
+<div class="@container h-full min-h-0 bg-background">
   <div
     class="grid h-full min-h-0 grid-cols-1 @min-[62rem]:grid-cols-[13rem_minmax(18rem,24rem)_minmax(0,1fr)]"
   >
     <aside
-      class="flex min-h-0 flex-col border-b border-line-1 bg-bg-1 @min-[62rem]:border-b-0 @min-[62rem]:border-r"
+      class="flex min-h-0 flex-col border-b border-muted bg-elevation-base-surface @min-[62rem]:border-b-0 @min-[62rem]:border-r"
     >
-      <div class="border-b border-line-1 px-3 py-3">
+      <div class="border-b border-muted px-3 py-3">
         <div class="type-label">Settings</div>
-        <div class="mt-1 text-[13px] text-fg-1">Governance surface</div>
+        <div class="mt-1 text-[13px] text-foreground">Governance surface</div>
       </div>
       <nav class="grid gap-0.5 p-2">
         {#each visiblePanes as pane (pane.id)}
@@ -594,11 +595,11 @@
           </NavItem>
         {/each}
       </nav>
-      <div class="mt-auto border-t border-line-1 px-3 py-2.5 text-[11px] text-fg-3">
+      <div class="mt-auto border-t border-muted px-3 py-2.5 text-[11px] text-ink-muted">
         {#if permissionsLoading}
           checking grants
         {:else if hasVisiblePane}
-          <span class="font-mono text-fg-2">{activeTotalCount}</span> live rows
+          <span class="font-mono text-ink-muted">{activeTotalCount}</span> live rows
         {:else}
           no readable panes
         {/if}
@@ -606,13 +607,13 @@
     </aside>
 
     <section
-      class="flex min-h-0 flex-col border-b border-line-1 bg-bg-1 @min-[62rem]:border-b-0 @min-[62rem]:border-r"
+      class="flex min-h-0 flex-col border-b border-muted bg-elevation-base-surface @min-[62rem]:border-b-0 @min-[62rem]:border-r"
       aria-label={`${activePane.label} entries`}
     >
-      <div class="border-b border-line-1 p-2">
+      <div class="border-b border-muted p-2">
         <div class="relative">
-          <Search
-            class="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-fg-3"
+          <DSIcon icon={Search} color="current"
+            class="pointer-events-none absolute left-2.5 top-1/2  -translate-y-1/2 text-ink-muted"
           />
           <Input
             type="text"
@@ -635,7 +636,7 @@
         {#if permissionsLoading}
           <div class="grid gap-1 p-2">
             {#each Array(4) as _, i (i)}
-              <div class="h-12 rounded-md bg-bg-2 motion-safe:animate-pulse"></div>
+              <div class="h-12 rounded-md bg-muted motion-safe:animate-pulse"></div>
             {/each}
           </div>
         {:else if !hasVisiblePane}
@@ -661,7 +662,7 @@
         {:else if loading && activeRowCount === 0}
           <div class="grid gap-1 p-2">
             {#each Array(8) as _, i (i)}
-              <div class="h-12 rounded-md bg-bg-2 motion-safe:animate-pulse"></div>
+              <div class="h-12 rounded-md bg-muted motion-safe:animate-pulse"></div>
             {/each}
           </div>
         {:else if activeRowCount === 0}
@@ -681,8 +682,8 @@
                 class={[
                   'grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-md px-2.5 py-2 transition-colors',
                   selectedSecret?.key === entry.key
-                    ? 'bg-bg-3 text-fg-0'
-                    : 'text-fg-1 hover:bg-bg-2',
+                    ? 'bg-elevation-raised-surface text-foreground'
+                    : 'text-foreground hover:bg-muted',
                 ].join(' ')}
               >
                 <Button
@@ -692,11 +693,11 @@
                   class="font-mono min-w-0 flex-col items-start" size="sm" variant="ghost"
                 >
                   <span class="block truncate text-[13px]">{control.label}</span>
-                  <span class="block truncate font-mono text-[11px] text-fg-3">{entry.key}</span>
+                  <span class="block truncate font-mono text-[11px] text-ink-muted">{entry.key}</span>
                 </Button>
 
-                <div class="inline-flex h-6 items-center gap-1.5 rounded border border-line-2 bg-bg-2 px-1.5 font-mono text-[11px] text-fg-2">
-                  <KeyRound class="size-3" />
+                <div class="inline-flex h-6 items-center gap-1.5 rounded border border-control-edge bg-muted px-1.5 font-mono text-[11px] text-ink-muted">
+                  <DSIcon icon={KeyRound} color="current" class="" />
                   {entry.value}
                 </div>
               </div>
@@ -710,8 +711,8 @@
                 class={[
                   'grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-md px-2.5 py-2 transition-colors',
                   selectedEntry?.key === entry.key
-                    ? 'bg-bg-3 text-fg-0'
-                    : 'text-fg-1 hover:bg-bg-2',
+                    ? 'bg-elevation-raised-surface text-foreground'
+                    : 'text-foreground hover:bg-muted',
                 ].join(' ')}
               >
                 <Button
@@ -721,7 +722,7 @@
                   class="font-mono min-w-0 flex-col items-start" size="sm" variant="ghost"
                 >
                   <span class="block truncate text-[13px]">{control.label}</span>
-                  <span class="block truncate font-mono text-[11px] text-fg-3">{entry.key}</span>
+                  <span class="block truncate font-mono text-[11px] text-ink-muted">{entry.key}</span>
                 </Button>
 
                 {#if control.kind === 'boolean'}
@@ -756,7 +757,7 @@
         {/if}
       </div>
 
-      <div class="grid gap-2 border-t border-line-1 px-3 py-2.5">
+      <div class="grid gap-2 border-t border-muted px-3 py-2.5">
         {#if activePane.id === 'config'}
           <Button
             type="button"
@@ -764,13 +765,13 @@
             disabled={permissionsLoading || !hasVisiblePane || loading || configEntries.length === 0}
             class="font-mono" size="sm"
           >
-            <Download class="size-3.5" />
+            <DSIcon icon={Download} color="current" class="" />
             export config
           </Button>
         {/if}
-        <div class="truncate text-[11px] text-fg-3">
+        <div class="truncate text-[11px] text-ink-muted">
           {#if hasVisiblePane}
-            Live from <span class="font-mono text-fg-2">{activeUrl}</span>.
+            Live from <span class="font-mono text-ink-muted">{activeUrl}</span>.
           {:else}
             Requires a Settings read grant.
           {/if}
@@ -778,7 +779,7 @@
       </div>
     </section>
 
-    <div class="min-h-0 min-w-0 overflow-auto bg-bg-0">
+    <div class="min-h-0 min-w-0 overflow-auto bg-background">
       <div class="p-6">
         {#if permissionsLoading}
           <PageHeader eyebrow="Settings" title="Settings" subtitle="Checking Settings grants." />
@@ -808,7 +809,7 @@
               disabled={loading || !connected}
               class="font-mono" size="sm"
             >
-              <RefreshCw class={loading ? 'size-3.5 animate-spin' : 'size-3.5'} />
+              <DSIcon icon={RefreshCw} color="current" class={loading ? ' animate-spin' : ''} />
               refresh
             </Button>
           {/snippet}
@@ -839,7 +840,7 @@
                     {#snippet actions()}<Pill>masked</Pill>{/snippet}
                   </SectionHeading>
 
-                  <div class="divide-y divide-line-1 overflow-hidden rounded-lg border border-line-1 bg-bg-1">
+                  <div class="divide-y divide-line-1 overflow-hidden rounded-lg border border-muted bg-elevation-base-surface">
                     <SettingsRow
                       label={selectedSecretControl.label}
                       description="Vault metadata row; plaintext is masked unless break-glass reveal is granted."
@@ -858,7 +859,7 @@
 
                     <SettingsRow label="Key" hint={selectedSecret.key}>
                       {#snippet actions()}
-                        <span class="font-mono text-[12px] text-fg-1">{selectedSecret.key}</span>
+                        <span class="font-mono text-[12px] text-foreground">{selectedSecret.key}</span>
                       {/snippet}
                     </SettingsRow>
 
@@ -884,7 +885,7 @@
                               onclick={clearRevealedSecret}
                               class="font-mono" size="sm"
                             >
-                              <EyeOff class="size-3.5" />
+                              <DSIcon icon={EyeOff} color="current" class="" />
                               hide
                             </Button>
                           {:else}
@@ -894,7 +895,7 @@
                               disabled={revealing}
                               class="font-mono" size="sm" tone="warning"
                             >
-                              <Eye class={revealing ? 'size-3.5 animate-pulse' : 'size-3.5'} />
+                              <DSIcon icon={Eye} color="current" class={revealing ? ' animate-pulse' : ''} />
                               reveal
                             </Button>
                           {/if}
@@ -911,7 +912,7 @@
                             disabled={writing}
                             class="font-mono" size="sm" tone="danger"
                           >
-                            <Trash2 class="size-3.5" />
+                            <DSIcon icon={Trash2} color="current" class="" />
                             delete
                           </Button>
                         {/snippet}
@@ -926,12 +927,12 @@
                   class={[
                     'inline-flex max-w-full items-center gap-1.5 rounded-md border px-2.5 py-1.5 font-mono text-[11px]',
                     revealStatus.tone === 'ok'
-                      ? 'border-ok/30 bg-ok/5 text-ok'
-                      : 'border-danger/30 bg-danger/5 text-danger',
+                      ? 'border-ok/30 bg-feedback-success-fill/5 text-feedback-success-foreground'
+                      : 'border-feedback-danger-border/30 bg-feedback-danger-fill/5 text-feedback-danger-foreground',
                   ].join(' ')}
                   role="status"
                 >
-                  <AlertCircle class="size-3 shrink-0" />
+                  <DSIcon icon={AlertCircle} color="current" class=" shrink-0" />
                   <span class="truncate">{revealStatus.message}</span>
                 </div>
               {/if}
@@ -942,12 +943,12 @@
                     class={[
                       'inline-flex max-w-full items-center gap-1.5 rounded-md border px-2.5 py-1.5 font-mono text-[11px]',
                       writeStatus.tone === 'ok'
-                        ? 'border-ok/30 bg-ok/5 text-ok'
-                        : 'border-danger/30 bg-danger/5 text-danger',
+                        ? 'border-ok/30 bg-feedback-success-fill/5 text-feedback-success-foreground'
+                        : 'border-feedback-danger-border/30 bg-feedback-danger-fill/5 text-feedback-danger-foreground',
                     ].join(' ')}
                     role="status"
                   >
-                    <AlertCircle class="size-3 shrink-0" />
+                    <DSIcon icon={AlertCircle} color="current" class=" shrink-0" />
                     <span class="truncate">{writeStatus.message}</span>
                   </div>
                 {/if}
@@ -956,7 +957,7 @@
                   <SectionHeading size="sm" rule={false} title="Set secret" class="mb-2">
                     {#snippet leading()}<DsIcon icon={Plus} size="sm" />{/snippet}
                   </SectionHeading>
-                  <div class="grid gap-2 rounded-lg border border-line-1 bg-bg-1 p-3">
+                  <div class="grid gap-2 rounded-lg border border-muted bg-elevation-base-surface p-3">
                     <Input
                       type="text"
                       value={secretWriteKey}
@@ -983,7 +984,7 @@
                         disabled={writing || !secretWriteKey.trim() || !secretWriteValue}
                         class="font-mono shrink-0" size="sm"
                       >
-                        <Save class="size-3.5" />
+                        <DSIcon icon={Save} color="current" class="" />
                         set
                       </Button>
                     </div>
@@ -1010,7 +1011,7 @@
               {#snippet actions()}<Pill>{selectedControl.kind}</Pill>{/snippet}
             </SectionHeading>
 
-            <div class="divide-y divide-line-1 overflow-hidden rounded-lg border border-line-1 bg-bg-1">
+            <div class="divide-y divide-line-1 overflow-hidden rounded-lg border border-muted bg-elevation-base-surface">
               <SettingsRow
                 label={selectedControl.label}
                 description={selectedControl.description}
@@ -1065,7 +1066,7 @@
 
               <SettingsRow label="Key" hint={selectedEntry.key}>
                 {#snippet actions()}
-                  <span class="font-mono text-[12px] text-fg-1">{selectedEntry.key}</span>
+                  <span class="font-mono text-[12px] text-foreground">{selectedEntry.key}</span>
                 {/snippet}
               </SettingsRow>
 
@@ -1095,7 +1096,7 @@
                           : 'Save config value'}
                         class="font-mono" size="sm"
                       >
-                        <Save class="size-3.5" />
+                        <DSIcon icon={Save} color="current" class="" />
                         save
                       </Button>
                       <Button
@@ -1104,7 +1105,7 @@
                         disabled={writing}
                         class="font-mono" size="sm" tone="danger"
                       >
-                        <Trash2 class="size-3.5" />
+                        <DSIcon icon={Trash2} color="current" class="" />
                         unset
                       </Button>
                     </div>
@@ -1119,21 +1120,21 @@
                   class={[
                     'mt-3 inline-flex max-w-full items-center gap-1.5 rounded-md border px-2.5 py-1.5 font-mono text-[11px]',
                     writeStatus.tone === 'ok'
-                      ? 'border-ok/30 bg-ok/5 text-ok'
-                      : 'border-danger/30 bg-danger/5 text-danger',
+                      ? 'border-ok/30 bg-feedback-success-fill/5 text-feedback-success-foreground'
+                      : 'border-feedback-danger-border/30 bg-feedback-danger-fill/5 text-feedback-danger-foreground',
                   ].join(' ')}
                   role="status"
                 >
-                  <AlertCircle class="size-3 shrink-0" />
+                  <DSIcon icon={AlertCircle} color="current" class=" shrink-0" />
                   <span class="truncate">{writeStatus.message}</span>
                 </div>
               {/if}
 
-              <section class="mt-4 border-t border-line-1 pt-4">
+              <section class="mt-4 border-t border-muted pt-4">
                 <SectionHeading size="sm" rule={false} title="Set config key" class="mb-2">
                   {#snippet leading()}<DsIcon icon={Plus} size="sm" />{/snippet}
                 </SectionHeading>
-                <div class="grid gap-2 rounded-lg border border-line-1 bg-bg-1 p-3">
+                <div class="grid gap-2 rounded-lg border border-muted bg-elevation-base-surface p-3">
                   <div class="grid gap-2 @min-[42rem]:grid-cols-[minmax(0,1fr)_8rem]">
                     <Input
                       type="text"
@@ -1189,7 +1190,7 @@
                       disabled={writing || !newConfigKey.trim()}
                       class="font-mono shrink-0" size="sm"
                     >
-                      <Plus class="size-3.5" />
+                      <DSIcon icon={Plus} color="current" class="" />
                       set
                     </Button>
                   </div>

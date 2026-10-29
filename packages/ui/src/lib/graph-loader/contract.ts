@@ -14,7 +14,8 @@
 // connection — expected for a static file.
 
 import type { QueryResult } from "#reddb";
-import { colorForCommunity } from "$lib/renderers/graph-render";
+import { CHART_PALETTE_40 } from "@reddb-io/design-system/data/recipes";
+import { tokenColor } from "@reddb-io/design-system/base/recipes";
 
 /** Major version of the graph.json contract this loader understands. */
 export const SUPPORTED_GRAPH_VERSION_MAJOR = 1;
@@ -194,7 +195,15 @@ function normalizeCommunities(raw: unknown): LoadedGraphCommunity[] {
       id,
       label: typeof entry.label === "string" ? entry.label : `Community ${id}`,
       color:
-        typeof entry.color === "string" ? entry.color : colorForCommunity(id),
+        typeof entry.color === "string"
+          ? entry.color
+          : tokenColor(
+              CHART_PALETTE_40[
+                ((id % CHART_PALETTE_40.length) + CHART_PALETTE_40.length) %
+                  CHART_PALETTE_40.length
+              ],
+              "var(--reddb-color-foreground)"
+            ),
       size: typeof entry.size === "number" ? entry.size : 0,
     };
   });

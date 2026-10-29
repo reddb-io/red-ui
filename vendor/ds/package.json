@@ -16,15 +16,21 @@
     "./adapters/reddb/connection-provider": "./adapters/reddb/src/connection-provider.ts",
     "./adapters/reddb/dev-console": "./adapters/reddb/src/dev-console.ts",
     "./adapters/reddb/diff-results": "./adapters/reddb/src/diff-results.ts",
+    "./adapters/reddb/graph-results": "./adapters/reddb/src/graph-results.ts",
     "./adapters/reddb/injected-client-provider": "./adapters/reddb/src/injected-client-provider.ts",
+    "./adapters/reddb/kv-results": "./adapters/reddb/src/kv-results.ts",
     "./adapters/reddb/local-url-provider": "./adapters/reddb/src/local-url-provider.ts",
     "./adapters/reddb/permission-gate": "./adapters/reddb/src/permission-gate.ts",
+    "./adapters/reddb/queue-results": "./adapters/reddb/src/queue-results.ts",
     "./adapters/reddb/server-capabilities": "./adapters/reddb/src/server-capabilities.ts",
     "./adapters/reddb/settings-authoring": "./adapters/reddb/src/settings-authoring.ts",
     "./adapters/reddb/stats-results": "./adapters/reddb/src/stats-results.ts",
+    "./adapters/reddb/table-results": "./adapters/reddb/src/table-results.ts",
+    "./adapters/reddb/time-series-results": "./adapters/reddb/src/time-series-results.ts",
     "./adapters/reddb/transports": "./adapters/reddb/src/transports.ts",
     "./adapters/reddb/types": "./adapters/reddb/src/types.ts",
     "./adapters/reddb/uri": "./adapters/reddb/src/uri.ts",
+    "./adapters/reddb/vector-results": "./adapters/reddb/src/vector-results.ts",
     "./app": {
       "svelte": "./kits/app/src/index.ts",
       "default": "./kits/app/src/index.ts"
@@ -32,6 +38,10 @@
     "./app/ApplicationWorkspace": {
       "svelte": "./kits/app/src/composites/ApplicationWorkspace.svelte",
       "default": "./kits/app/src/composites/ApplicationWorkspace.svelte"
+    },
+    "./app/OutcomeScreen": {
+      "svelte": "./kits/app/src/composites/OutcomeScreen.svelte",
+      "default": "./kits/app/src/composites/OutcomeScreen.svelte"
     },
     "./app/recipes": {
       "types": "./kits/app/src/recipes.ts",
@@ -85,6 +95,22 @@
       "types": "./kits/data/src/diff-explorer.ts",
       "default": "./kits/data/src/diff-explorer.ts"
     },
+    "./data/event-series-explorer": {
+      "types": "./kits/data/src/event-series-explorer.ts",
+      "default": "./kits/data/src/event-series-explorer.ts"
+    },
+    "./data/graph-explorer": {
+      "types": "./kits/data/src/graph-explorer.ts",
+      "default": "./kits/data/src/graph-explorer.ts"
+    },
+    "./data/key-value-explorer": {
+      "types": "./kits/data/src/key-value-explorer.ts",
+      "default": "./kits/data/src/key-value-explorer.ts"
+    },
+    "./data/queue-explorer": {
+      "types": "./kits/data/src/queue-explorer.ts",
+      "default": "./kits/data/src/queue-explorer.ts"
+    },
     "./data/recipes": {
       "types": "./kits/data/src/recipes.ts",
       "default": "./kits/data/src/recipes.ts"
@@ -100,6 +126,14 @@
     "./data/stream": {
       "types": "./kits/data/src/chart-stream.ts",
       "default": "./kits/data/src/chart-stream.ts"
+    },
+    "./data/table-explorer": {
+      "types": "./kits/data/src/table-explorer.ts",
+      "default": "./kits/data/src/table-explorer.ts"
+    },
+    "./data/vector-explorer": {
+      "types": "./kits/data/src/vector-explorer.ts",
+      "default": "./kits/data/src/vector-explorer.ts"
     },
     "./styles.css": "./styles/all.css",
     "./styles/all.css": "./styles/all.css",

@@ -1,4 +1,8 @@
 <script lang="ts">
+  import Table from "@reddb-io/design-system/data/Table"
+  import { Select } from "@reddb-io/design-system/base"
+  import { Button as DSButton } from '@reddb-io/design-system/base'
+  import { Icon as DSIcon } from '@reddb-io/design-system/base'
   import type { CollectionVcsState, QueryResult, RedClient, VcsCommit, VcsDiff } from '#reddb'
   import GitCommitHorizontal from '@lucide/svelte/icons/git-commit-horizontal'
   import GitCompareArrows from '@lucide/svelte/icons/git-compare-arrows'
@@ -125,110 +129,110 @@
   })
 </script>
 
-<div class="h-full min-h-0 flex flex-col bg-bg-0">
-  <div class="border-b border-line-1 px-3 py-1.5 flex items-center gap-2 font-mono text-[11px]">
-    <div class="inline-flex overflow-hidden rounded border border-line-2">
-      <button
+<div class="h-full min-h-0 flex flex-col bg-background">
+  <div class="border-b border-muted px-3 py-1.5 flex items-center gap-2 font-mono text-[11px]">
+    <div class="inline-flex overflow-hidden rounded border border-control-edge">
+      <DSButton variant="ghost" size="sm" aria-pressed={mode === 'commits'}
         type="button"
-        class={['inline-flex h-7 items-center gap-1 px-2', mode === 'commits' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+
         onclick={() => (mode = 'commits')}
       >
-        <GitCommitHorizontal class="size-3" />
+        <DSIcon icon={GitCommitHorizontal} color="current" class="" />
         commits
-      </button>
-      <button
+      </DSButton>
+      <DSButton variant="ghost" size="sm" aria-pressed={mode === 'diff'}
         type="button"
-        class={['inline-flex h-7 items-center gap-1 border-l border-line-2 px-2', mode === 'diff' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+
         onclick={() => (mode = 'diff')}
       >
-        <GitCompareArrows class="size-3" />
+        <DSIcon icon={GitCompareArrows} color="current" class="" />
         diff
-      </button>
-      <button
+      </DSButton>
+      <DSButton variant="ghost" size="sm" aria-pressed={mode === 'live'}
         type="button"
-        class={['inline-flex h-7 items-center gap-1 border-l border-line-2 px-2', mode === 'live' ? 'bg-primary text-on-primary' : 'bg-bg-1 text-fg-2 hover:text-fg-0'].join(' ')}
+
         onclick={() => (mode = 'live')}
       >
-        <RadioTower class="size-3" />
+        <DSIcon icon={RadioTower} color="current" class="" />
         live
-      </button>
+      </DSButton>
     </div>
 
-    <span class={vcs?.versioned ? 'text-ok' : 'text-fg-3'}>
+    <span class={vcs?.versioned ? 'text-feedback-success-foreground' : 'text-ink-muted'}>
       {vcs?.versioned ? 'versioned' : 'not versioned'}
     </span>
-    <span class="text-fg-3">{collection}</span>
+    <span class="text-ink-muted">{collection}</span>
 
-    <button
+    <DSButton variant="ghost" size="sm"
       type="button"
-      class="ml-auto inline-flex h-7 items-center gap-1 rounded border border-line-1 px-2 text-fg-3 hover:bg-bg-2 hover:text-fg-1"
+      class="ml-auto"
       onclick={() => void load()}
       disabled={loading}
     >
       {#if loading}
-        <LoaderCircle class="size-3 animate-spin" />
+        <DSIcon icon={LoaderCircle} color="current" class=" animate-spin" />
       {:else}
-        <RefreshCw class="size-3" />
+        <DSIcon icon={RefreshCw} color="current" class="" />
       {/if}
       refresh
-    </button>
+    </DSButton>
   </div>
 
   {#if error}
-    <div class="border-b border-line-1 px-3 py-1.5 font-mono text-[11px] text-warn">{error}</div>
+    <div class="border-b border-muted px-3 py-1.5 font-mono text-[11px] text-feedback-warning-foreground">{error}</div>
   {/if}
 
   {#if !client}
-    <div class="p-4 font-mono text-[12px] text-fg-3">No active RedDB connection.</div>
+    <div class="p-4 font-mono text-[12px] text-ink-muted">No active RedDB connection.</div>
   {:else if loading && !vcs}
-    <div class="p-4 font-mono text-[12px] text-fg-3">Loading version history…</div>
+    <div class="p-4 font-mono text-[12px] text-ink-muted">Loading version history…</div>
   {:else if vcs && !vcs.versioned}
-    <div class="p-4 font-mono text-[12px] text-fg-3">
-      <div class="mb-2 text-fg-1">This collection is a normal collection with versioning disabled.</div>
-      <button
+    <div class="p-4 font-mono text-[12px] text-ink-muted">
+      <div class="mb-2 text-foreground">This collection is a normal collection with versioning disabled.</div>
+      <DSButton variant="primary" size="sm"
         type="button"
-        class="inline-flex h-7 items-center gap-1 rounded border border-accent/40 bg-accent px-2 text-white hover:bg-accent/90"
+
         onclick={() => void enableVersioning()}
       >
-        <ShieldCheck class="size-3" />
+        <DSIcon icon={ShieldCheck} color="current" class="" />
         enable versioning
-      </button>
+      </DSButton>
     </div>
   {:else if mode === 'live'}
     <div class="flex-1 min-h-0">
       <LiveChanges {collection} />
     </div>
   {:else if mode === 'diff'}
-    <div class="border-b border-line-1 px-3 py-1.5 flex flex-wrap items-center gap-2 font-mono text-[11px]">
-      <label class="inline-flex items-center gap-1 text-fg-3">
+    <div class="border-b border-muted px-3 py-1.5 flex flex-wrap items-center gap-2 font-mono text-[11px]">
+      <label class="inline-flex items-center gap-1 text-ink-muted">
         <span>from</span>
-        <select bind:value={from} class="h-7 rounded border border-line-1 bg-bg-0 px-2 text-fg-1">
+        <Select bind:value={from} class="h-7 rounded border border-muted bg-background px-2 text-foreground">
           <option value="">select commit</option>
           {#each commits as commit (commit.hash)}
             <option value={commit.hash}>{shortHash(commit.hash)} · {commit.message}</option>
           {/each}
-        </select>
+        </Select>
       </label>
-      <label class="inline-flex items-center gap-1 text-fg-3">
+      <label class="inline-flex items-center gap-1 text-ink-muted">
         <span>to</span>
-        <select bind:value={to} class="h-7 rounded border border-line-1 bg-bg-0 px-2 text-fg-1">
+        <Select bind:value={to} class="h-7 rounded border border-muted bg-background px-2 text-foreground">
           <option value="">select commit</option>
           {#each commits as commit (commit.hash)}
             <option value={commit.hash}>{shortHash(commit.hash)} · {commit.message}</option>
           {/each}
-        </select>
+        </Select>
       </label>
-      <button
+      <DSButton variant="ghost" size="sm"
         type="button"
-        class="inline-flex h-7 items-center gap-1 rounded border border-line-1 px-2 text-fg-2 hover:bg-bg-2 disabled:text-fg-3"
+
         disabled={!canDiff || diffLoading}
         onclick={() => void runDiff()}
       >
-        {#if diffLoading}<LoaderCircle class="size-3 animate-spin" />{:else}<GitCompareArrows class="size-3" />{/if}
+        {#if diffLoading}<DSIcon icon={LoaderCircle} color="current" class=" animate-spin" />{:else}<DSIcon icon={GitCompareArrows} color="current" class="" />{/if}
         run diff
-      </button>
+      </DSButton>
       {#if diff}
-        <span class="ml-auto text-fg-3">
+        <span class="ml-auto text-ink-muted">
           +{diff.added} -{diff.removed} ~{diff.modified}
         </span>
       {/if}
@@ -237,34 +241,15 @@
       {#if diff}
         <DiffRenderer result={diffResult(diff)} {collection} />
       {:else}
-        <div class="p-4 font-mono text-[12px] text-fg-3">Choose two commits to compare this collection.</div>
+        <div class="p-4 font-mono text-[12px] text-ink-muted">Choose two commits to compare this collection.</div>
       {/if}
     </div>
   {:else}
     <div class="flex-1 overflow-auto">
       {#if commits.length === 0}
-        <div class="p-4 font-mono text-[12px] text-fg-3">No commits yet.</div>
+        <div class="p-4 font-mono text-[12px] text-ink-muted">No commits yet.</div>
       {:else}
-        <table class="w-full border-collapse font-mono text-[12px]">
-          <thead class="sticky top-0 bg-bg-0 text-fg-3">
-            <tr class="border-b border-line-1">
-              <th class="px-3 py-1.5 text-left font-normal">commit</th>
-              <th class="px-3 py-1.5 text-left font-normal">message</th>
-              <th class="px-3 py-1.5 text-left font-normal">author</th>
-              <th class="px-3 py-1.5 text-left font-normal">time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each commits as commit (commit.hash)}
-              <tr class="border-b border-line-1/60 hover:bg-bg-1/50">
-                <td class="px-3 py-1.5 text-primary-text">{shortHash(commit.hash)}</td>
-                <td class="px-3 py-1.5 text-fg-1">{commit.message}</td>
-                <td class="px-3 py-1.5 text-fg-3">{commit.author?.name ?? '-'}</td>
-                <td class="px-3 py-1.5 text-fg-3">{formatTime(commit.timestamp_ms)}</td>
-              </tr>
-            {/each}
-          </tbody>
-        </table>
+        <Table caption="Collection commits" captionHidden rowKey="hash" pageSize={80} rows={commits.map(commit => ({hash:commit.hash,short:shortHash(commit.hash),message:commit.message,author:commit.author?.name ?? '-',time:formatTime(commit.timestamp_ms)}))} columns={[{key:'short',header:'commit'},{key:'message',header:'message'},{key:'author',header:'author'},{key:'time',header:'time'}]} />
       {/if}
     </div>
   {/if}

@@ -37,6 +37,7 @@ jobs:
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm ds:check
+      - run: pnpm ds:audit:strict
       - run: pnpm -r check
       - run: pnpm -r test
       # Smoke build: catches TypeScript / Svelte compile errors that

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Icon as DSIcon } from '@reddb-io/design-system/base'
   import { useWorkspace } from './workspace-context'
   import { onMount, tick, untrack } from 'svelte'
   import { AlertDialog, DropdownMenu, Icon, NavigationScope, Select, Skeleton, ToggleButton } from '@reddb-io/design-system/base'
@@ -433,12 +434,12 @@
 </script>
 
 <div bind:this={pane} class="h-full flex flex-col">
-  <div class="border-b border-line-1 flex flex-wrap items-stretch min-h-[36px] bg-bg-0">
+  <div class="border-b border-muted flex flex-wrap items-stretch min-h-[36px] bg-background">
     <span class="type-label px-3 py-2">Results</span>
     {#if tabs.active && (tabs.active.kind === 'collection' || tabs.active.kind === 'query')}
       {@const activeTab = tabs.active}
       {@const activeResult = results[activeTab.id]}
-      <div class="ml-auto flex min-w-0 flex-wrap items-center gap-2 px-2 text-[11px] font-mono text-fg-3">
+      <div class="ml-auto flex min-w-0 flex-wrap items-center gap-2 px-2 text-[11px] font-mono text-ink-muted">
         {#if activeTab.kind === 'collection'}
           <ToggleButton
             label="meta"
@@ -446,7 +447,7 @@
             title={metadataOpen ? 'Hide collection metadata' : 'Show collection metadata'}
             pressed={metadataOpen}
           >
-            <Info class="size-3" />
+            <DSIcon icon={Info} color="current" class="" />
             <span>meta</span>
           </ToggleButton>
           {#if connection.capabilities.vcs}
@@ -458,7 +459,7 @@
               title={historyOpen[activeTab.id] ? 'Hide version history' : 'Show version history and diffs'}
               pressed={historyOpen[activeTab.id] ?? false}
               >
-              <GitBranch class="size-3" />
+              <DSIcon icon={GitBranch} color="current" class="" />
               <span>history</span>
             </ToggleButton>
           {/if}
@@ -470,14 +471,14 @@
           pressed={activeTab.showSystemColumns ?? false}
         >
           {#if activeTab.showSystemColumns}
-            <Eye class="size-3" />
+            <DSIcon icon={Eye} color="current" class="" />
           {:else}
-            <EyeOff class="size-3" />
+            <DSIcon icon={EyeOff} color="current" class="" />
           {/if}
           <span>sys</span>
         </ToggleButton>
         <span>{defaultCapabilityLabel(activeTab, activeResult)}</span>
-        <span class="text-fg-3">· override:</span>
+        <span class="text-ink-muted">· override:</span>
         <Select
           class="w-auto max-w-full"
           aria-label="Renderer override"
@@ -507,7 +508,7 @@
     if (tab) router.go({ view: 'collection', collection: tab.key, subpage: tab.subpage ?? defaultSubpage(tab.capability) })
   }}>
     {#if tabs.tabs.length}
-      <WorkspaceTabs label="Open results" class="min-h-0 flex-1" panelClass="overflow-hidden bg-bg-0 p-0"
+      <WorkspaceTabs label="Open results" class="min-h-0 flex-1" panelClass="overflow-hidden bg-background p-0"
         items={tabs.tabs.map(tab => ({ id: tab.id, label: tab.label,
           dirty: tab.kind === 'query' && queryTabs.isDirty(tab.id),
           href: tab.kind === 'collection' ? router.href({ view: 'collection', collection: tab.key, subpage: tab.subpage ?? defaultSubpage(tab.capability) }) : undefined,
@@ -520,7 +521,7 @@
       {:else if tab.kind === 'query'}
         <QueryEditor tabId={tab.id} fallbackLabel={tab.key} />
       {:else if tab.kind === 'welcome'}
-        <div class="h-full grid place-items-center text-fg-3 text-[12px] font-mono">
+        <div class="h-full grid place-items-center text-ink-muted text-[12px] font-mono">
           Workspace
         </div>
       {:else}
@@ -541,62 +542,62 @@
           {@const catalog = catalogMetadata[tab.id]}
           {@const catalogErr = catalogErrors[tab.id]}
           <div class="h-full flex flex-col">
-            <div class="border-b border-line-1 bg-bg-1/35 px-3 py-2">
+            <div class="border-b border-muted bg-elevation-base-surface/35 px-3 py-2">
               {#if catalogErr}
-                <div class="flex items-center gap-2 text-[11px] font-mono text-fg-3">
-                  <Info class="size-3.5 text-warn" />
+                <div class="flex items-center gap-2 text-[11px] font-mono text-ink-muted">
+                  <DSIcon icon={Info} color="current" class=" text-feedback-warning-foreground" />
                   <span>Catalog metadata unavailable.</span>
                   <span class="truncate">{catalogErr}</span>
                 </div>
               {:else if !catalog}
-                <div class="flex items-center gap-2 text-[11px] font-mono text-fg-3">
-                  <Database class="size-3.5" />
+                <div class="flex items-center gap-2 text-[11px] font-mono text-ink-muted">
+                  <DSIcon icon={Database} color="current" class="" />
                   <span>Loading collection catalog…</span>
                 </div>
               {:else}
                 <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
                   <div class="min-w-[180px] flex-1">
                     <div class="flex items-center gap-2">
-                      <span class="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-primary-text">
+                      <span class="rounded border border-primary/30 bg-primary/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-primary-text">
                         {catalog.model ?? 'collection'}
                       </span>
-                      <span class="truncate font-mono text-[12px] text-fg-0">{catalog.name}</span>
+                      <span class="truncate font-mono text-[12px] text-foreground">{catalog.name}</span>
                     </div>
                     <div class="mt-1 flex flex-wrap gap-1">
                       {#each collectionCatalogBadges(catalog) as badge}
-                        <span class="rounded border border-line-1 bg-bg-0/70 px-1.5 py-0.5 font-mono text-[10px] text-fg-2">{badge}</span>
+                        <span class="rounded border border-muted bg-background/70 px-1.5 py-0.5 font-mono text-[10px] text-ink-muted">{badge}</span>
                       {/each}
                       {#if collectionCatalogBadges(catalog).length === 0}
-                        <span class="font-mono text-[10px] text-fg-3">No type-specific catalog fields.</span>
+                        <span class="font-mono text-[10px] text-ink-muted">No type-specific catalog fields.</span>
                       {/if}
                     </div>
                   </div>
 
                   <div class="flex flex-wrap items-center gap-2 font-mono text-[11px]">
-                    <div class="inline-flex min-w-[94px] items-center gap-1.5 rounded border border-line-1 bg-bg-0/70 px-2 py-1">
-                      <Rows3 class="size-3.5 text-fg-3" />
-                      <span class="text-fg-0">{formatCount(catalog.entities)}</span>
-                      <span class="text-fg-3">entities</span>
+                    <div class="inline-flex min-w-[94px] items-center gap-1.5 rounded border border-muted bg-background/70 px-2 py-1">
+                      <DSIcon icon={Rows3} color="current" class=" text-ink-muted" />
+                      <span class="text-foreground">{formatCount(catalog.entities)}</span>
+                      <span class="text-ink-muted">entities</span>
                     </div>
-                    <div class="inline-flex min-w-[92px] items-center gap-1.5 rounded border border-line-1 bg-bg-0/70 px-2 py-1">
-                      <HardDrive class="size-3.5 text-fg-3" />
-                      <span class="text-fg-0">{formatBytes(catalog.onDiskBytes)}</span>
-                      <span class="text-fg-3">disk</span>
+                    <div class="inline-flex min-w-[92px] items-center gap-1.5 rounded border border-muted bg-background/70 px-2 py-1">
+                      <DSIcon icon={HardDrive} color="current" class=" text-ink-muted" />
+                      <span class="text-foreground">{formatBytes(catalog.onDiskBytes)}</span>
+                      <span class="text-ink-muted">disk</span>
                     </div>
-                    <div class="inline-flex min-w-[92px] items-center gap-1.5 rounded border border-line-1 bg-bg-0/70 px-2 py-1">
-                      <Activity class="size-3.5 text-fg-3" />
-                      <span class="text-fg-0">{formatBytes(catalog.inMemoryBytes)}</span>
-                      <span class="text-fg-3">mem</span>
+                    <div class="inline-flex min-w-[92px] items-center gap-1.5 rounded border border-muted bg-background/70 px-2 py-1">
+                      <DSIcon icon={Activity} color="current" class=" text-ink-muted" />
+                      <span class="text-foreground">{formatBytes(catalog.inMemoryBytes)}</span>
+                      <span class="text-ink-muted">mem</span>
                     </div>
-                    <div class="inline-flex min-w-[78px] items-center gap-1.5 rounded border border-line-1 bg-bg-0/70 px-2 py-1">
-                      <Layers3 class="size-3.5 text-fg-3" />
-                      <span class="text-fg-0">{formatCount(catalog.segments)}</span>
-                      <span class="text-fg-3">seg</span>
+                    <div class="inline-flex min-w-[78px] items-center gap-1.5 rounded border border-muted bg-background/70 px-2 py-1">
+                      <DSIcon icon={Layers3} color="current" class=" text-ink-muted" />
+                      <span class="text-foreground">{formatCount(catalog.segments)}</span>
+                      <span class="text-ink-muted">seg</span>
                     </div>
-                    <div class="inline-flex min-w-[78px] items-center gap-1.5 rounded border border-line-1 bg-bg-0/70 px-2 py-1">
-                      <ScanLine class="size-3.5 text-fg-3" />
-                      <span class="text-fg-0">{formatCount(catalog.indices)}</span>
-                      <span class="text-fg-3">idx</span>
+                    <div class="inline-flex min-w-[78px] items-center gap-1.5 rounded border border-muted bg-background/70 px-2 py-1">
+                      <DSIcon icon={ScanLine} color="current" class=" text-ink-muted" />
+                      <span class="text-foreground">{formatCount(catalog.indices)}</span>
+                      <span class="text-ink-muted">idx</span>
                     </div>
                   </div>
                 </div>
@@ -606,43 +607,43 @@
             {#if metadataOpen}
               {@const meta = metadata[tab.id]}
               {@const metaErr = metadataErrors[tab.id]}
-              <div class="border-b border-line-1 bg-bg-1/30 px-3 py-2 text-[11px] font-mono">
+              <div class="border-b border-muted bg-elevation-base-surface/30 px-3 py-2 text-[11px] font-mono">
                 {#if metaErr}
-                  <div class="flex items-start gap-2 text-fg-3">
-                    <Info class="mt-0.5 size-3.5 text-warn" />
+                  <div class="flex items-start gap-2 text-ink-muted">
+                    <DSIcon icon={Info} color="current" class="mt-0.5  text-feedback-warning-foreground" />
                     <div>
-                      <div class="text-warn">Collection metadata unavailable.</div>
+                      <div class="text-feedback-warning-foreground">Collection metadata unavailable.</div>
                       <div class="mt-0.5 break-words">{metaErr}</div>
                     </div>
                   </div>
                 {:else if !meta}
-                  <div class="text-fg-3">Loading metadata…</div>
+                  <div class="text-ink-muted">Loading metadata…</div>
                 {:else}
                   <div class="grid grid-cols-[minmax(160px,0.8fr)_1.2fr] gap-3">
                     <div class="grid grid-cols-[78px_1fr] gap-x-2 gap-y-1">
-                      <span class="text-fg-3">name</span>
-                      <span class="text-fg-0 truncate">{meta.name ?? tab.key}</span>
-                      <span class="text-fg-3">kind</span>
+                      <span class="text-ink-muted">name</span>
+                      <span class="text-foreground truncate">{meta.name ?? tab.key}</span>
+                      <span class="text-ink-muted">kind</span>
                       <span class="text-primary-text">{meta.kind ?? meta.capability ?? tab.capability ?? 'unknown'}</span>
-                      <span class="text-fg-3">tenant</span>
-                      <span class="text-fg-1">{meta.tenant ?? 'not exposed'}</span>
-                      <span class="text-fg-3">indexes</span>
-                      <span class="text-fg-1">{meta.indexes?.length ?? 0}</span>
+                      <span class="text-ink-muted">tenant</span>
+                      <span class="text-foreground">{meta.tenant ?? 'not exposed'}</span>
+                      <span class="text-ink-muted">indexes</span>
+                      <span class="text-foreground">{meta.indexes?.length ?? 0}</span>
                     </div>
 
                     <div class="grid gap-1">
                       <div class="flex flex-wrap gap-1">
                         {#if meta.capability}
-                          <span class="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-primary-text">{meta.capability}</span>
+                          <span class="rounded border border-primary/30 bg-primary/10 px-1.5 py-0.5 text-primary-text">{meta.capability}</span>
                         {/if}
                         {#each meta.capabilities ?? [] as cap}
-                          <span class="rounded border border-line-1 px-1.5 py-0.5 text-fg-2">{cap}</span>
+                          <span class="rounded border border-muted px-1.5 py-0.5 text-ink-muted">{cap}</span>
                         {/each}
                         {#if objectKeys(meta.schema).length > 0}
-                          <span class="rounded border border-line-1 px-1.5 py-0.5 text-fg-2">schema {objectKeys(meta.schema).length}</span>
+                          <span class="rounded border border-muted px-1.5 py-0.5 text-ink-muted">schema {objectKeys(meta.schema).length}</span>
                         {/if}
                         {#if objectKeys(meta.retention).length > 0}
-                          <span class="rounded border border-line-1 px-1.5 py-0.5 text-fg-2">retention</span>
+                          <span class="rounded border border-muted px-1.5 py-0.5 text-ink-muted">retention</span>
                         {/if}
                       </div>
 
@@ -653,7 +654,7 @@
                             <span
                               class={[
                                 'rounded border px-1.5 py-0.5',
-                                state.allowed ? 'border-ok/30 bg-ok/10 text-ok' : 'border-danger/30 bg-danger/10 text-danger',
+                                state.allowed ? 'border-ok/30 bg-feedback-success-fill/10 text-feedback-success-foreground' : 'border-feedback-danger-border/30 bg-feedback-danger-fill/10 text-feedback-danger-foreground',
                               ].join(' ')}
                               title={state.reason}
                             >
@@ -662,7 +663,7 @@
                           {/each}
                         </div>
                       {:else}
-                        <div class="mt-1 text-fg-3">Action grants not exposed.</div>
+                        <div class="mt-1 text-ink-muted">Action grants not exposed.</div>
                       {/if}
                     </div>
                   </div>
@@ -670,7 +671,7 @@
               </div>
             {/if}
             {#if historyOpen[tab.id]}
-              <div class="h-[320px] min-h-[240px] border-b border-line-1">
+              <div class="h-[320px] min-h-[240px] border-b border-muted">
                 <CollectionHistory client={connection.client ?? undefined} collection={tab.key} />
               </div>
             {/if}
@@ -690,7 +691,7 @@
         {/snippet}
       </WorkspaceTabs>
     {:else}
-      <div class="min-h-0 flex-1 overflow-hidden bg-bg-0">
+      <div class="min-h-0 flex-1 overflow-hidden bg-background">
       <div class="h-full grid place-items-center p-6">
         {#if connection.connected}
           <EmptyState illustration={projectEmpty} illustrationSize="lg" title="Choose a collection" message="Your database is connected. Pick a collection from the schema browser to inspect its data." />

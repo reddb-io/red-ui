@@ -1,7 +1,7 @@
 <script lang="ts">
   import { useWorkspace } from './workspace-context'
   import { onMount } from 'svelte'
-  import { Button, Field, Icon, Input, Popover } from '@reddb-io/design-system/base'
+  import { Button, Disclosure, Field, Icon, Input, Popover } from '@reddb-io/design-system/base'
   import { makeCustomConnection, parseConnectionInput } from './connections.svelte'
   import Zap from '@lucide/svelte/icons/zap'
   import Loader2 from '@lucide/svelte/icons/loader-2'
@@ -141,7 +141,7 @@
   })
 
   const dotClass = $derived(
-    connection.connected ? 'bg-ok' : status === 'error' ? 'bg-danger' : 'bg-fg-3'
+    connection.connected ? 'bg-feedback-success-fill' : status === 'error' ? 'bg-feedback-danger-fill' : 'bg-fg-3'
   )
 
   const triggerLabel = $derived(
@@ -183,8 +183,8 @@
   {#snippet trigger()}
     <span class={['size-1.5 rounded-full shrink-0', dotClass].join(' ')}></span>
     {#if !connection.connected}<Icon icon={Plug} size="sm" />{/if}
-    <span class="font-mono">{triggerLabel}</span>
-    <span class="text-caption text-ink-muted">{triggerStatus}</span>
+    <span class="min-w-0 max-w-[14rem] truncate font-mono">{triggerLabel}</span>
+    <span class="shrink-0 whitespace-nowrap text-caption text-ink-muted">{triggerStatus}</span>
     <Icon icon={ChevronDown} size="sm" />
   {/snippet}
   <form onsubmit={submit} class="grid gap-3">
@@ -195,8 +195,7 @@
           placeholder="https://user:password@host or Base64" />
       {/snippet}
     </Field>
-    <details bind:open={signInOpen}>
-      <summary class="cursor-pointer text-sm text-fg-2">Sign in to the database</summary>
+    <Disclosure bind:open={signInOpen} label="Sign in to the database">
       <div class="mt-2 grid gap-2">
         <Field id={workspace.idFor("connect-username")} label="Username">
           {#snippet children(control)}<Input {...control} autocomplete="username" bind:value={username} disabled={status === 'probing'} />{/snippet}
@@ -206,17 +205,17 @@
         </Field>
         <p class="text-caption text-ink-muted">Credentials go directly to this database. The session stays in this tab.</p>
       </div>
-    </details>
+    </Disclosure>
     <Button type="submit" variant="primary"
       disabled={status === 'probing' || !url.trim() || Boolean(username.trim()) !== Boolean(password)}>
       {#if status === 'probing'}<Icon icon={Loader2} size="sm" class="animate-spin" /> Connecting…
       {:else}<Icon icon={Zap} size="sm" /> Connect{/if}
     </Button>
     <div aria-live="polite" class="min-h-5 flex items-center gap-1.5 text-caption">
-      {#if status === 'ok'}<Icon icon={CheckCircle2} size="sm" class="text-ok" />
-        <span class="text-ok">Connected{rtt !== null ? ` · ${rtt}ms` : ''}</span>
-      {:else if status === 'error'}<Icon icon={AlertCircle} size="sm" class="text-danger" />
-        <span class="break-words text-danger">{error}</span>{/if}
+      {#if status === 'ok'}<Icon icon={CheckCircle2} size="sm" class="text-feedback-success-foreground" />
+        <span class="text-feedback-success-foreground">Connected{rtt !== null ? ` · ${rtt}ms` : ''}</span>
+      {:else if status === 'error'}<Icon icon={AlertCircle} size="sm" class="text-feedback-danger-foreground" />
+        <span class="break-words text-feedback-danger-foreground">{error}</span>{/if}
     </div>
   </form>
   {#if canOpenFile}
@@ -225,7 +224,7 @@
     </Button>
   {/if}
   {#if reachableHistory.length > 0}
-    <section aria-label="Recent connections" class="mt-3 border-t border-line-1 pt-3">
+    <section aria-label="Recent connections" class="mt-3 border-t border-muted pt-3">
       <h3 class="type-label mb-2 flex items-center gap-1.5"><Icon icon={Clock} size="sm" />Recent</h3>
       <div class="grid max-h-[180px] gap-1 overflow-y-auto">
         {#each reachableHistory as h (h.id)}

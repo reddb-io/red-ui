@@ -31,9 +31,9 @@
   }
 </script>
 
-<div data-renderer="document" class="flex h-full flex-col text-fg-1">
+<div data-renderer="document" class="flex h-full flex-col text-foreground">
   {#if !result.ok}
-    <div role="alert" class="grid flex-1 place-items-center p-6 text-[12px] font-mono text-fg-3">{result.error ?? 'Query failed.'}</div>
+    <div role="alert" class="grid flex-1 place-items-center p-[var(--reddb-spatial-inset-lg)] text-sm font-mono text-ink-muted">{result.error ?? 'Query failed.'}</div>
   {:else if docs.length === 0}
     <RendererEmptyState surface="document" reason={result.result.records.length ? 'unsupported' : 'empty'} art={documentCollectionEmptyCompact} title={result.result.records.length ? 'No document data in this result' : 'No documents returned'} description={result.result.records.length ? 'The returned records do not contain document bodies. Inspect the collection as a table or return document fields.' : 'This query returned no documents. Adjust the query or inspect the collection as a table.'}>
       {#snippet actions()}{#if collection}<Button href={collectionPageHref(collection, 'table')}>View as table</Button>{/if}{/snippet}
@@ -48,7 +48,7 @@
         {/snippet}
       </DocumentViewer>
     </div>
-    <div class="border-t border-line-1 px-3 py-1.5 text-[10px] font-mono text-fg-3">
+    <div class="border-t border-muted px-[var(--reddb-spatial-inset-sm)] py-[var(--reddb-spatial-inset-sm)] text-xs font-mono text-ink-muted">
       {docs.length} documents{collection ? ' · ' : ''}{collection ?? ''}
     </div>
   {/if}

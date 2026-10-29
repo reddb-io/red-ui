@@ -17,4 +17,4 @@
   {@render children?.()}
 {/snippet}
 <PageHeading {title} description={subtitle} {actions} context={eyebrow || children ? context : undefined}
-  class="mb-4 border-b border-line-1 pb-4" />
+  class="mb-[var(--reddb-spatial-layout-gap-md)] border-b border-muted pb-[var(--reddb-spatial-inset-lg)]" />
