@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { NavItem } from "@reddb-io/design-system/app"
+  import { Input as DSInput, Button as DSButton } from '@reddb-io/design-system/base'
+  import { Icon as DSIcon } from '@reddb-io/design-system/base'
   import { useWorkspace } from './workspace-context'
 
   import {
@@ -93,44 +96,44 @@
 
 </script>
 
-<div class="px-3 py-2 border-b border-line-1 flex items-center justify-between text-fg-3">
+<div class="px-3 py-2 border-b border-muted flex items-center justify-between text-ink-muted">
   <div class="flex items-center gap-2">
-    <Database class="size-3.5" />
+    <DSIcon icon={Database} color="current" class="" />
     <span class="type-label">Schema</span>
   </div>
   {#if connected && items.length > 0}
-    <span class="font-mono text-[10px] text-fg-3">{items.length}</span>
+    <span class="font-mono text-[10px] text-ink-muted">{items.length}</span>
   {/if}
 </div>
 
 {#if secureStore.locked}
-  <div class="p-3 flex flex-col items-start gap-2 text-[12px] text-fg-3 font-mono leading-relaxed">
-    <Lock class="size-4 text-primary-text" />
-    <span class="text-fg-1">Locked.</span>
+  <div class="p-3 flex flex-col items-start gap-2 text-[12px] text-ink-muted font-mono leading-relaxed">
+    <DSIcon icon={Lock} color="current" class=" text-primary-text" />
+    <span class="text-foreground">Locked.</span>
     <span>Enter your master password to load the schema.</span>
   </div>
 {:else if !connected}
-  <div class="p-3 flex flex-col items-start gap-2 text-[12px] text-fg-3 font-mono leading-relaxed">
-    <Plug class="size-4 text-fg-3" />
+  <div class="p-3 flex flex-col items-start gap-2 text-[12px] text-ink-muted font-mono leading-relaxed">
+    <DSIcon icon={Plug} color="current" class=" text-ink-muted" />
     <span>No schema to show.</span>
     <span>Connect to a reddb instance to inspect collections.</span>
   </div>
 {:else if error}
-  <div class="p-3 text-[12px] text-fg-3 font-mono leading-relaxed">
-    <div class="text-fg-2">Couldn't load collections.</div>
+  <div class="p-3 text-[12px] text-ink-muted font-mono leading-relaxed">
+    <div class="text-ink-muted">Couldn't load collections.</div>
     <div class="mt-1 break-words">{error}</div>
   </div>
 {:else if loading && items.length === 0}
   <div class="schema-skeleton" aria-busy="true" aria-label="Loading schema">
-    <div class="p-2 border-b border-line-1 grid gap-2">
-      <div class="flex items-center gap-1.5 h-7 rounded border border-line-1 bg-bg-0 px-2">
-        <Search class="size-3 text-fg-3" />
-        <div class="h-3 w-32 rounded bg-bg-2 motion-safe:animate-pulse"></div>
+    <div class="p-2 border-b border-muted grid gap-2">
+      <div class="flex items-center gap-1.5 h-7 rounded border border-muted bg-background px-2">
+        <DSIcon icon={Search} color="current" class=" text-ink-muted" />
+        <div class="h-3 w-32 rounded bg-muted motion-safe:animate-pulse"></div>
       </div>
 
       <div class="flex flex-wrap gap-1">
         {#each skeletonChips as chip (chip)}
-          <div class="h-5 rounded border border-line-1 bg-bg-1 px-1.5 motion-safe:animate-pulse" style={`width: ${chip === 0 ? 42 : 28 + chip * 8}px`}></div>
+          <div class="h-5 rounded border border-muted bg-elevation-base-surface px-1.5 motion-safe:animate-pulse" style={`width: ${chip === 0 ? 42 : 28 + chip * 8}px`}></div>
         {/each}
       </div>
     </div>
@@ -138,85 +141,71 @@
     <ul class="py-1" role="presentation">
       {#each skeletonRows as row (row)}
         <li class="flex h-7 items-center gap-2 px-3">
-          <div class="h-4 w-4 rounded bg-bg-2 motion-safe:animate-pulse"></div>
-          <div class="h-3 rounded bg-bg-2 motion-safe:animate-pulse" style={`width: ${row % 3 === 0 ? 132 : row % 3 === 1 ? 96 : 164}px`}></div>
+          <div class="h-4 w-4 rounded bg-muted motion-safe:animate-pulse"></div>
+          <div class="h-3 rounded bg-muted motion-safe:animate-pulse" style={`width: ${row % 3 === 0 ? 132 : row % 3 === 1 ? 96 : 164}px`}></div>
         </li>
       {/each}
     </ul>
   </div>
 {:else if items.length === 0}
-  <div class="p-3 flex flex-col items-start gap-2 text-[12px] text-fg-3 font-mono leading-relaxed">
-    <span class="text-fg-2">No user collections.</span>
+  <div class="p-3 flex flex-col items-start gap-2 text-[12px] text-ink-muted font-mono leading-relaxed">
+    <span class="text-ink-muted">No user collections.</span>
     <span>Seed the instance to populate the schema.</span>
-    <code class="px-2 py-1 bg-bg-2 border border-line-1 rounded text-[11px]">./scripts/seed.sh {activeUrl}</code>
+    <code class="px-2 py-1 bg-muted border border-muted rounded text-[11px]">./scripts/seed.sh {activeUrl}</code>
   </div>
 {:else}
-  <div class="p-2 border-b border-line-1 grid gap-2">
-    <div class="flex items-center gap-1.5 h-7 rounded border border-line-1 bg-bg-0 px-2 text-[11px] font-mono">
-      <Search class="size-3 text-fg-3" />
-      <input
+  <div class="p-2 border-b border-muted grid gap-2">
+    <div class="flex items-center gap-1.5 h-7 rounded border border-muted bg-background px-2 text-[11px] font-mono">
+      <DSIcon icon={Search} color="current" class=" text-ink-muted" />
+      <DSInput
         type="text"
         bind:value={search}
+        aria-label="Search collections"
         placeholder="search collections…"
-        class="min-w-0 flex-1 bg-transparent text-fg-1 outline-none placeholder:text-fg-3"
+        class="min-w-0 flex-1"
       />
       {#if search}
-        <button type="button" class="text-fg-3 hover:text-fg-1 cursor-pointer" aria-label="Clear collection search" onclick={() => (search = '')}>
-          <X class="size-3" />
-        </button>
+        <DSButton variant="ghost" size="sm" type="button"  aria-label="Clear collection search" onclick={() => (search = '')}>
+          <DSIcon icon={X} color="current" class="" />
+        </DSButton>
       {/if}
     </div>
 
     <div class="flex flex-wrap gap-1">
-      <button
+      <DSButton variant="ghost" size="sm" aria-pressed={capabilityFilter === 'all'}
         type="button"
         onclick={() => (capabilityFilter = 'all')}
-        class={[
-          'h-5 rounded border px-1.5 font-mono text-[10px] cursor-pointer transition-colors',
-          capabilityFilter === 'all' ? 'border-accent/40 bg-accent/10 text-primary-text' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
-        ].join(' ')}
+
       >
         all {items.length}
-      </button>
+      </DSButton>
       {#each capabilityCounts as [cap, count] (cap)}
         {@const g = CAPABILITY_GLYPHS[cap]}
-        <button
+        <DSButton variant="ghost" size="sm" aria-pressed={capabilityFilter === cap}
           type="button"
           onclick={() => (capabilityFilter = cap)}
           title={g.label}
-          class={[
-            'h-5 rounded border px-1.5 font-mono text-[10px] cursor-pointer transition-colors',
-            capabilityFilter === cap ? 'border-accent/40 bg-accent/10 text-primary-text' : 'border-line-1 text-fg-3 hover:text-fg-1 hover:border-line-2',
-          ].join(' ')}
+
         >
           {g.glyph} {count}
-        </button>
+        </DSButton>
       {/each}
     </div>
   </div>
   <ul class="py-1" role="list">
     {#if filteredItems.length === 0}
-      <li class="px-3 py-2 font-mono text-[12px] text-fg-3">No matching collections.</li>
+      <li class="px-3 py-2 font-mono text-[12px] text-ink-muted">No matching collections.</li>
     {/if}
     {#each filteredItems as item (item.name)}
       {@const g = CAPABILITY_GLYPHS[item.capability]}
       {@const active = item.name === activeCollection}
       {@const target = { view: 'collection' as const, collection: item.name, subpage: defaultSubpage(item.capability) }}
       <li>
-        <a
-          href={router.href(target)}
-          onclick={(e) => router.go(target, e)}
-          aria-current={active ? 'page' : undefined}
-          title={`${g.label} · ${item.name}`}
-          class={[
-            'w-full flex items-center gap-2 px-3 py-1 font-mono text-[12px] no-underline transition-colors',
-            active ? 'bg-bg-1 text-fg-0' : 'text-fg-2 hover:bg-bg-1 hover:text-fg-0',
-          ].join(' ')}
-        >
-          <span class="inline-block w-4 text-center text-fg-3" aria-hidden="true">{g.glyph}</span>
-          <span class="truncate">{item.name}</span>
-          <span class="sr-only">{g.label}</span>
-        </a>
+        <NavItem href={router.href(target)} label={item.name} current={active}
+          onclick={(event) => router.go(target, event)} title={`${g.label} · ${item.name}`}>
+          {#snippet icon()}<span aria-hidden="true">{g.glyph}</span>{/snippet}
+          {#snippet trailing()}<span class="sr-only">{g.label}</span>{/snippet}
+        </NavItem>
       </li>
     {/each}
   </ul>

@@ -134,6 +134,10 @@ function normalizeRoute(input: string): string {
     route === "/collections" ||
     route === "/cluster" ||
     route === "/security" ||
+    route === "/analytics" ||
+    route === "/settings" ||
+    route === "/appearance" ||
+    route === "/ask" ||
     route.startsWith("/c/")
   ) {
     return route;

@@ -14,6 +14,8 @@ export { collectionEmpty } from "./illustrations/collection-empty";
 export { projectEmpty } from "./illustrations/project-empty";
 /** A checked document with its confirmation tile in place. */
 export { operationComplete } from "./illustrations/operation-complete";
+/** A document and a crossed confirmation tile indicate an unfinished operation. */
+export { operationFailed } from "./illustrations/operation-failed";
 /** A document moves upward from a waiting tray. */
 export { fileUpload } from "./illustrations/file-upload";
 /** A document moves down into a receiving tray. */

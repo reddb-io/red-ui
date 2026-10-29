@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { CodeBlock } from "@reddb-io/design-system/base"
   // Black-screen shield (#126). A render crash inside the Workspace used to
   // tear down the whole webview and leave a black window with no way back.
   // This wraps its children in a Svelte error boundary whose `failed` state
@@ -10,7 +11,7 @@
   // Artwork and controls inherit the surrounding DS appearance.
   import type { Snippet } from 'svelte'
   import { ErrorBoundary as Boundary } from '@reddb-io/design-system/app'
-  import { Button, Icon, StateIllustration } from '@reddb-io/design-system/base'
+  import { Button, Disclosure, Icon, StateIllustration } from '@reddb-io/design-system/base'
   import { maintenance } from '@reddb-io/design-system/base/illustrations'
   import RotateCw from '@lucide/svelte/icons/rotate-cw'
   import RefreshCw from '@lucide/svelte/icons/refresh-cw'
@@ -36,29 +37,26 @@
 
   {#snippet fallback({ error, retry })}
     <div
-      class="relative z-[1] flex h-full w-full flex-col items-center justify-center gap-5 overflow-auto bg-bg-0 px-6 py-10 text-center"
+      class="relative z-[1] flex h-full w-full flex-col items-center justify-center gap-5 overflow-auto bg-background px-6 py-10 text-center"
     >
       <div class="flex flex-col items-center gap-2">
         <StateIllustration art={maintenance} size="lg" />
-        <h1 class="type-h2 m-0 text-fg-0">Something crashed while rendering</h1>
-        <p class="m-0 max-w-lg text-[13px] leading-relaxed text-fg-2">
+        <h1 class="type-h2 m-0 text-foreground">Something crashed while rendering</h1>
+        <p class="m-0 max-w-lg text-[13px] leading-relaxed text-ink-muted">
           The workspace could not be displayed. Try rendering it again, or
           reload the window to continue.
         </p>
       </div>
 
-      <details class="w-full max-w-2xl text-left">
-        <summary class="cursor-pointer text-sm text-fg-2">Error details</summary>
+      <Disclosure label="Error details" class="w-full max-w-2xl text-left">
         <p class="my-3 max-w-full break-words font-mono text-[12px] text-primary-text">
           {messageOf(error)}
         </p>
 
         {#if stackOf(error)}
-          <pre
-            class="m-0 max-h-52 w-full max-w-2xl overflow-auto rounded-lg border border-line-1 bg-bg-1 p-3 text-left font-mono text-[11px] leading-relaxed text-fg-3"
-          >{stackOf(error)}</pre>
+          <CodeBlock code={stackOf(error) ?? ""} />
         {/if}
-      </details>
+      </Disclosure>
 
       <div class="flex flex-wrap justify-center gap-2">
         <Button

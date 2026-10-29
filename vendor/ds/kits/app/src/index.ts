@@ -306,6 +306,7 @@ export type PrimitiveName = (typeof PRIMITIVES)[number];
  */
 export const COMPOSITES = [
   "ApplicationWorkspace",
+  "OutcomeScreen",
   "WorkspaceTabs",
   "ChangeReview",
   "ErrorBoundary",
@@ -369,6 +370,7 @@ export type ComponentName = PrimitiveName | CompositeName;
  */
 export const COMPONENT_PURPOSES = {
   ApplicationWorkspace: "Layout",
+  OutcomeScreen: "Feedback",
   WorkspaceTabs: "Navigation",
   ChangeReview: "Data display",
   ErrorBoundary: "Feedback",
@@ -456,3 +458,6 @@ export type { ShortcutGroup, ShortcutCommand } from "./core/shortcut-help";
 export type { SidebarRailSizing } from "./core/contracts/sidebarrail";
 
 export { createWorkspaceSession, type WorkspaceSession } from "./core/workspace-session";
+
+export { default as OutcomeScreen } from "./composites/OutcomeScreen.svelte";
+export { outcomeScreen } from "./outcome-screen.variants";

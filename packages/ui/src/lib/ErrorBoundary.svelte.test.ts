@@ -31,10 +31,13 @@ test("a throwing child renders the failure screen, not a black webview", () => {
   expect(
     target.querySelector('svg[data-state-illustration="maintenance"]')
   ).not.toBeNull();
-  expect(target.querySelector("details")?.open).toBe(false);
-  expect(target.querySelector("summary")?.textContent).toContain(
-    "Error details"
-  );
+  const disclosure = target.querySelector<HTMLButtonElement>(
+    "[data-disclosure] button"
+  )!;
+  expect(disclosure.getAttribute("aria-expanded")).toBe("false");
+  expect(disclosure.textContent).toContain("Error details");
+  disclosure.click();
+  flushSync();
   // The crash message and stack are surfaced for the operator.
   expect(target.textContent).toContain("render-crash-test");
   expect(

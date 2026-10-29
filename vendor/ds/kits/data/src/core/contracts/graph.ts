@@ -1,6 +1,12 @@
 import type { GraphData, GraphLayout } from "../../graph";
 /** Portable Graph properties shared by native adapters. */
 export interface GraphContract {
+    /** Draw community boundaries and route edges between their borders. */
+    grouped?: boolean;
+    /** Bundle compatible edges, bounded to 1500 edges with an explicit fallback. */
+    bundled?: boolean;
+    /** Show zoom and fit controls for the canvas and accessible SVG fallback. */
+    controls?: boolean;
     /**
          * The network to draw: `nodes` (a stable `id` each, plus optional label, community, token
          * colour, size, position and caller-owned `metadata`) and `edges` between node ids.

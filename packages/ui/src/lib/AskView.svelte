@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { CodeBlock } from "@reddb-io/design-system/base"
+  import { Button as DSButton, Textarea as DSTextarea } from '@reddb-io/design-system/base'
+  import { Icon as DSIcon } from '@reddb-io/design-system/base'
   import { useWorkspace } from './workspace-context'
   // Eixo 4 — the ASK chat. Starts as a centred full-screen conversation;
   // the moment an answer arrives grounded on sources, it splits into two
@@ -122,21 +125,21 @@
       <div class={['mx-auto flex flex-col gap-4 p-4', squeezed ? 'max-w-none' : 'max-w-2xl'].join(' ')}>
         {#if messages.length === 0}
           <div class="flex flex-col items-center gap-4 py-16 text-center">
-            <div class="flex size-12 items-center justify-center rounded-full border border-line-2 bg-bg-1">
-              <Sparkles class="size-5 text-primary-text" />
+            <div class="flex size-12 items-center justify-center rounded-full border border-control-edge bg-elevation-base-surface">
+              <DSIcon icon={Sparkles} color="current" class=" text-primary-text" />
             </div>
             <div>
-              <div class="font-mono text-[15px] text-fg-0">Ask your database</div>
-              <div class="mt-1 text-[12px] text-fg-3">Grounded answers with citations to the rows, docs, and vectors behind them.</div>
+              <div class="font-mono text-[15px] text-foreground">Ask your database</div>
+              <div class="mt-1 text-[12px] text-ink-muted">Grounded answers with citations to the rows, docs, and vectors behind them.</div>
             </div>
             <div class="flex flex-wrap justify-center gap-1.5">
               {#each SUGGESTIONS as s}
-                <button
+                <DSButton variant="secondary" size="sm"
                   type="button"
                   onclick={() => { input = s; if (canSend) void send() }}
                   disabled={!connected || locked}
-                  class="rounded-full border border-line-2 bg-bg-1 px-3 py-1.5 text-[11px] text-fg-2 hover:border-line-3 hover:text-fg-0 disabled:cursor-not-allowed disabled:opacity-40"
-                >{s}</button>
+
+                >{s}</DSButton>
               {/each}
             </div>
           </div>
@@ -145,36 +148,36 @@
         {#each messages as m, i (m.id)}
           {#if m.role === 'user'}
             <div class="flex justify-end">
-              <div class="max-w-[85%] rounded-lg rounded-br-sm border border-line-2 bg-bg-2 px-3 py-2 font-mono text-[12px] text-fg-0">{m.text}</div>
+              <div class="max-w-[85%] rounded-lg rounded-br-sm border border-control-edge bg-muted px-3 py-2 font-mono text-[12px] text-foreground">{m.text}</div>
             </div>
           {:else}
             <div class="flex flex-col gap-1.5">
               {#if m.pending}
-                <div class="flex items-center gap-2 text-[12px] text-fg-3"><Sparkles class="size-3.5 animate-pulse text-primary-text" /> thinking…</div>
+                <div class="flex items-center gap-2 text-[12px] text-ink-muted"><DSIcon icon={Sparkles} color="current" class=" animate-pulse text-primary-text" /> thinking…</div>
               {:else if m.error}
-                <div class="flex items-start gap-2 rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 text-[12px] text-fg-1">
-                  <AlertTriangle class="mt-0.5 size-3.5 shrink-0 text-primary-text" />
+                <div class="flex items-start gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-[12px] text-foreground">
+                  <DSIcon icon={AlertTriangle} color="current" class="mt-0.5  shrink-0 text-primary-text" />
                   <span>{m.error.includes('404') || m.error.includes('route not found') ? 'This reddb has no AI endpoint (/ai/ask). Configure a provider to enable Ask.' : m.error}</span>
                 </div>
               {:else if m.response}
-                <div class="text-[13px] leading-relaxed text-fg-1">
+                <div class="text-[13px] leading-relaxed text-foreground">
                   {#each parseAnswerSegments(m.response.answer) as seg}
-                    {#if seg.type === 'text'}{seg.value}{:else}<button
+                    {#if seg.type === 'text'}{seg.value}{:else}<DSButton variant="ghost" size="sm"
                       type="button"
                       onclick={() => focusSource(i, seg.marker)}
                       title="Jump to source {seg.marker}"
-                      class="mx-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded bg-accent/15 px-1 align-super text-[9px] font-semibold text-primary-text hover:bg-accent/25"
-                    >{seg.marker}</button>{/if}
+                      class="mx-0.5 min-w-4 align-super"
+                    >{seg.marker}</DSButton>{/if}
                   {/each}
                 </div>
-                <div class="flex flex-wrap items-center gap-1.5 text-[10px] text-fg-3">
+                <div class="flex flex-wrap items-center gap-1.5 text-[10px] text-ink-muted">
                   {#if m.response.validation && !m.response.validation.ok}
                     <Badge tone="warning">unverified citations</Badge>
                   {/if}
                   {#if m.response.sources_flat?.length}
-                    <button type="button" class="rounded border border-line-1 px-1.5 py-0.5 hover:border-line-3 hover:text-fg-1" onclick={() => { activeArtifact = i; highlightMarker = null }}>
+                    <DSButton variant="ghost" size="sm" type="button"  onclick={() => { activeArtifact = i; highlightMarker = null }}>
                       {m.response.sources_flat.length} source{m.response.sources_flat.length === 1 ? '' : 's'}
-                    </button>
+                    </DSButton>
                   {/if}
                   {#if m.response.provider}<span class="font-mono">{m.response.provider}{m.response.model ? `·${m.response.model}` : ''}</span>{/if}
                   {#if m.response.cache_hit}<span>cached</span>{/if}
@@ -188,71 +191,72 @@
     </div>
 
     <!-- Composer -->
-    <div class="border-t border-line-1 bg-bg-0/80 p-3 backdrop-blur">
+    <div class="border-t border-muted bg-background/80 p-3 backdrop-blur">
       <div class={['mx-auto flex items-end gap-2', squeezed ? 'max-w-none' : 'max-w-2xl'].join(' ')}>
-        <textarea
+        <DSTextarea
           bind:value={input}
+          aria-label="Ask about this database"
           onkeydown={onKeydown}
-          rows="1"
+          rows={1}
           placeholder={connected ? 'Ask anything about this database…' : 'Connect to ask'}
           disabled={!connected || locked}
-          class="max-h-32 min-h-9 flex-1 resize-none rounded-lg border border-line-2 bg-bg-1 px-3 py-2 font-mono text-[12px] text-fg-0 placeholder:text-fg-3 focus:border-line-3 focus:outline-none disabled:opacity-50"
-        ></textarea>
-        <button
+          class="max-h-32 min-h-9 flex-1 resize-none"
+        ></DSTextarea>
+        <DSButton variant="primary" size="sm"
           type="button"
           onclick={send}
           disabled={!canSend}
-          class="inline-flex h-9 items-center gap-1.5 rounded-lg bg-accent px-3 text-[12px] font-medium text-white hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-40"
+
         >
-          <CornerDownLeft class="size-3.5" />
+          <DSIcon icon={CornerDownLeft} color="current" class="" />
           Ask
-        </button>
+        </DSButton>
       </div>
     </div>
   </div>
 {/snippet}
 
 {#snippet visualization()}
-  <div class="flex h-full flex-col overflow-hidden bg-bg-1">
+  <div class="flex h-full flex-col overflow-hidden bg-elevation-base-surface">
     {#if artifactMessage?.response}
       {@const r = artifactMessage.response}
-      <div class="flex items-center justify-between border-b border-line-1 px-4 py-2.5">
+      <div class="flex items-center justify-between border-b border-muted px-4 py-2.5">
         <span class="type-label">grounding · {r.sources_flat.length} source{r.sources_flat.length === 1 ? '' : 's'}</span>
-        <span class="font-mono text-[10px] text-fg-3">{r.provider ?? ''}{r.model ? ` · ${r.model}` : ''}</span>
+        <span class="font-mono text-[10px] text-ink-muted">{r.provider ?? ''}{r.model ? ` · ${r.model}` : ''}</span>
       </div>
       <div class="flex-1 overflow-auto p-3">
         <div class="grid gap-2">
           {#each r.sources_flat as src, si (src.urn + si)}
             {@const ref = parseUrn(src.urn)}
             <div class={[
-              'rounded border bg-bg-0 p-2.5 transition-colors',
-              highlightMarker === si + 1 ? 'border-accent' : 'border-line-1',
+              'rounded border bg-background p-2.5 transition-colors',
+              highlightMarker === si + 1 ? 'border-primary' : 'border-muted',
             ].join(' ')}>
               <div class="mb-1.5 flex items-center gap-2">
-                <span class="inline-flex size-4 items-center justify-center rounded bg-accent/15 text-[9px] font-semibold text-primary-text">{si + 1}</span>
+                <span class="inline-flex size-4 items-center justify-center rounded bg-primary/15 text-[9px] font-semibold text-primary-text">{si + 1}</span>
                 <Badge tone={SOURCE_TONE[src.kind] ?? 'neutral'}>{src.kind}</Badge>
-                {#if ref}<span class="font-mono text-[10px] text-fg-2">{ref.collection}<span class="text-fg-3">/{ref.id}</span></span>{/if}
-                {#if src.score !== undefined}<span class="ml-auto font-mono text-[10px] text-fg-3">score {src.score.toFixed(2)}</span>{/if}
+                {#if ref}<span class="font-mono text-[10px] text-ink-muted">{ref.collection}<span class="text-ink-muted">/{ref.id}</span></span>{/if}
+                {#if src.score !== undefined}<span class="ml-auto font-mono text-[10px] text-ink-muted">score {src.score.toFixed(2)}</span>{/if}
               </div>
-              <pre class="max-h-48 overflow-auto whitespace-pre-wrap break-words font-mono text-[10px] leading-relaxed text-fg-1">{formatContent(src.content)}</pre>
+              <CodeBlock code={formatContent(src.content)} />
             </div>
           {/each}
         </div>
       </div>
     {:else}
-      <div class="flex h-full items-center justify-center font-mono text-[12px] text-fg-3">no grounding to show</div>
+      <div class="flex h-full items-center justify-center font-mono text-[12px] text-ink-muted">no grounding to show</div>
     {/if}
   </div>
 {/snippet}
 
-<div class="h-full overflow-hidden bg-bg-0 text-fg-1">
+<div class="h-full overflow-hidden bg-background text-foreground">
   {#if locked}
     <div class="p-6"><EmptyState illustration={accessLocked} title="Locked" message="Unlock the secure store to ask." /></div>
   {:else if !connected}
     <div class="grid h-full place-items-center overflow-auto p-6"><DisconnectedState message="Connect to a reddb instance to ask grounded questions with citations to your data." /></div>
   {:else if splitOpen}
     <div class="grid h-full grid-cols-[minmax(340px,42%)_1fr] overflow-hidden">
-      <div class="min-h-0 border-r border-line-1">{@render conversation(true)}</div>
+      <div class="min-h-0 border-r border-muted">{@render conversation(true)}</div>
       <div class="min-h-0">{@render visualization()}</div>
     </div>
   {:else}

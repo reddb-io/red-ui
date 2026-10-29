@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Button as DSButton } from '@reddb-io/design-system/base'
+  import { Icon as DSIcon } from '@reddb-io/design-system/base'
   import { useWorkspace } from './workspace-context'
   import { Card, Badge } from '@reddb-io/design-system/base'
   import PageHeader from '$lib/PageHeader.svelte'
@@ -112,22 +114,22 @@
   })
 </script>
 
-<div class="flex h-full flex-col overflow-hidden bg-bg-0 text-fg-1">
+<div class="flex h-full flex-col overflow-hidden bg-background text-foreground">
   <PageHeader
     eyebrow="Observability"
     title="Analytics"
     subtitle="Metrics chart themselves by nature — a counter is a rate, a histogram is P50/P95/P99, a gauge is a level."
   >
     {#snippet actions()}
-      <button
+      <DSButton variant="secondary" size="sm"
         type="button"
         onclick={refresh}
         disabled={loading || secureStore.locked || !connected}
-        class="inline-flex h-7 items-center gap-1.5 rounded-md border border-line-2 bg-bg-2 px-2.5 text-[11px] font-mono text-fg-1 hover:border-line-3 hover:text-fg-0 disabled:cursor-not-allowed disabled:opacity-40"
+
       >
-        <RefreshCw class="size-3.5 {loading ? 'animate-spin' : ''}" />
+        <DSIcon icon={RefreshCw} color="current" class=" {loading ? 'animate-spin' : ''}" />
         refresh
-      </button>
+      </DSButton>
     {/snippet}
   </PageHeader>
 
@@ -156,23 +158,20 @@
   {:else}
     <div class="grid min-h-0 flex-1 grid-cols-[260px_1fr] overflow-hidden">
       <!-- Catalog -->
-      <div class="overflow-auto border-r border-line-1 p-2">
+      <div class="overflow-auto border-r border-muted p-2">
         <div class="grid gap-0.5">
           {#each metrics as m (m.path)}
-            <button
+            <DSButton variant="ghost" size="sm" aria-pressed={selectedPath === m.path}
               type="button"
               onclick={() => selectMetric(m)}
-              class={[
-                'flex flex-col gap-1 rounded px-2.5 py-2 text-left transition-colors',
-                selectedPath === m.path ? 'bg-bg-2' : 'hover:bg-bg-2',
-              ].join(' ')}
+               class="flex-col text-left"
             >
-              <span class="truncate font-mono text-[12px] text-fg-0">{m.path}</span>
+              <span class="truncate font-mono text-[12px] text-foreground">{m.path}</span>
               <span class="flex items-center gap-1.5">
                 <Badge tone={KIND_TONE[m.kind] ?? 'neutral'}>{m.kind}</Badge>
-                <span class="font-mono text-[10px] text-fg-3">{m.role}</span>
+                <span class="font-mono text-[10px] text-ink-muted">{m.role}</span>
               </span>
-            </button>
+            </DSButton>
           {/each}
         </div>
       </div>
@@ -182,18 +181,18 @@
         {#if selected}
           <div class="mb-3 flex items-baseline justify-between">
             <div>
-              <div class="font-mono text-[14px] text-fg-0">{selected.path}</div>
-              <div class="mt-0.5 text-[11px] text-fg-3">
+              <div class="font-mono text-[14px] text-foreground">{selected.path}</div>
+              <div class="mt-0.5 text-[11px] text-ink-muted">
                 {selected.kind} · {chartKind}{#if chartKind !== 'gauge'} · window {windowLabel}{/if}
               </div>
             </div>
-            {#if selected.unit}<span class="font-mono text-[11px] text-fg-3">{selected.unit}</span>{/if}
+            {#if selected.unit}<span class="font-mono text-[11px] text-ink-muted">{selected.unit}</span>{/if}
           </div>
-          <div class="relative min-h-0 flex-1 rounded border border-line-1 bg-bg-1 p-3">
+          <div class="relative min-h-0 flex-1 rounded border border-muted bg-elevation-base-surface p-3">
             {#if chartLoading}
-              <div class="flex h-full items-center justify-center font-mono text-[12px] text-fg-3">querying…</div>
+              <div class="flex h-full items-center justify-center font-mono text-[12px] text-ink-muted">querying…</div>
             {:else if seriesError}
-              <div class="flex h-full items-center justify-center px-6 text-center font-mono text-[12px] text-fg-3">
+              <div class="flex h-full items-center justify-center px-6 text-center font-mono text-[12px] text-ink-muted">
                 {seriesError.includes('404') || seriesError.includes('route not found')
                   ? 'this reddb has no Prometheus query endpoint (/api/v1/query_range)'
                   : seriesError}
@@ -203,7 +202,7 @@
             {/if}
           </div>
         {:else}
-          <div class="flex h-full items-center justify-center font-mono text-[12px] text-fg-3">
+          <div class="flex h-full items-center justify-center font-mono text-[12px] text-ink-muted">
             select a metric
           </div>
         {/if}

@@ -1,187 +1,37 @@
 <script lang="ts">
-  import { useWorkspace } from './workspace-context'
+  import { Badge, Button, StatusIndicator } from '@reddb-io/design-system/base'
   import { useRouter } from './router.svelte'
-
-  import ArrowRight from '@lucide/svelte/icons/arrow-right'
-  import FilePenLine from '@lucide/svelte/icons/file-pen-line'
-  import Lock from '@lucide/svelte/icons/lock'
-  import Terminal from '@lucide/svelte/icons/terminal'
+  import { useWorkspace } from './workspace-context'
   import { readBuildInfo } from './build-info'
 
   const workspace = useWorkspace()
   const { connection, pendingChanges } = workspace
-
-  const build = readBuildInfo()
-
   const router = useRouter()
-  const pendingCount = $derived(pendingChanges.count)
-
-  // Read-only badge (#23) — driven solely by the server's reported status.
-  const readOnly = $derived(connection.readOnly)
-  const readOnlyReason = $derived(connection.readOnlyReason)
-
-  function openPending() {
-    workspace.dispatch('red:open-pending-changes')
-  }
-
-  const connected = $derived(connection.connected)
-  const role = $derived<'primary' | 'replica' | 'standalone' | 'embedded'>(
-    (connection.probe.replication?.role as 'primary' | 'replica' | 'standalone' | undefined)
-      ?? (connection.active?.role as 'primary' | 'replica' | 'embedded' | undefined)
-      ?? 'standalone'
-  )
-
-  const roleDotColor = $derived(
-    role === 'primary'  ? 'var(--color-role-primary)' :
-    role === 'replica'  ? 'var(--color-role-replica)' :
-    role === 'embedded' ? 'var(--color-role-embedded)' :
-                          'var(--color-fg-3)'
-  )
-
-  const wal = $derived(
-    connection.probe.replication?.wal_lsn
-      ?? connection.probe.replication?.last_applied_lsn
-  )
-
+  const build = readBuildInfo()
+  const role = $derived(connection.probe.replication?.role ?? connection.active?.role ?? 'standalone')
+  const wal = $derived(connection.probe.replication?.wal_lsn ?? connection.probe.replication?.last_applied_lsn)
   const lag = $derived.by(() => {
-    const r = connection.probe.replication
-    if (!r || role !== 'replica') return undefined
-    if (r.last_seen_primary_lsn === undefined || r.last_applied_lsn === undefined) return undefined
-    return Math.max(0, r.last_seen_primary_lsn - r.last_applied_lsn)
+    const replication = connection.probe.replication
+    if (role !== 'replica' || replication?.last_seen_primary_lsn === undefined || replication.last_applied_lsn === undefined) return undefined
+    return Math.max(0, replication.last_seen_primary_lsn - replication.last_applied_lsn)
   })
-
-  function openConnect() {
-    workspace.dispatch('red:open-connect')
-  }
-
-  // Toggle the instrumented developer console (#128). Neutral chrome — the
-  // console never claims the accent, matching one-accent-per-screen.
-  function toggleConsole() {
-    workspace.dispatch('red:toggle-dev-console')
-  }
-
-  function openCluster(e: MouseEvent) {
-    const target = e.target as HTMLElement | null
-    if (target?.closest('button, a, [data-no-nav]')) return
-    router.go({ view: 'cluster' })
-  }
-
-  function onKey(e: KeyboardEvent) {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      router.go({ view: 'cluster' })
-    }
-  }
 </script>
 
-<div
-  class="h-8 flex items-stretch border-b border-line-1 bg-bg-1/60 text-[11px] font-mono select-none"
-  role="status"
-  aria-label="Connection status"
->
-  <div
-    role="button"
-    tabindex="0"
-    onclick={openCluster}
-    onkeydown={onKey}
-    title="Open cluster overview"
-    class="flex-1 flex items-center gap-3 px-3 cursor-pointer hover:bg-bg-2/40 transition-colors min-w-0"
-  >
-    {#if connected}
-      <span class="inline-flex items-center gap-1.5 shrink-0">
-        <span
-          class="w-1.5 h-1.5 rounded-full"
-          style:background-color={roleDotColor}
-        ></span>
-        <span class="text-fg-1 uppercase tracking-wider text-[10px]">{role}</span>
-      </span>
-
-      <span class="text-fg-3">·</span>
-      <span class="text-fg-1 truncate">{connection.active.label}</span>
-
-      {#if connection.probe.rtt_ms !== undefined}
-        <span class="text-fg-3">·</span>
-        <span class="text-fg-2">
-          <span class="text-fg-3">rtt</span>
-          <span class="text-fg-1 tabular-nums">{connection.probe.rtt_ms}</span><span class="text-fg-3">ms</span>
-        </span>
-      {/if}
-
-      {#if role === 'replica' && lag !== undefined}
-        <span class="text-fg-3">·</span>
-        <span class="text-fg-2">
-          <span class="text-fg-3">lag</span>
-          <span class:text-warn={(lag ?? 0) > 0} class="text-fg-1 tabular-nums">{lag}</span>
-        </span>
-      {/if}
-
-      {#if wal !== undefined}
-        <span class="text-fg-3">·</span>
-        <span class="text-fg-2">
-          <span class="text-fg-3">lsn</span>
-          <span class="text-fg-1 tabular-nums">{wal}</span>
-        </span>
-      {/if}
-
-      {#if readOnly}
-        <span class="text-fg-3">·</span>
-        <span
-          class="inline-flex items-center gap-1 shrink-0 text-warn"
-          title={readOnlyReason ?? 'The server is open read-only — mutations are disabled.'}
-        >
-          <Lock class="size-3" />
-          <span class="uppercase tracking-wider text-[10px]">read-only — file in use</span>
-        </span>
-      {/if}
-    {:else}
-      <span class="inline-flex items-center gap-1.5 shrink-0">
-        <span class="w-1.5 h-1.5 rounded-full bg-fg-3"></span>
-        <span class="text-fg-3">Not connected</span>
-      </span>
-    {/if}
+<div aria-label="Connection status" role="status" class="flex flex-wrap items-center gap-[var(--reddb-spatial-gap-sm)] border-b border-muted bg-background px-[var(--reddb-spatial-inset-sm)] py-[var(--reddb-spatial-inset-sm)] text-sm text-foreground">
+  <Button variant="ghost" size="sm" onclick={() => router.go({ view: 'cluster' })} title="Open cluster overview">
+    <StatusIndicator label={connection.connected ? role : 'Not connected'} tone={connection.connected ? 'success' : 'neutral'} />
+    {#if connection.connected}<span class="max-w-full truncate">{connection.active.label}</span>{/if}
+  </Button>
+  {#if connection.connected}
+    {#if connection.probe.rtt_ms !== undefined}<Badge>rtt {connection.probe.rtt_ms}ms</Badge>{/if}
+    {#if lag !== undefined}<Badge tone={lag > 0 ? 'warning' : 'neutral'}>lag {lag}</Badge>{/if}
+    {#if wal !== undefined}<Badge>lsn {wal}</Badge>{/if}
+    {#if connection.readOnly}<Badge tone="warning" title={connection.readOnlyReason ?? 'The server is open read-only; mutations are disabled.'}>Read-only</Badge>{/if}
+  {/if}
+  <div class="ms-auto flex flex-wrap items-center gap-[var(--reddb-spatial-gap-sm)]">
+    {#if pendingChanges.count > 0}<Button variant="ghost" size="sm" aria-label={`Pending changes (${pendingChanges.count})`} onclick={() => workspace.dispatch('red:open-pending-changes')}>Pending changes ({pendingChanges.count})</Button>{/if}
+    {#if !connection.connected}<Button size="sm" onclick={() => workspace.dispatch('red:open-connect')}>Connect</Button>{/if}
+    <Button variant="ghost" size="sm" aria-label="Console: toggle developer console" onclick={() => workspace.dispatch('red:toggle-dev-console')}>Console</Button>
+    <Badge title={`red-ui ${build.version} · ${build.gitSha} · built ${build.buildTime}`}>v{build.version}</Badge>
   </div>
-
-  {#if pendingCount > 0}
-    <button
-      type="button"
-      onclick={openPending}
-      data-no-nav
-      aria-label={`${pendingCount} pending changes`}
-      class="inline-flex items-center gap-1.5 px-3 text-primary-text hover:bg-bg-2/60 transition-colors cursor-pointer bg-transparent border-0 border-l border-line-1"
-    >
-      <FilePenLine class="size-3" />
-      <span class="tabular-nums">Pending changes ({pendingCount})</span>
-    </button>
-  {/if}
-
-  {#if !connected}
-    <button
-      type="button"
-      onclick={openConnect}
-      data-no-nav
-      class="inline-flex items-center gap-1 px-3 text-fg-2 hover:text-fg-0 hover:bg-bg-2/60 transition-colors cursor-pointer bg-transparent border-0 border-l border-line-1"
-    >
-      <span>Connect</span>
-      <ArrowRight class="size-3" />
-    </button>
-  {/if}
-
-  <button
-    type="button"
-    onclick={toggleConsole}
-    data-no-nav
-    aria-label="Toggle developer console"
-    title="Developer console — every query and HTTP call, with timing and row counts"
-    class="inline-flex items-center gap-1 px-3 text-fg-3 hover:text-fg-1 hover:bg-bg-2/60 transition-colors cursor-pointer bg-transparent border-0 border-l border-line-1"
-  >
-    <Terminal class="size-3" />
-    <span>Console</span>
-  </button>
-
-  <span
-    class="inline-flex items-center px-3 shrink-0 font-mono text-fg-3 border-l border-line-1 select-none"
-    title={`red-ui ${build.version} · ${build.gitSha} · built ${build.buildTime}`}
-  >
-    v{build.version}
-  </span>
 </div>

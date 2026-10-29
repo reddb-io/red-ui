@@ -73,8 +73,8 @@
 </script>
 
 <script lang="ts">
- import type {GraphContract} from "./core/contracts/graph";
-  import { Input, ToggleButton } from "@reddb-io/design-system/base";
+  import type { GraphContract } from "./core/contracts/graph";
+  import { Input, ToggleButton, Button } from "@reddb-io/design-system/base";
   import { onMount, tick, untrack } from "svelte";
   import { warnDeprecated } from "@reddb-io/design-system/base";
   import {
@@ -91,6 +91,12 @@
     type ShapedGraphNode,
   } from "./graph";
 
+  import {
+    attachGraphViewport,
+    graphViewBox,
+    graphZoomRatio,
+  } from "./graph-viewport";
+  import { graphOverlays, graphPath } from "./graph-overlays";
   type GraphLayout = "stress" | "force" | "radial";
 
   // Graph nodes and edges are focusable SVG; each draws the same ink focus
@@ -100,10 +106,12 @@
 
   interface GraphEngineController {
     destroy(): void;
+    zoom(ratio: number): void;
+    fit(): void;
     focusNode(id: string | null): void;
     setData(
       data: ReturnType<typeof shapeGraphData>,
-      options?: { layout: GraphLayout },
+      options?: { layout: GraphLayout; grouped?: boolean; bundled?: boolean },
     ): void;
   }
 
@@ -130,6 +138,9 @@
     width = 640,
     height = 400,
     renderer = "auto",
+    grouped = false,
+    bundled = false,
+    controls = false,
     searchable = true,
     focusedNode,
     onfocusednodechange,
@@ -147,6 +158,29 @@
   }: Props = $props();
 
   let query = $state("");
+  let zoomRatio = $state(1),
+    pan = $state({ x: 0, y: 0 }),
+    hovered = $state<string | null>(null);
+  let svgRoot: SVGSVGElement;
+  onMount(() =>
+    attachGraphViewport(
+      svgRoot,
+      () => ({ width, height, view: { ratio: zoomRatio, ...pan } }),
+      (view) => {
+        zoomRatio = view.ratio;
+        pan = { x: view.x, y: view.y };
+      },
+    ),
+  );
+  function zoom(next: number) {
+    zoomRatio = graphZoomRatio(next);
+    controller?.zoom(zoomRatio);
+  }
+  function fit() {
+    pan = { x: 0, y: 0 };
+    zoomRatio = 1;
+    controller?.fit();
+  }
   let localFocus = $state<string | null>(null);
   let engineState = $state<"fallback" | "loading" | "ready">("loading");
   let engineHost: HTMLDivElement;
@@ -154,14 +188,20 @@
   let controller = $state<GraphEngineController>();
   let reducedMotion = $state(false);
   let nodeMargin = $state(4);
-  let localCollapsedCommunities = $state(untrack(() => new Set(collapsedCommunities)));
+  let localCollapsedCommunities = $state(
+    untrack(() => new Set(collapsedCommunities)),
+  );
   let localExpandedSubtrees = $state(new Set<string>());
   let selectedInteraction = $state<GraphInteraction>();
 
   const shaped = $derived(shapeGraphData(data));
-  const detected = $derived(detectGraphCommunities(shaped, { seed: layoutSeed }));
+  const detected = $derived(
+    detectGraphCommunities(shaped, { seed: layoutSeed }),
+  );
   const communities = $derived(groupGraphCommunities(detected.nodes));
-  const collapsed = $derived(collapseGraphCommunities(detected, localCollapsedCommunities));
+  const collapsed = $derived(
+    collapseGraphCommunities(detected, localCollapsedCommunities),
+  );
   const arrangement = $derived(
     layoutGraphBySparseStress(collapsed, {
       seed: layoutSeed,
@@ -179,10 +219,13 @@
     }),
   );
   const visible = $derived(detail.data);
+  const overlays = $derived(graphOverlays(visible, { grouped, bundled }));
   const results = $derived(searchGraphNodes(visible.nodes, query));
-  const activeFocus = $derived(focusedNode === undefined ? localFocus : focusedNode);
+  const activeFocus = $derived(
+    focusedNode === undefined ? localFocus : focusedNode,
+  );
   const focused = $derived(
-    reduceGraphFocus(visible, activeFocus ?? null, 0, {
+    reduceGraphFocus(visible, activeFocus ?? hovered, 0, {
       width,
       height,
       padding: 40,
@@ -194,11 +237,11 @@
     return visible.nodes.find((node) => node.id === id)!;
   }
 
-  function svgX(node: ShapedGraphNode): number {
+  function svgX(node: { x: number }): number {
     return ((node.x + 1) / 2) * (width - 80) + 40;
   }
 
-  function svgY(node: ShapedGraphNode): number {
+  function svgY(node: { y: number }): number {
     return ((node.y + 1) / 2) * (height - 80) + 40;
   }
 
@@ -247,14 +290,22 @@
     const occupied: SvgLabelBox[] = [];
     const labels: SvgLabel[] = [];
     const fits = (box: SvgLabelBox): boolean => {
-      if (box.left < 4 || box.right > width - 4 || box.top < 4 || box.bottom > height - 4) {
+      if (
+        box.left < 4 ||
+        box.right > width - 4 ||
+        box.top < 4 ||
+        box.bottom > height - 4
+      ) {
         return false;
       }
       if (occupied.some((other) => boxesOverlap(box, other))) return false;
       return circles.every((circle) => {
         const nearestX = Math.max(box.left, Math.min(circle.x, box.right));
         const nearestY = Math.max(box.top, Math.min(circle.y, box.bottom));
-        return Math.hypot(circle.x - nearestX, circle.y - nearestY) > circle.radius + 2;
+        return (
+          Math.hypot(circle.x - nearestX, circle.y - nearestY) >
+          circle.radius + 2
+        );
       });
     };
     const accept = (
@@ -270,7 +321,11 @@
       if (!placement && required) {
         const labelWidth = Math.max(16, text.length * 7.5);
         for (let y = 18; y <= height - 8 && !placement; y += 18) {
-          for (let x = labelWidth / 2 + 6; x <= width - labelWidth / 2 - 6; x += 18) {
+          for (
+            let x = labelWidth / 2 + 6;
+            x <= width - labelWidth / 2 - 6;
+            x += 18
+          ) {
             const box = labelBox(text, x, y);
             if (fits(box)) placement = { x, y, box };
           }
@@ -297,8 +352,8 @@
           (right.node.trunkRank ?? Number.POSITIVE_INFINITY);
         if (byTrunkRank !== 0) return byTrunkRank;
         return (
-          (degrees.get(right.node.id) ?? 0) - (degrees.get(left.node.id) ?? 0) ||
-          left.index - right.index
+          (degrees.get(right.node.id) ?? 0) -
+            (degrees.get(left.node.id) ?? 0) || left.index - right.index
         );
       });
 
@@ -334,7 +389,10 @@
       const sourceY = svgY(source);
       const targetX = svgX(target);
       const targetY = svgY(target);
-      const length = Math.max(1, Math.hypot(targetX - sourceX, targetY - sourceY));
+      const length = Math.max(
+        1,
+        Math.hypot(targetX - sourceX, targetY - sourceY),
+      );
       const normalX = -(targetY - sourceY) / length;
       const normalY = (targetX - sourceX) / length;
       const candidates = [0.5, 0.35, 0.65, 0.2, 0.8].flatMap((progress) =>
@@ -343,16 +401,23 @@
           y: sourceY + (targetY - sourceY) * progress + normalY * offset + 4,
         })),
       );
-      accept(`edge:${edge.id}`, edge.displayLabel, candidates, { edgeId: edge.id });
+      accept(`edge:${edge.id}`, edge.displayLabel, candidates, {
+        edgeId: edge.id,
+      });
     }
 
     return labels;
   });
 
-  function interaction(kind: "node" | "edge", action: "click" | "focus", id: string): void {
-    const item = kind === "node"
-      ? visible.nodes.find((node) => node.id === id)
-      : visible.edges.find((edge) => edge.id === id);
+  function interaction(
+    kind: "node" | "edge",
+    action: "click" | "focus",
+    id: string,
+  ): void {
+    const item =
+      kind === "node"
+        ? visible.nodes.find((node) => node.id === id)
+        : visible.edges.find((edge) => edge.id === id);
     if (!item) return;
     const event: GraphInteraction = {
       kind,
@@ -368,11 +433,17 @@
   // Each deprecated camelCase name still fires beside its canonical callback
   // for one release and warns once in development (ADR 0026).
   $effect(() => {
-    if (onFocusedNode) warnDeprecated("Graph", "onFocusedNode", "onfocusednodechange");
+    if (onFocusedNode)
+      warnDeprecated("Graph", "onFocusedNode", "onfocusednodechange");
     if (onCollapsedCommunitiesChange) {
-      warnDeprecated("Graph", "onCollapsedCommunitiesChange", "oncollapsedcommunitieschange");
+      warnDeprecated(
+        "Graph",
+        "onCollapsedCommunitiesChange",
+        "oncollapsedcommunitieschange",
+      );
     }
-    if (onInteraction) warnDeprecated("Graph", "onInteraction", "oninteraction");
+    if (onInteraction)
+      warnDeprecated("Graph", "onInteraction", "oninteraction");
   });
 
   function expandCommunity(community: string): void {
@@ -399,15 +470,11 @@
 
   async function pulseSvgNode(id: string): Promise<void> {
     await tick();
-    const node = [...graphRoot.querySelectorAll<SVGCircleElement>("[data-node-id]")].find(
-      (circle) => circle.dataset.nodeId === id,
-    );
+    const node = [
+      ...graphRoot.querySelectorAll<SVGCircleElement>("[data-node-id]"),
+    ].find((circle) => circle.dataset.nodeId === id);
     node?.animate?.(
-      [
-        { strokeWidth: "3" },
-        { strokeWidth: "5" },
-        { strokeWidth: "3" },
-      ],
+      [{ strokeWidth: "3" }, { strokeWidth: "5" }, { strokeWidth: "3" }],
       { duration: 420, easing: "ease-out" },
     );
   }
@@ -449,7 +516,7 @@
   }
 
   $effect(() => {
-    controller?.setData(visible, { layout });
+    controller?.setData(visible, { layout, grouped, bundled });
   });
 
   // The spacing nodes keep apart is the gap-sm role at the Density in effect
@@ -470,7 +537,9 @@
 
   onMount(() => {
     if (typeof globalThis.matchMedia !== "function") return;
-    const preference = globalThis.matchMedia("(prefers-reduced-motion: reduce)");
+    const preference = globalThis.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
     const update = (): void => {
       reducedMotion = preference.matches;
     };
@@ -500,10 +569,11 @@
             if (kind !== "node") return;
             const node = nodeById(id);
             if (node.collapsedSubtree) expandSubtree(node.collapsedSubtree);
-            else if (node.collapsedCommunity) expandCommunity(node.collapsedCommunity);
+            else if (node.collapsedCommunity)
+              expandCommunity(node.collapsedCommunity);
             else focus(id);
           },
-          { layout },
+          { layout, grouped, bundled },
         );
         controller.focusNode(activeFocus ?? null);
         engineState = "ready";
@@ -546,7 +616,10 @@
         class="w-full"
       />
       {#if query}
-        <div data-graph-search-results class="mt-[var(--reddb-spatial-gap-sm)] flex flex-wrap gap-[var(--reddb-spatial-gap-sm)]">
+        <div
+          data-graph-search-results
+          class="mt-[var(--reddb-spatial-gap-sm)] flex flex-wrap gap-[var(--reddb-spatial-gap-sm)]"
+        >
           {#each results as node (node.id)}
             <ToggleButton
               label={node.label}
@@ -562,6 +635,21 @@
     </div>
   {/if}
 
+  {#if controls}<div
+      class="flex flex-wrap gap-[var(--reddb-spatial-gap-sm)] p-[var(--reddb-spatial-inset-sm)]"
+    >
+      <Button onclick={() => zoom(zoomRatio / 1.4)} aria-label="Zoom in"
+        >Zoom in</Button
+      ><Button onclick={() => zoom(zoomRatio * 1.4)} aria-label="Zoom out"
+        >Zoom out</Button
+      ><Button onclick={fit}>Fit graph</Button>
+    </div>{/if}
+  {#if overlays.bundleSkipped}<p
+      role="status"
+      class="p-[var(--reddb-spatial-inset-sm)] text-ink-muted"
+    >
+      Bundling is available for up to 1,500 edges. Showing individual edges.
+    </p>{/if}
   <div class="relative w-full" style:height={`${height}px`}>
     <div
       bind:this={engineHost}
@@ -578,16 +666,29 @@
       them in the tree as the interactive parts of one graph.
     -->
     <svg
+      bind:this={svgRoot}
       data-graph-fallback="svg"
       role="group"
       aria-label={label}
       aria-hidden={engineState === "ready"}
-      viewBox={`0 0 ${width} ${height}`}
-      class="h-full w-full bg-[var(--reddb-color-background)]"
+      viewBox={graphViewBox(width, height, { ratio: zoomRatio, ...pan })}
+      class="h-full w-full touch-none bg-[var(--reddb-color-background)]"
       class:invisible={engineState === "ready"}
       onclick={() => focus(null)}
     >
       <title>{label}</title>
+      <g aria-hidden="true" data-graph-groups
+        >{#each overlays.boxes as box (box.id)}<rect
+            x={svgX({ x: box.minX })}
+            y={svgY({ y: box.minY })}
+            width={svgX({ x: box.maxX }) - svgX({ x: box.minX })}
+            height={svgY({ y: box.maxY }) - svgY({ y: box.minY })}
+            fill={box.color}
+            fill-opacity=".08"
+            stroke={box.color}
+            stroke-opacity=".5"
+          />{/each}</g
+      >
       {#each focused.edges as edge (edge.id)}
         {@const source = nodeById(edge.source)}
         {@const target = nodeById(edge.target)}
@@ -602,29 +703,48 @@
           onfocus={() => interaction("edge", "focus", edge.id)}
           onkeydown={(event) => handleEdgeKeydown(event, edge.id)}
         >
-          <line
-            x1={svgX(source)}
-            y1={svgY(source)}
-            x2={svgX(target)}
-            y2={svgY(target)}
-            stroke={edge.color}
-            stroke-width={Math.max(1, edge.weight)}
-          />
+          {#if overlays.paths.has(edge.id)}<path
+              d={graphPath(overlays.paths.get(edge.id)!, (point) => ({
+                x: svgX(point),
+                y: svgY(point),
+              }))}
+              fill="none"
+              stroke={edge.color}
+              stroke-width={Math.max(1, edge.weight)}
+            />{:else}
+            <line
+              x1={svgX(source)}
+              y1={svgY(source)}
+              x2={svgX(target)}
+              y2={svgY(target)}
+              stroke={edge.color}
+              stroke-width={Math.max(1, edge.weight)}
+            />{/if}
         </g>
       {/each}
       {#each focused.nodes as node (node.id)}
         <g data-graph-node data-focused={activeFocus === node.id}>
           <circle
+            onpointerenter={() => (hovered = node.id)}
+            onpointerleave={() => (hovered = null)}
             data-node-id={node.id}
             data-supernode-community={node.collapsedCommunity}
             data-summary-subtree={node.collapsedSubtree}
-            data-summary-member-count={node.collapsedSubtree ? node.memberIds?.length : undefined}
-            data-focus-pulse={activeFocus === node.id ? (reducedMotion ? "held" : "active") : "none"}
+            data-summary-member-count={node.collapsedSubtree
+              ? node.memberIds?.length
+              : undefined}
+            data-focus-pulse={activeFocus === node.id
+              ? reducedMotion
+                ? "held"
+                : "active"
+              : "none"}
             cx={svgX(node)}
             cy={svgY(node)}
             r={node.size * node.scale}
             fill={node.color}
-            stroke={activeFocus === node.id ? "var(--reddb-color-foreground)" : "var(--reddb-color-background)"}
+            stroke={activeFocus === node.id
+              ? "var(--reddb-color-foreground)"
+              : "var(--reddb-color-background)"}
             stroke-width={activeFocus === node.id ? 3 : 1}
             role="button"
             tabindex="0"
@@ -646,17 +766,24 @@
             text-anchor="middle"
             fill="var(--reddb-color-foreground)"
             class="text-xs"
-            style:pointer-events="bounding-box"
-          >{label.text}</text>
+            style:pointer-events="bounding-box">{label.text}</text
+          >
         {/each}
       </g>
     </svg>
   </div>
 
-  <ul aria-label="Graph communities" class="m-0 flex list-none flex-wrap gap-[var(--reddb-spatial-gap-md)] border-t border-muted p-[var(--reddb-spatial-inset-sm)] text-sm">
+  <ul
+    aria-label="Graph communities"
+    class="m-0 flex list-none flex-wrap gap-[var(--reddb-spatial-gap-md)] border-t border-muted p-[var(--reddb-spatial-inset-sm)] text-sm"
+  >
     {#each communities as community (community.id)}
       <li class="flex items-center gap-[var(--reddb-spatial-gap-sm)]">
-        <span aria-hidden="true" class="inline-block size-2 rounded-full" style:background={community.color}></span>
+        <span
+          aria-hidden="true"
+          class="inline-block size-2 rounded-full"
+          style:background={community.color}
+        ></span>
         {community.label} ({community.nodes.length})
       </li>
     {/each}
@@ -668,11 +795,21 @@
       aria-live="polite"
       class="border-t border-muted p-[var(--reddb-spatial-inset-sm)] text-sm"
     >
-      <strong>{selectedInteraction.kind === "node" ? "Node" : "Edge"} {selectedInteraction.id}</strong>
+      <strong
+        >{selectedInteraction.kind === "node" ? "Node" : "Edge"}
+        {selectedInteraction.id}</strong
+      >
       {#if selectedInteraction.metadata}
-        <pre class="mt-[var(--reddb-spatial-gap-sm)] overflow-auto whitespace-pre-wrap text-xs">{JSON.stringify(selectedInteraction.metadata, null, 2)}</pre>
+        <pre
+          class="mt-[var(--reddb-spatial-gap-sm)] overflow-auto whitespace-pre-wrap text-xs">{JSON.stringify(
+            selectedInteraction.metadata,
+            null,
+            2,
+          )}</pre>
       {:else}
-        <span class="ml-[var(--reddb-spatial-gap-sm)] text-ink-muted">No metadata</span>
+        <span class="ml-[var(--reddb-spatial-gap-sm)] text-ink-muted"
+          >No metadata</span
+        >
       {/if}
     </aside>
   {/if}

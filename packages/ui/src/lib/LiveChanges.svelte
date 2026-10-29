@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { Checkbox } from "@reddb-io/design-system/base"
+  import { Button as DSButton } from '@reddb-io/design-system/base'
+  import { Icon as DSIcon } from '@reddb-io/design-system/base'
   import { useWorkspace } from './workspace-context'
   import { onDestroy } from 'svelte'
   import { CDCStreamClient, type ChangeEvent, type Subscription } from '#reddb'
@@ -108,92 +111,84 @@
   const scope = $derived(collection ? `collection: ${collection}` : 'global')
 </script>
 
-<div class="h-full flex flex-col bg-bg-0">
-  <header class="px-3 py-2 border-b border-line-1 flex items-center gap-3 text-fg-3">
-    <Activity class="size-3.5" />
+<div class="h-full flex flex-col bg-background">
+  <header class="px-3 py-2 border-b border-muted flex items-center gap-3 text-ink-muted">
+    <DSIcon icon={Activity} color="current" class="" />
     <span class="type-label">Live changes</span>
-    <span class="text-[11px] font-mono text-fg-3">· {scope}</span>
+    <span class="text-[11px] font-mono text-ink-muted">· {scope}</span>
 
     <div class="ml-auto flex items-center gap-1">
-      <button
+      <DSButton variant="ghost" size="sm"
         type="button"
-        class="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-mono rounded border border-line-1 hover:bg-bg-2 text-fg-2"
+
         onclick={() => (paused = !paused)}
         title={paused ? 'Resume stream' : 'Pause stream'}
       >
         {#if paused}
-          <Play class="size-3" /> resume
+          <DSIcon icon={Play} color="current" class="" /> resume
         {:else}
-          <Pause class="size-3" /> pause
+          <DSIcon icon={Pause} color="current" class="" /> pause
         {/if}
-      </button>
+      </DSButton>
 
-      <div class="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-mono rounded border border-line-1 text-fg-3">
-        <Filter class="size-3" />
+      <div class="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-mono rounded border border-muted text-ink-muted">
+        <DSIcon icon={Filter} color="current" class="" />
         {#each OPS as op (op)}
-          <label class="inline-flex items-center gap-1 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={filter[op]}
-              onchange={(ev) => (filter = { ...filter, [op]: (ev.currentTarget as HTMLInputElement).checked })}
-              class="accent-accent size-3"
-            />
-            <span class={filter[op] ? 'text-fg-1' : 'text-fg-3'}>{op}</span>
-          </label>
+          <Checkbox label={op} checked={filter[op]} oncheckedchange={checked => filter = {...filter, [op]: checked}} />
         {/each}
       </div>
 
       {#if events.length > 0}
-        <button
+        <DSButton variant="ghost" size="sm"
           type="button"
-          class="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-mono rounded border border-line-1 hover:bg-bg-2 text-fg-3"
+
           onclick={() => (events = [])}
           title="Clear buffer"
         >
-          <X class="size-3" /> clear
-        </button>
+          <DSIcon icon={X} color="current" class="" /> clear
+        </DSButton>
       {/if}
     </div>
   </header>
 
   <div class="flex-1 overflow-auto">
     {#if error}
-      <div class="p-6 text-[12px] font-mono text-fg-3">
+      <div class="p-6 text-[12px] font-mono text-ink-muted">
         <span class="text-primary-text">error:</span> {error}
       </div>
     {:else if !connection.connected}
-      <div class="p-6 text-[12px] font-mono text-fg-3">
+      <div class="p-6 text-[12px] font-mono text-ink-muted">
         Not connected. Use the topbar Connect button to open a stream.
       </div>
     {:else if visible.length === 0}
-      <div class="p-6 text-[12px] font-mono text-fg-3">
+      <div class="p-6 text-[12px] font-mono text-ink-muted">
         {paused ? 'Paused — no events captured.' : 'Listening for changes…'}
       </div>
     {:else}
       <ul class="divide-y divide-line-1 font-mono text-[12px]">
         {#each visible as e (e.lsn)}
-          <li class="px-3 py-1.5 flex items-center gap-3 hover:bg-bg-1">
-            <span class="text-fg-3 w-16 shrink-0" title={absolute(e.timestamp)}>
+          <li class="px-3 py-1.5 flex items-center gap-3 hover:bg-elevation-base-surface">
+            <span class="text-ink-muted w-16 shrink-0" title={absolute(e.timestamp)}>
               {relative(e.timestamp)}
             </span>
-            <span class="text-fg-3 w-16 shrink-0">lsn {e.lsn}</span>
+            <span class="text-ink-muted w-16 shrink-0">lsn {e.lsn}</span>
             <span
               class={[
                 'inline-block w-14 text-center text-[10px] uppercase rounded px-1 py-0.5 shrink-0 border',
-                e.operation === 'insert' && 'border-ok/40 text-ok',
-                e.operation === 'update' && 'border-warn/40 text-warn',
-                e.operation === 'delete' && 'border-accent/40 text-primary-text',
+                e.operation === 'insert' && 'border-ok/40 text-feedback-success-foreground',
+                e.operation === 'update' && 'border-feedback-warning-border/40 text-feedback-warning-foreground',
+                e.operation === 'delete' && 'border-primary/40 text-primary-text',
               ]
                 .filter(Boolean)
                 .join(' ')}
             >
               {e.operation}
             </span>
-            <span class="text-fg-2 truncate">{e.collection}</span>
-            <span class="text-fg-3">·</span>
-            <span class="text-fg-3 truncate">{e.kind}</span>
+            <span class="text-ink-muted truncate">{e.collection}</span>
+            <span class="text-ink-muted">·</span>
+            <span class="text-ink-muted truncate">{e.kind}</span>
             {#if e.rid !== undefined}
-              <span class="text-fg-3 ml-auto">rid {e.rid}</span>
+              <span class="text-ink-muted ml-auto">rid {e.rid}</span>
             {/if}
           </li>
         {/each}

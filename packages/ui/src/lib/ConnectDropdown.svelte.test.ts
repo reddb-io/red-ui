@@ -87,6 +87,8 @@ test("separate sign-in fields still work and the password is cleared", () => {
   const login = vi.spyOn(connection, "login").mockResolvedValue(false);
   const target = render();
   fill(target, "#connect-url", "reds://localhost");
+  target.querySelector<HTMLButtonElement>("[data-disclosure] button")!.click();
+  flushSync();
   fill(target, "#connect-username", "alice");
   const password = fill(target, "#connect-password", "secret");
   submit(target);
@@ -106,7 +108,11 @@ test("a protected database opens the sign-in fields after an anonymous 401", () 
       "Database credentials required (HTTP 401). Sign in with a database username and password.",
   };
   flushSync();
-  expect(target.querySelector("details")?.open).toBe(true);
+  expect(
+    target
+      .querySelector("[data-disclosure] button")
+      ?.getAttribute("aria-expanded")
+  ).toBe("true");
   expect(target.textContent).toContain("HTTP 401");
   expect(
     target.querySelector<HTMLInputElement>("#connect-password")?.value
@@ -132,6 +138,8 @@ test("conflicting credential sources require an explicit choice", () => {
   const login = vi.spyOn(connection, "login");
   const target = render();
   fill(target, "#connect-url", "reds://alice:inline@localhost");
+  target.querySelector<HTMLButtonElement>("[data-disclosure] button")!.click();
+  flushSync();
   fill(target, "#connect-username", "bob");
   const password = fill(target, "#connect-password", "separate");
   submit(target);

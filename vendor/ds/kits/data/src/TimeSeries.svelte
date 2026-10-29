@@ -37,6 +37,8 @@
     onhiddenserieschange?: (ids: readonly string[]) => void;
     /** Reports linked inspection as an epoch timestamp, or null to clear it. */
     onactivexchange?: (value: number | null) => void;
+    /** Commits a sample with a pointer press or Enter/Space, independently of hover inspection. */
+    onselect?: (value: number) => void;
     /** Extra classes, merged onto the chart's root `figure`. */
     class?: string;
   }
@@ -46,6 +48,7 @@
     timeRange,
     activeX = $bindable(null),
     onactivexchange,
+    onselect,
     label = "Time series",
     variant = "line",
     curve = "smooth",
@@ -114,17 +117,20 @@
     onhiddenserieschange?.(hiddenSeries);
   }
 
-  function explorePointer(event: PointerEvent): void {
+  function explorePointer(event: PointerEvent, commit = false): void {
     if (!explores || samples.length === 0) return;
     keyboard = false;
     const box = (event.currentTarget as HTMLElement).getBoundingClientRect();
     const fraction = Math.max(0, Math.min(1, (event.clientX - box.left - padding.left) / Math.max(1, drawingWidth - padding.left - padding.right)));
-    inspect(+(samples[nearestTimeIndex(samples, domain[0] + fraction * (domain[1] - domain[0]))]!));
+    const value = +(samples[nearestTimeIndex(samples, domain[0] + fraction * (domain[1] - domain[0]))]!);
+    inspect(value);
+    if (commit) onselect?.(value);
   }
 
   function exploreKey(event: KeyboardEvent): void {
     if (!explores || samples.length === 0) return;
     if (event.key === "Escape") { inspect(null); return; }
+    if (onselect && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); onselect(+samples[index]!); return; }
     const next = event.key === "Home" ? 0 : event.key === "End" ? samples.length - 1
       : ["ArrowRight", "ArrowUp"].includes(event.key) ? index + 1
       : ["ArrowLeft", "ArrowDown"].includes(event.key) ? index - 1 : undefined;
@@ -195,8 +201,8 @@
     aria-valuenow={explores ? index : undefined}
     aria-valuetext={explores ? announcement : undefined}
     class={`relative min-h-0 shrink-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus ${height === "fill" ? "flex-1" : chartAdaptiveHeight(layout, legacyRows, size, height)}`}
-    onpointermove={explorePointer}
-    onpointerdown={explorePointer}
+    onpointermove={(event) => explorePointer(event)}
+    onpointerdown={(event) => explorePointer(event, true)}
     onkeydown={exploreKey}
     onblur={() => (keyboard = false)}
   >

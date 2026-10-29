@@ -9,5 +9,8 @@ export const explorerClasses = {
   raw: "min-w-0 flex-1 overflow-auto whitespace-pre-wrap break-words p-[var(--reddb-spatial-inset-md)] font-mono",
   cell: "px-[var(--reddb-spatial-inset-sm)] py-[var(--reddb-spatial-inset-sm)] align-top",
   value: "min-w-0 whitespace-pre-wrap break-words font-mono",
+  select: "min-h-[var(--reddb-spatial-control-height-sm)] max-w-full rounded-sm border border-control-edge bg-background px-[var(--reddb-spatial-inset-sm)] text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",
+  coordinateTrack: "h-[var(--reddb-spatial-inset-sm)] w-full overflow-hidden rounded-sm bg-muted",
+  coordinateBar: "h-full bg-primary",
   muted: "text-ink-muted",
 };

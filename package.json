@@ -18,7 +18,10 @@
     "release:publish": "changeset publish",
     "prepare": "husky",
     "ds:sync": "node scripts/design-system.mjs sync",
-    "ds:check": "node scripts/design-system.mjs check"
+    "ds:check": "node scripts/design-system.mjs check",
+    "ds:audit": "node scripts/audit-ui-ownership.mjs",
+    "ds:audit:check": "node scripts/audit-ui-ownership.mjs --check",
+    "ds:audit:strict": "node scripts/audit-ui-ownership.mjs --strict"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.7.0",
