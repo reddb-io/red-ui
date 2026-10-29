@@ -1,6 +1,6 @@
 {
-  "version": "v2026.10.54",
-  "revision": "b9cf65d04b047a27ae8e18a81b164e63207c054f",
+  "version": "v2026.10.55",
+  "revision": "5b348bfd525e5636974dc7d5072db6591091c800",
   "distribution": {
     "format": "source",
     "minify": false,
@@ -388,6 +388,7 @@
     "kits/base/src/core/index.ts": "9dec5cba037736752e18b69f82859009ec61f40c34b502ae43dad309283aee1d",
     "kits/base/src/core/inline-edit.ts": "a67b47e46cc50c6e877f671b5763ee3a3e3129eb779e67a07c05630279c98d47",
     "kits/base/src/core/input.ts": "0d5c36521652994d40062abaa46bb198b24c470d06c6a5802d9a6bb90b2e0d53",
+    "kits/base/src/core/json-code.ts": "93d0843d8b31e2917aeea75d10cca52bafe1a74f8b2f07f2943d745862cc1941",
     "kits/base/src/core/modal.ts": "092afd40ec9987cbc3fe1f8b5e12c911c33087168dee14baa73f5a53cea1fef0",
     "kits/base/src/core/native-controls.ts": "7e5dfaea18f6691ad6e03bf9e640e62703bfe22a344de21d781490e1d63402b7",
     "kits/base/src/core/navbar.ts": "136e1c25e96bdcc0166c4b3692d892ba53c00b12685bd4add0387d543337d262",
@@ -518,7 +519,7 @@
     "kits/base/src/illustrations/team-empty.ts": "a95817b4d3a80729b516e630bea37d9689f98b00fc185c024349e8a39acdd9a5",
     "kits/base/src/illustrations.ts": "cb803a450cd04a7f6df3956159608ebebc91f093bad558f6a6755fc1470a235b",
     "kits/base/src/image.variants.ts": "098c5f87b6a04f399828d2738d95ef97a7e48416a4d24b882e92f5ae2615c8a5",
-    "kits/base/src/index.ts": "b51afcd03bef21e8f6d40f6cb8e3e26e7347e7337d7d7fa5d942abe700428d8f",
+    "kits/base/src/index.ts": "eab114f58613466d8d8ff932c0b02711f5f50f2bd23981405f0b6976352940f4",
     "kits/base/src/indicator.variants.ts": "3e0c66f4bb20d83c2bd1e5a7799603c5a2b1591c3689a42c6801d4d9fb34f1c7",
     "kits/base/src/inline-edit.variants.ts": "9c1579d43ef4205849e1546da3a6d90483c2aa3d0be4fec91b790f0cc845829d",
     "kits/base/src/input.variants.ts": "75ef9ea6e478ed335514b007b80c3c320cf6c18b0a4673386e5a987ceda58e1e",

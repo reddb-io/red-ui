@@ -7,7 +7,7 @@
 
   import { type Tab } from '$lib/tabs.svelte'
 
-  import { defaultSubpage, subpageCapability } from '$lib/collection-pages'
+  import { defaultSubpage, rendererSelection, subpageCapability } from '$lib/collection-pages'
   import { collectionPreviewQuery, safeCollectionName } from '$lib/collection-preview'
   import {
     collectionCatalogBadges,
@@ -403,7 +403,7 @@
     // even for an empty graph/queue). Keep the collection's selected view so
     // its own empty state renders instead of falling back to a blank table.
     const emptyCapability = result.ok && !result.result.records.length ? cap : undefined
-    return registry.pick(cap, result, tab.overrideCapability ?? emptyCapability)
+    return registry.pick(cap, result, rendererSelection(tab.subpage, tab.overrideCapability, emptyCapability))
   }
 
   function openLiveChanges() {
