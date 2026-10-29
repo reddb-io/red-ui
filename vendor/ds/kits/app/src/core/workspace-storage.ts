@@ -56,3 +56,72 @@ export function scopedStorage(
     },
   };
 }
+
+/** A minimal persistence backend for snapshot reads and writes. */
+export interface WorkspaceSnapshotStorage {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+}
+
+/** Debounced, caller-validated snapshots scoped to one workspace and storage key. */
+export class WorkspaceSnapshotStore<Snapshot> {
+  private timer: ReturnType<typeof setTimeout> | null = null;
+  readonly debounceMs: number;
+  private readonly storage: () => WorkspaceSnapshotStorage | null;
+  private readonly key: string;
+  private readonly accepts: (value: unknown) => value is Snapshot;
+
+  constructor(options: {
+    storage: () => WorkspaceSnapshotStorage | null;
+    key: string;
+    accepts: (value: unknown) => value is Snapshot;
+    debounceMs?: number;
+  }) {
+    this.storage = options.storage;
+    this.key = options.key;
+    this.accepts = options.accepts;
+    this.debounceMs = options.debounceMs ?? 1000;
+  }
+
+  private write(snapshot: Snapshot): void {
+    try {
+      this.storage()?.setItem(this.key, JSON.stringify(snapshot));
+    } catch {
+      // Storage may be restricted, full, or unavailable during SSR.
+    }
+  }
+
+  /** Replace the pending snapshot with a debounced write. */
+  schedule(snapshot: Snapshot): void {
+    if (this.timer !== null) clearTimeout(this.timer);
+    this.timer = setTimeout(() => {
+      this.timer = null;
+      this.write(snapshot);
+    }, this.debounceMs);
+  }
+
+  /** Cancel a pending write and persist immediately. */
+  flush(snapshot: Snapshot): void {
+    if (this.timer !== null) clearTimeout(this.timer);
+    this.timer = null;
+    this.write(snapshot);
+  }
+
+  /** Cancel a pending write without changing the stored snapshot. */
+  dispose(): void {
+    if (this.timer !== null) clearTimeout(this.timer);
+    this.timer = null;
+  }
+
+  /** Restore only JSON accepted by the host's snapshot contract. */
+  restore(): Snapshot | null {
+    try {
+      const raw = this.storage()?.getItem(this.key);
+      if (!raw) return null;
+      const value: unknown = JSON.parse(raw);
+      return this.accepts(value) ? value : null;
+    } catch {
+      return null;
+    }
+  }
+}
