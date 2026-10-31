@@ -13,6 +13,7 @@
   import DevConsole from './DevConsole.svelte'
   import GlobalProgressBar from './GlobalProgressBar.svelte'
   import Topbar from './Topbar.svelte'
+  import WorkspaceNavigation from './WorkspaceNavigation.svelte'
   import StatusBar from './StatusBar.svelte'
   import CommandPalette from './CommandPalette.svelte'
   import ShortcutOverlay from './ShortcutOverlay.svelte'
@@ -384,9 +385,11 @@
 {:else}
   <div bind:this={shell} class="app relative grid min-w-0 grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto_minmax(0,1fr)] h-screen">
     <GlobalProgressBar />
-    <Topbar showConnect={showConnect} label={label ?? connection.active.label} />
+    <Topbar showConnect={showConnect} />
     <StatusBar />
-    <svelte:element this={workspace.persistenceKey === 'default' ? 'main' : 'div'} class="relative min-w-0 overflow-hidden z-[1]">
+    <div data-workspace-body class="flex min-h-0 min-w-0 overflow-hidden">
+    <WorkspaceNavigation label={label ?? connection.active.label} />
+    <svelte:element this={workspace.persistenceKey === 'default' ? 'main' : 'div'} class="relative min-h-0 min-w-0 flex-1 overflow-hidden z-[1]">
       {#if router.view === 'ask'}
         <AskView />
       {:else if router.view === 'cluster'}
@@ -409,6 +412,7 @@
         <CollectionsView />
       {/if}
     </svelte:element>
+    </div>
     <CommandPalette />
     <ShortcutOverlay />
     <MasterPasswordDialog />

@@ -434,7 +434,7 @@
 </script>
 
 <div bind:this={pane} class="h-full flex flex-col">
-  <div class="border-b border-muted flex flex-wrap items-stretch min-h-[36px] bg-background">
+  <div class="border-b border-elevation-base-border flex shrink-0 flex-wrap items-stretch min-h-[36px] bg-elevation-sunken-surface">
     <span class="type-label px-3 py-2">Results</span>
     {#if tabs.active && (tabs.active.kind === 'collection' || tabs.active.kind === 'query')}
       {@const activeTab = tabs.active}

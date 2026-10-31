@@ -18,6 +18,7 @@
     explorerTableColumns,
   } from "./table-explorer";
   import { explorerClasses as styles } from "./diff-explorer.variants";
+  import { tableExplorerClasses as chrome } from "./table-appearance";
   import type { TableExplorerContract } from "./core/contracts/tableexplorer";
   interface Props extends TableExplorerContract {
     /** Extra root classes. */
@@ -116,10 +117,10 @@
   bind:this={root}
   data-table-explorer
   aria-label={label}
-  class={`${styles.root} ${className}`}
+  class={`${chrome.root} ${className}`}
 >
   {#if error}<p role="alert" class={styles.detail}>{error}</p>{:else}
-    <div class={styles.toolbar}>
+    <div class={chrome.toolbar}>
       {#if onquery}<Button
           aria-pressed={projectionOpen}
           onclick={() => (projectionOpen = !projectionOpen)}>select</Button
@@ -131,8 +132,9 @@
         data-table-filter-toggle
         class={quietControl({
           selected: filtersOpen,
-          class: "px-[var(--reddb-spatial-inset-sm)]",
+          class: "min-h-[var(--reddb-spatial-control-height-sm)] rounded-sm border border-control-edge px-[var(--reddb-spatial-inset-sm)]",
         })}
+        aria-expanded={filtersOpen}
         aria-pressed={filtersOpen}
         onclick={() => (filtersOpen = !filtersOpen)}
         >filters{count ? ` ${count}` : ""}</button
@@ -141,7 +143,7 @@
         >{/if}<span>{visible.length} of {total ?? rows.length} rows</span>
     </div>
     {#if projectionOpen && onquery}<div class={styles.detail}>
-        <div class={styles.toolbar}>
+        <div class={chrome.toolbar}>
           <span>Columns</span><Button onclick={() => (projection = {})}
             >all</Button
           ><Button
@@ -159,7 +161,7 @@
             /></label
           >
         </div>
-        <div class={styles.toolbar}>
+        <div class={chrome.toolbar}>
           {#each queryColumns as key (key)}<Checkbox
               label={key}
               checked={projection[key] !== false}
@@ -172,8 +174,8 @@
             )}</pre>{/if}
       </div>{/if}
     {#if queryError}<p role="alert" class={styles.detail}>{queryError}</p>{/if}
-    {#if filtersOpen}<div class={styles.toolbar} data-table-filters>
-        {#each columns as column (column.key)}<label
+    {#if filtersOpen}<div class={chrome.filters} data-table-filters>
+        {#each columns as column (column.key)}<label class={chrome.filter}
             >{column.header}<Input
               aria-label={`Filter ${column.key}`}
               value={filters[column.key] ?? ""}
@@ -202,6 +204,8 @@
       </div>
     {:else}<Table
         caption={label}
+        class="font-mono"
+        containerClass={chrome.grid}
         captionHidden
         columns={gridColumns}
         rows={visible}
@@ -237,7 +241,7 @@
             >
           </div>{/snippet}
       </Table>{/if}
-    <p class={styles.detail}>
+    <p class={chrome.footer}>
       {visible.length} of {total ?? rows.length} rows{context
         ? ` · ${context}`
         : ""}{identityLabel ? ` · ${identityLabel}` : ""}{editable

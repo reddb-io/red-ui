@@ -17,7 +17,7 @@
   })
 </script>
 
-<div aria-label="Connection status" role="status" class="flex flex-wrap items-center gap-[var(--reddb-spatial-gap-sm)] border-b border-muted bg-background px-[var(--reddb-spatial-inset-sm)] py-[var(--reddb-spatial-inset-sm)] text-sm text-foreground">
+<div aria-label="Connection status" role="status" class="flex flex-wrap items-center gap-[var(--reddb-spatial-gap-sm)] border-b border-elevation-base-border bg-elevation-sunken-surface px-[var(--reddb-spatial-inset-sm)] py-[var(--reddb-spatial-inset-sm)] text-sm text-foreground">
   <Button variant="ghost" size="sm" onclick={() => router.go({ view: 'cluster' })} title="Open cluster overview">
     <StatusIndicator label={connection.connected ? role : 'Not connected'} tone={connection.connected ? 'success' : 'neutral'} />
     {#if connection.connected}<span class="max-w-full truncate">{connection.active.label}</span>{/if}

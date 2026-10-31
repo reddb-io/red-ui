@@ -77,11 +77,11 @@
   }
 </script>
 
-<div class="flex h-full flex-col">
-  <div class="flex flex-col border-b border-muted bg-background" style="height: 40%;">
-    <div class="flex flex-wrap items-center justify-between gap-2 px-3 py-1.5 border-b border-muted">
+<div class="flex h-full min-h-0 flex-col" data-query-workspace>
+  <section aria-label="Query editor" data-query-editor class="flex h-[30%] min-h-0 shrink-0 flex-col border-b border-elevation-base-border bg-elevation-sunken-surface sm:h-2/5">
+    <div class="flex flex-wrap items-center justify-between gap-[var(--reddb-spatial-gap-md)] px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-sm)] border-b border-elevation-base-border">
       <div class="flex items-center gap-2 text-ink-muted type-label">
-        <span>SQL</span>
+        <span class="font-medium text-foreground">SQL query</span>
         {#if connection.connected}
           <span class="text-ink-muted">·</span>
           <span class="text-ink-muted font-mono text-[11px] truncate max-w-[280px]">{connection.active.url}</span>
@@ -91,7 +91,7 @@
       </div>
       <div class="flex items-center gap-2">
         <span class="text-ink-muted font-mono text-[11px] hidden sm:inline">Run with <Kbd>⌘</Kbd><Kbd>↵</Kbd></span>
-        <DSButton variant="ghost" size="sm"
+        <DSButton variant="primary" size="sm"
           type="button"
 
           onclick={run}
@@ -108,20 +108,26 @@
         </DSButton>
       </div>
     </div>
-    <DSTextarea
-      bind:ref={textareaEl}
-      aria-label="SQL query"
-      class="flex-1 resize-none"
-      spellcheck="false"
-      autocapitalize="off"
-      placeholder={'SELECT * FROM users LIMIT 100'}
-      value={qs?.sql ?? ''}
-      oninput={(e) => setSql((e.currentTarget as HTMLTextAreaElement).value)}
-      onkeydown={onKey}
-    ></DSTextarea>
-  </div>
+    <div class="flex min-h-0 flex-1 p-[var(--reddb-spatial-inset-sm)]">
+      <DSTextarea
+        bind:ref={textareaEl}
+        aria-label="SQL query"
+        class="min-h-0 flex-1 resize-none font-mono focus-visible:-outline-offset-2"
+        spellcheck="false"
+        autocapitalize="off"
+        placeholder={'SELECT * FROM users LIMIT 100'}
+        value={qs?.sql ?? ''}
+        oninput={(e) => setSql((e.currentTarget as HTMLTextAreaElement).value)}
+        onkeydown={onKey}
+      ></DSTextarea>
+    </div>
+  </section>
 
-  <div class="flex-1 overflow-hidden bg-background">
+  <section aria-label="Query results" data-query-results class="flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
+    <div class="flex shrink-0 items-center justify-between gap-[var(--reddb-spatial-gap-md)] border-b border-elevation-base-border bg-elevation-sunken-surface px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-sm)] text-caption">
+      <span class="font-medium">Query results</span>
+      {#if qs?.result}<span class="text-ink-muted tabular-nums">{qs.result.record_count.toLocaleString()} rows</span>{/if}
+    </div>
     {#if qs?.running}
       <div class="h-full grid place-items-center p-6" aria-live="polite" aria-busy="true">
         <div class="w-full max-w-md rounded border border-muted bg-elevation-base-surface p-4 font-mono">
@@ -165,8 +171,10 @@
       {@const renderer = pickRenderer()}
       {#if renderer}
         {@const Renderer = renderer.component}
-        <Renderer result={qs.result} showSystem={tab?.showSystemColumns ?? false} />
+        <div class="min-h-0 flex-1 overflow-auto">
+          <Renderer result={qs.result} showSystem={tab?.showSystemColumns ?? false} />
+        </div>
       {/if}
     {/if}
-  </div>
+  </section>
 </div>

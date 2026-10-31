@@ -8,7 +8,7 @@
 <ApplicationWorkspace landmarks={false} label="Collections workspace" navigationLabel="Collections"
   class="h-full bg-background text-foreground"
   navigationClass="hidden @3xl/application-workspace:block"
-  contentClass="overflow-hidden">
+  contentClass="h-full overflow-hidden">
   {#snippet navigation()}<SchemaTree />{/snippet}
   {#snippet toolbar()}
     <div class="p-[var(--reddb-spatial-inset-sm)] @3xl/application-workspace:hidden">
