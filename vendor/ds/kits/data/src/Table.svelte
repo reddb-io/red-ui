@@ -32,6 +32,7 @@
   import { Button, Checkbox, Input } from "@reddb-io/design-system/base";
   import { tick, type Snippet } from "svelte";
   import { quietControl, warnDeprecated } from "@reddb-io/design-system/base";
+  import { dataTableClasses as appearance } from "./table-appearance";
   import {
     filterRows,
     paginateRows,
@@ -387,10 +388,10 @@
 
 <div
   data-data-table
-  class={`grid gap-[var(--reddb-spatial-layout-gap-sm)] text-foreground ${containerClass}`.trim()}
+  class={`${appearance.root} ${containerClass}`.trim()}
 >
   {#if filterableColumns.length > 0 || columnVisibility || actions}
-  <div class="flex flex-wrap items-end gap-[var(--reddb-spatial-layout-gap-sm)]" data-table-tools>
+  <div class={appearance.tools} data-table-tools>
     {#each filterableColumns as column (column.key)}
       <label class="grid gap-[var(--reddb-spatial-gap-sm)] text-sm font-medium">
         <span>Filter {column.header}</span>
@@ -442,7 +443,7 @@
     role="region"
     aria-label={`${caption} data`}
     tabindex="0"
-    class={`max-w-full overflow-auto rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${virtualize ? "relative" : ""}`.trim()}
+    class={`${appearance.scroll} ${virtualize ? "relative" : ""}`.trim()}
     style:max-height={virtualize ? `${virtualize.viewportHeight}px` : undefined}
     onscroll={(event) => (scrollTop = event.currentTarget.scrollTop)}
   >
@@ -459,14 +460,14 @@
           ? "sr-only"
           : "caption-top px-[var(--reddb-spatial-inset-md)] pb-[var(--reddb-spatial-inset-sm)] text-left font-medium"}
       >{caption}</caption>
-      <thead class="sticky top-0 z-10 border-b border-muted bg-background">
+      <thead class={appearance.header}>
         <tr>
           {#each visibleColumns as column (column.key)}
             <th
               scope="col"
               aria-sort={sortValue(column)}
               data-align={column.align ?? "start"}
-              class={`px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-sm)] align-middle font-medium ${alignClass(column)}`.trim()}
+              class={`${appearance.head} px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-sm)] align-middle font-medium ${alignClass(column)}`.trim()}
             >
               {#if column.sortable}
                 <button
@@ -499,7 +500,7 @@
             data-table-row-selected={rowSelected ? "" : undefined}
             aria-rowindex={dataIndex + 2}
             aria-selected={selectable ? rowSelected : undefined}
-            class={`border-b border-muted ${selectable ? "cursor-pointer" : ""} ${rowSelected ? "bg-foreground/10 font-medium" : selectable ? "hover:bg-foreground/8" : ""}`.trim()}
+            class={`${appearance.row} ${selectable ? "cursor-pointer" : ""} ${rowSelected ? "bg-foreground/10 font-medium" : "hover:bg-foreground/8"}`.trim()}
           >
             {#each visibleColumns as column, columnPosition (column.key)}
               {@const original = row[column.key]}
@@ -512,7 +513,7 @@
                 aria-readonly={!canEdit(row, column)}
                 data-align={column.align ?? "start"}
                 tabindex={active.row === rowPosition && active.column === columnPosition ? 0 : -1}
-                class={`px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-sm)] align-middle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus ${alignClass(column)}`.trim()}
+                class={`${appearance.cell} px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-sm)] align-middle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus ${alignClass(column)}`.trim()}
                 onclick={(event) => {
                   active = { row: rowPosition, column: columnPosition };
                   event.currentTarget.focus();

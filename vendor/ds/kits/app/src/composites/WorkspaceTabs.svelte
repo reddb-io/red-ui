@@ -109,7 +109,7 @@
           >
             {#snippet child({ props })}
               {#snippet identity()}
-            <span>{item.label}</span>
+            <span class="min-w-0 truncate" title={item.label}>{item.label}</span>
             {#if item.dirty || item.busy}<span
                 class={s.status()}
                 aria-hidden="true"
