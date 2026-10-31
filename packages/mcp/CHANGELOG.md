@@ -1,5 +1,11 @@
 # @reddb-io/ui-mcp
 
+## 0.7.26
+
+### Patch Changes
+
+- b287beb: Restore workspace hierarchy through Design System v2026.10.68: primary side rail, bounded mono query editing, distinct filter and table-header surfaces, visible grid boundaries and document tabs, and contained result scrolling.
+
 ## 0.7.25
 
 ### Patch Changes
