@@ -1,5 +1,12 @@
 # @reddb-io/embed-host
 
+## 0.1.48
+
+### Patch Changes
+
+- Updated dependencies [1b52ff6]
+  - @reddb-io/ui@0.7.28
+
 ## 0.1.47
 
 ### Patch Changes

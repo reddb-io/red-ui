@@ -1,5 +1,11 @@
 # @reddb-io/ui-kit
 
+## 0.7.28
+
+### Patch Changes
+
+- 1b52ff6: Make RedUI installable as a PWA with official icons, an offline application shell and safe updates. Keep database traffic outside the service worker cache and retain the session through offline startup and network recovery.
+
 ## 0.7.27
 
 ### Patch Changes
