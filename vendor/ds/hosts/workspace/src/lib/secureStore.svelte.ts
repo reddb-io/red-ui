@@ -1,6 +1,7 @@
 // Session-scoped secure-store service. Picks a backend at runtime:
 //   - Tauri: defer entirely to the OS keychain (no master password prompt).
 //   - Web:   no credential vault; target secrets are session-only. The
+//            Tab reload recovery is separate from the durable vault. The
 //            WebEncryptedStore path is retained for legacy/manual unlocks.
 //
 // The store is exposed reactively so the workspace shell can render
@@ -34,6 +35,7 @@ export class SecureStoreSvc {
   private readonly storage?: KeyValueStorage;
   private readonly storagePrefix: string;
   private disposed = false;
+  private readonly onWipe?: () => void;
   /** The active backend, or null when locked. */
   store = $state<EncryptedStore | null>(null);
   /** True when the user must authenticate before the store can be used. */
@@ -53,8 +55,10 @@ export class SecureStoreSvc {
       namespace?: string;
       storage?: KeyValueStorage;
       storagePrefix?: string;
+      onWipe?: () => void;
     } = {}
   ) {
+    this.onWipe = options.onWipe;
     this.namespace = options.namespace ?? NAMESPACE;
     this.storage =
       options.storage ??
@@ -72,7 +76,7 @@ export class SecureStoreSvc {
       return;
     }
     // embedded or web. Neither Surface restores credential secrets from
-    // storage: embedded persists nothing, and web persists target labels only.
+    // durable storage: embedded persists nothing; web history is labels only.
     this.backend = "web";
     const hasSecret = envelopesExist(this.namespace, this.storage);
     this.needsSetup = false;
@@ -155,6 +159,7 @@ export class SecureStoreSvc {
    * only and resets when the page reloads.
    */
   wipe() {
+    this.onWipe?.();
     if (!this.storage) return;
     const drop: string[] = [];
     for (let i = 0; i < this.storage.length; i++) {

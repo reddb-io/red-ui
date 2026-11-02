@@ -97,11 +97,15 @@
       subpage: router.subpage,
       tabs: tabs.tabs,
       activeTabId: tabs.activeId,
+      queries: queryTabs.snapshot(tabs.tabs),
     }
   }
 
   function applySnapshot(snap: WorkspaceSnapshot): void {
-    if (snap.tabs.length > 0) tabs.hydrate(snap.tabs, snap.activeTabId)
+    queryTabs.restore(snap.queries, snap.tabs)
+    tabs.hydrate(snap.tabs, snap.activeTabId)
+    // A direct URL remains authoritative; a bare launch restores the last view.
+    if (workspace.persistenceKey === 'default' && router.path !== '/') return
     router.go(
       snap.collection
         ? { view: 'collection', collection: snap.collection, subpage: snap.subpage ?? 'table' }
@@ -111,7 +115,20 @@
     )
   }
 
+  let restored = $state(false)
   onMount(() => {
+    // Restore documents before any route effect can mint an empty query tab.
+    const snap = workspaceSession.restore()
+    if (snap) {
+      applySnapshot(snap)
+      // A reload of the same route must retain the selected result document,
+      // even when that document is a query in the collections workspace.
+      if (snap.tabs.some(tab => tab.id === snap.activeTabId) && router.view === snap.view && router.collection === snap.collection && router.subpage === snap.subpage) {
+        lastView = router.view
+        lastCollectionKey = router.collection ? `${router.collection}::${router.subpage ?? ''}` : null
+      }
+    }
+    restored = true
     if (workspace.injected) {
       // Host-injected provider (#33): adopt its authenticated connection.
       void connection.adoptInjected().then(() => {
@@ -125,10 +142,6 @@
         if (workspace.session.disposed) return
         if (route) {
           navigateToBootRoute(route)
-        } else {
-          // No explicit boot route — restore the last workspace session.
-          const snap = workspaceSession.restore()
-          if (snap) applySnapshot(snap)
         }
       })
     }
@@ -265,7 +278,7 @@
   // Autosave: debounce-schedule a snapshot on every router/tab state change.
   // Guard on `booted` so we don't snapshot the blank pre-splash state.
   $effect(() => {
-    if (!booted) return
+    if (!booted || !restored) return
     const snap = buildSnapshot()
     workspaceSession.schedule(snap)
   })
@@ -276,9 +289,13 @@
     const flush = () => { if (booted) workspaceSession.flush(buildSnapshot()) }
     document.addEventListener('visibilitychange', flush)
     window.addEventListener('blur', flush)
+    window.addEventListener('pagehide', flush)
+    window.addEventListener('beforeunload', flush)
     return () => {
       document.removeEventListener('visibilitychange', flush)
       window.removeEventListener('blur', flush)
+      window.removeEventListener('pagehide', flush)
+      window.removeEventListener('beforeunload', flush)
     }
   })
 
@@ -351,6 +368,7 @@
   let lastView: View | null = null
   let lastCollectionKey: string | null = null
   $effect(() => {
+    if (!restored) return
     const view = router.view
     const collection = router.collection
     const subpage = router.subpage
@@ -365,11 +383,14 @@
       lastCollectionKey = null
     }
 
-    // Entering the query view mints a fresh query tab, matching the old
-    // `/query` route. Guarded on the transition so reactive ticks don't
-    // spawn duplicate tabs.
+    // Navigation returns to existing query documents. Only the explicit new
+    // query command mints another tab; hydration must never create duplicates.
     if (view === 'query' && lastView !== 'query') {
-      untrack(() => openNewQuery())
+      untrack(() => {
+        const existing = tabs.tabs.find(tab => tab.kind === 'query')
+        if (!existing) openNewQuery()
+        else if (tabs.active?.kind !== 'query') tabs.focus(existing.id)
+      })
     }
     lastView = view
   })

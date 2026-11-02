@@ -295,3 +295,19 @@ describe("formatElapsed", () => {
     expect(formatElapsed(65_000)).toBe("1m 05s");
   });
 });
+
+it("restores query drafts/results without replaying work and continues unique query labels", async () => {
+  queryTabs.setSql("q1", "SELECT x FROM records");
+  await queryTabs.run("q1");
+  const tabs = [
+    { id: "q1", kind: "query" as const, key: "Query 4", label: "x" },
+  ];
+  const saved = queryTabs.snapshot(tabs);
+  saved.q1.result = okResult(saved.q1.sql);
+  queryTabs.restore(saved, tabs);
+  expect(queryTabs.get("q1")?.sql).toBe("SELECT x FROM records");
+  expect(queryTabs.get("q1")?.running).toBe(false);
+  expect(queryTabs.get("q1")?.runningStartedAt).toBeNull();
+  expect(queryTabs.get("q1")?.result?.record_count).toBe(1);
+  expect(queryTabs.nextLabel()).toBe("Query 5");
+});

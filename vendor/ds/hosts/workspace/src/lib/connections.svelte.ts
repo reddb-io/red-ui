@@ -4,7 +4,8 @@
 // replication), and a connected flag that gates the Connect screen.
 //
 // History persistence is Surface-aware:
-//   - Web stores target labels only. Full URLs/credentials are session memory.
+//   - Web history stores labels only; reload recovery uses tab sessionStorage.
+//     Only endpoints and session tokens are retained there, never passwords.
 //   - Standalone stores full URLs in the vault and labels in localStorage.
 //   - Embedded and managed Web boot targets store nothing.
 
@@ -83,6 +84,7 @@ interface ProbeResult {
   error?: string;
 }
 
+import { ConnectionSessionStore } from "./connection-session";
 import type { DevConsoleStore } from "./reddb/dev-console";
 import type { KeyValueStorage } from "./connection-history";
 
@@ -110,6 +112,8 @@ export interface ConnectionServices {
   signal?: AbortSignal;
   storage?: KeyValueStorage;
   connectionKey?: string;
+  resumeStorage?: KeyValueStorage | null;
+  resumeKey?: string;
   historyKey?: string;
   urlPrefix?: string;
   consumeBootstrap?: boolean;
@@ -125,6 +129,12 @@ export function createConnections(services: ConnectionServices = {}) {
   const storage =
     services.storage ??
     (typeof localStorage !== "undefined" ? localStorage : undefined);
+
+  const resume = new ConnectionSessionStore(
+    services.resumeStorage ?? null,
+    services.resumeKey ?? "red-ui:connection-session"
+  );
+  const canResume = () => secureStore.surface === "web" && !services.provider;
 
   function persist(c: ConnectionPreset) {
     if (!storage) return;
@@ -485,8 +495,11 @@ export function createConnections(services: ConnectionServices = {}) {
     async bootstrap(
       resolve: () => Promise<ConnectionBootstrap> = () =>
         resolveConnectionBootstrap({
-          readPersisted: () =>
-            readPersistedLocalBootstrap(storage, STORAGE_KEY),
+          readPersisted: () => {
+            const saved = canResume() ? resume.read() : null;
+            if (saved?.managed) markManagedWebHandoff();
+            return saved ?? readPersistedLocalBootstrap(storage, STORAGE_KEY);
+          },
           ...(services.consumeBootstrap === false
             ? {
                 readTauri: () => null,
@@ -508,7 +521,23 @@ export function createConnections(services: ConnectionServices = {}) {
       }
       if (!boot.target) return route;
       if (!boot.token) {
-        await this.connectString(boot.target);
+        // A sanitized URL may still name the same endpoint after refresh.
+        // Reuse its token only for an exact normalized target match.
+        const saved = canResume() ? resume.read() : null;
+        let sameTarget = false;
+        try {
+          const parsed = parseConnectionString(boot.target);
+          sameTarget = !parsed.credentials && parsed.url === saved?.target;
+        } catch {
+          /* connectString reports invalid input. */
+        }
+        if (sameTarget && saved) {
+          if (saved.managed) markManagedWebHandoff();
+          await this.tryConnect(
+            makeCustomConnection(saved.target),
+            saved.token
+          );
+        } else await this.connectString(boot.target);
         return route;
       }
       let preset: ConnectionPreset;
@@ -533,12 +562,8 @@ export function createConnections(services: ConnectionServices = {}) {
       }
       if (boot.token) {
         markManagedWebHandoff();
-        const provider = getConnectionProvider();
-        if (isHandoffTokenConsumer(provider)) {
-          provider.useHandoffToken(preset.url, boot.token);
-        }
       }
-      await this.tryConnect(preset);
+      await this.tryConnect(preset, boot.token);
       return route;
     }
 
@@ -593,6 +618,7 @@ export function createConnections(services: ConnectionServices = {}) {
     ): Promise<boolean> {
       if (this.disposed || services.signal?.aborted) return false;
       const epoch = ++this.epoch;
+      resume.clear();
       this.active = preset;
       this.#client = null;
       this.connected = false;
@@ -608,8 +634,7 @@ export function createConnections(services: ConnectionServices = {}) {
           signal: services.signal,
         }).login(username, password);
         if (this.disposed || epoch !== this.epoch) return false;
-        targetProvider.useHandoffToken(preset.url, token);
-        return await this.tryConnect(preset);
+        return await this.tryConnect(preset, token);
       } catch (error) {
         if (this.disposed || epoch !== this.epoch) return false;
         this.probe = {
@@ -621,9 +646,13 @@ export function createConnections(services: ConnectionServices = {}) {
       }
     }
 
-    async tryConnect(preset: ConnectionPreset): Promise<boolean> {
+    async tryConnect(
+      preset: ConnectionPreset,
+      token?: string
+    ): Promise<boolean> {
       if (this.disposed || services.signal?.aborted) return false;
       const epoch = ++this.epoch;
+      resume.clear();
       this.active = preset;
       this.#client = null;
       this.connected = false;
@@ -637,6 +666,9 @@ export function createConnections(services: ConnectionServices = {}) {
       loading.begin(`Opening ${preset.label}`);
       try {
         loading.step("Reaching server", preset.url);
+        const targetProvider = getConnectionProvider();
+        if (token && isHandoffTokenConsumer(targetProvider))
+          targetProvider.useHandoffToken(preset.url, token);
         const active = await activity.track(`connect · ${preset.label}`, () =>
           getConnectionProvider().connect(preset.id)
         );
@@ -683,6 +715,12 @@ export function createConnections(services: ConnectionServices = {}) {
         };
         this.#capabilities = capabilities;
         this.connected = true;
+        if (canResume())
+          resume.write({
+            target: preset.url,
+            ...(token ? { token } : {}),
+            ...(hasManagedWebHandoff() ? { managed: true } : {}),
+          });
         loading.succeed();
         return true;
       } catch (e) {
@@ -772,11 +810,12 @@ export function createConnections(services: ConnectionServices = {}) {
 
     dispose() {
       this.disposed = true;
-      this.disconnect();
+      this.disconnect(true);
       historyStore.setOnChange(() => {});
     }
 
-    disconnect() {
+    disconnect(preserveSession = false) {
+      if (!preserveSession) resume.clear();
       this.epoch += 1;
       this.connected = false;
       this.probe = { reachable: false };

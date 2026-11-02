@@ -8,7 +8,8 @@
 //   - standalone — the Tauri desktop app. Keeps its vault (the OS keychain,
 //                  which unlocks automatically — "vault unlock as before").
 //   - web        — the hosted PWA. Persists only target labels; secrets are
-//                  session-only and are never restored from storage.
+//                  retained in tab-scoped sessionStorage for reload recovery.
+//                  Passwords never persist; embedded hosts still own their auth.
 
 export type Surface = "embedded" | "standalone" | "web";
 

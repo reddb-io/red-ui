@@ -98,6 +98,8 @@ export interface WorkspaceRuntimeOptions {
   consoleSink?: ConsoleSink;
   /** Optional persistence backend. Keys are projected to this workspace only. */
   storage?: KeyValueStorage;
+  /** Tab-lifetime recovery backend; defaults to sessionStorage for persisted mounts. */
+  resumeStorage?: KeyValueStorage;
 }
 
 /** Construct fresh instance services without starting a connection or timer. */
@@ -110,6 +112,7 @@ export function createWorkspaceRuntime(
   const keys = legacy
     ? {
         connection: "red-ui:connection",
+        resume: "red-ui:connection-session",
         history: "red-ui:history",
         secure: "red-ui:secure",
         session: "red-ui-workspace-session",
@@ -118,6 +121,7 @@ export function createWorkspaceRuntime(
       }
     : {
         connection: `${prefix}connection`,
+        resume: `${prefix}connection-session`,
         history: `${prefix}history`,
         secure: `${prefix}secure`,
         session: `${prefix}session`,
@@ -141,6 +145,20 @@ export function createWorkspaceRuntime(
       /* Restricted storage keeps this mount in memory. */
     }
   }
+  let resumeStorage: KeyValueStorage = new MemoryStorage();
+  if (options.persistenceKey) {
+    try {
+      const backing =
+        options.resumeStorage ??
+        (typeof sessionStorage !== "undefined" ? sessionStorage : undefined);
+      if (backing)
+        resumeStorage = scopedStorage(backing, (key) =>
+          legacy ? Object.values(keys).includes(key) : key.startsWith(prefix)
+        );
+    } catch {
+      /* Restricted tabs keep recovery in memory. */
+    }
+  }
   const controller = new AbortController();
   const activity = new ActivityStore();
   const loading = new LoadingStore();
@@ -153,6 +171,13 @@ export function createWorkspaceRuntime(
     // Enumeration is already projected to this profile. Include its legacy
     // hyphenated preference/snapshot keys when wiping the scoped backend.
     storagePrefix: "",
+    onWipe: () => {
+      while (resumeStorage.length) {
+        const key = resumeStorage.key(0);
+        if (key === null) break;
+        resumeStorage.removeItem(key);
+      }
+    },
   });
   const devConsole = new DevConsoleStore();
   const connections = createConnections({
@@ -164,6 +189,8 @@ export function createWorkspaceRuntime(
     console: devConsole,
     storage,
     connectionKey: keys.connection,
+    resumeKey: keys.resume,
+    resumeStorage,
     historyKey: keys.history,
     consumeBootstrap: legacy,
   });
@@ -177,7 +204,12 @@ export function createWorkspaceRuntime(
     queryTabs: new QueryTabsStore(activity),
     pendingChanges: new PendingChangesStore(),
     registry: createRendererRegistry(),
-    workspaceSession: new WorkspaceSession(1000, storage, keys.session),
+    workspaceSession: new WorkspaceSession(
+      1000,
+      storage,
+      keys.session,
+      resumeStorage
+    ),
     theme: new ThemeStore(keys.theme, storage, false),
     skins: new SkinStore(
       options.persistenceKey ? keys.skin : null,

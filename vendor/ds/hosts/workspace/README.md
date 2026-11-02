@@ -13,3 +13,11 @@ entrypoints until their declared compatibility window expires.
 Local checks: `pnpm --filter @reddb-io/ds-workspace-host check`, `test`, `build`.
 Browser integration must use a disposable RedDB and both standalone and embedded
 mounts. Copying this source alone does not retire legacy release workflows.
+
+Reload recovery is scoped by `persistenceKey`. Web connections retain only their
+normalized endpoint and session token in tab-scoped `sessionStorage`; passwords
+never persist. Explicit disconnect and workspace wipe clear recovery; unmount
+preserves it for refresh. Host-injected providers keep ownership of authentication.
+Durable snapshots retain documents and SQL drafts. Completed query results stay
+in the tab cache, with a drafts-only fallback when browser storage is full or
+blocked. Reload never replays SQL or resumes an in-flight query.
