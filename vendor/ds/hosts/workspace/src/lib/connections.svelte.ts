@@ -652,7 +652,9 @@ export function createConnections(services: ConnectionServices = {}) {
     ): Promise<boolean> {
       if (this.disposed || services.signal?.aborted) return false;
       const epoch = ++this.epoch;
-      resume.clear();
+      const saved = canResume() ? resume.read() : null;
+      const recovering = saved?.target === preset.url && saved?.token === token;
+      if (!recovering) resume.clear();
       this.active = preset;
       this.#client = null;
       this.connected = false;
@@ -725,6 +727,10 @@ export function createConnections(services: ConnectionServices = {}) {
         return true;
       } catch (e) {
         if (this.disposed || epoch !== this.epoch) return false;
+        // An offline launch is not a sign-out. Retain a known session so it
+        // can reconnect when the network returns; discard server-rejected auth.
+        if (/HTTP (401|403)|→ (401|403)\b/.test((e as Error).message))
+          resume.clear();
         this.probe = { reachable: false, error: (e as Error).message };
         loading.fail((e as Error).message);
         return false;

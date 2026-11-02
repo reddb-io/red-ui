@@ -12,11 +12,13 @@ const config = {
   preprocess: vitePreprocess(),
   kit: {
     paths: { base },
+    serviceWorker: { register: false },
     files: {
       assets: "../../vendor/ds/hosts/workspace/static",
       routes: "../../vendor/ds/hosts/workspace/src/routes",
       lib: "../../vendor/ds/hosts/workspace/src/lib",
       appTemplate: "../../vendor/ds/hosts/workspace/src/app.html",
+      serviceWorker: "../../vendor/ds/hosts/workspace/src/service-worker.ts",
     },
     adapter: adapter({
       pages: "build",

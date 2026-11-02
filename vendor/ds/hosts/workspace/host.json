@@ -26,5 +26,10 @@
     "@tauri-apps/plugin-http": "^2.5.9",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.6.0"
+  },
+  "pwa": {
+    "name": "RedUI",
+    "short_name": "RedUI",
+    "description": "Query, inspect and manage your RedDB databases."
   }
 }
