@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.27
+
+### Patch Changes
+
+- 0a866eb: Preserve connections, query drafts, active tabs and completed results across page refresh using Design System v2026.11. Resume web authentication with the tab's session token without storing passwords or replaying queries.
+- Updated dependencies [0a866eb]
+  - @reddb-io/ui-mcp@0.7.27
+
 ## 0.7.26
 
 ### Patch Changes
