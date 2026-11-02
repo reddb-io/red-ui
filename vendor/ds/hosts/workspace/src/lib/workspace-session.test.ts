@@ -120,3 +120,57 @@ describe('WorkspaceSession', () => {
     expect(restored?.collection).toBe('users')
   })
 })
+
+it("retains result rows only in the tab cache, with SQL drafts as durable fallback", () => {
+  const durable = new MemStorage();
+  const cache = new Map<string, string>();
+  const tabStorage = {
+    getItem: (key: string) => cache.get(key) ?? null,
+    setItem: (key: string, value: string) => {
+      cache.set(key, value);
+    },
+    removeItem: (key: string) => {
+      cache.delete(key);
+    },
+  };
+  const session = new WorkspaceSession(200, durable, "workspace", tabStorage);
+  const snap: WorkspaceSnapshot = {
+    ...makeSnap("query"),
+    tabs: [{ id: "q1", kind: "query", key: "Query 4", label: "Query 4" }],
+    activeTabId: "q1",
+    queries: {
+      q1: {
+        sql: "SELECT secret FROM records",
+        error: null,
+        result: {
+          ok: true,
+          query: "SELECT secret FROM records",
+          record_count: 1,
+          result: {
+            columns: ["secret"],
+            records: [{ values: { secret: "private-row" } }],
+          },
+        },
+      },
+    },
+  };
+  session.flush(snap);
+  expect(session.restore()?.queries?.q1.result?.record_count).toBe(1);
+  expect(durable.getItem("workspace")).not.toContain("private-row");
+  tabStorage.removeItem("workspace");
+  expect(session.restore()?.queries?.q1.sql).toBe("SELECT secret FROM records");
+  expect(session.restore()?.queries?.q1.result).toBeNull();
+  const blocked = {
+    ...tabStorage,
+    setItem: () => {
+      throw new Error("QuotaExceededError");
+    },
+  };
+  const limited = new WorkspaceSession(200, durable, "workspace", blocked);
+  tabStorage.setItem("workspace", JSON.stringify(snap));
+  limited.flush({
+    ...snap,
+    queries: { q1: { sql: "latest edit", result: null, error: null } },
+  });
+  expect(limited.restore()?.queries?.q1.sql).toBe("latest edit");
+});

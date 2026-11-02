@@ -19,7 +19,7 @@ export interface HistoryEntry {
   label: string;
   last_used: number;
   rtt_ms?: number;
-  /** Session/vault-hydrated URL. Absent on web after reload by design. */
+  /** Session/vault-hydrated URL. Durable web history keeps labels only; active-target reload recovery is separate. */
   url?: string;
 }
 

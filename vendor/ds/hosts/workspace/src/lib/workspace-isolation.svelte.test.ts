@@ -1,6 +1,8 @@
 import { afterEach, expect, test, vi } from "vitest";
 import { flushSync, mount, tick, unmount } from "svelte";
 import Workspace from "./Workspace.svelte";
+import { MemoryStorage } from "./workspace-storage";
+import { createStateRouter } from "./router.svelte";
 import {
   createWorkspaceRuntime,
   type WorkspaceRuntime,
@@ -157,4 +159,57 @@ test("two mounted workspaces route execution, dialogs and disposal to their own 
   // Svelte 5.57 clears its delegated-event guard on the next task.
   await vi.advanceTimersByTimeAsync(0);
   expect(vi.getTimerCount()).toBe(0);
+});
+
+test("refresh keeps a query selected in the collection route without creating or focusing another document", async () => {
+  vi.useFakeTimers();
+  const runtime = createWorkspaceRuntime({
+    persistenceKey: "recovery",
+    storage: new MemoryStorage(),
+    resumeStorage: new MemoryStorage(),
+  });
+  runtimes.push(runtime);
+  runtime.workspaceSession.flush({
+    view: "collections",
+    collection: "orders",
+    subpage: "table",
+    tabs: [
+      {
+        id: "orders",
+        kind: "collection",
+        key: "orders",
+        label: "orders",
+        subpage: "table",
+      },
+      { id: "draft", kind: "query", key: "Query 2", label: "Query 2" },
+    ],
+    activeTabId: "draft",
+    queries: {
+      draft: { sql: "SELECT customer FROM orders", result: null, error: null },
+    },
+  });
+  const target = document.createElement("div");
+  document.body.append(target);
+  roots.push(
+    mount(Workspace, {
+      target,
+      props: {
+        runtime,
+        router: createStateRouter({
+          view: "collections",
+          collection: "orders",
+          subpage: "table",
+        }),
+      },
+    })
+  );
+  flushSync();
+  await vi.advanceTimersByTimeAsync(1050);
+  await tick();
+  flushSync();
+  expect(runtime.tabs.activeId).toBe("draft");
+  expect(runtime.tabs.tabs).toHaveLength(2);
+  expect((target.querySelector("textarea") as HTMLTextAreaElement).value).toBe(
+    "SELECT customer FROM orders"
+  );
 });

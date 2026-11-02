@@ -6,6 +6,7 @@
 
 import { createWorkspaceExecution } from "@reddb-io/design-system/app/workspace/execution";
 import { activity as defaultActivity } from "./activity.svelte";
+import type { Tab } from "./tabs.svelte";
 import type { QueryResult } from "./reddb/index";
 
 export interface QueryTabState {
@@ -15,6 +16,9 @@ export interface QueryTabState {
   running: boolean;
   runningStartedAt: number | null;
 }
+
+/** Serializable completed state; in-flight work is never replayed on reload. */
+export type QueryTabSnapshot = Pick<QueryTabState, "sql" | "result" | "error">;
 
 export interface QueryRunOptions {
   signal?: AbortSignal;
@@ -64,6 +68,40 @@ export class QueryTabsStore {
   private counter = 0;
   private executor: QueryExecutor | null = null;
   private readonly execution = createWorkspaceExecution<QueryResult>();
+
+  snapshot(tabs: Tab[]): Record<string, QueryTabSnapshot> {
+    return Object.fromEntries(
+      tabs
+        .filter((tab) => tab.kind === "query")
+        .map((tab) => {
+          const state = this.ensure(tab.id);
+          return [
+            tab.id,
+            { sql: state.sql, result: state.result, error: state.error },
+          ];
+        })
+    );
+  }
+
+  restore(
+    saved: Record<string, QueryTabSnapshot> | undefined,
+    tabs: Tab[]
+  ): void {
+    this.execution.clear();
+    this.states = {};
+    this.counter = 0;
+    for (const tab of tabs.filter((tab) => tab.kind === "query")) {
+      const number = /^Query (\d+)$/.exec(tab.key);
+      this.counter = Math.max(this.counter, Number(number?.[1] ?? 0));
+      const state = this.ensure(tab.id);
+      const previous = saved?.[tab.id];
+      if (previous && typeof previous.sql === "string") {
+        state.sql = previous.sql;
+        state.result = previous.result ?? null;
+        state.error = previous.error ?? null;
+      }
+    }
+  }
 
   setExecutor(executor: QueryExecutor | null): void {
     this.executor = executor;
