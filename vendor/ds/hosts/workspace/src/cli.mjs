@@ -95,6 +95,10 @@ function contentType(filePath) {
       return "text/javascript; charset=utf-8";
     case ".css":
       return "text/css; charset=utf-8";
+    case ".webmanifest":
+      return "application/manifest+json; charset=utf-8";
+    case ".ico":
+      return "image/x-icon";
     case ".json":
       return "application/json; charset=utf-8";
     case ".png":
@@ -143,11 +147,15 @@ async function serve(args) {
 
     let filePath = insideBuild ? candidate : join(buildDir, "index.html");
     if (!existsSync(filePath) || statSync(filePath).isDirectory()) {
-      filePath = join(buildDir, "index.html");
+      const route = `${candidate}.html`;
+      filePath = insideBuild && existsSync(route) ? route :
+        join(buildDir, pathname === "/" ? "index.html" : "404.html");
     }
 
     try {
       res.setHeader("Content-Type", contentType(filePath));
+      if (pathname.endsWith("/service-worker.js") || pathname.endsWith("/manifest.webmanifest"))
+        res.setHeader("Cache-Control", "no-cache");
       createReadStream(filePath).pipe(res);
     } catch (error) {
       res.statusCode = 500;

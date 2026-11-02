@@ -4,7 +4,9 @@
   // refresh, and the back button keep working. The route `+page.svelte`
   // files exist only to make each URL a valid route — the Root reads the
   // location from the Kit router and renders the matching view itself.
-  import type { Snippet } from 'svelte'
+  import { onMount, type Snippet } from 'svelte'
+  import { dev } from '$app/environment'
+  import { registerWorkspacePwa } from '../lib/pwa'
   import { base } from '$app/paths'
   import { page } from '$app/state'
   import '../app.css'
@@ -13,6 +15,8 @@
   import { createKitRouter } from './kit-router.svelte'
 
   let { children }: { children: Snippet } = $props()
+
+  onMount(() => { if (!dev) void registerWorkspacePwa(base) })
 
   const router = createKitRouter()
   const path = $derived(page.url.pathname.slice(base.length) || '/')

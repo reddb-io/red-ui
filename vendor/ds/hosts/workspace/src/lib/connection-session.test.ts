@@ -164,3 +164,27 @@ it("resumes the same sanitized URL without sending its token to another browser 
   expect(calls).toHaveLength(before);
   expect(freshTab.connection.connected).toBe(false);
 });
+
+it("retains a known login through offline startup and resumes it when the network returns", async () => {
+  api();
+  const first = create();
+  await first.connection.connectString("https://alice:secret@bank.example");
+  first.dispose();
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => {
+      throw new TypeError("Failed to fetch");
+    })
+  );
+  const offline = create();
+  await offline.connection.bootstrap();
+  expect(offline.connection.connected).toBe(false);
+  expect(transient.getItem("red-ui:connection-session")).toContain("tab-token");
+  offline.dispose();
+  const { calls } = api();
+  const online = create();
+  await online.connection.bootstrap();
+  expect(online.connection.connected).toBe(true);
+  expect(calls.at(-1)?.auth).toBe("Bearer tab-token");
+  expect(calls.some((call) => call.path === "/auth/login")).toBe(false);
+});

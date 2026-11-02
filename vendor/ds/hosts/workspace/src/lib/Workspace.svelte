@@ -275,6 +275,16 @@
     if (secureStore.store) connection.hydrateUrls()
   })
 
+  // Opening an installed app offline keeps its documents and known session.
+  // Reacquire only the connection on network recovery, never replay its queries.
+  onMount(() => {
+    const reconnect = () => {
+      if (secureStore.surface === 'web' && !workspace.injected && !connection.client && connection.targetResolved) void connection.bootstrap()
+    }
+    window.addEventListener('online', reconnect)
+    return () => window.removeEventListener('online', reconnect)
+  })
+
   // Autosave: debounce-schedule a snapshot on every router/tab state change.
   // Guard on `booted` so we don't snapshot the blank pre-splash state.
   $effect(() => {
