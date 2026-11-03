@@ -385,6 +385,10 @@ export function createConnections(services: ConnectionServices = {}) {
     private disposed = false;
     /** Set after a probe succeeds for the first time — used to gate the Connect screen. */
     connected = $state<boolean>(false);
+    /** Includes credential exchange, before an authenticated client exists. */
+    get connecting(): boolean {
+      return loading.active;
+    }
     active = $state<ConnectionPreset>(PRESETS[1]);
     probe = $state<ProbeResult>({ reachable: false });
     history = $state<HistoryEntry[]>([]);
@@ -624,17 +628,21 @@ export function createConnections(services: ConnectionServices = {}) {
       this.connected = false;
       this.#capabilities = { ...EMPTY_SERVER_CAPABILITIES };
       this.probe = { reachable: false };
+      loading.begin(`Opening ${preset.label}`);
+      loading.step("Signing in", preset.url);
       try {
         const targetProvider = getConnectionProvider();
         if (!isHandoffTokenConsumer(targetProvider))
           throw new Error("This connection is managed by its host.");
-        const token = await new RedClient(preset.url, {
-          fetch: desktopFetch,
-          console: services.console,
-          signal: services.signal,
-        }).login(username, password);
+        const token = await activity.track(`sign-in · ${preset.label}`, () =>
+          new RedClient(preset.url, {
+            fetch: desktopFetch,
+            console: services.console,
+            signal: services.signal,
+          }).login(username, password)
+        );
         if (this.disposed || epoch !== this.epoch) return false;
-        return await this.tryConnect(preset, token);
+        return await this.open(preset, token, true);
       } catch (error) {
         if (this.disposed || epoch !== this.epoch) return false;
         this.probe = {
@@ -642,6 +650,7 @@ export function createConnections(services: ConnectionServices = {}) {
           error:
             error instanceof Error ? error.message : "Database sign-in failed.",
         };
+        loading.fail(this.probe.error);
         return false;
       }
     }
@@ -649,6 +658,14 @@ export function createConnections(services: ConnectionServices = {}) {
     async tryConnect(
       preset: ConnectionPreset,
       token?: string
+    ): Promise<boolean> {
+      return this.open(preset, token);
+    }
+
+    private async open(
+      preset: ConnectionPreset,
+      token?: string,
+      continuingSignIn = false
     ): Promise<boolean> {
       if (this.disposed || services.signal?.aborted) return false;
       const epoch = ++this.epoch;
@@ -665,7 +682,7 @@ export function createConnections(services: ConnectionServices = {}) {
       // timestamped steps so a slow open (sidecar spawn, readiness, handshake,
       // initial stats/schema fetch) shows honest feedback instead of a frozen
       // screen. Fast opens finish before the overlay's reveal threshold.
-      loading.begin(`Opening ${preset.label}`);
+      if (!continuingSignIn) loading.begin(`Opening ${preset.label}`);
       try {
         loading.step("Reaching server", preset.url);
         const targetProvider = getConnectionProvider();
@@ -823,6 +840,7 @@ export function createConnections(services: ConnectionServices = {}) {
     disconnect(preserveSession = false) {
       if (!preserveSession) resume.clear();
       this.epoch += 1;
+      loading.succeed();
       this.connected = false;
       this.probe = { reachable: false };
       this.#client = null;

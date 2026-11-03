@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Badge, Button, StatusIndicator } from '@reddb-io/design-system/base'
+  import { Badge, Button, LoadingIndicator, StatusIndicator } from '@reddb-io/design-system/base'
   import { useRouter } from './router.svelte'
   import { useWorkspace } from './workspace-context'
   import { readBuildInfo } from './build-info'
@@ -18,10 +18,14 @@
 </script>
 
 <div aria-label="Connection status" role="status" class="flex flex-wrap items-center gap-[var(--reddb-spatial-gap-sm)] border-b border-elevation-base-border bg-elevation-sunken-surface px-[var(--reddb-spatial-inset-sm)] py-[var(--reddb-spatial-inset-sm)] text-sm text-foreground">
-  <Button variant="ghost" size="sm" onclick={() => router.go({ view: 'cluster' })} title="Open cluster overview">
-    <StatusIndicator label={connection.connected ? role : 'Not connected'} tone={connection.connected ? 'success' : 'neutral'} />
-    {#if connection.connected}<span class="max-w-full truncate">{connection.active.label}</span>{/if}
-  </Button>
+  {#if connection.connecting}
+    <LoadingIndicator size="sm" label="Connecting…" />
+  {:else}
+    <Button variant="ghost" size="sm" onclick={() => router.go({ view: 'cluster' })} title="Open cluster overview">
+      <StatusIndicator label={connection.connected ? role : 'Not connected'} tone={connection.connected ? 'success' : 'neutral'} />
+      {#if connection.connected}<span class="max-w-full truncate">{connection.active.label}</span>{/if}
+    </Button>
+  {/if}
   {#if connection.connected}
     {#if connection.probe.rtt_ms !== undefined}<Badge>rtt {connection.probe.rtt_ms}ms</Badge>{/if}
     {#if lag !== undefined}<Badge tone={lag > 0 ? 'warning' : 'neutral'}>lag {lag}</Badge>{/if}
@@ -30,7 +34,7 @@
   {/if}
   <div class="ms-auto flex flex-wrap items-center gap-[var(--reddb-spatial-gap-sm)]">
     {#if pendingChanges.count > 0}<Button variant="ghost" size="sm" aria-label={`Pending changes (${pendingChanges.count})`} onclick={() => workspace.dispatch('red:open-pending-changes')}>Pending changes ({pendingChanges.count})</Button>{/if}
-    {#if !connection.connected}<Button size="sm" onclick={() => workspace.dispatch('red:open-connect')}>Connect</Button>{/if}
+    {#if !connection.connected && !connection.connecting}<Button size="sm" onclick={() => workspace.dispatch('red:open-connect')}>Connect</Button>{/if}
     <Button variant="ghost" size="sm" aria-label="Console: toggle developer console" onclick={() => workspace.dispatch('red:toggle-dev-console')}>Console</Button>
     <Badge title={`red-ui ${build.version} · ${build.gitSha} · built ${build.buildTime}`}>v{build.version}</Badge>
   </div>

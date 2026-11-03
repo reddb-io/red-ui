@@ -1,6 +1,6 @@
 <script lang="ts">
   import { useWorkspace } from './workspace-context'
-  import { Button } from '@reddb-io/design-system/base'
+  import { Button, LoadingIndicator } from '@reddb-io/design-system/base'
   import { connectionLost, integrationEmpty, sessionExpired } from '@reddb-io/design-system/base/illustrations'
   import EmptyState from './EmptyState.svelte'
 
@@ -12,17 +12,24 @@
   const signInRequired = $derived(connection.probe.error?.includes('HTTP 401') ?? false)
 </script>
 
-<EmptyState
-  illustration={signInRequired ? sessionExpired : interrupted ? connectionLost : integrationEmpty}
-  illustrationSize="lg"
-  title={signInRequired ? 'Sign in to your database' : interrupted ? 'Connection interrupted' : 'Connect to your database'}
-  message={secureStore.surface === 'embedded' ? 'Restore the database connection in the host application to continue.' : signInRequired ? 'This database requires authentication. Review your connection and sign in to continue.' : message}
->
-  {#snippet actions()}
-    {#if secureStore.surface !== 'embedded'}
-      <Button variant="primary" onclick={() => workspace.dispatch('red:open-connect')}>
-        {signInRequired ? 'Sign in' : interrupted ? 'Review connection' : 'Connect to database'}
-      </Button>
-    {/if}
-  {/snippet}
-</EmptyState>
+{#if connection.connecting}
+  <div class="grid place-items-center gap-[var(--reddb-spatial-gap-md)] p-[var(--reddb-spatial-inset-lg)]">
+    <LoadingIndicator label="Connecting to your database" />
+    <p class="text-caption text-ink-muted">{workspace.loading.current?.label ?? 'Opening connection'}</p>
+  </div>
+{:else}
+  <EmptyState
+    illustration={signInRequired ? sessionExpired : interrupted ? connectionLost : integrationEmpty}
+    illustrationSize="lg"
+    title={signInRequired ? 'Sign in to your database' : interrupted ? 'Connection interrupted' : 'Connect to your database'}
+    message={secureStore.surface === 'embedded' ? 'Restore the database connection in the host application to continue.' : signInRequired ? 'This database requires authentication. Review your connection and sign in to continue.' : message}
+  >
+    {#snippet actions()}
+      {#if secureStore.surface !== 'embedded'}
+        <Button variant="primary" onclick={() => workspace.dispatch('red:open-connect')}>
+          {signInRequired ? 'Sign in' : interrupted ? 'Review connection' : 'Connect to database'}
+        </Button>
+      {/if}
+    {/snippet}
+  </EmptyState>
+{/if}
