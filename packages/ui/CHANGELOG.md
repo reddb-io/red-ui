@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.7.29
+
+### Patch Changes
+
+- 995a620: Show connection progress from the start of database sign-in, including admin Connect handoffs. Keep one progress log through authentication and discovery, distinguish connecting from disconnected, and prevent competing connection attempts while sign-in is pending.
+- Updated dependencies [995a620]
+  - @reddb-io/ui-mcp@0.7.29
+
 ## 0.7.28
 
 ### Patch Changes
