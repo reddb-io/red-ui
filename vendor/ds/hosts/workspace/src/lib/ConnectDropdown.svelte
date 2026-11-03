@@ -31,6 +31,7 @@
   let username = $state('')
   let password = $state('')
   let status = $state<'idle' | 'probing' | 'ok' | 'error'>('idle')
+  const probing = $derived(status === 'probing' || connection.connecting)
   let error = $state<string | null>(null)
   let rtt = $state<number | null>(null)
   let inputEl: HTMLInputElement | undefined = $state()
@@ -141,15 +142,17 @@
   })
 
   const dotClass = $derived(
-    connection.connected ? 'bg-feedback-success-fill' : status === 'error' ? 'bg-feedback-danger-fill' : 'bg-fg-3'
+    connection.connecting ? 'bg-feedback-info-fill' : connection.connected ? 'bg-feedback-success-fill' : status === 'error' ? 'bg-feedback-danger-fill' : 'bg-fg-3'
   )
 
   const triggerLabel = $derived(
-    connection.connected ? connection.active.label : 'Connect'
+    connection.connecting ? 'Connecting…' : connection.connected ? connection.active.label : 'Connect'
   )
 
   const triggerStatus = $derived(
-    connection.connected && connection.probe.rtt_ms !== undefined
+    connection.connecting
+      ? workspace.loading.current?.label ?? 'Opening connection'
+      : connection.connected && connection.probe.rtt_ms !== undefined
       ? `${connection.probe.rtt_ms}ms`
       : connection.connected
         ? 'live'
@@ -190,7 +193,7 @@
   <form onsubmit={submit} class="grid gap-3">
     <Field id={workspace.idFor("connect-url")} label="Connection string" help={`URL or Base64-encoded URL · reachable here: ${supportedHint}`}>
       {#snippet children(control)}
-        <Input {...control} bind:ref={inputEl} bind:value={url} disabled={status === 'probing'}
+        <Input {...control} bind:ref={inputEl} bind:value={url} disabled={probing}
           oninput={() => { username = ''; password = '' }} spellcheck="false"
           placeholder="https://user:password@host or Base64" />
       {/snippet}
@@ -198,17 +201,17 @@
     <Disclosure bind:open={signInOpen} label="Sign in to the database">
       <div class="mt-2 grid gap-2">
         <Field id={workspace.idFor("connect-username")} label="Username">
-          {#snippet children(control)}<Input {...control} autocomplete="username" bind:value={username} disabled={status === 'probing'} />{/snippet}
+          {#snippet children(control)}<Input {...control} autocomplete="username" bind:value={username} disabled={probing} />{/snippet}
         </Field>
         <Field id={workspace.idFor("connect-password")} label="Password">
-          {#snippet children(control)}<Input {...control} type="password" autocomplete="current-password" bind:value={password} disabled={status === 'probing'} />{/snippet}
+          {#snippet children(control)}<Input {...control} type="password" autocomplete="current-password" bind:value={password} disabled={probing} />{/snippet}
         </Field>
         <p class="text-caption text-ink-muted">Credentials go directly to this database. The session stays in this tab.</p>
       </div>
     </Disclosure>
     <Button type="submit" variant="primary"
-      disabled={status === 'probing' || !url.trim() || Boolean(username.trim()) !== Boolean(password)}>
-      {#if status === 'probing'}<Icon icon={Loader2} size="sm" class="animate-spin" /> Connecting…
+      disabled={probing || !url.trim() || Boolean(username.trim()) !== Boolean(password)}>
+      {#if probing}<Icon icon={Loader2} size="sm" class="animate-spin" /> Connecting…
       {:else}<Icon icon={Zap} size="sm" /> Connect{/if}
     </Button>
     <div aria-live="polite" class="min-h-5 flex items-center gap-1.5 text-caption">
@@ -219,7 +222,7 @@
     </div>
   </form>
   {#if canOpenFile}
-    <Button onclick={openFile} disabled={status === 'probing'} class="mt-2 w-full">
+    <Button onclick={openFile} disabled={probing} class="mt-2 w-full">
       <Icon icon={FolderOpen} size="sm" /> Open database file…
     </Button>
   {/if}
@@ -229,7 +232,7 @@
       <div class="grid max-h-[180px] gap-1 overflow-y-auto">
         {#each reachableHistory as h (h.id)}
           <div class="flex items-center gap-1">
-            <Button variant="ghost" size="sm" class="min-w-0 flex-1 justify-between" disabled={status === 'probing'}
+            <Button variant="ghost" size="sm" class="min-w-0 flex-1 justify-between" disabled={probing}
               title={h.url ? undefined : 'Enter credentials to reconnect'}
               onclick={() => {
                 if (h.url) attempt(h.url)
@@ -241,7 +244,7 @@
                 <span>{fmtRel(h.last_used)}</span>
               </span>
             </Button>
-            <Button variant="ghost" size="sm" disabled={status === 'probing'}
+            <Button variant="ghost" size="sm" disabled={probing}
               aria-label={`Remove ${h.label} from history`} onclick={(e: MouseEvent) => forget(e, h.id)}>
               <Icon icon={X} size="sm" />
             </Button>
