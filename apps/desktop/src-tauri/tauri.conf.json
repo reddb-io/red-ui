@@ -28,7 +28,9 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "externalBin": ["binaries/red-ui-reddb"],
+    "externalBin": [
+      "binaries/red-ui-reddb"
+    ],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -38,12 +40,22 @@
     ],
     "category": "DeveloperTool",
     "shortDescription": "reddb client",
-    "longDescription": "Universal client for reddb — embedded, server, docker, cluster."
+    "longDescription": "Universal client for reddb \u2014 embedded, server, docker, cluster.",
+    "resources": [
+      "third-party/RedDB-LICENSE.txt",
+      "third-party/RedDB-SOURCE.txt"
+    ]
   },
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": ["red", "red+tls", "red+unix", "red+http", "red+https"]
+        "schemes": [
+          "red",
+          "red+tls",
+          "red+unix",
+          "red+http",
+          "red+https"
+        ]
       }
     }
   }

@@ -1,3 +1,5 @@
+mod workspace_persistence;
+
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Mutex;
@@ -318,7 +320,10 @@ pub fn run() {
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_dialog::init())
         .manage(EmbeddedRegistry::default())
+        .manage(workspace_persistence::WorkspaceRegistry::default())
         .setup(|app| {
+            #[cfg(feature = "workspace-persistence-smoke")]
+            workspace_persistence::start_smoke(app.handle().clone());
             let handle = app.handle().clone();
             app.deep_link().on_open_url(move |event| {
                 let urls: Vec<String> = event.urls().into_iter().map(|u| u.to_string()).collect();
@@ -327,6 +332,7 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            workspace_persistence::workspace_persistence,
             connection_bootstrap,
             keychain_set,
             keychain_get,
@@ -341,6 +347,7 @@ pub fn run() {
                 // Reap any embedded reddb sidecars when the app exits so we never
                 // leak a file-backed server holding the database open.
                 tauri::RunEvent::Exit => {
+                    tauri::async_runtime::block_on(workspace_persistence::shutdown_all(app_handle));
                     if let Some(registry) = app_handle.try_state::<EmbeddedRegistry>() {
                         if let Ok(mut map) = registry.0.lock() {
                             for (_, embedded) in map.drain() {
@@ -351,7 +358,7 @@ pub fn run() {
                 }
                 // Close-request watchdog (#129): prevent the OS close, signal
                 // the webview to flush its session and destroy the window, then
-                // arm a 500 ms watchdog that force-destroys if the webview hangs
+                // arm a five-second watchdog that force-destroys if the webview hangs
                 // so the OS close button can never be trapped.
                 tauri::RunEvent::WindowEvent { label, event, .. } => {
                     if let tauri::WindowEvent::CloseRequested { api, .. } = event {
@@ -361,7 +368,7 @@ pub fn run() {
                             let win = window.clone();
                             tauri::async_runtime::spawn(async move {
                                 tokio::time::sleep(
-                                    std::time::Duration::from_millis(500),
+                                    std::time::Duration::from_secs(5),
                                 )
                                 .await;
                                 let _ = win.destroy();
