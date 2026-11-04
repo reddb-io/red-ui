@@ -45,8 +45,12 @@ interface CompositeSeriesIdentity {
 export interface CompositeValueSeries extends CompositeSeriesIdentity {
   /** Geometry of this layer, independent of every other series. */
   kind: "line" | "area" | "column";
-  /** Caller-owned observations; last duplicate coordinate wins. */
+  /** Caller-owned observations; last duplicate coordinate wins unless preserveDuplicateX is enabled. */
   data: readonly CompositePoint[];
+  /** Fade an area fill towards its baseline. */
+  gradient?: boolean;
+  /** Preserve same-time points in input order to show vertical resets; inspection reads the last value. Only line and area layers support this. */
+  preserveDuplicateX?: boolean;
   /** Straight segments by default; dash distinguishes trend or target lines. */
   dash?: "solid" | "dashed" | "dotted";
 }
@@ -75,6 +79,8 @@ interface ReferenceIdentity {
   label: string;
   /** DS Series Role; defaults to six. */
   series?: ChartSeries;
+  /** Show the reference label at the plot edge when space permits. */
+  showLabel?: boolean;
 }
 /** A reference level or observation marker. Its direction follows the chosen orientation. */
 export type CompositeReference = ReferenceIdentity & (
@@ -96,6 +102,7 @@ export interface ResolvedCompositeSeries {
   axis: "primary" | "secondary";
   paint: string;
   dash?: string;
+  gradient?: boolean;
   points: ResolvedCompositePoint[];
   samples: Map<number, ResolvedCompositePoint>;
 }
@@ -126,7 +133,7 @@ export interface CompositeModel {
   secondaryDomain: [number, number];
   categorical: boolean;
   interval: number;
-  references: { id: string; label: string; paint: string; kind: "value" | "sample"; value: number; axis: "primary" | "secondary" }[];
+  references: { id: string; label: string; paint: string; kind: "value" | "sample"; value: number; axis: "primary" | "secondary"; showLabel?: boolean }[];
 }
 export const compositePaint = (series: ChartSeries = 1) => `var(--reddb-color-series-${series})`;
 export const compositeDash = (dash?: "solid" | "dashed" | "dotted") => dash === "dashed" ? "6 3" : dash === "dotted" ? "2 3" : undefined;
@@ -171,6 +178,8 @@ export function resolveCompositeChart(data: readonly CompositeChartSeries[], ori
     if (item.axis === "secondary" && !secondaryAxis?.label.trim()) throw new Error("CompositeChart: secondary layers require a named secondaryAxis.");
     if (item.kind === "candlestick" && orientation === "horizontal") throw new Error("CompositeChart: candles require vertical orientation.");
     const samples = new Map<number, ResolvedCompositePoint>();
+    const points: ResolvedCompositePoint[] = [];
+    if ("preserveDuplicateX" in item && item.preserveDuplicateX && item.kind === "column") throw new Error("CompositeChart: duplicate coordinates can only be preserved for line or area layers.");
     for (const point of item.data) {
       const x = coordinate(point.x);
       if (!Number.isFinite(x)) continue;
@@ -179,8 +188,9 @@ export function resolveCompositeChart(data: readonly CompositeChartSeries[], ori
         const valid = [point.open, point.high, point.low, point.close].every(Number.isFinite) && point.low <= Math.min(point.open, point.close) && point.high >= Math.max(point.open, point.close);
         samples.set(x, { x, value: valid ? point.close : null, ...(valid ? { candle: point } : {}) });
       } else samples.set(x, { x, value: typeof point.y === "number" && Number.isFinite(point.y) ? point.y : null, paint: point.color ? chartColor({ color: point.color, series: item.series }) : undefined });
+      points.push(samples.get(x)!);
     }
-    return { format: (item.axis === "secondary" ? secondaryAxis : primaryAxis)?.format, id: item.id, label: item.label, kind: item.kind, axis: item.axis ?? "primary", paint: chartColor(item, options.palette, automatic), dash: compositeDash("dash" in item ? item.dash : undefined), samples, points: [...samples.values()].sort((a, b) => a.x - b.x) };
+    return { format: (item.axis === "secondary" ? secondaryAxis : primaryAxis)?.format, id: item.id, label: item.label, kind: item.kind, axis: item.axis ?? "primary", paint: chartColor(item, options.palette, automatic), dash: compositeDash("dash" in item ? item.dash : undefined), gradient: "gradient" in item ? item.gradient : undefined, samples, points: ("preserveDuplicateX" in item && item.preserveDuplicateX ? points : [...samples.values()]).sort((a, b) => a.x - b.x) };
   });
   // Stable sort preserves input order for layers with the same explicit order.
   const ordered = series.map((item, index) => ({ item, order: data[index]!.order ?? index })).sort((a, b) => a.order - b.order).map(entry => entry.item);
@@ -198,7 +208,7 @@ export function resolveCompositeChart(data: readonly CompositeChartSeries[], ori
     const value = reference.kind === "value" ? reference.value : coordinate(reference.x);
     const axis = reference.kind === "value" ? reference.axis ?? "primary" : "primary";
     if (axis === "secondary" && !secondaryAxis?.label.trim()) throw new Error("CompositeChart: secondary references require a named secondaryAxis.");
-    return Number.isFinite(value) ? [{ id: reference.id, label: reference.label, paint: compositePaint(reference.series ?? 6), kind: reference.kind, value, axis } as const] : [];
+    return Number.isFinite(value) ? [{ id: reference.id, label: reference.label, paint: compositePaint(reference.series ?? 6), kind: reference.kind, value, axis, showLabel: reference.showLabel } as const] : [];
   });
   const stacked = (axis: "primary" | "secondary", declared?: readonly [number, number]) => {
     if (options.columnMode !== "stacked") return valueDomain(series, axis, declared);

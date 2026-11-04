@@ -1,4 +1,5 @@
 import { tv } from "tailwind-variants";
+import { typeRoleMerge } from "@reddb-io/design-system/base/recipes";
 
 /** One Density-responsive composition for field associations and independently named actions. */
 export const settingsRow = tv({
@@ -17,4 +18,4 @@ export const settingsRow = tv({
     required: "ms-[var(--reddb-spatial-gap-sm)]",
     error: "m-0 break-words text-caption text-feedback-danger-foreground",
   },
-});
+}, typeRoleMerge);

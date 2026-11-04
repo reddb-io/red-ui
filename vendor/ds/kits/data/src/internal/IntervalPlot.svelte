@@ -57,7 +57,7 @@
           {/each}
         {/if}
         <Mark id={item.id} label={`${item.label}: ${formatDuration(item.end-item.start)} · ${item.tone??"neutral"}`} {selected} onselect={interactive?select:undefined}>
-          <text x={item.depth*12+4} y={y+12} fill={selected===item.id?ink:mutedInk} class="text-xs">{short(item.label,Math.max(6,Math.floor((left-item.depth*12-16)/7)))}</text>
+          <text x={item.depth*12+4} y={y+12} fill={ink} class="text-xs">{short(item.label,Math.max(6,Math.floor((left-item.depth*12-16)/7)))}</text>
           {#if end>=left&&x<=w-12}
             {@const startX=Math.max(left,x)} {@const bw=Math.max(2,Math.min(w-12,end)-startX)}
             <rect x={startX} {y} width={bw} height={18} rx={3} fill={tint(color,selected===item.id?40:18)} stroke={color} stroke-width={selected===item.id?2:1}/>

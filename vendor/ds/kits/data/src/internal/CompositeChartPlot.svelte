@@ -21,7 +21,9 @@
   yDomain={layout.horizontal ? model.sampleDomain : model.primaryDomain}
   xNice={false} yNice={false} tooltipContext={false}>
   <Svg aria-hidden="true">
-    <defs><clipPath id={clipId}><rect width={layout.plotWidth} height={layout.plotHeight} /></clipPath></defs>
+    <defs><clipPath id={clipId}><rect width={layout.plotWidth} height={layout.plotHeight} /></clipPath>
+      {#each geometry.layers as layer, index (layer.id)}{#if layer.gradient}<linearGradient id={`${uid}-area-${index}`} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color={layer.paint} stop-opacity="0.24" /><stop offset="100%" stop-color={layer.paint} stop-opacity="0" /></linearGradient>{/if}{/each}
+    </defs>
     {#if presentation === "full"}
       <g data-chart-grid stroke="var(--reddb-color-muted)">
         {#each layout.primaryTicks as tick}
@@ -31,9 +33,9 @@
       </g>
     {/if}
     <g clip-path={`url(#${clipId})`}>
-      {#each geometry.layers as layer (layer.id)}
+      {#each geometry.layers as layer, index (layer.id)}
         <g data-composite-layer={layer.id} data-composite-kind={layer.kind} data-composite-axis={layer.axis}>
-          {#if layer.fill}<path d={layer.fill} fill={layer.paint} fill-opacity={0.2} />{/if}
+          {#if layer.fill}<path d={layer.fill} fill={layer.gradient ? `url(#${uid}-area-${index})` : layer.paint} fill-opacity={layer.gradient ? 1 : 0.2} />{/if}
           {#each layer.rects as rect}<rect {...rect} fill={rect.paint ?? layer.paint} data-composite-column />{/each}
           {#if model.options?.dataLabels === "value"}
             {#each layer.rects as rect}
@@ -58,6 +60,9 @@
       {#each geometry.references as reference (reference.id)}
         <line data-composite-reference={reference.id} x1={reference.x1} x2={reference.x2} y1={reference.y1} y2={reference.y2}
           stroke={reference.paint} stroke-dasharray="4 3"><title>{reference.label}</title></line>
+        {#if reference.showLabel && reference.kind === "sample" && !layout.horizontal}
+          <text data-reference-label={reference.id} x={reference.x1} y={12} text-anchor={reference.x1 > layout.plotWidth / 2 ? "end" : "start"} fill="var(--reddb-color-ink-muted)" class="text-xs">{reference.label}</text>
+        {/if}
       {/each}
       {#if cursor !== undefined}
         {@const position = geometry.cursor(cursor)}
