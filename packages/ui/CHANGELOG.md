@@ -1,5 +1,12 @@
 # @reddb-io/ui
 
+## 0.8.1
+
+### Patch Changes
+
+- ac28aaa: Sync Design System v2026.11.7 through the pinned Producer. Restore SettingsRow label and description hierarchy in Appearance and Settings, and include the new ActivityTimeline and ProjectionChart components and chart improvements in the canonical Data Kit.
+  - @reddb-io/ui-mcp@0.8.1
+
 ## 0.8.0
 
 ### Minor Changes
