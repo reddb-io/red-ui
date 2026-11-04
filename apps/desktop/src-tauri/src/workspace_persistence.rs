@@ -148,7 +148,10 @@ async fn start(
             match event {
                 CommandEvent::Stdout(bytes) => {
                     if let Ok(handshake) = serde_json::from_slice::<Handshake>(&bytes) {
-                        if handshake.protocol == 1 && handshake.port > 0 && handshake.token.len() == 64 {
+                        if handshake.protocol == 1
+                            && handshake.port > 0
+                            && handshake.token.len() == 64
+                        {
                             return Ok(handshake);
                         }
                     }
@@ -339,6 +342,30 @@ async fn smoke(app: &tauri::AppHandle) -> Result<(), CommandError> {
     call("first", "vaultUnlock", json!({})).await?;
     call("first", "commit", json!({ "metadata": { "draft": "SELECT 42", "profile": "admin" }, "secrets": { "admin": "desktop smoke private credential" } })).await?;
     call("second", "read", json!({})).await?;
+    // Exercise the actual webview IPC boundary as well as the Rust handler.
+    let window = app
+        .get_webview_window("main")
+        .ok_or_else(|| failure("Smoke webview is unavailable"))?;
+    let ipc_args = json!({ "profile": profile, "owner": "second", "method": "commit", "params": { "metadata": { "ipc_smoke": "verified" }, "secrets": {} } });
+    let script = format!("if (window.__TAURI_INTERNALS__ && !window.__redWorkspaceSmoke) {{ window.__redWorkspaceSmoke = true; window.__TAURI_INTERNALS__.invoke('workspace_persistence', {ipc_args}).catch(() => {{}}); }}");
+    let deadline = std::time::Instant::now() + Duration::from_secs(15);
+    loop {
+        window
+            .eval(&script)
+            .map_err(|_| failure("Could not reach the smoke webview"))?;
+        if call("first", "read", json!({}))
+            .await?
+            .get("ipc_smoke")
+            .and_then(Value::as_str)
+            == Some("verified")
+        {
+            break;
+        }
+        if std::time::Instant::now() >= deadline {
+            return Err(failure("Webview IPC did not commit workspace metadata"));
+        }
+        tokio::time::sleep(Duration::from_millis(100)).await;
+    }
     {
         let registry = app.state::<WorkspaceRegistry>();
         let databases = registry.0.lock().await;
