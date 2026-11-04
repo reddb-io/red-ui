@@ -29,11 +29,13 @@ async function files(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
   return (
     await Promise.all(
-      entries.map((entry) =>
-        entry.isDirectory()
-          ? files(resolve(dir, entry.name))
-          : [resolve(dir, entry.name)]
-      )
+      entries
+        .filter((entry) => entry.name !== ".red")
+        .map((entry) =>
+          entry.isDirectory()
+            ? files(resolve(dir, entry.name))
+            : [resolve(dir, entry.name)]
+        )
     )
   ).flat();
 }
