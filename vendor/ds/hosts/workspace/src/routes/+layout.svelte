@@ -10,7 +10,7 @@
   import { base } from '$app/paths'
   import { page } from '$app/state'
   import '../app.css'
-  import Workspace from '../lib/Workspace.svelte'
+  import WorkspaceShell from './WorkspaceShell.svelte'
   import ErrorBoundary from '../lib/ErrorBoundary.svelte'
   import { createKitRouter } from './kit-router.svelte'
 
@@ -31,6 +31,6 @@
   <!-- Black-screen shield (#126): a render crash in the Workspace shows the
        recovery screen instead of tearing down the webview to black. -->
   <ErrorBoundary>
-    <Workspace {router} persistenceKey="default" themeTarget={typeof document !== "undefined" ? document.documentElement : null} />
+    <WorkspaceShell {router} />
   </ErrorBoundary>
 {/if}

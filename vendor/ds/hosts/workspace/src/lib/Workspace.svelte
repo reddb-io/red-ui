@@ -31,6 +31,7 @@
   import { detectCapability } from './capability'
   import { defaultSubpage } from './collection-pages'
   import { createStateRouter, pathToLocation, setRouter, type Router, type View } from './router.svelte'
+  import type { WorkspacePersistence } from './workspace-persistence'
   import type { WorkspaceSnapshot } from './workspace-session'
 
   let {
@@ -38,6 +39,7 @@
     runtime: suppliedRuntime,
     label,
     persistenceKey,
+    persistence,
     portalTarget: injectedPortalTarget,
     connectionProvider,
     showConnect = true,
@@ -50,6 +52,7 @@
     runtime?: WorkspaceRuntime
     label?: string
     persistenceKey?: string
+    persistence?: WorkspacePersistence
     portalTarget?: HTMLElement
     connectionProvider?: ConnectionProvider
     showConnect?: boolean
@@ -69,7 +72,7 @@
   // The runtime and router are fixed for this mount. Ownership transfers to
   // the Workspace; disposal never changes another mount or its host provider.
   // svelte-ignore state_referenced_locally
-  const workspace = setWorkspaceRuntime(suppliedRuntime ?? createWorkspaceRuntime({ connectionProvider, persistenceKey }))
+  const workspace = setWorkspaceRuntime(suppliedRuntime ?? createWorkspaceRuntime({ connectionProvider, persistenceKey, persistence }))
   const { connection, theme, skins, secureStore, pendingChanges, queryTabs, tabs, workspaceSession, loading, devConsole } = workspace
   let portalTarget = $state<HTMLDivElement>()
 
@@ -118,6 +121,8 @@
   let restored = $state(false)
   onMount(() => {
     // Restore documents before any route effect can mint an empty query tab.
+    void workspace.ready.then(() => {
+    if (workspace.session.disposed) return
     const snap = workspaceSession.restore()
     if (snap) {
       applySnapshot(snap)
@@ -129,6 +134,7 @@
       }
     }
     restored = true
+    })
     if (workspace.injected) {
       // Host-injected provider (#33): adopt its authenticated connection.
       void connection.adoptInjected().then(() => {
@@ -152,7 +158,7 @@
   let shell = $state<HTMLDivElement>()
 
   onDestroy(() => {
-    if (booted) workspaceSession.flush(buildSnapshot())
+    if (booted && restored) workspaceSession.flush(buildSnapshot())
     workspace.dispose()
   })
 
@@ -247,9 +253,12 @@
   const REFRESH_MS = 5000
 
   onMount(() => {
+    void workspace.ready.then(() => {
+    if (workspace.session.disposed) return
     const target = themeTarget ?? workspace.root
     theme.init({ target, persist: Boolean(workspace.persistenceKey) && persistTheme, initial: initialTheme })
     skins.init(target)
+    })
   })
 
   // Hard lock gate: while the secure store is locked, no automatic network
@@ -259,7 +268,7 @@
   // so a credential-less Surface that boots straight to data never probes a
   // default it was never pointed at.
   $effect(() => {
-    if (secureStore.locked || !connection.targetResolved) return
+    if (secureStore.requiresUnlock || !connection.targetResolved) return
     // Poll only an acquired client. Re-entering connect here races with the
     // boot/login token exchange; tracking refresh reads also retriggers this
     // effect whenever a probe changes instead of waiting for the interval.
@@ -296,7 +305,7 @@
   // Flush immediately on page hide / window blur so an edit made
   // right before closing is never lost to the debounce window.
   onMount(() => {
-    const flush = () => { if (booted) workspaceSession.flush(buildSnapshot()) }
+    const flush = () => { if (booted && restored) workspaceSession.flush(buildSnapshot()) }
     document.addEventListener('visibilitychange', flush)
     window.addEventListener('blur', flush)
     window.addEventListener('pagehide', flush)
@@ -320,7 +329,8 @@
     void import('@tauri-apps/api/event')
       .then(({ listen }) =>
         listen<void>('close-request', async () => {
-          workspaceSession.flush(buildSnapshot())
+          if (restored) workspaceSession.flush(buildSnapshot())
+          try { await workspace.flushPersistence() } catch { /* The metadata recovery journal is retained. */ }
           const { getCurrentWindow } = await import('@tauri-apps/api/window')
           await getCurrentWindow().destroy()
         }),
@@ -421,7 +431,9 @@
     <div data-workspace-body class="flex min-h-0 min-w-0 overflow-hidden">
     <WorkspaceNavigation label={label ?? connection.active.label} />
     <svelte:element this={workspace.persistenceKey === 'default' ? 'main' : 'div'} class="relative min-h-0 min-w-0 flex-1 overflow-hidden z-[1]">
-      {#if router.view === 'ask'}
+      {#if !restored}
+        <div role="status" class="flex h-full items-center justify-center text-sm text-ink-muted">Opening saved workspace…</div>
+      {:else if router.view === 'ask'}
         <AskView />
       {:else if router.view === 'cluster'}
         <ClusterView />

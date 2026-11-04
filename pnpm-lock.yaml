@@ -205,6 +205,9 @@ importers:
       "@lucide/svelte":
         specifier: ^1.0.1
         version: 1.61.0(svelte@5.55.9)
+      "@reddb-io/browser":
+        specifier: 0.8.0
+        version: 0.8.0
       "@tauri-apps/api":
         specifier: ^2.5.0
         version: 2.11.0
@@ -1575,6 +1578,12 @@ packages:
     resolution:
       {
         integrity: sha512-oOAWABowe8EAbMyWKM0tYDKi8Yaox52D+HWZhAIJqQXbqe0xI/GV7FhLWqlEKreMkfDjshR5FKgi3mnle0h6Eg==,
+      }
+
+  "@reddb-io/browser@0.8.0":
+    resolution:
+      {
+        integrity: sha512-FZUOvhd3fOA5uIxCx8d8s33hv2fwtV7RNAdYJdY+ISB8aw33F84h02v85goFRkEmYiEenBltsLUJo/X5fn6ZOg==,
       }
 
   "@rollup/rollup-android-arm-eabi@4.60.4":
@@ -5628,6 +5637,8 @@ snapshots:
   "@protobufjs/pool@1.1.0": {}
 
   "@protobufjs/utf8@1.1.1": {}
+
+  "@reddb-io/browser@0.8.0": {}
 
   "@rollup/rollup-android-arm-eabi@4.60.4":
     optional: true

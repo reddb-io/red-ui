@@ -141,7 +141,9 @@
     "./hosts/workspace/compat": "./hosts/workspace/src/compat/lib/index.ts",
     "./hosts/workspace/compat.css": "./hosts/workspace/src/compat/tokens/styles.css",
     "./hosts/workspace/embed": "./hosts/workspace/src/lib/embed/index.ts",
+    "./hosts/workspace/persistence": "./hosts/workspace/src/lib/default-workspace-persistence.ts",
     "./hosts/workspace/renderers": "./hosts/workspace/src/lib/renderers/index.ts",
+    "./hosts/workspace/runtime-staging": "./hosts/workspace/src/stage-offline-runtime.mjs",
     "./hosts/workspace/styles.css": "./hosts/workspace/src/app.css",
     "./hosts/workspace/tokens": "./hosts/workspace/src/compat/tokens/index.ts",
     "./hosts/workspace/tokens.css": "./hosts/workspace/src/compat/tokens/tokens.css",
@@ -152,6 +154,7 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.12.4",
+    "@reddb-io/browser": "0.8.0",
     "@tauri-apps/api": "^2.5.0",
     "@tauri-apps/plugin-dialog": "^2.5.0",
     "@tauri-apps/plugin-http": "^2.5.9",

@@ -9,12 +9,17 @@ const cacheName = `${prefix}${version}`;
 // The static adapter's fallback has absolute/base-aware asset URLs, unlike
 // index.html's route-relative URLs. It can boot any deep link while offline.
 const shell = new URL("404.html", scope).pathname;
+// Filled by stage-offline-runtime.mjs after Vite emits its nested Worker/WASM.
+const localRuntime = "__REDDB_WORKSPACE_OFFLINE_RUNTIME__"
+  .split("|")
+  .filter(Boolean)
+  .map((path) => new URL(path, scope).pathname);
 const identity = files.filter((path) =>
   /\/(?:manifest\.webmanifest|favicon\.(?:ico|svg)|apple-touch-icon-180\.png|(?:icon|maskable)-(?:192|512)\.png)$/.test(
     path
   )
 );
-const assets = new Set([...build, ...identity, shell]);
+const assets = new Set([...build, ...localRuntime, ...identity, shell]);
 
 worker.addEventListener("install", (event) => {
   event.waitUntil(

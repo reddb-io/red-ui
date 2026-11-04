@@ -22,6 +22,26 @@ Durable snapshots retain documents and SQL drafts. Completed query results stay
 in the tab cache, with a drafts-only fallback when browser storage is full or
 blocked. Reload never replays SQL or resumes an in-flight query.
 
+The standalone web/PWA stores workspace metadata in a local RedDB file in OPFS.
+Its reusable Worker releases the file between operations; an application Web
+Lock serializes tabs. A metadata-only tab journal protects drafts during an
+immediate reload. The status bar acknowledges a save only after a commit.
+Unsupported platforms retain legacy metadata storage; file corruption, quota
+and Worker failures report an error and preserve the original data.
+
+Connection credentials are saved only by explicit opt-in, including App
+handoffs. Browser users set a master password for the native RedDB Vault;
+desktop hosts supply its opening credential through the OS keychain and a
+private `red workspace-store` child. Saved labels remain visible while locked.
+Locking this local Vault leaves the current database session connected. Tokens
+can expire, in which case the user signs in again. Legacy encrypted credentials
+are migrated after unlock with commit/readback verification; originals remain.
+
+Embedded mounts have no persistence engine by default. Hosts may explicitly
+provide `WorkspacePersistence` and a private `persistenceKey`. The optional
+`/persistence` entry selects the standalone engine without adding Worker/WASM
+dependencies to generic Kits or to the default embed bundle.
+
 The standalone HTTPS web surface is installable as **RedUI** from the browser's
 Install menu (on iOS: Share → Add to Home Screen). The manifest, normal/adaptive
 icons and Apple touch icon come from the Assets Contract; host metadata opts in
@@ -44,6 +64,8 @@ embedded hosts do not register this worker. Local CLI hosting serves the
 manifest with its manifest MIME type and the worker without HTTP cache reuse.
 
 PWA browser gate: `node packages/workspace-host/tools/pwa-smoke.mjs` after build.
+Local Vault, immediate reload and persistent-browser restart gate:
+`node packages/workspace-host/tools/workspace-persistence-smoke.mjs` after build.
 Set `PWA_APP_URL`, `PWA_DATABASE_URL`, `PWA_COLLECTION` and `PWA_EXPECT_ROWS` to
 verify a deployed consumer against a real disposable database. The local gate
 also stages a second worker revision and verifies it waits without reloading

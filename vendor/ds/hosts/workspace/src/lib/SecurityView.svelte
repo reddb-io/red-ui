@@ -55,7 +55,7 @@
 
   async function refresh() {
     const client = connection.client
-    if (!client || secureStore.locked || !connected) {
+    if (!client || secureStore.requiresUnlock || !connected) {
       whoami = null
       tenants = []
       users = []
@@ -127,7 +127,7 @@
   }
 
   $effect(() => {
-    if (secureStore.locked) return
+    if (secureStore.requiresUnlock) return
     void activeUrl
     void connected
     refresh()
@@ -144,7 +144,7 @@
       <DSButton variant="secondary" size="sm"
         type="button"
         onclick={refresh}
-        disabled={loading || secureStore.locked || !connected}
+        disabled={loading || secureStore.requiresUnlock || !connected}
 
       >
         <DSIcon icon={RefreshCw} color="current" class={loading ? ' animate-spin' : ''} />
@@ -153,7 +153,7 @@
     {/snippet}
   </PageHeader>
 
-  {#if secureStore.locked}
+  {#if secureStore.requiresUnlock}
     <EmptyState illustration={accessLocked} title="Security locked" message="Enter the master password before red-ui loads auth data." />
   {:else if !connected}
     <DisconnectedState message="Connect to a reddb instance to inspect its users, policies and security posture." />

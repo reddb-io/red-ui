@@ -130,3 +130,5 @@ export type {
   VcsDiff,
   VcsEnvelope,
 } from "./reddb/index";
+
+export type { WorkspacePersistence, MetadataChanges, PersistenceState } from "./workspace-persistence";

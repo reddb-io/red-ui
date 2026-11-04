@@ -1,7 +1,8 @@
 <script lang="ts">
   import { useWorkspace } from './workspace-context'
   import { onMount } from 'svelte'
-  import { Button, Disclosure, Field, Icon, Input, Popover } from '@reddb-io/design-system/base'
+  import { Alert, Button, Checkbox, Disclosure, Field, Icon, Input, Popover } from '@reddb-io/design-system/base'
+  import type { LocalConnectionProfile } from './local-connections.svelte'
   import { makeCustomConnection, parseConnectionInput } from './connections.svelte'
   import Zap from '@lucide/svelte/icons/zap'
   import Loader2 from '@lucide/svelte/icons/loader-2'
@@ -14,7 +15,7 @@
   import FolderOpen from '@lucide/svelte/icons/folder-open'
 
   const workspace = useWorkspace()
-  const { connection, openDatabaseFile, unreachableConnectHint } = workspace
+  const { connection, secureStore, localConnections, openDatabaseFile, unreachableConnectHint } = workspace
 
   const DEFAULT_URL = 'red://localhost'
 
@@ -27,6 +28,9 @@
 
   let open = $state(false)
   let signInOpen = $state(false)
+  let remember = $state(false)
+  let savedMessage = $state('')
+  let savedConnectionName = $state('')
   let url = $state(pickDefaultUrl())
   let username = $state('')
   let password = $state('')
@@ -77,12 +81,51 @@
     if (ok) {
       status = 'ok'
       rtt = connection.probe.rtt_ms ?? null
+      if (remember && credentials && localConnections) {
+        try {
+          await localConnections.save(parsed.url, savedConnectionName.trim() || `${credentials.username} @ ${preset.label}`, credentials)
+          savedMessage = 'Credentials saved on this device'
+        } catch {
+          error = 'Connected, but credentials could not be saved. Unlock the local Vault and retry.'
+          status = 'error'
+          return
+        }
+      }
       setTimeout(() => (open = false), 350)
     } else {
       status = 'error'
       error = connection.probe.error ?? 'unreachable'
     }
   }
+
+  async function connectSaved(profile: LocalConnectionProfile) {
+    if (secureStore.locked) { secureStore.requestUnlock(); return }
+    try {
+      const credentials = await localConnections!.credentials(profile)
+      const preset = makeCustomConnection(profile.endpoint)
+      const ok = 'token' in credentials
+        ? await connection.tryConnect(preset, credentials.token)
+        : await connection.login(preset, credentials.username, credentials.password)
+      if (ok) open = false
+      else { status = 'error'; error = connection.probe.error ?? 'Sign in again to renew this saved connection.' }
+    } catch { status = 'error'; error = 'Could not open this saved connection. Unlock the local Vault and retry.' }
+  }
+
+  async function saveCurrentSession() {
+    const token = connection.tokenForSaving()
+    if (!token || !localConnections) return
+    try {
+      await localConnections.save(connection.active.url, savedConnectionName.trim() || connection.active.label, { token })
+      savedMessage = 'Session saved on this device. Sign in again when it expires.'
+    } catch { status = 'error'; error = 'Could not save this session. Unlock the local Vault and retry.' }
+  }
+
+  async function forgetSaved(profile: LocalConnectionProfile) {
+    try { await localConnections!.forget(profile) }
+    catch { status = 'error'; error = 'Could not remove this saved connection. Unlock the local Vault and retry.' }
+  }
+
+  $effect(() => { if (open && localConnections) void localConnections.load().catch(() => {}) })
 
   function submit(e: Event) {
     e.preventDefault()
@@ -209,6 +252,9 @@
         <p class="text-caption text-ink-muted">Credentials go directly to this database. The session stays in this tab.</p>
       </div>
     </Disclosure>
+    {#if localConnections && secureStore.available}
+      <Checkbox label="Save credentials on this device" bind:checked={remember} disabled={secureStore.locked} />
+    {/if}
     <Button type="submit" variant="primary"
       disabled={probing || !url.trim() || Boolean(username.trim()) !== Boolean(password)}>
       {#if probing}<Icon icon={Loader2} size="sm" class="animate-spin" /> Connecting…
@@ -221,6 +267,40 @@
         <span class="break-words text-feedback-danger-foreground">{error}</span>{/if}
     </div>
   </form>
+  {#if localConnections}
+    <section aria-label="Local credentials" class="mt-[var(--reddb-spatial-gap-md)] grid gap-[var(--reddb-spatial-gap-sm)] border-t border-elevation-base-border pt-[var(--reddb-spatial-inset-md)]">
+      {#if secureStore.available}
+        <div class="flex items-center justify-between gap-[var(--reddb-spatial-gap-sm)]">
+          <span class="text-caption text-ink-muted">Local Vault · {secureStore.locked ? 'Locked' : 'Unlocked'}</span>
+          {#if secureStore.locked}
+            <Button size="sm" disabled={secureStore.unlocking} onclick={() => secureStore.requestUnlock()}>{secureStore.unlocking ? 'Unlocking…' : secureStore.surface === 'standalone' ? 'Unlock OS keychain' : secureStore.needsSetup ? 'Set master password' : 'Unlock Vault'}</Button>
+          {:else}
+            <Button size="sm" onclick={() => { remember = false; void secureStore.lock().catch(() => { error = 'Could not lock the local Vault'; status = 'error' }) }}>Lock Vault</Button>
+          {/if}
+        </div>
+        {#if !secureStore.locked && (remember || connection.connected && connection.tokenForSaving())}
+          <Field label="Saved connection name">
+            {#snippet children(control)}<Input {...control} bind:value={savedConnectionName} placeholder={connection.active.label} />{/snippet}
+          </Field>
+        {/if}
+        {#if connection.connected && connection.tokenForSaving()}
+          <Button size="sm" disabled={secureStore.locked} onclick={saveCurrentSession}>Save current session on this device</Button>
+        {/if}
+      {:else}
+        <p class="text-caption text-ink-muted">Credential saving is unavailable on this device. Your current session can still reconnect after a reload.</p>
+      {/if}
+      {#if secureStore.available && secureStore.error}<Alert tone="danger" title={secureStore.error} />{/if}
+      {#if savedMessage}<p role="status" class="text-caption text-ink-muted">{savedMessage}</p>{/if}
+      {#each localConnections.profiles as profile (profile.id)}
+        <div class="flex items-center gap-[var(--reddb-spatial-gap-sm)]">
+          <Button variant="ghost" size="sm" class="min-w-0 flex-1 justify-start" disabled={probing} onclick={() => connectSaved(profile)}>
+            <span class="truncate" title={profile.endpoint}>{profile.label}</span>
+          </Button>
+          <Button variant="ghost" size="sm" disabled={secureStore.locked} aria-label={`Forget saved connection ${profile.label}`} onclick={() => forgetSaved(profile)}><Icon icon={X} size="sm" /></Button>
+        </div>
+      {/each}
+    </section>
+  {/if}
   {#if canOpenFile}
     <Button onclick={openFile} disabled={probing} class="mt-2 w-full">
       <Icon icon={FolderOpen} size="sm" /> Open database file…

@@ -21,6 +21,7 @@ import { ThemeStore, theme as legacyTheme } from "./theme.svelte";
 import { SkinStore, skins as legacySkins } from "./skins/skins.svelte";
 import {
   WorkspaceSession,
+  acceptsSnapshot,
   workspaceSession as legacyPersistence,
 } from "./workspace-session";
 import {
@@ -44,6 +45,9 @@ import {
 } from "./renderers";
 import { MemoryStorage, scopedStorage } from "./workspace-storage";
 import { detectSurface, type Surface } from "./surface";
+import { WorkspaceMetadataStorage, type WorkspacePersistence, type PersistenceState } from "./workspace-persistence";
+import { LocalConnections } from "./local-connections.svelte";
+import { readUrlOpenContractBootstrap } from "./reddb/connection-bootstrap";
 import type { KeyValueStorage } from "./connection-history";
 
 export type WorkspaceCommand =
@@ -72,6 +76,14 @@ export interface WorkspaceServices {
 }
 
 export interface WorkspaceRuntime extends WorkspaceServices {
+  /** Metadata recovery completes independently of Vault unlock and connection login. */
+  readonly ready: Promise<void>;
+  /** Acknowledge pending local metadata commits before closing the host. */
+  flushPersistence(): Promise<void>;
+  /** Reports actual local durability; optimistic edits are never labeled saved. */
+  readonly persistenceStatus: { state: PersistenceState; error: string | null };
+  /** Explicitly saved device-local connection profiles and credential references. */
+  readonly localConnections?: LocalConnections;
   readonly id: string;
   readonly injected: boolean;
   readonly persistenceKey?: string;
@@ -90,6 +102,8 @@ export interface WorkspaceRuntime extends WorkspaceServices {
 export interface WorkspaceRuntimeOptions {
   /** The host retains ownership of authentication and its provider. */
   connectionProvider?: ConnectionProvider;
+  /** Owned async backend, disposed with the runtime. Embedded mounts omit it by default. */
+  persistence?: WorkspacePersistence;
   /** Omit for private memory. "default" preserves the standalone PWA's keys. */
   persistenceKey?: string;
   /** Explicit surface ownership, independent of other mounts in this page. */
@@ -106,9 +120,15 @@ export interface WorkspaceRuntimeOptions {
 export function createWorkspaceRuntime(
   options: WorkspaceRuntimeOptions = {}
 ): WorkspaceRuntime {
+  // Capture and sanitize credential URLs before any asynchronous engine work.
+  const launch = options.persistenceKey === "default" && !options.connectionProvider
+    ? readUrlOpenContractBootstrap() : null;
+  const surface = options.surface ?? (options.connectionProvider ? "embedded" : detectSurface());
+  const persistenceStatus = $state<{ state: PersistenceState; error: string | null }>({ state: "legacy", error: null });
   const id = `workspace-${globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)}`;
   const legacy = options.persistenceKey === "default";
   const prefix = `red-ui:workspace:${encodeURIComponent(options.persistenceKey ?? id)}:`;
+  const journalKey = `red-ui:journal:${encodeURIComponent(options.persistenceKey ?? id)}:v1`;
   const keys = legacy
     ? {
         connection: "red-ui:connection",
@@ -136,10 +156,10 @@ export function createWorkspaceRuntime(
         (typeof localStorage !== "undefined" ? localStorage : undefined);
       if (backing)
         storage = scopedStorage(backing, (key) =>
-          legacy
+          key === journalKey || (legacy
             ? Object.values(keys).includes(key) ||
               key.startsWith(`${keys.secure}:`)
-            : key.startsWith(prefix)
+            : key.startsWith(prefix))
         );
     } catch {
       /* Restricted storage keeps this mount in memory. */
@@ -153,21 +173,61 @@ export function createWorkspaceRuntime(
         (typeof sessionStorage !== "undefined" ? sessionStorage : undefined);
       if (backing)
         resumeStorage = scopedStorage(backing, (key) =>
-          legacy ? Object.values(keys).includes(key) : key.startsWith(prefix)
+          key === journalKey || (legacy ? Object.values(keys).includes(key) : key.startsWith(prefix))
         );
     } catch {
       /* Restricted tabs keep recovery in memory. */
     }
   }
+  const legacyStorage = storage;
+  const persistence = options.persistence;
+  const metadataKeys = new Set([keys.session, keys.theme, keys.skin, keys.history, keys.connection]);
+  const metadata = persistence ? new WorkspaceMetadataStorage({
+    persistence,
+    profile: options.persistenceKey ?? id,
+    legacy: legacyStorage,
+    journal: options.resumeStorage ?? (surface === "standalone"
+      ? legacyStorage
+      : typeof sessionStorage !== "undefined" ? sessionStorage : new MemoryStorage()),
+    owns: key => metadataKeys.has(key),
+    accepts(key, value) {
+      if (!metadataKeys.has(key)) return false;
+      if (key === keys.session) {
+        try {
+          const snapshot = JSON.parse(value);
+          return acceptsSnapshot(snapshot) && Object.values(snapshot.queries ?? {}).every(query => query.result === null && query.error === null);
+        } catch { return false; }
+      }
+      if (key === keys.connection) {
+        try {
+          const pin = JSON.parse(value);
+          const endpoint = new URL(pin.url);
+          return !endpoint.username && !endpoint.password && !pin.token && !pin.password;
+        } catch { return false; }
+      }
+      if (key === keys.history) {
+        try { return Array.isArray(JSON.parse(value)) && JSON.parse(value).every((entry: Record<string, unknown>) => !entry.url && !entry.token && !entry.password); }
+        catch { return false; }
+      }
+      return true;
+    },
+    releaseJournalSpace: () => resumeStorage.removeItem(keys.session),
+    onState(state, error) { persistenceStatus.state = state; persistenceStatus.error = error; },
+  }) : undefined;
+  if (metadata) storage = metadata;
+  const ready = metadata?.ready ?? Promise.resolve();
+  const localConnections = persistence ? new LocalConnections(persistence) : undefined;
+  void ready.then(() => localConnections?.load()).catch(() => {});
   const controller = new AbortController();
   const activity = new ActivityStore();
   const loading = new LoadingStore();
   const secureStore = new SecureStoreSvc({
-    surface:
-      options.surface ??
-      (options.connectionProvider ? "embedded" : detectSurface()),
+    surface,
     namespace: keys.secure,
-    storage,
+    storage: legacyStorage,
+    persistence,
+    persistenceReady: ready,
+    historyKey: keys.history,
     // Enumeration is already projected to this profile. Include its legacy
     // hyphenated preference/snapshot keys when wiping the scoped backend.
     storagePrefix: "",
@@ -193,6 +253,9 @@ export function createWorkspaceRuntime(
     resumeStorage,
     historyKey: keys.history,
     consumeBootstrap: legacy,
+    launchBootstrap: launch,
+    persistenceReady: ready,
+    optInCredentials: Boolean(persistence),
   });
   const services: WorkspaceServices = {
     connection: connections.connection,
@@ -208,7 +271,8 @@ export function createWorkspaceRuntime(
       1000,
       storage,
       keys.session,
-      resumeStorage
+      resumeStorage,
+      Boolean(persistence)
     ),
     theme: new ThemeStore(keys.theme, storage, false),
     skins: new SkinStore(
@@ -220,6 +284,7 @@ export function createWorkspaceRuntime(
   const session = createWorkspaceSession<WorkspaceServices, WorkspaceCommand>(
     services
   );
+  session.onDispose(() => metadata?.dispose());
   session.onDispose(() => devConsole.dispose());
   session.onDispose(() => services.theme.dispose());
   session.onDispose(() => services.skins.dispose());
@@ -235,6 +300,10 @@ export function createWorkspaceRuntime(
 
   const runtime: WorkspaceRuntime = {
     ...services,
+    ready,
+    async flushPersistence() { await ready; await metadata?.flush(); },
+    persistenceStatus,
+    localConnections,
     id,
     injected: Boolean(options.connectionProvider),
     persistenceKey: options.persistenceKey,
@@ -298,6 +367,9 @@ export function getLegacyWorkspace(): WorkspaceRuntime {
   legacyRuntime = {
     ...services,
     id: "legacy",
+    ready: Promise.resolve(),
+    async flushPersistence() {},
+    persistenceStatus: { state: "legacy", error: null },
     injected: getConnectionProvider() !== provider,
     persistenceKey: "default",
     root: null,
