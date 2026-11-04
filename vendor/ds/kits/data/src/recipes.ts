@@ -13,3 +13,6 @@ export * from "./composite-chart.variants";
 export * from "./chart-layout.variants";
 
 export { CHART_PALETTE_10, CHART_PALETTE_40, chartPaletteFor, automaticChartPalette } from "./core/chart-color";
+
+export * from "./activity-timeline.variants";
+export * from "./projection-chart.variants";
