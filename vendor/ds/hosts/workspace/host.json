@@ -18,14 +18,17 @@
     "/tokens": "./src/compat/tokens/index.ts",
     "/tokens.css": "./src/compat/tokens/tokens.css",
     "/compat.css": "./src/compat/tokens/styles.css",
-    "/cli": "./src/cli.mjs"
+    "/cli": "./src/cli.mjs",
+    "/persistence": "./src/lib/default-workspace-persistence.ts",
+    "/runtime-staging": "./src/stage-offline-runtime.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.5.0",
     "@tauri-apps/plugin-dialog": "^2.5.0",
     "@tauri-apps/plugin-http": "^2.5.9",
     "clsx": "^2.1.1",
-    "tailwind-merge": "^3.6.0"
+    "tailwind-merge": "^3.6.0",
+    "@reddb-io/browser": "0.8.0"
   },
   "pwa": {
     "name": "RedUI",

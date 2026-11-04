@@ -88,7 +88,7 @@
   $effect(() => {
     // Block all probing until the secure store is unlocked, so the
     // network panel doesn't leak the schema before the user authenticates.
-    if (secureStore.locked) return
+    if (secureStore.requiresUnlock) return
     void connected
     void activeUrl
     refresh()
@@ -106,7 +106,7 @@
   {/if}
 </div>
 
-{#if secureStore.locked}
+{#if secureStore.requiresUnlock}
   <div class="p-3 flex flex-col items-start gap-2 text-[12px] text-ink-muted font-mono leading-relaxed">
     <DSIcon icon={Lock} color="current" class=" text-primary-text" />
     <span class="text-foreground">Locked.</span>

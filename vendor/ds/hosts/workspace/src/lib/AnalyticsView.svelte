@@ -48,7 +48,7 @@
 
   async function refresh() {
     const client = connection.client
-    if (!client || secureStore.locked || !connected) {
+    if (!client || secureStore.requiresUnlock || !connected) {
       metrics = []
       selectedPath = null
       series = []
@@ -107,7 +107,7 @@
   }
 
   $effect(() => {
-    if (secureStore.locked) return
+    if (secureStore.requiresUnlock) return
     void activeUrl
     void connected
     refresh()
@@ -124,7 +124,7 @@
       <DSButton variant="secondary" size="sm"
         type="button"
         onclick={refresh}
-        disabled={loading || secureStore.locked || !connected}
+        disabled={loading || secureStore.requiresUnlock || !connected}
 
       >
         <DSIcon icon={RefreshCw} color="current" class=" {loading ? 'animate-spin' : ''}" />
@@ -133,7 +133,7 @@
     {/snippet}
   </PageHeader>
 
-  {#if secureStore.locked}
+  {#if secureStore.requiresUnlock}
     <div class="p-6"><EmptyState illustration={accessLocked} title="Locked" message="Unlock the secure store to read the metric catalog." /></div>
   {:else if !connected}
     <div class="grid min-h-0 flex-1 place-items-center overflow-auto p-6"><DisconnectedState message="Connect to a reddb instance to browse its live metrics." /></div>

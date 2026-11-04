@@ -35,12 +35,12 @@
   const title = $derived(needsSetup ? 'Set a master password' : 'Unlock credentials')
   const hint = $derived(
     needsSetup
-      ? 'Picks a key that encrypts your connection history at rest. The password lives in this browser session only — there is no recovery.'
+      ? 'Encrypts saved connections on this device. Keep the master password; it cannot be recovered.'
       : 'Enter the master password used to encrypt your saved connections.'
   )
 
   $effect(() => {
-    if (secureStore.locked) setTimeout(() => inputEl?.focus(), 0)
+    if (secureStore.dialogOpen || secureStore.backend === 'web' && secureStore.locked) setTimeout(() => inputEl?.focus(), 0)
   })
 
   async function submit(e: Event) {
@@ -61,14 +61,15 @@
       // connection.refresh() once locked flips, but firing it here too
       // means the connect dot updates within the same microtask the
       // dialog disappears — no "I unlocked but nothing happened" lag.
-      connection.refresh()
+      if (secureStore.backend !== 'reddb') connection.refresh()
     }
   }
 </script>
 
-<Dialog {title} description={hint} open={secureStore.backend === 'web' && secureStore.locked}
-  dismissible={false} showClose={false} size="sm"
-  onkeydown={(event: KeyboardEvent) => { if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation() } }}>
+<Dialog {title} description={hint} open={secureStore.backend === 'reddb' ? secureStore.dialogOpen : secureStore.backend === 'web' && secureStore.locked}
+  dismissible={secureStore.backend === 'reddb'} showClose={secureStore.backend === 'reddb'}
+  onopenchange={(open) => { if (!open) { secureStore.dialogOpen = false; password = ''; confirm = '' } }} size="sm"
+  onkeydown={(event: KeyboardEvent) => { if (event.key === 'Escape' && secureStore.backend !== 'reddb') { event.preventDefault(); event.stopPropagation() } }}>
   <form onsubmit={submit} class="grid gap-3">
     <Field label="Master password">
       {#snippet children(control)}
@@ -88,6 +89,9 @@
       {:else}{needsSetup ? 'Set password' : 'Unlock'}{/if}
     </Button>
     {#if error}<Alert tone="danger" title={error} />{/if}
+    {#if secureStore.backend === 'reddb'}
+      <Button variant="ghost" onclick={() => { secureStore.dialogOpen = false; password = ''; confirm = '' }}>Continue without saving credentials</Button>
+    {:else}
     <div class="border-t border-muted pt-3">
       {#if !confirmingWipe}
         <Button variant="ghost" tone="danger" size="sm" onclick={startWipe}>
@@ -101,5 +105,6 @@
         </div>
       {/if}
     </div>
+    {/if}
   </form>
 </Dialog>

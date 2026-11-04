@@ -38,7 +38,7 @@
   let nextId = 0
 
   const connected = $derived(connection.connected)
-  const locked = $derived(secureStore.locked)
+  const locked = $derived(secureStore.requiresUnlock)
   const canSend = $derived(connected && !locked && !sending && input.trim().length > 0)
 
   // Split as soon as any answer carries grounding sources.

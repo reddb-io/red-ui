@@ -1,0 +1,4 @@
+This application bundles the RedDB native database runtime.
+Source: https://github.com/reddb-io/reddb
+The immutable runtime version is pinned in scripts/fetch-sidecar.sh.
+See RedDB-LICENSE.txt for the original runtime license.

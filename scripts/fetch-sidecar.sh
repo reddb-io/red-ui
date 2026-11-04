@@ -26,13 +26,12 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DEST_DIR="$HERE/apps/desktop/src-tauri/binaries"
 
 # ── version pin ──────────────────────────────────────────────────────────────
-# WHY THIS PIN: >=1.9.1 emits Access-Control-Allow-Origin headers (required for
-# browser fetches from the SvelteKit bundle); v1.23.2 is the current release and
-# the one whose asset set is verified against the mapping below. Update
+# WHY THIS PIN: v1.28.0 adds the private workspace-store protocol and native
+# transactional Vault used by this desktop host. Update
 # REDDB_VERSION when reddb ships a newer release that red-ui requires, then
 # confirm the new release has all required assets via:
 #   scripts/preflight-release-assets.sh
-REDDB_VERSION="${REDDB_VERSION:-v1.23.2}"
+REDDB_VERSION="${REDDB_VERSION:-v1.28.0}"
 REDDB_REPO="reddb-io/reddb"
 
 # ── target triple ────────────────────────────────────────────────────────────
@@ -77,7 +76,7 @@ fi
 #
 # These names are reddb's own release convention (`<arch>` as uname reports it,
 # `-static` for the musl link) — verify against a real release before editing:
-#   gh release view v1.23.2 -R reddb-io/reddb --json assets --jq '.assets[].name'
+#   gh release view v1.28.0 -R reddb-io/reddb --json assets --jq '.assets[].name'
 case "$TRIPLE" in
   x86_64-unknown-linux-*)
     PREFERRED="red-linux-x86_64-static"

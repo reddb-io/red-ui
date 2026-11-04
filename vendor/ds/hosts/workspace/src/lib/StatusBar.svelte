@@ -32,6 +32,12 @@
     {#if wal !== undefined}<Badge>lsn {wal}</Badge>{/if}
     {#if connection.readOnly}<Badge tone="warning" title={connection.readOnlyReason ?? 'The server is open read-only; mutations are disabled.'}>Read-only</Badge>{/if}
   {/if}
+  {#if workspace.persistenceStatus.state !== 'legacy'}
+    <span title={workspace.persistenceStatus.error ?? 'Workspace documents on this device'}>
+      {workspace.persistenceStatus.state === 'saved' ? 'Saved on this device' : workspace.persistenceStatus.state === 'error' ? 'Workspace not saved' : workspace.persistenceStatus.state === 'loading' ? 'Opening local workspace…' : 'Saving workspace…'}
+    </span>
+    {#if workspace.persistenceStatus.state === 'error'}<Button variant="ghost" size="sm" onclick={() => { void workspace.flushPersistence().catch(() => {}) }}>Retry saving</Button>{/if}
+  {/if}
   <div class="ms-auto flex flex-wrap items-center gap-[var(--reddb-spatial-gap-sm)]">
     {#if pendingChanges.count > 0}<Button variant="ghost" size="sm" aria-label={`Pending changes (${pendingChanges.count})`} onclick={() => workspace.dispatch('red:open-pending-changes')}>Pending changes ({pendingChanges.count})</Button>{/if}
     {#if !connection.connected && !connection.connecting}<Button size="sm" onclick={() => workspace.dispatch('red:open-connect')}>Connect</Button>{/if}

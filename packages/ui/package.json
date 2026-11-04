@@ -23,7 +23,11 @@
       "svelte": "./src/lib/renderers/index.ts",
       "types": "./src/lib/renderers/index.ts"
     },
-    "./build/*": "./build/*"
+    "./build/*": "./build/*",
+    "./persistence": {
+      "types": "./src/lib/persistence.ts",
+      "import": "./src/lib/persistence.ts"
+    }
   },
   "files": [
     "bin",
@@ -43,7 +47,7 @@
   "scripts": {
     "prepack": "pnpm build && node ../../scripts/package-with-design-system.mjs ui",
     "dev": "vite dev --host 127.0.0.1 --port 1420 --strictPort",
-    "build": "vite build && vite build --config vite.embed.config.ts",
+    "build": "vite build && node ../../scripts/stage-workspace-runtime.mjs && vite build --config vite.embed.config.ts",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test": "svelte-kit sync && vitest run"

@@ -115,7 +115,7 @@
     // configured topology to anyone watching the network panel. Flip
     // `loading` off so the UI shows a locked EmptyState instead of an
     // infinite "Probing…" message.
-    if (secureStore.locked) {
+    if (secureStore.requiresUnlock) {
       loading = false
       return
     }
@@ -160,7 +160,7 @@
   // mirroring SecurityView's contract.
   const router = useRouter()
   const isConnectedNode = $derived(
-    !!selected && connection.connected && !secureStore.locked && connection.active?.url === selected.preset.url,
+    !!selected && connection.connected && !secureStore.requiresUnlock && connection.active?.url === selected.preset.url,
   )
 
   interface MetaSummary {
@@ -392,7 +392,7 @@
 
 {#if loading}
   <div class="grid h-full place-items-center p-6"><LoadingIndicator label="Loading cluster topology" /></div>
-{:else if secureStore.locked}
+{:else if secureStore.requiresUnlock}
   <div class="p-6">
     <EmptyState
       illustration={accessLocked}

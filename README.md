@@ -87,8 +87,9 @@ If the database requires authentication, expand **Sign in to the database** in
 Connect and enter its username and password. Credentials are sent directly to
 that endpoint's `/auth/login` over HTTPS (HTTP is accepted only for loopback
 development). Redirects are refused. The resulting bearer session stays in
-memory in the current tab; passwords and tokens are excluded from connection
-history, browser storage, and the developer console. Credential launch links use
+the current tab, with tab-scoped recovery for F5. Passwords never enter that
+recovery record; secrets are excluded from connection history, workspace metadata
+and the developer console. Credential launch links use
 the URL fragment as described below. Failed
 boot connections keep the supplied endpoint visible for sign-in or retry.
 
@@ -108,7 +109,18 @@ fallback features. Browser connections still require a server with CORS support
 (RedDB 1.9.1+), HTTPS for remote password sign-in, and compatible query responses.
 The RedDB bundled with desktop builds is a tested default, independently of
 which compatible remote RedDB version the UI can connect to; build it with
-`REDDB_VERSION=vX.Y.Z` to select a different sidecar release.
+`REDDB_VERSION=vX.Y.Z` to select a different sidecar release. Private desktop
+workspace persistence requires the version-1 `workspace-store` protocol shipped
+in RedDB 1.28.0.
+
+Workspace documents, SQL drafts, theme and connection metadata are saved in a
+local RedDB file, including in the installed PWA. Results remain tab-scoped.
+Connect offers explicit credential saving in RedDB's native Vault: a master
+password protects browser credentials, and the OS keychain protects desktop
+credentials. App launch links never opt in automatically. Saved labels remain
+visible while locked; locking this local Vault keeps the active connection.
+Offline startup restores the workspace, while database requests require the
+server to be reachable. Reload and network recovery never replay SQL.
 
 ## Embeddable Lib
 

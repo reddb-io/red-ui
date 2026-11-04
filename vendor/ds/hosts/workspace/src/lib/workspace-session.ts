@@ -26,7 +26,7 @@ export interface KeyValueStorage {
 
 const STORAGE_KEY = "red-ui-workspace-session";
 
-function acceptsSnapshot(value: unknown): value is WorkspaceSnapshot {
+export function acceptsSnapshot(value: unknown): value is WorkspaceSnapshot {
   if (!value || typeof value !== "object") return false;
   const snapshot = value as WorkspaceSnapshot;
   return (
@@ -77,7 +77,8 @@ export class WorkspaceSession extends WorkspaceSnapshotStore<WorkspaceSnapshot> 
     storageKey = STORAGE_KEY,
     tabStorage:
       | (KeyValueStorage & { removeItem(key: string): void })
-      | null = null
+      | null = null,
+    private readonly immediate = false
   ) {
     super({
       debounceMs,
@@ -132,6 +133,12 @@ export class WorkspaceSession extends WorkspaceSnapshotStore<WorkspaceSnapshot> 
       accepts: acceptsSnapshot,
     });
   }
+  override schedule(snapshot: WorkspaceSnapshot): void {
+    // The async backend owns batching. Journal drafts in the same turn so an
+    // immediate reload need not wait for the old snapshot debounce.
+    if (this.immediate) this.flush(snapshot); else super.schedule(snapshot);
+  }
+
 }
 
 export const workspaceSession = new WorkspaceSession();

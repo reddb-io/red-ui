@@ -26,6 +26,7 @@ import {
   transportForUrl,
   type Connection,
   type ConnectionBootstrap,
+  type ConnectionBootstrapPayload,
   type ConnectionProvider,
   type HandoffTokenConsumer,
   type ReplicationStatus,
@@ -117,6 +118,9 @@ export interface ConnectionServices {
   historyKey?: string;
   urlPrefix?: string;
   consumeBootstrap?: boolean;
+  launchBootstrap?: ConnectionBootstrapPayload;
+  persistenceReady?: Promise<void>;
+  optInCredentials?: boolean;
 }
 
 /** Create connection state, provider and history for one workspace. */
@@ -134,7 +138,7 @@ export function createConnections(services: ConnectionServices = {}) {
     services.resumeStorage ?? null,
     services.resumeKey ?? "red-ui:connection-session"
   );
-  const canResume = () => secureStore.surface === "web" && !services.provider;
+  const canResume = () => (secureStore.surface === "web" || services.optInCredentials && secureStore.surface === "standalone") && !services.provider;
 
   function persist(c: ConnectionPreset) {
     if (!storage) return;
@@ -175,6 +179,7 @@ export function createConnections(services: ConnectionServices = {}) {
   }
 
   function currentCredentialPersistence() {
+    if (services.optInCredentials) return secureStore.surface === "embedded" ? "none" : "labels-only";
     return credentialPersistenceForSurface(
       secureStore.surface,
       hasManagedWebHandoff()
@@ -185,6 +190,7 @@ export function createConnections(services: ConnectionServices = {}) {
     surface: () => secureStore.surface,
     secureStore: () => secureStore.store,
     managedWebTarget: hasManagedWebHandoff,
+    credentialPersistence: services.optInCredentials ? currentCredentialPersistence : undefined,
     storage,
     historyKey: services.historyKey,
     urlPrefix: services.urlPrefix,
@@ -399,6 +405,8 @@ export function createConnections(services: ConnectionServices = {}) {
      * until the first successful connect and is replaced on every switch.
      */
     #client = $state<RedClient | null>(null);
+    #sessionToken: string | null = null;
+    tokenForSaving(): string | null { return this.connected ? this.#sessionToken : null; }
 
     /**
      * Server capability map for the active connection (#22), resolved at connect.
@@ -499,11 +507,13 @@ export function createConnections(services: ConnectionServices = {}) {
     async bootstrap(
       resolve: () => Promise<ConnectionBootstrap> = () =>
         resolveConnectionBootstrap({
-          readPersisted: () => {
+          readPersisted: async () => {
+            await services.persistenceReady;
             const saved = canResume() ? resume.read() : null;
             if (saved?.managed) markManagedWebHandoff();
             return saved ?? readPersistedLocalBootstrap(storage, STORAGE_KEY);
           },
+          ...(services.launchBootstrap ? { readUrl: () => services.launchBootstrap } : {}),
           ...(services.consumeBootstrap === false
             ? {
                 readTauri: () => null,
@@ -734,6 +744,7 @@ export function createConnections(services: ConnectionServices = {}) {
         };
         this.#capabilities = capabilities;
         this.connected = true;
+        this.#sessionToken = token ?? null;
         if (canResume())
           resume.write({
             target: preset.url,
@@ -842,6 +853,7 @@ export function createConnections(services: ConnectionServices = {}) {
       this.epoch += 1;
       loading.succeed();
       this.connected = false;
+      this.#sessionToken = null;
       this.probe = { reachable: false };
       this.#client = null;
       this.#capabilities = { ...EMPTY_SERVER_CAPABILITIES };

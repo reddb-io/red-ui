@@ -38,6 +38,7 @@ export interface SurfaceHistoryStoreOptions {
   storage?: KeyValueStorage;
   historyKey?: string;
   urlPrefix?: string;
+  credentialPersistence?: () => CredentialPersistence;
 }
 
 export const DEFAULT_HISTORY_KEY = "red-ui:history";
@@ -149,12 +150,14 @@ export class SurfaceHistoryStore implements HistoryStore {
   private readonly storage?: KeyValueStorage;
   private readonly historyKey: string;
   private readonly urlPrefix: string;
+  private readonly credentialPersistence?: () => CredentialPersistence;
   private idByUrl = new Map<string, string>();
   private urlById = new Map<string, string>();
   private onChange?: () => void;
 
   constructor(opts: SurfaceHistoryStoreOptions) {
     this.surface = opts.surface;
+    this.credentialPersistence = opts.credentialPersistence;
     this.secureStore = opts.secureStore;
     this.managedWebTarget = opts.managedWebTarget ?? (() => false);
     this.storage = opts.storage ?? defaultStorage();
@@ -167,6 +170,7 @@ export class SurfaceHistoryStore implements HistoryStore {
   }
 
   persistence(): CredentialPersistence {
+    if (this.credentialPersistence) return this.credentialPersistence();
     return credentialPersistenceForSurface(
       this.surface(),
       this.managedWebTarget()

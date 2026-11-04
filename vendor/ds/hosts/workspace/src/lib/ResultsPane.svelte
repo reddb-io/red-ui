@@ -258,7 +258,7 @@
   }
 
   $effect(() => {
-    if (secureStore.locked) return
+    if (secureStore.requiresUnlock) return
     const client = connection.client
     if (!client) return
     for (const tab of tabs.tabs) {
@@ -312,7 +312,7 @@
   })
 
   $effect(() => {
-    if (secureStore.locked) return
+    if (secureStore.requiresUnlock) return
     const client = connection.client
     if (!client) return
     for (const tab of tabs.tabs) {
@@ -327,7 +327,7 @@
 
   $effect(() => {
     if (!metadataOpen) return
-    if (secureStore.locked) return
+    if (secureStore.requiresUnlock) return
     const client = connection.client
     if (!client) return
     for (const tab of tabs.tabs) {
