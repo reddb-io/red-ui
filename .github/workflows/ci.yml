@@ -137,6 +137,9 @@ jobs:
         run: bash scripts/fetch-sidecar.sh
       - run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
       - name: verify private persistence with the real OS keychain and RedDB binary
+        env:
+          # Only this disposable headless fixture runs without WebKit's OS sandbox.
+          WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS: "1"
         run: |
           sudo apt-get install -y dbus-x11 gnome-keyring xvfb
           cargo build --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --features workspace-persistence-smoke
