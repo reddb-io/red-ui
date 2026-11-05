@@ -13,6 +13,10 @@ export interface WorkspaceTabsContract {
   onselectedchange?: (id: string) => void;
   /** Requests closing; the application confirms dirty drafts and removes accepted items. */
   oncloserequest?: (id: string) => void;
+  /** Requests a new document from the action beside the tablist. */
+  oncreaterequest?: () => void;
+  /** Accessible name of the new-document action. */
+  createLabel?: string;
   /** Accessible prefix for each close action. */
   closeLabel?: string;
   /** Accessible description for unsaved changes. */

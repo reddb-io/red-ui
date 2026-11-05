@@ -27,7 +27,6 @@
 
   const commands: Command[] = [
     { id: 'ask', group: 'navigate', label: 'Open ask', hint: '/ask', run: () => navigate({ view: 'ask' }) },
-    { id: 'query', group: 'navigate', label: 'Open query', hint: '/query', run: () => navigate({ view: 'query' }) },
     { id: 'collections', group: 'navigate', label: 'Open collections', hint: '/collections', run: () => navigate({ view: 'collections' }) },
     { id: 'topology', group: 'navigate', label: 'Open cluster', hint: '/cluster', run: () => navigate({ view: 'cluster' }) },
     { id: 'security', group: 'navigate', label: 'Open security', hint: '/security', run: () => navigate({ view: 'security' }) },
@@ -35,6 +34,7 @@
     { id: 'settings', group: 'navigate', label: 'Open settings', hint: '/settings', run: () => navigate({ view: 'settings' }) },
     { id: 'appearance', group: 'navigate', label: 'Open appearance', hint: '/appearance', run: () => navigate({ view: 'appearance' }) },
 
+    { id: 'live-changes', group: 'data', label: 'Open live changes', run: () => { workspace.tabs.open({ kind: 'live-changes', label: 'live · global', key: 'global' }); if (router.view !== 'collections' || router.collection) router.go({ view: 'collections' }); close() } },
     { id: 'new-query', group: 'data', label: 'New query', shortcut: '⌘T', run: () => { fire('red:new-query'); close() } },
 
     { id: 'open-connect', group: 'actions', label: 'Open Connect dropdown', shortcut: '⌘⇧C', run: () => { fire('red:open-connect'); close() } },

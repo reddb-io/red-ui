@@ -61,7 +61,7 @@ test("concurrent mounts and stale handles preserve a replacement, including clos
     ).toBe(replacement.runtime.id);
     const before = replacement.runtime.tabs.tabs.length;
     const menu = replacement.shadowRoot.querySelector<HTMLElement>(
-      '[aria-label="Open tab menu"]'
+      '[aria-label="New query"]'
     )!;
     menu.dispatchEvent(
       new KeyboardEvent("keydown", {

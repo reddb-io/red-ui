@@ -2,7 +2,6 @@
   import { NavigationScope } from '@reddb-io/design-system/base'
   import { SidebarRail } from '@reddb-io/design-system/app'
   import Sparkles from '@lucide/svelte/icons/sparkles'
-  import FileCode2 from '@lucide/svelte/icons/file-code-2'
   import Database from '@lucide/svelte/icons/database'
   import Network from '@lucide/svelte/icons/network'
   import Shield from '@lucide/svelte/icons/shield'
@@ -14,7 +13,6 @@
   const router = useRouter()
   const destinations = [
     { id: 'ask', label: 'Ask', icon: Sparkles },
-    { id: 'query', label: 'Query', icon: FileCode2 },
     { id: 'collections', label: 'Collections', icon: Database },
     { id: 'cluster', label: 'Cluster', icon: Network, separatorBefore: true },
     { id: 'security', label: 'Security', icon: Shield },
@@ -22,7 +20,7 @@
     { id: 'settings', label: 'Settings', icon: Settings2, separatorBefore: true },
   ] as const
   const items = $derived(destinations.map(item => ({ ...item, href: router.href({ view: item.id }) })))
-  const currentId = $derived(router.view === 'appearance' ? 'settings' : router.view)
+  const currentId = $derived(router.view === 'appearance' ? 'settings' : router.view === 'query' ? 'collections' : router.view)
 </script>
 
 <!-- Native destinations also work in embedded workspaces, whose router owns

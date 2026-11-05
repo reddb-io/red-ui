@@ -4,6 +4,13 @@ Universal client for [reddb](https://github.com/reddb-io/reddb) — connect to e
 
 Ships as both a desktop app (Tauri 2) and a PWA built from the same Design System workspace host. This repository publishes compatibility packages and installers; UI implementation lives in the DS. See [ownership and migration](docs/migration/ownership.md).
 
+Collections is the shared data workspace. Open a collection from the browser or
+use **+** beside the document tabs to create a SQL query. The toolbar below the
+tabs controls the active document and its result view. Search, type filters,
+refresh and **System collections** belong to the browser; **System columns**
+controls fields shown in the active result. Existing `/query` links remain
+supported.
+
 ## Install
 
 ```sh

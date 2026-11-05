@@ -1,6 +1,6 @@
 <script lang="ts">
   import { NavItem } from "@reddb-io/design-system/app"
-  import { Input as DSInput, Button as DSButton } from '@reddb-io/design-system/base'
+  import { Input as DSInput, Button as DSButton, ToggleButton } from '@reddb-io/design-system/base'
   import { Icon as DSIcon } from '@reddb-io/design-system/base'
   import { useWorkspace } from './workspace-context'
 
@@ -17,6 +17,8 @@
   import Lock from '@lucide/svelte/icons/lock'
   import Search from '@lucide/svelte/icons/search'
   import X from '@lucide/svelte/icons/x'
+  import Eye from '@lucide/svelte/icons/eye'
+  import RefreshCw from '@lucide/svelte/icons/refresh-cw'
 
   const workspace = useWorkspace()
   const { activity, connection, secureStore } = workspace
@@ -35,6 +37,8 @@
   let loading = $state(false)
   let error = $state<string | null>(null)
   let search = $state('')
+  let showSystemCollections = $state(false)
+  let refreshGeneration = 0
   let capabilityFilter = $state<Capability | 'all'>('all')
   const skeletonRows = Array.from({ length: 10 }, (_, i) => i)
   const skeletonChips = Array.from({ length: 4 }, (_, i) => i)
@@ -49,6 +53,7 @@
   const filteredItems = $derived.by(() => {
     const q = search.trim().toLowerCase()
     return items.filter((item) => {
+      if (!showSystemCollections && isInternalCollection(item.name)) return false
       if (capabilityFilter !== 'all' && item.capability !== capabilityFilter) return false
       if (!q) return true
       const g = CAPABILITY_GLYPHS[item.capability]
@@ -57,6 +62,8 @@
   })
 
   async function refresh() {
+    const generation = ++refreshGeneration
+    const includeSystem = showSystemCollections
     const client = connection.client
     if (!client || !connected) {
       items = []
@@ -67,21 +74,23 @@
     const token = activeUrl
     try {
       const names = await activity.track('schema · list collections', () => client.collections())
-      const user = names.filter((n) => !isInternalCollection(n)).sort()
+      if (generation !== refreshGeneration || token !== activeUrl) return
+      const user = names.filter((n) => includeSystem || !isInternalCollection(n)).sort()
       items = user.map((name) => ({ name, capability: 'table' as Capability }))
       const probes = user.map((name) =>
         activity.track(`schema · probe ${name}`, async () => {
           const cap = await detectCapability(client, name)
-          if (token !== activeUrl) return
+          if (generation !== refreshGeneration || token !== activeUrl) return
           items = items.map((it) => (it.name === name ? { ...it, capability: cap } : it))
         }),
       )
       await Promise.all(probes)
     } catch (e) {
+      if (generation !== refreshGeneration || token !== activeUrl) return
       error = (e as Error).message
       items = []
     } finally {
-      loading = false
+      if (generation === refreshGeneration) loading = false
     }
   }
 
@@ -91,6 +100,7 @@
     if (secureStore.requiresUnlock) return
     void connected
     void activeUrl
+    void showSystemCollections
     refresh()
   })
 
@@ -99,12 +109,23 @@
 <div class="px-3 py-2 border-b border-muted flex items-center justify-between text-ink-muted">
   <div class="flex items-center gap-2">
     <DSIcon icon={Database} color="current" class="" />
-    <span class="type-label">Schema</span>
+    <span class="type-label">Collections</span>
   </div>
-  {#if connected && items.length > 0}
-    <span class="font-mono text-[10px] text-ink-muted">{items.length}</span>
+  {#if connected}
+    <div class="flex items-center gap-[var(--reddb-spatial-gap-sm)]">
+      <span class="text-caption tabular-nums">{items.length}</span>
+      <DSButton variant="ghost" size="sm" aria-label="Refresh collections" title="Refresh collections" onclick={refresh} disabled={loading || secureStore.requiresUnlock}><DSIcon icon={RefreshCw} color="current" /></DSButton>
+    </div>
   {/if}
 </div>
+
+{#if connected && !secureStore.requiresUnlock}
+  <div role="group" aria-label="Collection browser options" class="border-b border-elevation-base-border bg-elevation-sunken-surface p-[var(--reddb-spatial-inset-sm)]">
+    <ToggleButton label="System collections" pressed={showSystemCollections} onpressedchange={value => showSystemCollections = value} title="Include internal RedDB collections in this browser">
+      <DSIcon icon={Eye} color="current" /><span>System collections</span>
+    </ToggleButton>
+  </div>
+{/if}
 
 {#if secureStore.requiresUnlock}
   <div class="p-3 flex flex-col items-start gap-2 text-[12px] text-ink-muted font-mono leading-relaxed">
@@ -149,8 +170,8 @@
   </div>
 {:else if items.length === 0}
   <div class="p-3 flex flex-col items-start gap-2 text-[12px] text-ink-muted font-mono leading-relaxed">
-    <span class="text-ink-muted">No user collections.</span>
-    <span>Seed the instance to populate the schema.</span>
+    <span class="text-ink-muted">No collections to show.</span>
+    <span>Show system collections or seed the instance to populate the schema.</span>
     <code class="px-2 py-1 bg-muted border border-muted rounded text-[11px]">./scripts/seed.sh {activeUrl}</code>
   </div>
 {:else}

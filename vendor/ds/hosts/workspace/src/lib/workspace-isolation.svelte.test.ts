@@ -20,7 +20,7 @@ afterEach(async () => {
   vi.useRealTimers();
 });
 
-function create(owner: string) {
+function create(owner: string, router?: ReturnType<typeof createStateRouter>) {
   const connection = {
     id: owner,
     label: owner,
@@ -80,7 +80,7 @@ function create(owner: string) {
   document.body.append(target);
   const root = mount(Workspace, {
     target,
-    props: { runtime, initialRoute: "/query" },
+    props: { runtime, initialRoute: "/query", ...(router ? { router } : {}) },
   });
   roots.push(root);
   return { runtime, target, root };
@@ -212,4 +212,64 @@ test("refresh keeps a query selected in the collection route without creating or
   expect((target.querySelector("textarea") as HTMLTextAreaElement).value).toBe(
     "SELECT customer FROM orders"
   );
+});
+
+
+test("Collections owns queries, direct creation and per-document result options", async () => {
+  vi.useFakeTimers();
+  const { runtime, target } = create("collections");
+  flushSync();
+  await vi.advanceTimersByTimeAsync(1050);
+  await tick();
+  flushSync();
+  const rail = target.querySelector('[data-sidebar-rail]')!;
+  expect(rail.querySelector('[aria-current="page"]')?.textContent).toContain("Collections");
+  expect(rail.textContent).not.toMatch(/Query/);
+  const originalId = runtime.tabs.activeId!;
+  runtime.queryTabs.setSql(originalId, "SELECT 'draft'");
+  const createQuery = target.querySelector<HTMLButtonElement>('[aria-label="New query"]')!;
+  createQuery.click();
+  await tick();
+  flushSync();
+  expect(runtime.tabs.tabs).toHaveLength(2);
+  const nextId = runtime.tabs.activeId!;
+  expect(nextId).not.toBe(originalId);
+  expect(runtime.queryTabs.get(originalId)?.sql).toBe("SELECT 'draft'");
+  const toolbar = target.querySelector('[role="tabpanel"]:not([hidden]) [data-query-toolbar]')!;
+  expect(toolbar.querySelector('[aria-label="Run query"]')).not.toBeNull();
+  const columns = toolbar.querySelector<HTMLButtonElement>('[aria-label="System columns"]')!;
+  columns.click();
+  await tick();
+  flushSync();
+  expect(runtime.tabs.tabs.find(tab => tab.id === nextId)?.showSystemColumns).toBe(true);
+  expect(runtime.tabs.tabs.find(tab => tab.id === originalId)?.showSystemColumns).not.toBe(true);
+});
+
+
+test("query tab operations canonicalize the route once without repeating navigation", async () => {
+  vi.useFakeTimers();
+  const router = createStateRouter({ view: "query", collection: null, subpage: null });
+  const navigate = vi.spyOn(router, "go");
+  const { runtime, target } = create("history", router);
+  flushSync();
+  await vi.advanceTimersByTimeAsync(1050);
+  await tick();
+  flushSync();
+  navigate.mockClear();
+  const first = runtime.tabs.activeId!;
+  const createQuery = target.querySelector<HTMLButtonElement>('[aria-label="New query"]')!;
+  createQuery.click();
+  await tick();
+  flushSync();
+  createQuery.click();
+  await tick();
+  flushSync();
+  target.querySelector<HTMLButtonElement>(`[data-workspace-tab="${first}"]`)!.click();
+  await tick();
+  flushSync();
+  expect(runtime.tabs.tabs).toHaveLength(3);
+  expect(runtime.tabs.activeId).toBe(first);
+  expect(router.view).toBe("collections");
+  expect(navigate).toHaveBeenCalledTimes(1);
+  expect(navigate).toHaveBeenCalledWith({ view: "collections" });
 });

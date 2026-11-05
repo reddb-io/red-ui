@@ -25,6 +25,8 @@
     selected,
     onselectedchange,
     oncloserequest,
+    oncreaterequest,
+    createLabel = "New document",
     closeLabel = "Close",
     dirtyLabel = "Unsaved changes",
     busyLabel = "Running",
@@ -68,6 +70,7 @@
     activationMode={documents.some(item => item.href) ? "manual" : "automatic"}
     loop
   >
+    <div class={s.header()}>
     <div
       data-workspace-scroll
       class={s.frame()}
@@ -161,6 +164,8 @@
           </div>{/if}
       {/each}
     </div>
+    {#if oncreaterequest}<Button variant="ghost" size="sm" class={s.create()} aria-label={createLabel} title={createLabel} onclick={oncreaterequest}><span aria-hidden="true">+</span></Button>{/if}
+    </div>
     {#each documents as item (item.id)}<Bits.Content
         value={item.id}
         hidden={active !== item.id}
@@ -169,5 +174,5 @@
         tabindex={0}>{@render children?.({ id: item.id })}</Bits.Content
       >{/each}
   </Bits.Root>
-  {#if !documents.length}<p class={s.empty()}>{emptyLabel}</p>{/if}
+  {#if !documents.length && emptyLabel}<p class={s.empty()}>{emptyLabel}</p>{/if}
 </div>

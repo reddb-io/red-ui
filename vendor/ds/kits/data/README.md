@@ -669,3 +669,27 @@ const palette = automaticChartPalette(allEntities);
 The analytical-charts example includes 10, 11 and 40-category views, an application
 palette toggle, a ring-thickness slider, and controls for highlighting a single
 quadrant with the exact `highlights` configuration displayed inline.
+
+### DeveloperPanel
+
+`DeveloperPanel` is a collapsible bottom-docked request inspector. It accepts a
+snapshot of requests from the host and can be contained inside an application
+shell. The host owns capture, retention, redaction and clearing; the component
+does not intercept traffic or make network requests. Supply only values safe to
+show, including URLs, headers, bodies, connection metadata and errors.
+
+```svelte
+<script lang="ts">
+  import DeveloperPanel from "@reddb-io/design-system/data/DeveloperPanel";
+  let open = false;
+  const requests = [{ id: "1", method: "GET", target: "/health", status: "200", durationMs: 23 }];
+</script>
+<DeveloperPanel label="Developer tools" {requests} bind:open onrequestschange={(next) => { /* update the host's log */ }} />
+```
+
+The React flavor uses the same entry fields and `onOpenChange` / `onRequestsChange`.
+Each timing phase is an explicit start offset and duration in milliseconds;
+missing phases remain unavailable rather than becoming fabricated DNS or TLS
+measurements. Browser network APIs and native transports expose different data;
+the host should only supply measurements it actually obtained. The optional
+child content provides a Tools view for application-specific diagnostics.
