@@ -17,6 +17,7 @@ import type { MetricDescriptor, PromResponse } from "./analytics";
 import type { AskResponse, AskOptions } from "./ask";
 import {
   devConsole,
+  sanitizeHeaders,
   sanitizePayload,
   type DevConsoleStore,
 } from "./dev-console";
@@ -449,6 +450,7 @@ export class RedClient {
     const startedAt = Date.now();
     const start = performance.now();
     const payload = sanitizePayload(init?.body);
+    const requestHeaders = sanitizeHeaders(headers);
     const elapsed = () => Math.round(performance.now() - start);
 
     let res: Response;
@@ -463,6 +465,7 @@ export class RedClient {
         durationMs: elapsed(),
         ok: false,
         payload,
+        requestHeaders,
         error: errorText(e),
       });
       throw e;
@@ -473,7 +476,7 @@ export class RedClient {
       const message =
         res.status === 401
           ? "Database credentials required (HTTP 401). Sign in with a database username and password."
-          : `${verb} ${path} → ${res.status} ${body.slice(0, 200)}`;
+          : `${verb} ${path} → ${res.status} ${sanitizePayload(body)?.slice(0, 200) ?? ""}`;
       this.console.record({
         kind: "http",
         verb,
@@ -482,7 +485,10 @@ export class RedClient {
         durationMs: elapsed(),
         ok: false,
         status: res.status,
+        responseHeaders: sanitizeHeaders(res.headers),
+        response: sanitizePayload(body),
         payload,
+        requestHeaders,
         error: message,
       });
       throw new Error(message);
@@ -502,6 +508,9 @@ export class RedClient {
       status: res.status,
       ...(rowCount === undefined ? {} : { rowCount }),
       payload,
+      requestHeaders,
+      responseHeaders: sanitizeHeaders(res.headers),
+      response: sanitizePayload(data),
     });
     return data;
   }
@@ -770,6 +779,7 @@ export class RedClient {
     const start = performance.now();
     const body = JSON.stringify({ query });
     const payload = sanitizePayload(body);
+    const requestHeaders = sanitizeHeaders(headers);
     const elapsed = () => Math.round(performance.now() - start);
 
     let res: Response;
@@ -789,13 +799,14 @@ export class RedClient {
         durationMs: elapsed(),
         ok: false,
         payload,
+        requestHeaders,
         error: errorText(e),
       });
       throw e;
     }
     if (!res.ok || !res.body) {
       const errBody = res.body ? await res.text().catch(() => "") : "";
-      const message = `POST /query/stream → ${res.status} ${errBody.slice(0, 200)}`;
+      const message = `POST /query/stream → ${res.status} ${sanitizePayload(errBody)?.slice(0, 200) ?? ""}`;
       this.console.record({
         kind: "query",
         verb: "POST",
@@ -804,7 +815,10 @@ export class RedClient {
         durationMs: elapsed(),
         ok: false,
         status: res.status,
+        responseHeaders: sanitizeHeaders(res.headers),
+        response: sanitizePayload(errBody),
         payload,
+        requestHeaders,
         error: message,
       });
       throw new Error(message);
@@ -847,6 +861,9 @@ export class RedClient {
       status: res.status,
       rowCount: out.rowCount,
       payload,
+      requestHeaders,
+      responseHeaders: sanitizeHeaders(res.headers),
+      response: sanitizePayload({ columns: out.columns, rows: out.rows, rowCount: out.rowCount, truncated: out.truncated }),
     });
 
     // We stopped early with more rows on the server — release the pinned cursor.

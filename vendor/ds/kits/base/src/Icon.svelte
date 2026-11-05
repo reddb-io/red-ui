@@ -3,7 +3,7 @@
   import type { LucideProps } from "@lucide/svelte";
   import type { Component } from "svelte";
 
-  /*! @license Built-in navigation geometry: Copyright (c) 2026 Lucide Icons and Contributors.
+  /*! @license Built-in icon geometry: Copyright (c) 2026 Lucide Icons and Contributors.
    * Permission to use, copy, modify, and/or distribute this software for any
    * purpose with or without fee is hereby granted, provided that the above
    * copyright notice and this permission notice appear in all copies.
@@ -32,8 +32,8 @@
       SVGAttributes<SVGSVGElement>,
       "color" | "height" | "stroke" | "stroke-width" | "width"
     > {
-    /** A consumer-supplied Lucide glyph, or a built-in navigation glyph without loading the optional icon package. */
-    icon: IconGlyph | "menu" | "chevron-down";
+    /** A consumer-supplied Lucide glyph, or a built-in glyph without loading the optional icon package. */
+    icon: IconGlyph | "menu" | "chevron-down" | "x" | "maximize" | "restore";
     /** Density-responsive DS size. */
     size?: IconSize;
     /**
@@ -66,9 +66,9 @@
 </script>
 
 {#if typeof Glyph === "string"}
-  <!-- Geometry: Lucide menu and chevron-down, @lucide/svelte 1.52.0 (ISC). -->
+  <!-- Geometry: Lucide menu, chevron-down, x, maximize-2 and minimize-2, @lucide/svelte 1.52.0 (ISC). -->
   <svg {...rest} data-icon width={dimension} height={dimension} viewBox="0 0 24 24" fill="none" stroke={resolvedColor} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={className}>
-    {#if Glyph === "chevron-down"}<path d="m6 9 6 6 6-6" />{:else}<path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" />{/if}
+    {#if Glyph === "chevron-down"}<path d="m6 9 6 6 6-6" />{:else if Glyph === "maximize"}<path d="M15 3h6v6" /><path d="m21 3-7 7" /><path d="m3 21 7-7" /><path d="M9 21H3v-6" />{:else if Glyph === "restore"}<path d="M14 10 21 3" /><path d="M20 10h-6V4" /><path d="m3 21 7-7" /><path d="M4 14h6v6" />{:else if Glyph === "x"}<path d="M18 6 6 18" /><path d="m6 6 12 12" />{:else}<path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" />{/if}
   </svg>
 {:else}
   <RenderGlyph {...rest} data-icon size={dimension} color={resolvedColor} strokeWidth={2} class={className} />

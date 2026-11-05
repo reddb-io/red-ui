@@ -17,6 +17,10 @@
      * tab's value, to choose what to show.
      */
     children?: Snippet<[{ value: string }]>;
+    /** Optional content placed before the tablist, outside its keyboard navigation. */
+    leading?: Snippet;
+    /** Optional actions placed beside the tablist. */
+    actions?: Snippet;
     /** Extra classes, merged over the root slot's own. */
     class?: string;
   }
@@ -31,6 +35,8 @@
     onvaluechange,
     onchange,
     children,
+    actions,
+    leading,
     class: className,
     listClass,
     triggerClass,
@@ -86,6 +92,18 @@
   });
 </script>
 
+{#snippet tabList()}
+  <Bits.List aria-label={label} class={styles.list({ class: `${actions || leading ? "min-w-0 flex-1 border-b-0" : ""} ${listClass ?? ""}` })}>
+    {#each items as item (item.value)}
+      <Bits.Trigger value={item.value} disabled={item.disabled}>
+        {#snippet child({ props })}
+          <Button {...props} variant="ghost" size="sm" class={styles.trigger({ class: triggerClass })}>{item.label}</Button>
+        {/snippet}
+      </Bits.Trigger>
+    {/each}
+  </Bits.List>
+{/snippet}
+
 <div
   bind:this={root}
   data-tabs
@@ -101,20 +119,11 @@
     {disabled}
     aria-label={label}
   >
-    <Bits.List aria-label={label} class={styles.list({ class: listClass })}>
-      {#each items as item (item.value)}
-        <Bits.Trigger value={item.value} disabled={item.disabled}>
-          {#snippet child({ props })}
-            <Button
-              {...props}
-              variant="ghost"
-              size="sm"
-              class={styles.trigger({ class: triggerClass })}
-            >{item.label}</Button>
-          {/snippet}
-        </Bits.Trigger>
-      {/each}
-    </Bits.List>
+    {#if actions || leading}
+      <div data-tabs-header class={styles.bar()}>{@render leading?.()}{@render tabList()}{@render actions?.()}</div>
+    {:else}
+      {@render tabList()}
+    {/if}
 
     {#each items as item (item.value)}
       <Bits.Content

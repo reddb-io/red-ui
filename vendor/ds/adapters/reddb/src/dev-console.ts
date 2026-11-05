@@ -32,6 +32,12 @@ export interface ConsoleEntry {
   rowCount?: number;
   /** Sanitized request payload or query text — copyable, never contains secrets. */
   payload?: string;
+  /** Sanitized response body, bounded like the request payload. */
+  response?: string;
+  /** Sanitized request headers; authentication and cookies are masked. */
+  requestHeaders?: readonly (readonly [string, string])[];
+  /** Response headers exposed by the transport (CORS may limit these). */
+  responseHeaders?: readonly (readonly [string, string])[];
   /** Error text when the call failed. */
   error?: string;
 }
@@ -51,7 +57,7 @@ type Listener = (entries: readonly ConsoleEntry[]) => void;
 
 /** Keys whose values are always masked, matched case-insensitively as substrings. */
 const SENSITIVE_KEY_RE =
-  /pass(word)?|secret|token|api[-_]?key|authorization|auth|credential|cookie|session|bearer|private[-_]?key|mfa/i;
+  /pass(word)?|secret|token|api[-_]?key|authorization|auth|credential|cookie|session|bearer|certificate|private[-_]?key|mfa/i;
 
 const REDACTED = "«redacted»";
 
@@ -101,6 +107,14 @@ export function sanitizePayload(body: unknown): string | undefined {
   } catch {
     return undefined;
   }
+}
+
+/** Copy only transport-visible headers and mask sensitive names before retention. */
+export function sanitizeHeaders(headers: HeadersInit | undefined): [string, string][] | undefined {
+  if (!headers) return undefined;
+  return [...new Headers(headers).entries()].map(([key, value]) => [
+    key, SENSITIVE_KEY_RE.test(key) ? REDACTED : (sanitizePayload(value) ?? ""),
+  ]);
 }
 
 /**

@@ -2,7 +2,6 @@
   import { useWorkspace } from './workspace-context'
   import { Button, Icon, Kbd, Logo } from '@reddb-io/design-system/base'
   import ConnectDropdown from './ConnectDropdown.svelte'
-  import ActivityIndicator from './ActivityIndicator.svelte'
   import Search from '@lucide/svelte/icons/search'
   import Sun from '@lucide/svelte/icons/sun'
   import Moon from '@lucide/svelte/icons/moon'
@@ -40,7 +39,6 @@
   </div>
 
   <div class="flex items-center gap-2.5">
-    <ActivityIndicator />
     <Button
       size="sm"
       type="button"

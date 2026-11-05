@@ -41,7 +41,6 @@
   <div class="ms-auto flex flex-wrap items-center gap-[var(--reddb-spatial-gap-sm)]">
     {#if pendingChanges.count > 0}<Button variant="ghost" size="sm" aria-label={`Pending changes (${pendingChanges.count})`} onclick={() => workspace.dispatch('red:open-pending-changes')}>Pending changes ({pendingChanges.count})</Button>{/if}
     {#if !connection.connected && !connection.connecting}<Button size="sm" onclick={() => workspace.dispatch('red:open-connect')}>Connect</Button>{/if}
-    <Button variant="ghost" size="sm" aria-label="Console: toggle developer console" onclick={() => workspace.dispatch('red:toggle-dev-console')}>Console</Button>
     <Badge title={`red-ui ${build.version} · ${build.gitSha} · built ${build.buildTime}`}>v{build.version}</Badge>
   </div>
 </div>

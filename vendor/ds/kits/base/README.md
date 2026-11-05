@@ -1183,6 +1183,8 @@ snippet content, while page arrangement and business language remain local.
 </Disclosure>
 ```
 
+Tabs accept an optional `actions` snippet (or React node) alongside the tablist. Actions stay outside its roving-focus sequence and can compose a Toolbar.
+
 Tabs use automatic activation with roving focus: horizontal arrows, Home, and
 End move both focus and selection, skipping disabled tabs. Accordion triggers
 publish `aria-expanded` and their controlled region relationship; single mode
@@ -1721,3 +1723,6 @@ creation action, empty search needs a filter recovery, and completed work needs
 confirmation plus a way to review history. An inbox with a check means the work
 is complete; it should not replace an illustration for missing initial content.
 The gallery compares scene/compact compositions and downloads the selected one.
+
+`Tabs` can also place a `leading` snippet (React: `leading` node) before its
+ tablist, outside the arrow-key navigation, for controls such as a panel title.
