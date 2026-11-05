@@ -25,9 +25,7 @@ name: Changesets
 # changesets/action PR flow.
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 concurrency:
   group: changesets-${{ github.workflow }}
@@ -37,7 +35,7 @@ jobs:
   release:
     name: Version + publish (PR-less)
     runs-on: ubuntu-latest
-    if: ${{ !endsWith(github.actor, '[bot]') }}
+    if: (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main') && (${{ !endsWith(github.actor, '[bot]') }})
     permissions:
       contents: write
       id-token: write # npm provenance
