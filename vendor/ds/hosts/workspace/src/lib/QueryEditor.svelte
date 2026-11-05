@@ -13,7 +13,7 @@
   import { deriveQueryLabel, formatElapsed } from './query-tabs.svelte'
 
   import type { Capability } from './renderers'
-  import { Kbd } from '@reddb-io/design-system/base'
+  import type { Snippet } from 'svelte'
 
   const workspace = useWorkspace()
   const { connection, queryTabs, registry, tabs } = workspace
@@ -21,9 +21,10 @@
   interface Props {
     tabId: string
     fallbackLabel: string
+    controls?: Snippet
   }
 
-  let { tabId, fallbackLabel }: Props = $props()
+  let { tabId, fallbackLabel, controls }: Props = $props()
 
   // Ensure qs exists for this tab id.
   $effect(() => {
@@ -78,35 +79,20 @@
 </script>
 
 <div class="flex h-full min-h-0 flex-col" data-query-workspace>
-  <section aria-label="Query editor" data-query-editor class="flex h-[30%] min-h-0 shrink-0 flex-col border-b border-elevation-base-border bg-elevation-sunken-surface sm:h-2/5">
-    <div class="flex flex-wrap items-center justify-between gap-[var(--reddb-spatial-gap-md)] px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-sm)] border-b border-elevation-base-border">
-      <div class="flex items-center gap-2 text-ink-muted type-label">
-        <span class="font-medium text-foreground">SQL query</span>
-        {#if connection.connected}
-          <span class="text-ink-muted">·</span>
-          <span class="text-ink-muted font-mono text-[11px] truncate max-w-[280px]">{connection.active.url}</span>
-        {:else}
-          <span class="text-feedback-warning-foreground font-mono text-[11px]">disconnected</span>
-        {/if}
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="text-ink-muted font-mono text-[11px] hidden sm:inline">Run with <Kbd>⌘</Kbd><Kbd>↵</Kbd></span>
-        <DSButton variant="primary" size="sm"
-          type="button"
-
-          onclick={run}
+  <section aria-label="Query editor" data-query-editor class="flex h-[30%] min-h-min shrink-0 flex-col border-b border-elevation-base-border bg-elevation-sunken-surface sm:h-2/5">
+    <div data-query-toolbar role="group" aria-label="Query actions" class="flex shrink-0 flex-wrap items-center justify-between gap-[var(--reddb-spatial-gap-md)] border-b border-elevation-base-border px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-sm)]">
+      <div class="flex min-w-0 items-center gap-[var(--reddb-spatial-gap-sm)]">
+        <DSButton variant="primary" size="sm" type="button" onclick={run}
           disabled={qs?.running || !connection.connected}
-          aria-label={qs?.running ? "Running query" : "Run query"}
-        >
-          {#if qs?.running}
-            <DSIcon icon={Loader2} color="current" class=" animate-spin" />
-            <span>Running…</span>
-          {:else}
-            <DSIcon icon={Play} color="current" class="" />
-            <span>Run</span>
-          {/if}
+          aria-label={qs?.running ? 'Running query' : 'Run query'} aria-keyshortcuts="Control+Enter Meta+Enter" title="Run query (Ctrl/⌘ + Enter)">
+          {#if qs?.running}<DSIcon icon={Loader2} color="current" class="animate-spin" /><span class="hidden sm:inline">Running…</span>
+          {:else}<DSIcon icon={Play} color="current" /><span class="hidden sm:inline">Run</span>{/if}
         </DSButton>
+        {#if connection.connected}
+          <span class="hidden min-w-0 truncate text-caption text-ink-muted sm:inline" title={connection.active.url}>{connection.active.label ?? connection.active.url}</span>
+        {:else}<span class="text-caption text-feedback-warning-foreground">Disconnected</span>{/if}
       </div>
+      {@render controls?.()}
     </div>
     <div class="flex min-h-0 flex-1 p-[var(--reddb-spatial-inset-sm)]">
       <DSTextarea

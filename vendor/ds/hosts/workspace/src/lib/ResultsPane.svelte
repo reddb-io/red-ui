@@ -2,7 +2,7 @@
   import { Icon as DSIcon } from '@reddb-io/design-system/base'
   import { useWorkspace } from './workspace-context'
   import { onMount, tick, untrack } from 'svelte'
-  import { AlertDialog, DropdownMenu, Icon, NavigationScope, Select, Skeleton, ToggleButton } from '@reddb-io/design-system/base'
+  import { AlertDialog, NavigationScope, Select, Skeleton, ToggleButton } from '@reddb-io/design-system/base'
   import { WorkspaceTabs } from '@reddb-io/design-system/app'
   import { useRouter } from './router.svelte'
 
@@ -30,7 +30,6 @@
   import type { CollectionMetadata, QueryResult, RedClient } from './reddb/index'
   import Activity from '@lucide/svelte/icons/activity'
   import Database from '@lucide/svelte/icons/database'
-  import Plus from '@lucide/svelte/icons/plus'
   import EyeOff from '@lucide/svelte/icons/eye-off'
   import Eye from '@lucide/svelte/icons/eye'
   import Info from '@lucide/svelte/icons/info'
@@ -380,7 +379,7 @@
     // The dialog's invoking close control was removed with the draft.
     // Return to the surviving document, or the action that opens a new one.
     const next = pane?.querySelector<HTMLElement>('[data-workspace-tab][aria-selected="true"]')
-      ?? pane?.querySelector<HTMLElement>('[aria-label="Open tab menu"]')
+      ?? pane?.querySelector<HTMLElement>('[aria-label="New query"]')
     next?.focus()
   }
 
@@ -391,6 +390,16 @@
       true,
     )
     queryTabs.ensure(tab.id)
+    goToWorkspace()
+  }
+
+  function goToWorkspace() {
+    if (router.view !== 'collections' || router.collection) router.go({ view: 'collections' })
+  }
+
+  function focusTab(id: string) {
+    tabs.focus(id)
+    if (tabs.active?.kind !== 'collection') goToWorkspace()
   }
 
   onMount(() => {
@@ -407,20 +416,16 @@
     return registry.pick(cap, result, rendererSelection(tab.subpage, tab.overrideCapability, emptyCapability))
   }
 
-  function openLiveChanges() {
-    tabs.open({ kind: 'live-changes', label: 'live · global', key: 'global' })
-  }
-
   function onOverrideChange(tab: Tab, e: Event) {
     const value = (e.currentTarget as HTMLSelectElement).value as '' | Capability
     tabs.setOverride(tab.id, value === '' ? undefined : value)
   }
 
-  function defaultCapabilityLabel(tab: Tab, result: QueryResult | null | undefined): string {
-    if (tab.subpage) return tab.subpage
-    if (tab.capability) return tab.capability
-    if (result?.capability) return result.capability
-    return 'auto'
+  function defaultRendererLabel(tab: Tab): string {
+    const result = tab.kind === 'query' ? queryTabs.states[tab.id]?.result : results[tab.id]
+    const capability = tab.subpage ?? tab.capability ?? result?.capability
+    const label = OVERRIDE_CHOICES.find(choice => choice.value === capability)?.label ?? capability
+    return label ? `Auto (${label})` : 'Auto'
   }
 
   function actionAllowed(v: NonNullable<CollectionMetadata['actions']>[string]): { allowed: boolean; reason?: string } {
@@ -433,100 +438,96 @@
   }
 </script>
 
-<div bind:this={pane} class="h-full flex flex-col">
-  <div class="border-b border-elevation-base-border flex shrink-0 flex-wrap items-stretch min-h-[36px] bg-elevation-sunken-surface">
-    <span class="type-label px-3 py-2">Results</span>
-    {#if tabs.active && (tabs.active.kind === 'collection' || tabs.active.kind === 'query')}
-      {@const activeTab = tabs.active}
-      {@const activeResult = results[activeTab.id]}
-      <div class="ml-auto flex min-w-0 flex-wrap items-center gap-2 px-2 text-[11px] font-mono text-ink-muted">
-        {#if activeTab.kind === 'collection'}
+{#snippet resultControls(tab: Tab)}
+  <div role="group" aria-label="Result display" class="flex min-w-0 flex-wrap items-center gap-[var(--reddb-spatial-gap-sm)]">
+        <ToggleButton
+          label="System columns"
+          onpressedchange={pressed => tabs.setShowSystem(tab.id, pressed)}
+          title={tab.showSystemColumns ? 'Hide reddb system columns (rid, collection, kind, tenant, created_at, updated_at)' : 'Show reddb system columns'}
+          pressed={tab.showSystemColumns ?? false}
+        >
+          {#if tab.showSystemColumns}
+            <DSIcon icon={Eye} color="current" class="" />
+          {:else}
+            <DSIcon icon={EyeOff} color="current" class="" />
+          {/if}
+          <span class="hidden sm:inline">System columns</span>
+        </ToggleButton>
+        <span class="hidden text-caption text-ink-muted sm:inline">View</span>
+        <Select
+          class="w-auto max-w-full"
+          aria-label="Result view"
+          title="Result view"
+          value={tab.overrideCapability ?? ''}
+          onchange={(e) => onOverrideChange(tab, e)}
+        >
+          {#each OVERRIDE_CHOICES as choice (choice.value)}
+            <option value={choice.value}>{choice.value === '' ? defaultRendererLabel(tab) : choice.label}</option>
+          {/each}
+        </Select>
+
+  </div>
+{/snippet}
+
+{#snippet collectionActions(tab: Tab)}
+        {#if tab.kind === 'collection'}
           <ToggleButton
-            label="meta"
+            label="Metadata"
             onpressedchange={pressed => metadataOpen = pressed}
             title={metadataOpen ? 'Hide collection metadata' : 'Show collection metadata'}
             pressed={metadataOpen}
           >
             <DSIcon icon={Info} color="current" class="" />
-            <span>meta</span>
+            <span>Metadata</span>
           </ToggleButton>
           {#if connection.capabilities.vcs}
             <!-- VCS history is server-gated (#22): absent when the connected
                  server doesn't support version control, not shown-but-broken. -->
             <ToggleButton
-              label="history"
-              onpressedchange={pressed => historyOpen = { ...historyOpen, [activeTab.id]: pressed }}
-              title={historyOpen[activeTab.id] ? 'Hide version history' : 'Show version history and diffs'}
-              pressed={historyOpen[activeTab.id] ?? false}
+              label="History"
+              onpressedchange={pressed => historyOpen = { ...historyOpen, [tab.id]: pressed }}
+              title={historyOpen[tab.id] ? 'Hide version history' : 'Show version history and diffs'}
+              pressed={historyOpen[tab.id] ?? false}
               >
               <DSIcon icon={GitBranch} color="current" class="" />
-              <span>history</span>
+              <span>History</span>
             </ToggleButton>
           {/if}
         {/if}
-        <ToggleButton
-          label="sys"
-          onpressedchange={pressed => tabs.setShowSystem(activeTab.id, pressed)}
-          title={activeTab.showSystemColumns ? 'Hide reddb system columns (rid, collection, kind, tenant, created_at, updated_at)' : 'Show reddb system columns'}
-          pressed={activeTab.showSystemColumns ?? false}
-        >
-          {#if activeTab.showSystemColumns}
-            <DSIcon icon={Eye} color="current" class="" />
-          {:else}
-            <DSIcon icon={EyeOff} color="current" class="" />
-          {/if}
-          <span>sys</span>
-        </ToggleButton>
-        <span>{defaultCapabilityLabel(activeTab, activeResult)}</span>
-        <span class="text-ink-muted">· override:</span>
-        <Select
-          class="w-auto max-w-full"
-          aria-label="Renderer override"
-          value={activeTab.overrideCapability ?? ''}
-          onchange={(e) => onOverrideChange(activeTab, e)}
-        >
-          {#each OVERRIDE_CHOICES as choice (choice.value)}
-            <option value={choice.value}>{choice.label}</option>
-          {/each}
-        </Select>
-      </div>
-    {/if}
+{/snippet}
 
-    <div class="ml-auto flex items-center px-2">
-      <DropdownMenu triggerLabel="Open tab menu" contentLabel="Result tabs" variant="ghost" size="sm" align="end"
-        items={[
-          { id: 'query', label: 'New query', shortcut: ['⌘', 'T'], onselect: openNewQuery },
-          { id: 'live', label: 'Live changes (global)', onselect: openLiveChanges },
-        ]}>
-        {#snippet trigger()}<Icon icon={Plus} size="sm" />{/snippet}
-      </DropdownMenu>
-    </div>
-  </div>
-
+<div bind:this={pane} class="h-full flex flex-col">
   <NavigationScope navigate={href => {
     const tab = tabs.tabs.find(tab => tab.kind === 'collection' && router.href({ view: 'collection', collection: tab.key, subpage: tab.subpage ?? defaultSubpage(tab.capability) }) === href)
     if (tab) router.go({ view: 'collection', collection: tab.key, subpage: tab.subpage ?? defaultSubpage(tab.capability) })
   }}>
-    {#if tabs.tabs.length}
-      <WorkspaceTabs label="Open results" class="min-h-0 flex-1" panelClass="overflow-hidden bg-background p-0"
+      <WorkspaceTabs label="Open documents" class={tabs.tabs.length ? "min-h-0 flex-1" : "shrink-0"} panelClass="overflow-hidden bg-background p-0"
+        oncreaterequest={openNewQuery} createLabel="New query" emptyLabel=""
         items={tabs.tabs.map(tab => ({ id: tab.id, label: tab.label,
           dirty: tab.kind === 'query' && queryTabs.isDirty(tab.id),
           href: tab.kind === 'collection' ? router.href({ view: 'collection', collection: tab.key, subpage: tab.subpage ?? defaultSubpage(tab.capability) }) : undefined,
-        }))} selected={tabs.activeId} onselectedchange={id => tabs.focus(id)} oncloserequest={id => closeTab(id)}>
+        }))} selected={tabs.activeId} onselectedchange={focusTab} oncloserequest={id => closeTab(id)}>
         {#snippet children({ id })}
           {@const tab = tabs.tabs.find(tab => tab.id === id)}
-          {#if tab && (id === tabs.activeId || mountedTabIds.includes(id))}<div class="h-full min-h-0 overflow-hidden">
+          {#if tab && (id === tabs.activeId || mountedTabIds.includes(id))}<div class="h-full min-h-0 flex flex-col overflow-hidden">
       {#if tab.kind === 'live-changes'}
         <LiveChanges collection={undefined} />
       {:else if tab.kind === 'query'}
-        <QueryEditor tabId={tab.id} fallbackLabel={tab.key} />
+        <QueryEditor tabId={tab.id} fallbackLabel={tab.key}>
+          {#snippet controls()}{@render resultControls(tab)}{/snippet}
+        </QueryEditor>
       {:else if tab.kind === 'welcome'}
         <div class="h-full grid place-items-center text-ink-muted text-[12px] font-mono">
           Workspace
         </div>
       {:else}
+        <div aria-label="Collection actions" role="group" class="flex shrink-0 flex-wrap items-center justify-between gap-[var(--reddb-spatial-gap-md)] border-b border-elevation-base-border bg-elevation-sunken-surface px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-sm)]">
+          <div class="flex items-center gap-[var(--reddb-spatial-gap-sm)]">{@render collectionActions(tab)}</div>
+          {@render resultControls(tab)}
+        </div>
         {@const result = results[tab.id]}
         {@const err = errors[tab.id]}
+        <div class="min-h-0 flex-1 overflow-hidden">
         {#if err}
           <QueryFailure message={err} />
         {:else if !result}
@@ -686,11 +687,12 @@
             </div>
           </div>
         {/if}
+        </div>
       {/if}
           </div>{/if}
         {/snippet}
       </WorkspaceTabs>
-    {:else}
+    {#if !tabs.tabs.length}
       <div class="min-h-0 flex-1 overflow-hidden bg-background">
       <div class="h-full grid place-items-center p-6">
         {#if connection.connected}

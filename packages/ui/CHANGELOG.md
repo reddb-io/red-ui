@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.8.2
+
+### Patch Changes
+
+- Use Collections as the single data workspace, with a direct New query action beside the tabs and a compact toolbar scoped to the active document. Separate System collections in the browser from System columns in results, while preserving query handoffs and saved drafts.
+- Updated dependencies
+  - @reddb-io/ui-mcp@0.8.2
+
 ## 0.8.1
 
 ### Patch Changes
