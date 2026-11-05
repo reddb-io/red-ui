@@ -7,7 +7,7 @@
   const workspace = useWorkspace()
   const { connection, secureStore } = workspace
 
-  let { message = 'Connect to a reddb instance to browse collections and run queries.' }: { message?: string } = $props()
+  let { message = 'Connect to a reddb instance to browse collections and run queries.', showConnect = true }: { message?: string; showConnect?: boolean } = $props()
   const interrupted = $derived(Boolean(connection.probe.error))
   const signInRequired = $derived(connection.probe.error?.includes('HTTP 401') ?? false)
 </script>
@@ -25,7 +25,7 @@
     message={secureStore.surface === 'embedded' ? 'Restore the database connection in the host application to continue.' : signInRequired ? 'This database requires authentication. Review your connection and sign in to continue.' : message}
   >
     {#snippet actions()}
-      {#if secureStore.surface !== 'embedded'}
+      {#if showConnect && secureStore.surface !== 'embedded'}
         <Button variant="primary" onclick={() => workspace.dispatch('red:open-connect')}>
           {signInRequired ? 'Sign in' : interrupted ? 'Review connection' : 'Connect to database'}
         </Button>

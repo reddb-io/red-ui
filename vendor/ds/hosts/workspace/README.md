@@ -70,3 +70,9 @@ Set `PWA_APP_URL`, `PWA_DATABASE_URL`, `PWA_COLLECTION` and `PWA_EXPECT_ROWS` to
 verify a deployed consumer against a real disposable database. The local gate
 also stages a second worker revision and verifies it waits without reloading
 an edited query. `PWA_BASE_PATH` supports a build made with `BASE_PATH`.
+
+## Initial connection flow
+
+The host checks local documents, saved connection profiles and Vault availability before showing its entry form. A fresh launch does not mount Collections or create query tabs. Explicit URL/App handoffs keep authenticating independently of local recovery; the connected workspace appears only when both are ready. Real connection-opening steps remain visible throughout discovery.
+
+Recovered documents can be opened explicitly offline when no connection is available. Once a workspace has been entered, temporary connection loss preserves its documents. Saving credentials remains optional.

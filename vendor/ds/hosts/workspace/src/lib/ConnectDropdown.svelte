@@ -17,13 +17,16 @@
   const workspace = useWorkspace()
   const { connection, secureStore, localConnections, openDatabaseFile, unreachableConnectHint } = workspace
 
+  // Reuse authentication and credential opt-in for entry and navbar contexts.
+  let { presentation = 'popover' }: { presentation?: 'popover' | 'inline' } = $props()
+
   const DEFAULT_URL = 'red://localhost'
 
   function pickDefaultUrl(): string {
     if (connection.history[0]?.url) return connection.history[0].url
     if (connection.history[0]?.label) return connection.history[0].label
-    if (connection.active.url) return connection.active.url
-    return DEFAULT_URL
+    if ((presentation === 'popover' || connection.targetResolved) && connection.active.url) return connection.active.url
+    return presentation === 'inline' ? '' : DEFAULT_URL
   }
 
   let open = $state(false)
@@ -224,49 +227,7 @@
   const canOpenFile = $derived(connection.supportedTransports.includes('unix'))
 </script>
 
-<Popover triggerLabel={`${triggerLabel} ${triggerStatus}`} contentLabel="Connect to reddb" bind:open size="sm"
-  class="w-[380px] max-w-[calc(100vw-2rem)] p-4">
-  {#snippet trigger()}
-    <span class={['size-1.5 rounded-full shrink-0', dotClass].join(' ')}></span>
-    {#if !connection.connected}<Icon icon={Plug} size="sm" />{/if}
-    <span class="min-w-0 max-w-[14rem] truncate font-mono">{triggerLabel}</span>
-    <span class="shrink-0 whitespace-nowrap text-caption text-ink-muted">{triggerStatus}</span>
-    <Icon icon={ChevronDown} size="sm" />
-  {/snippet}
-  <form onsubmit={submit} class="grid gap-3">
-    <Field id={workspace.idFor("connect-url")} label="Connection string" help={`URL or Base64-encoded URL · reachable here: ${supportedHint}`}>
-      {#snippet children(control)}
-        <Input {...control} bind:ref={inputEl} bind:value={url} disabled={probing}
-          oninput={() => { username = ''; password = '' }} spellcheck="false"
-          placeholder="https://user:password@host or Base64" />
-      {/snippet}
-    </Field>
-    <Disclosure bind:open={signInOpen} label="Sign in to the database">
-      <div class="mt-2 grid gap-2">
-        <Field id={workspace.idFor("connect-username")} label="Username">
-          {#snippet children(control)}<Input {...control} autocomplete="username" bind:value={username} disabled={probing} />{/snippet}
-        </Field>
-        <Field id={workspace.idFor("connect-password")} label="Password">
-          {#snippet children(control)}<Input {...control} type="password" autocomplete="current-password" bind:value={password} disabled={probing} />{/snippet}
-        </Field>
-        <p class="text-caption text-ink-muted">Credentials go directly to this database. The session stays in this tab.</p>
-      </div>
-    </Disclosure>
-    {#if localConnections && secureStore.available}
-      <Checkbox label="Save credentials on this device" bind:checked={remember} disabled={secureStore.locked} />
-    {/if}
-    <Button type="submit" variant="primary"
-      disabled={probing || !url.trim() || Boolean(username.trim()) !== Boolean(password)}>
-      {#if probing}<Icon icon={Loader2} size="sm" class="animate-spin" /> Connecting…
-      {:else}<Icon icon={Zap} size="sm" /> Connect{/if}
-    </Button>
-    <div aria-live="polite" class="min-h-5 flex items-center gap-1.5 text-caption">
-      {#if status === 'ok'}<Icon icon={CheckCircle2} size="sm" class="text-feedback-success-foreground" />
-        <span class="text-feedback-success-foreground">Connected{rtt !== null ? ` · ${rtt}ms` : ''}</span>
-      {:else if status === 'error'}<Icon icon={AlertCircle} size="sm" class="text-feedback-danger-foreground" />
-        <span class="break-words text-feedback-danger-foreground">{error}</span>{/if}
-    </div>
-  </form>
+{#snippet localCredentials()}
   {#if localConnections}
     <section aria-label="Local credentials" class="mt-[var(--reddb-spatial-gap-md)] grid gap-[var(--reddb-spatial-gap-sm)] border-t border-elevation-base-border pt-[var(--reddb-spatial-inset-md)]">
       {#if secureStore.available}
@@ -301,6 +262,53 @@
       {/each}
     </section>
   {/if}
+{/snippet}
+
+{#snippet connectionForm()}
+  <form onsubmit={submit} class="grid gap-3">
+    <Field id={workspace.idFor("connect-url")} label="Connection string" help={`URL or Base64-encoded URL · reachable here: ${supportedHint}`}>
+      {#snippet children(control)}
+        <Input {...control} bind:ref={inputEl} bind:value={url} disabled={probing}
+          oninput={() => { username = ''; password = '' }} spellcheck="false"
+          placeholder="https://user:password@host or Base64" />
+      {/snippet}
+    </Field>
+    <Disclosure bind:open={signInOpen} label="Sign in to the database">
+      <div class="mt-2 grid gap-2">
+        <Field id={workspace.idFor("connect-username")} label="Username">
+          {#snippet children(control)}<Input {...control} autocomplete="username" bind:value={username} disabled={probing} />{/snippet}
+        </Field>
+        <Field id={workspace.idFor("connect-password")} label="Password">
+          {#snippet children(control)}<Input {...control} type="password" autocomplete="current-password" bind:value={password} disabled={probing} />{/snippet}
+        </Field>
+        <p class="text-caption text-ink-muted">Credentials go directly to this database. The session stays in this tab.</p>
+      </div>
+    </Disclosure>
+    {#if localConnections && secureStore.available && (presentation === 'popover' || !secureStore.locked)}
+      <Checkbox label="Save credentials on this device" bind:checked={remember} disabled={secureStore.locked} />
+    {/if}
+    <Button type="submit" variant="primary"
+      disabled={probing || !url.trim() || Boolean(username.trim()) !== Boolean(password)}>
+      {#if probing}<Icon icon={Loader2} size="sm" class="animate-spin" /> Connecting…
+      {:else}<Icon icon={Zap} size="sm" /> Connect{/if}
+    </Button>
+    <div aria-live="polite" class="min-h-5 flex items-center gap-1.5 text-caption">
+      {#if status === 'ok'}<Icon icon={CheckCircle2} size="sm" class="text-feedback-success-foreground" />
+        <span class="text-feedback-success-foreground">Connected{rtt !== null ? ` · ${rtt}ms` : ''}</span>
+      {:else if status === 'error'}<Icon icon={AlertCircle} size="sm" class="text-feedback-danger-foreground" />
+        <span class="break-words text-feedback-danger-foreground">{error}</span>{/if}
+    </div>
+  </form>
+  {#if localConnections}
+    {#if presentation === 'inline' && localConnections.profiles.length === 0}
+      <Disclosure label="Save connections on this device">
+        <p class="text-caption text-ink-muted">Optional. Keep saved credentials encrypted on this device.</p>
+        {@render localCredentials()}
+      </Disclosure>
+    {:else}
+      {@render localCredentials()}
+    {/if}
+  {/if}
   {#if canOpenFile}
     <Button onclick={openFile} disabled={probing} class="mt-2 w-full">
       <Icon icon={FolderOpen} size="sm" /> Open database file…
@@ -333,4 +341,22 @@
       </div>
     </section>
   {/if}
+{/snippet}
+
+{#if presentation === 'inline'}
+  <section aria-label="Connect to reddb" data-connection-form>
+    {@render connectionForm()}
+  </section>
+{:else}
+<Popover triggerLabel={`${triggerLabel} ${triggerStatus}`} contentLabel="Connect to reddb" bind:open size="sm"
+  class="w-[380px] max-w-[calc(100vw-2rem)] p-4">
+  {#snippet trigger()}
+    <span class={['size-1.5 rounded-full shrink-0', dotClass].join(' ')}></span>
+    {#if !connection.connected}<Icon icon={Plug} size="sm" />{/if}
+    <span class="min-w-0 max-w-[14rem] truncate font-mono">{triggerLabel}</span>
+    <span class="shrink-0 whitespace-nowrap text-caption text-ink-muted">{triggerStatus}</span>
+    <Icon icon={ChevronDown} size="sm" />
+  {/snippet}
+  {@render connectionForm()}
 </Popover>
+{/if}

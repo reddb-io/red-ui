@@ -209,6 +209,10 @@ test("refresh keeps a query selected in the collection route without creating or
   flushSync();
   expect(runtime.tabs.activeId).toBe("draft");
   expect(runtime.tabs.tabs).toHaveLength(2);
+  expect(target.querySelector('[data-workspace-body]')).toBeNull();
+  const openOffline = [...target.querySelectorAll('button')].find(button => button.textContent?.includes('Open saved workspace offline'))!;
+  openOffline.click();
+  flushSync();
   expect((target.querySelector("textarea") as HTMLTextAreaElement).value).toBe(
     "SELECT customer FROM orders"
   );

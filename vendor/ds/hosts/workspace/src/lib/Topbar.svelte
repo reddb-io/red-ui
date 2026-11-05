@@ -11,7 +11,7 @@
   const workspace = useWorkspace()
   const { theme } = workspace
 
-  let { showConnect = true }: { showConnect?: boolean } = $props()
+  let { showConnect = true, showCommands = true }: { showConnect?: boolean; showCommands?: boolean } = $props()
 
   const router = useRouter()
 
@@ -52,6 +52,7 @@
         <Icon icon={Moon} size="sm" />
       {/if}
     </Button>
+    {#if showCommands}
     <Button
       size="sm"
       aria-haspopup="dialog"
@@ -62,5 +63,6 @@
       <span>Search or run</span>
       <span class="inline-flex gap-0.5 ml-1"><Kbd>⌘</Kbd><Kbd>K</Kbd></span>
     </Button>
+    {/if}
   </div>
 </header>
