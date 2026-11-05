@@ -1,26 +1,8 @@
 name: ci
 
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - "**.md"
-      - "docs/**"
-      - ".changeset/**"
-      - "LICENSE**"
-  pull_request:
-    paths-ignore:
-      - "**.md"
-      - "docs/**"
-      - ".changeset/**"
-      - "LICENSE**"
+  workflow_dispatch:
 
-# Blacksmith-hosted runners (matching reddb-io/reddb's pattern) — same
-# GitHub Actions semantics, dramatically faster boots and SSDs.
-
-# Cost guard: a new push cancels older in-flight CI on the same ref. Release
-# validation lives in release.yml; CI runs should stay quick (harvested from
-# reddb-io/reddb).
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true

@@ -5,24 +5,6 @@ on:
     tags: ["v*"]
   workflow_dispatch:
 
-# Runners: free standard GitHub-hosted runners for this public repository.
-# Blacksmith remains available for explicit Testbox/performance investigations.
-#
-# Signing secrets (all optional — the workflow falls back to unsigned
-# builds when a secret is missing):
-#   TAURI_SIGNING_PRIVATE_KEY    — Tauri updater signing key (for autoUpdate)
-#   TAURI_SIGNING_PRIVATE_KEY_PASSWORD
-#   APPLE_CERTIFICATE             — base64-encoded .p12 (Developer ID Application)
-#   APPLE_CERTIFICATE_PASSWORD
-#   APPLE_SIGNING_IDENTITY        — e.g. "Developer ID Application: …"
-#   APPLE_ID                      — Apple ID for notarization
-#   APPLE_PASSWORD                — app-specific password
-#   APPLE_TEAM_ID
-#   WINDOWS_CERTIFICATE           — base64-encoded .pfx
-#   WINDOWS_CERTIFICATE_PASSWORD
-
-# Never interrupt an in-flight release (a half-published tag is worse than a
-# queued one), but don't run two releases for the same ref at once.
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
