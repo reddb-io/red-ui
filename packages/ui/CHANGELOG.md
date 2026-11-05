@@ -1,5 +1,12 @@
 # @reddb-io/ui
 
+## 0.8.4
+
+### Patch Changes
+
+- Open RedUI through a connection-first entry screen. Check recovered local documents and saved connections before showing the connection form, keep real connection progress visible, and enter Collections only after the connection is ready. Recovered drafts can be opened explicitly offline; fresh sessions no longer show collection chrome or create a query tab before connecting.
+  - @reddb-io/ui-mcp@0.8.4
+
 ## 0.8.3
 
 ### Patch Changes

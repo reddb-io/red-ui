@@ -8,23 +8,17 @@
   import { BitsConfig } from 'bits-ui'
   import { createWorkspaceRuntime, type WorkspaceRuntime } from './workspace-runtime.svelte'
   import { setWorkspaceRuntime } from './workspace-context'
-  import Splash from './Splash.svelte'
   import LoadingOverlay from './LoadingOverlay.svelte'
   import DevConsole from './DevConsole.svelte'
   import GlobalProgressBar from './GlobalProgressBar.svelte'
   import Topbar from './Topbar.svelte'
-  import WorkspaceNavigation from './WorkspaceNavigation.svelte'
+  import WorkspaceEntry from './WorkspaceEntry.svelte'
+  import WorkspaceContent from './WorkspaceContent.svelte'
   import StatusBar from './StatusBar.svelte'
   import CommandPalette from './CommandPalette.svelte'
   import ShortcutOverlay from './ShortcutOverlay.svelte'
   import MasterPasswordDialog from './MasterPasswordDialog.svelte'
   import PendingChangesPanel from './PendingChangesPanel.svelte'
-  import CollectionsView from './CollectionsView.svelte'
-  import ClusterView from './ClusterView.svelte'
-  import AskView from './AskView.svelte'
-  import SecurityView from './SecurityView.svelte'
-  import SettingsView from './SettingsView.svelte'
-  import Appearance from './Appearance.svelte'
   import { runQueryPreferStream, type ConnectionProvider } from './reddb/index'
   import type { Theme } from './theme.svelte'
   import { buildUpdateSql, type CommitOutcome } from './pending-changes.svelte'
@@ -119,6 +113,12 @@
   }
 
   let restored = $state(false)
+  let bootstrapResolved = $state(false)
+  let enteredWorkspace = $state(false)
+
+  // Enter data surfaces only after local recovery and a successful connection.
+  // Once entered, preserve open editors through switches and network loss.
+  $effect(() => { if (restored && bootstrapResolved && connection.connected && !connection.connecting) enteredWorkspace = true })
   onMount(() => {
     // Restore documents before any route effect can mint an empty query tab.
     void workspace.ready.then(() => {
@@ -140,7 +140,9 @@
       void connection.adoptInjected().then(() => {
         if (workspace.session.disposed) return
         if (initialRoute) navigateToBootRoute(initialRoute)
-      })
+      }).catch(() => {
+        if (!workspace.session.disposed) connection.probe = { reachable: false, error: 'Could not open the host connection.' }
+      }).finally(() => { if (!workspace.session.disposed) bootstrapResolved = true })
     } else {
       // Connection Bootstrap: one boot resolver handles Tauri IPC, host globals,
       // the Open Contract URL/hash, and finally persisted standalone state.
@@ -149,16 +151,17 @@
         if (route) {
           navigateToBootRoute(route)
         }
-      })
+      }).catch(() => {
+        if (!workspace.session.disposed) connection.probe = { reachable: false, error: 'Could not restore the connection. Review its details and try again.' }
+      }).finally(() => { if (!workspace.session.disposed) bootstrapResolved = true })
     }
   })
 
-  let booted = $state(false)
   let pendingOpen = $state(false)
   let shell = $state<HTMLDivElement>()
 
   onDestroy(() => {
-    if (booted && restored) workspaceSession.flush(buildSnapshot())
+    if (enteredWorkspace && restored) workspaceSession.flush(buildSnapshot())
     workspace.dispose()
   })
 
@@ -295,9 +298,9 @@
   })
 
   // Autosave: debounce-schedule a snapshot on every router/tab state change.
-  // Guard on `booted` so we don't snapshot the blank pre-splash state.
+  // Entered workspaces alone may autosave; startup must not replace recovered documents.
   $effect(() => {
-    if (!booted || !restored) return
+    if (!enteredWorkspace || !restored) return
     const snap = buildSnapshot()
     workspaceSession.schedule(snap)
   })
@@ -305,7 +308,7 @@
   // Flush immediately on page hide / window blur so an edit made
   // right before closing is never lost to the debounce window.
   onMount(() => {
-    const flush = () => { if (booted && restored) workspaceSession.flush(buildSnapshot()) }
+    const flush = () => { if (enteredWorkspace && restored) workspaceSession.flush(buildSnapshot()) }
     document.addEventListener('visibilitychange', flush)
     window.addEventListener('blur', flush)
     window.addEventListener('pagehide', flush)
@@ -329,7 +332,7 @@
     void import('@tauri-apps/api/event')
       .then(({ listen }) =>
         listen<void>('close-request', async () => {
-          if (restored) workspaceSession.flush(buildSnapshot())
+          if (enteredWorkspace && restored) workspaceSession.flush(buildSnapshot())
           try { await workspace.flushPersistence() } catch { /* The metadata recovery journal is retained. */ }
           const { getCurrentWindow } = await import('@tauri-apps/api/window')
           await getCurrentWindow().destroy()
@@ -388,7 +391,7 @@
   let lastView: View | null = null
   let lastCollectionKey: string | null = null
   $effect(() => {
-    if (!restored) return
+    if (!restored || !enteredWorkspace) return
     const view = router.view
     const collection = router.collection
     const subpage = router.subpage
@@ -421,53 +424,32 @@
   aria-label={workspace.persistenceKey === 'default' ? undefined : (label ?? `${connection.active.label} workspace`)}
   class={`relative isolate h-full bg-background text-foreground ${workspace.persistenceKey === 'default' ? 'min-h-screen' : 'min-h-[720px]'}`} tabindex="-1">
 <BitsConfig defaultPortalTo={injectedPortalTarget ?? portalTarget}>
-{#if !booted}
-  <Splash contained onDone={() => (booted = true)} />
-{:else}
+{#if enteredWorkspace}
   <div bind:this={shell} class="app relative grid min-w-0 grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto_minmax(0,1fr)_auto] h-screen">
     <GlobalProgressBar />
     <Topbar showConnect={showConnect} />
     <StatusBar />
-    <div data-workspace-body class="flex min-h-0 min-w-0 overflow-hidden">
-    <WorkspaceNavigation label={label ?? connection.active.label} />
-    <svelte:element this={workspace.persistenceKey === 'default' ? 'main' : 'div'} class="relative min-h-0 min-w-0 flex-1 overflow-hidden z-[1]">
-      {#if !restored}
-        <div role="status" class="flex h-full items-center justify-center text-sm text-ink-muted">Opening saved workspace…</div>
-      {:else if router.view === 'ask'}
-        <AskView />
-      {:else if router.view === 'cluster'}
-        <ClusterView />
-      {:else if router.view === 'security'}
-        <SecurityView />
-      {:else if router.view === 'analytics'}
-        <!-- Lazy: LayerChart + d3 are heavy, so the charting bundle only
-             loads when the user actually opens Analytics. -->
-        {#await import('./AnalyticsView.svelte')}
-          <div class="flex h-full items-center justify-center font-mono text-[12px] text-ink-muted">loading analytics…</div>
-        {:then { default: AnalyticsView }}
-          <AnalyticsView />
-        {/await}
-      {:else if router.view === 'settings'}
-        <SettingsView />
-      {:else if router.view === 'appearance'}
-        <Appearance />
-      {:else}
-        <CollectionsView />
-      {/if}
-    </svelte:element>
-    </div>
+    <WorkspaceContent label={label ?? connection.active.label} />
     <DevConsole contained store={devConsole} />
     <CommandPalette />
     <ShortcutOverlay />
     <MasterPasswordDialog />
     <PendingChangesPanel open={pendingOpen} onClose={closePending} />
   </div>
+  {:else}
+    <div class="flex h-full min-h-[inherit] flex-col bg-background">
+      <Topbar showConnect={false} showCommands={false} />
+      <WorkspaceEntry {restored} resolved={bootstrapResolved} {showConnect} onopendrafts={() => enteredWorkspace = true} />
+    </div>
+    <MasterPasswordDialog />
 {/if}
 
 <!-- Step-logged loading overlay (#127): sits above the shell during a slow
      connect/boot; self-hides once the open resolves and never flashes on fast
      opens. -->
-<LoadingOverlay contained store={loading} />
+<!-- Handoffs authenticate in parallel; local recovery owns the first screen.
+     A fast connection must not flash its modal and return to local checking. -->
+{#if restored}<LoadingOverlay contained store={loading} />{/if}
 
 
 <div bind:this={portalTarget} data-workspace-portals={workspace.id}></div>

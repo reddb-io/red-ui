@@ -76,7 +76,7 @@ export interface WorkspaceServices {
 }
 
 export interface WorkspaceRuntime extends WorkspaceServices {
-  /** Metadata recovery completes independently of Vault unlock and connection login. */
+  /** Local documents, saved profiles and Vault availability; never waits for unlock or login. */
   readonly ready: Promise<void>;
   /** Acknowledge pending local metadata commits before closing the host. */
   flushPersistence(): Promise<void>;
@@ -215,9 +215,9 @@ export function createWorkspaceRuntime(
     onState(state, error) { persistenceStatus.state = state; persistenceStatus.error = error; },
   }) : undefined;
   if (metadata) storage = metadata;
-  const ready = metadata?.ready ?? Promise.resolve();
+  const metadataReady = metadata?.ready ?? Promise.resolve();
   const localConnections = persistence ? new LocalConnections(persistence) : undefined;
-  void ready.then(() => localConnections?.load()).catch(() => {});
+  const profilesReady = metadataReady.then(() => localConnections?.load()).catch(() => {});
   const controller = new AbortController();
   const activity = new ActivityStore();
   const loading = new LoadingStore();
@@ -226,7 +226,7 @@ export function createWorkspaceRuntime(
     namespace: keys.secure,
     storage: legacyStorage,
     persistence,
-    persistenceReady: ready,
+    persistenceReady: metadataReady,
     historyKey: keys.history,
     // Enumeration is already projected to this profile. Include its legacy
     // hyphenated preference/snapshot keys when wiping the scoped backend.
@@ -239,6 +239,9 @@ export function createWorkspaceRuntime(
       }
     },
   });
+  // Entry decisions need the whole local picture, including saved profile
+  // labels and Vault availability. Explicit handoffs still connect independently.
+  const ready = Promise.all([metadataReady, profilesReady, secureStore.ready]).then(() => {});
   const devConsole = new DevConsoleStore();
   const connections = createConnections({
     secureStore,
@@ -254,7 +257,7 @@ export function createWorkspaceRuntime(
     historyKey: keys.history,
     consumeBootstrap: legacy,
     launchBootstrap: launch,
-    persistenceReady: ready,
+    persistenceReady: metadataReady,
     optInCredentials: Boolean(persistence),
   });
   const services: WorkspaceServices = {
