@@ -670,26 +670,28 @@ The analytical-charts example includes 10, 11 and 40-category views, an applicat
 palette toggle, a ring-thickness slider, and controls for highlighting a single
 quadrant with the exact `highlights` configuration displayed inline.
 
-### DeveloperPanel
+### DeveloperPanel and DeveloperRequestInspector
 
-`DeveloperPanel` is a collapsible bottom-docked request inspector. It accepts a
-snapshot of requests from the host and can be contained inside an application
-shell. The host owns capture, retention, redaction and clearing; the component
-does not intercept traffic or make network requests. Supply only values safe to
-show, including URLs, headers, bodies, connection metadata and errors.
+`DeveloperPanel` docks arbitrary caller-owned content at the bottom of the viewport or a containing host. It can render plain children without tabs, or host-defined `contexts` and `contextContent`; optional `contextToolbar` and `headerActions` let the host compose its own controls. The panel owns resizing, maximizing and restoring its previous height. It does not need requests or any particular application content.
+
+`DeveloperRequestInspector` is an optional Data Kit Composite. It composes the existing ListRow, Badge, Input, Tabs, Toolbar and DescriptionList to inspect a sanitized request snapshot. It can be placed in a panel context or any bounded surface; the application owns collection, redaction, retention and action behavior. Optional `timeLabel` and `source` are display-ready host data and participate in filtering. `requestActions` receives the selected request, while child content supplies an optional Tools view.
 
 ```svelte
 <script lang="ts">
   import DeveloperPanel from "@reddb-io/design-system/data/DeveloperPanel";
-  let open = false;
-  const requests = [{ id: "1", method: "GET", target: "/health", status: "200", durationMs: 23 }];
+  import DeveloperRequestInspector from "@reddb-io/design-system/data/DeveloperRequestInspector";
+  const requests = [{ id: "1", method: "GET", target: "/health", status: "200" }];
+  const contexts = [{ value: "requests", label: "Requests" }, { value: "console", label: "Console" }];
 </script>
-<DeveloperPanel label="Developer tools" {requests} bind:open onrequestschange={(next) => { /* update the host's log */ }} />
+<DeveloperPanel label="Developer tools" {contexts}>
+  {#snippet contextContent({ value })}
+    {#if value === "requests"}<DeveloperRequestInspector {requests} />{:else}<p>Console output</p>{/if}
+  {/snippet}
+</DeveloperPanel>
 ```
 
-The React flavor uses the same entry fields and `onOpenChange` / `onRequestsChange`.
-Each timing phase is an explicit start offset and duration in milliseconds;
-missing phases remain unavailable rather than becoming fabricated DNS or TLS
-measurements. Browser network APIs and native transports expose different data;
-the host should only supply measurements it actually obtained. The optional
-child content provides a Tools view for application-specific diagnostics.
+With no contexts, pass `children` directly; no tab or request data is required. `contextToolbar` receives the active value, or `content` for a panel without tabs. Set `toolbarContexts` to limit where that toolbar appears. React uses render functions for `contextContent`, `contextToolbar` and `requestActions`.
+
+**BREAKING:** The panel's `requests`, `onrequestschange`/`onRequestsChange` and `requestActions` are deprecated for one release. Move them to `DeveloperRequestInspector` inside a caller-defined Requests context. The compatibility path still renders the existing inspector and Tools content during the deprecation window.
+
+Request timing phases must be supplied measurements; missing DNS, TLS or other timings are never inferred. Drag the upper separator or use Up/Down, Home and End to resize; Maximize fills the viewport or containing host and Restore returns to the previous height.

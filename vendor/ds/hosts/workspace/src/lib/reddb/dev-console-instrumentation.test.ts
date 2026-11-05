@@ -149,3 +149,21 @@ describe("RedClient console instrumentation", () => {
     expect(entry.payload).toContain("SELECT n FROM t");
   });
 });
+
+
+describe("developer request inspector capture", () => {
+  it("captures sanitized response and headers while returning original data to the caller", async () => {
+    const data = { result: { records: [{ values: { n: 1, password: "response-secret" } }] }, token: "top-secret" };
+    const fetcher = vi.fn(async () => Response.json(data, { headers: { "set-cookie": "session=hidden", "x-request-id": "trace-1" } }));
+    const client = new RedClient("http://reddb.test", { fetch: fetcher, headers: { Authorization: "Bearer hidden", "X-Client": "red-ui" } });
+    const result = await client.query("SELECT n FROM t");
+    expect(result).toEqual(data);
+    const [entry] = devConsole.snapshot();
+    expect(entry.response).toContain('"n": 1');
+    expect(entry.response).not.toContain("response-secret");
+    expect(entry.response).not.toContain("top-secret");
+    expect(entry.requestHeaders).toContainEqual(["authorization", "«redacted»"]);
+    expect(entry.responseHeaders).toContainEqual(["set-cookie", "«redacted»"]);
+    expect(entry.responseHeaders).toContainEqual(["x-request-id", "trace-1"]);
+  });
+});

@@ -1,89 +1,107 @@
 <script lang="ts">
-  import { Button, Input, quietControl } from "@reddb-io/design-system/base";
+  import { Button, Icon, Tabs, warnDeprecated } from "@reddb-io/design-system/base";
+  import DeveloperRequestInspector from "./DeveloperRequestInspector.svelte";
   import type { Snippet } from "svelte";
   import type { DeveloperRequest } from "./developer-panel";
   import type { DeveloperPanelContract } from "./core/contracts/developerpanel";
-  import { filterDeveloperRequests, formatRequestDuration, formatRequestDetails } from "./developer-panel";
+  import { clampDeveloperPanelHeight, developerPanelHeightForKey } from "./developer-panel";
   import { developerPanelClasses as styles } from "./developer-panel.variants";
   export type { DeveloperRequest, RequestPhase } from "./developer-panel";
   interface Props extends DeveloperPanelContract {
     /** Called when the expanded state changes. */
     onopenchange?: (open: boolean) => void;
-    /** Called when the user asks the application to clear the request log. */
+    /** Legacy callback for clearing the request log.
+     * @deprecated Use `contextContent` to compose DeveloperRequestInspector with this handler; removed next release. */
     onrequestschange?: (requests: readonly DeveloperRequest[]) => void;
-    /** Optional additional tools supplied by the host. */
+    /** Caller-owned panel content; the legacy requests prop renders it in the Tools view. */
     children?: Snippet;
+    /** Body for a host-defined context, receiving its value. */
+    contextContent?: Snippet<[{ value: string }]>;
+    /** Optional toolbar below the header for the current context. */
+    contextToolbar?: Snippet<[{ value: string }]>;
+    /** Legacy actions for the selected request.
+     * @deprecated Use `contextContent` to compose DeveloperRequestInspector with these actions; removed next release. */
+    requestActions?: Snippet<[DeveloperRequest]>;
+    /** Optional header controls before the close button. */
+    headerActions?: Snippet;
     /** Extra root classes. */
     class?: string;
   }
-  let { label, requests, open = $bindable(false), contained = false, onopenchange, onrequestschange, children, class: className = "" }: Props = $props();
-  let filter = $state("");
-  let selected = $state<string | null>(null);
-  let copyMessage = $state("");
-  let tab = $state<"request" | "response" | "timing" | "tools">("request");
-  const filtered = $derived(filterDeveloperRequests([...requests].reverse(), filter));
-  const active = $derived(filtered.find((item) => item.id === selected) ?? filtered[0]);
-  $effect(() => { void active?.id; void tab; copyMessage = ""; });
-  function toggle() { open = !open; onopenchange?.(open); }
-  async function copyDetails() {
-    if (!active || tab === "tools") return;
-    try { await navigator.clipboard.writeText(formatRequestDetails(active, tab)); copyMessage = "Copied."; }
-    catch { copyMessage = "Copy failed."; }
+  let { label, requests, open = $bindable(false), contained = false, onopenchange, onrequestschange, children: extraTools, contexts = [], contextContent, contextToolbar, toolbarContexts, headerActions, requestActions, class: className = "" }: Props = $props();
+  const panelId = $props.id();
+  let root = $state<HTMLElement>();
+  let maximized = $state(false);
+  let resizedHeight = $state<number>();
+  let measuredHeight = $state(0);
+  let availableHeight = $state(0);
+  let drag = $state<{ y: number; height: number }>();
+  function available(): number { return contained ? (root?.parentElement?.clientHeight ?? 0) : window.innerHeight; }
+  $effect(() => {
+    if (!root || !open) return;
+    const element = root;
+    const update = () => { measuredHeight = element.getBoundingClientRect().height; availableHeight = available(); };
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    if (contained && element.parentElement) observer.observe(element.parentElement);
+    window.addEventListener("resize", update);
+    update();
+    return () => { observer.disconnect(); window.removeEventListener("resize", update); };
+  });
+  function startResize(event: PointerEvent) {
+    if (event.button !== 0 || !root) return;
+    event.preventDefault();
+    drag = { y: event.clientY, height: root.getBoundingClientRect().height };
+    event.currentTarget instanceof HTMLElement && event.currentTarget.setPointerCapture(event.pointerId);
   }
+  function moveResize(event: PointerEvent) {
+    if (drag) resizedHeight = clampDeveloperPanelHeight(drag.height + drag.y - event.clientY, available());
+  }
+  function resizeKey(event: KeyboardEvent) {
+    if (!root) return;
+    const next = developerPanelHeightForKey(event.key, root.getBoundingClientRect().height, available());
+    if (next !== null) { event.preventDefault(); resizedHeight = next; }
+  }
+  const hasRequests = $derived(requests !== undefined);
+  const entries = $derived(requests ?? []);
+  let context = $state("requests");
+  const contextItems = $derived([...(hasRequests ? [{ value: "requests", label: "Requests" }] : []), ...contexts.filter((item) => !hasRequests || item.value !== "requests")]);
+  $effect(() => { if (hasRequests) warnDeprecated("DeveloperPanel", "requests", "DeveloperRequestInspector inside a Requests context"); });
+  function toggle() { open = !open; onopenchange?.(open); }
+
 </script>
 
-<section aria-label={label} data-developer-panel class={`${styles.root} ${contained ? "absolute" : "fixed"} ${className}`}>
-  <div class={styles.toolbar}>
-    <Button variant="ghost" size="sm" onclick={toggle} aria-expanded={open}>{label} · {requests.length}</Button>
-    {#if open}
-      <div class="min-w-0 flex-1"><Input type="search" aria-label="Filter requests" placeholder="Filter requests" bind:value={filter} /></div>
-      {#if onrequestschange}<Button variant="ghost" size="sm" onclick={() => onrequestschange?.([])}>Clear requests</Button>{/if}
-      <Button variant="ghost" size="sm" onclick={toggle}>Close</Button>
-    {/if}
-  </div>
-  {#if open}
-    <div class={styles.content}>
-      <!-- svelte-ignore a11y_no_noninteractive_tabindex: scrollable request list is keyboard accessible -->
-      <div class={styles.list} role="region" aria-label="Requests" tabindex="0">
-        {#if filtered.length === 0}<p class={`${styles.detail} ${styles.muted}`}>{requests.length ? "No requests match the filter." : "No requests recorded."}</p>{/if}
-        {#each filtered as item (item.id)}
-          <button type="button" class={quietControl({ selected: active?.id === item.id, focus: "inset", class: styles.row })} aria-pressed={active?.id === item.id} onclick={() => selected = item.id}>
-            <span>{item.method}</span><span class="min-w-0 flex-1 truncate">{item.target}</span><span>{item.status}</span><span class={styles.muted}>{formatRequestDuration(item.durationMs)}</span>
-          </button>
-        {/each}
-      </div>
-      <!-- svelte-ignore a11y_no_noninteractive_tabindex: scrollable request details are keyboard accessible -->
-      <div class={styles.detail} role="region" aria-label="Request details" tabindex="0">
-        <div class={styles.tabs} aria-label="Request views">
-          {#each ["request", "response", "timing"] as name}
-            <Button variant="ghost" size="sm" aria-pressed={tab === name} class={tab === name ? "border-b-2 border-b-foreground" : "border-b-2 border-b-transparent"} onclick={() => tab = name as typeof tab}>{name === "request" ? "Request" : name === "response" ? "Response" : "Timing"}</Button>
-          {/each}
-          {#if children}<Button variant="ghost" size="sm" aria-pressed={tab === "tools"} class={tab === "tools" ? "border-b-2 border-b-foreground" : "border-b-2 border-b-transparent"} onclick={() => tab = "tools"}>Tools</Button>{/if}
-        </div>
-        {#if active && tab !== "tools"}<Button variant="ghost" size="sm" onclick={copyDetails}>Copy details</Button><span role="status">{copyMessage}</span>{/if}
-        {#if tab === "tools" && children}
-          {@render children()}
-        {:else if !active}
-          <p class={styles.muted}>Select a request to inspect it.</p>
-        {:else if tab === "timing"}
-          <div class={styles.stack}>
-            <p>Total: {formatRequestDuration(active.durationMs)}</p>
-            {#if active.phases?.length}
-              <table><caption class="sr-only">Measured phases</caption><thead><tr><th class={styles.cell}>Phase</th><th class={styles.cell}>Start</th><th class={styles.cell}>Duration</th></tr></thead><tbody>{#each active.phases as phase}<tr><th scope="row" class={styles.cell}>{phase.label}</th><td class={styles.cell}>{formatRequestDuration(phase.startMs)}</td><td class={styles.cell}>{formatRequestDuration(phase.durationMs)}</td></tr>{/each}</tbody></table>
-            {:else}<p class={styles.muted}>Timing phases not available.</p>{/if}
-            {#if active.connection?.length}<div><p class="font-medium">Connection</p><dl>{#each active.connection as [key, value]}<div><dt>{key}</dt><dd class={styles.text}>{value}</dd></div>{/each}</dl></div>{/if}
-          </div>
-        {:else}
-          {@const headers = tab === "request" ? active.requestHeaders : active.responseHeaders}
-          {@const body = tab === "request" ? active.requestBody : active.responseBody}
-          <div class={styles.stack}>
-            <p class={styles.text}>{active.method} {active.target} · {active.status}</p>
-            {#if active.error && tab === "response"}<p>{active.error}</p>{/if}
-            <div><p class="font-medium">Headers</p>{#if headers?.length}<dl>{#each headers as [key, value]}<div><dt>{key}</dt><dd class={styles.text}>{value}</dd></div>{/each}</dl>{:else}<p class={styles.muted}>Not available.</p>{/if}</div>
-            <div><p class="font-medium">Body</p>{#if body !== undefined}<pre class={styles.text}>{body}</pre>{:else}<p class={styles.muted}>Not available.</p>{/if}</div>
-          </div>
-        {/if}
-      </div>
+{#snippet panelControls()}
+  <div class={styles.headerActions}>{@render headerActions?.()}<Button variant="ghost" size="md" class="w-[var(--reddb-spatial-control-height-md)] min-w-[var(--reddb-spatial-control-height-md)] p-0" aria-label={maximized ? "Restore panel size" : "Maximize panel"} title={maximized ? "Restore panel size" : "Maximize panel"} onclick={() => maximized = !maximized}><Icon icon={maximized ? "restore" : "maximize"} size="md" color="current" aria-hidden="true" /></Button><Button variant="ghost" size="lg" class="w-[var(--reddb-spatial-control-height-lg)] min-w-[var(--reddb-spatial-control-height-lg)] p-0" aria-label="Close" title="Close" onclick={toggle}><Icon icon="x" size="md" color="current" aria-hidden="true" /></Button></div>
+{/snippet}
+
+<section bind:this={root} id={panelId} aria-label={label} data-developer-panel data-maximized={maximized && open} style:height={!open || resizedHeight === undefined || maximized ? undefined : `${resizedHeight}px`} class={`${styles.root} ${contained ? "absolute max-h-full" : "fixed max-h-[100dvh]"} ${open ? (maximized ? styles.maximized : styles.expanded) : ""} ${className}`}>
+  {#if open && !maximized}
+    <!-- svelte-ignore a11y_no_noninteractive_tabindex: adjustable ARIA separator -->
+    <!-- svelte-ignore a11y_no_noninteractive_element_interactions: adjustable ARIA separator -->
+    <div class={styles.resize} role="separator" tabindex="0" aria-label="Resize developer panel" aria-controls={panelId} aria-orientation="horizontal" aria-valuemin={Math.min(160, Math.round(availableHeight))} aria-valuemax={Math.round(availableHeight)} aria-valuenow={Math.round(measuredHeight)} onpointerdown={startResize} onpointermove={moveResize} onpointerup={() => drag = undefined} onpointercancel={() => drag = undefined} onlostpointercapture={() => drag = undefined} onkeydown={resizeKey}></div>
+  {/if}
+  {#if !open}
+    <div class={styles.toolbar}>
+      <Button variant="ghost" size="sm" class="text-body font-medium text-foreground" onclick={toggle} aria-expanded={false}>{label}{hasRequests ? ` · ${entries.length}` : ""}</Button>
     </div>
+  {:else if contextItems.length === 0}
+    <div class={styles.toolbar}><Button variant="ghost" size="sm" class="text-body font-medium text-foreground" onclick={toggle} aria-expanded={true}>{label}</Button>{@render panelControls()}</div>
+    <div class="flex min-h-0 flex-1 flex-col overflow-hidden">
+      {#if contextToolbar && (!toolbarContexts || toolbarContexts.includes("content"))}<div class={styles.contextToolbar}>{@render contextToolbar({ value: "content" })}</div>{/if}
+      <div class={styles.customBody}>{#if contextContent}{@render contextContent({ value: "content" })}{:else}{@render extraTools?.()}{/if}</div>
+    </div>
+  {:else}
+    <Tabs label="Developer contexts" items={contextItems} triggerClass="text-caption" value={context} onvaluechange={(value) => context = value} class={styles.contexts} listClass="order-last basis-full self-end [&>button]:shrink-0 @lg:order-none @lg:basis-auto" contentClass={styles.contextBody}>
+      {#snippet leading()}<Button variant="ghost" size="sm" class="self-center text-body font-medium text-foreground" onclick={toggle} aria-expanded={true}>{label}{hasRequests ? ` · ${entries.length}` : ""}</Button>{/snippet}
+      {#snippet actions()}{@render panelControls()}{/snippet}
+      {#snippet children({ value: activeContext })}
+        {#if contextToolbar && (!toolbarContexts || toolbarContexts.includes(activeContext))}<div class={styles.contextToolbar}>{@render contextToolbar({ value: activeContext })}</div>{/if}
+        {#if hasRequests && activeContext === "requests"}
+          <div class={styles.customBody}>{#if extraTools}<DeveloperRequestInspector requests={entries} {onrequestschange} {requestActions}>{@render extraTools()}</DeveloperRequestInspector>{:else}<DeveloperRequestInspector requests={entries} {onrequestschange} {requestActions} />{/if}</div>
+        {:else}
+          <div class={styles.customBody}>{#if contextContent}{@render contextContent({ value: activeContext })}{:else if !hasRequests}{@render extraTools?.()}{/if}</div>
+        {/if}
+      {/snippet}
+    </Tabs>
   {/if}
 </section>

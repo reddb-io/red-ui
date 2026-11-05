@@ -18,6 +18,10 @@ export interface DeveloperRequest {
   target: string;
   /** Response status or transport state. */
   status: string;
+  /** Optional source or category supplied by the host, such as an API name. */
+  source?: string;
+  /** Optional display-ready capture time supplied by the host. */
+  timeLabel?: string;
   /** Total duration in milliseconds when measured. */
   durationMs?: number;
   /** Sanitized request headers, preserving duplicate names. */
@@ -39,7 +43,7 @@ export interface DeveloperRequest {
 /** Filter a supplied snapshot without inspecting body content. */
 export function filterDeveloperRequests(requests: readonly DeveloperRequest[], filter: string): DeveloperRequest[] {
   const query = filter.trim().toLocaleLowerCase();
-  return requests.filter((request) => [request.method, request.target, request.status].some((value) => value.toLocaleLowerCase().includes(query)));
+  return requests.filter((request) => [request.method, request.target, request.status, request.source, request.timeLabel].some((value) => value?.toLocaleLowerCase().includes(query)));
 }
 
 /** Format measured durations without presenting missing measurements as zero. */
@@ -51,9 +55,14 @@ export function formatRequestDuration(value: number | undefined): string {
 }
 
 /** Prepare a single visible detail view for copying. Only caller-supplied data is included. */
-export function formatRequestDetails(request: DeveloperRequest, view: "request" | "response" | "timing"): string {
+export function formatRequestDetails(request: DeveloperRequest, view: "request" | "response" | "headers" | "timing"): string {
   const lines = [`${request.method} ${request.target} · ${request.status}`];
-  if (view === "timing") {
+  if (view === "headers") {
+    lines.push("Response headers:");
+    for (const [key, value] of request.responseHeaders ?? []) lines.push(`${key}: ${value}`);
+    lines.push("", "Request headers:");
+    for (const [key, value] of request.requestHeaders ?? []) lines.push(`${key}: ${value}`);
+  } else if (view === "timing") {
     lines.push(`Total: ${formatRequestDuration(request.durationMs)}`);
     for (const phase of request.phases ?? []) lines.push(`${phase.label}: ${formatRequestDuration(phase.durationMs)} (start ${formatRequestDuration(phase.startMs)})`);
     for (const [key, value] of request.connection ?? []) lines.push(`${key}: ${value}`);
@@ -65,4 +74,32 @@ export function formatRequestDetails(request: DeveloperRequest, view: "request" 
     if (body !== undefined) lines.push("", body);
   }
   return lines.join("\n");
+}
+
+/** HTTP status codes use feedback tones; non-HTTP or unknown statuses remain neutral. */
+export function developerRequestStatusTone(status: string): "neutral" | "info" | "success" | "warning" | "danger" {
+  const code = /^(\d{3})(?:\s|$)/.exec(status.trim());
+  if (!code) return "neutral";
+  const value = Number(code[1]);
+  if (value >= 500 && value < 600) return "danger";
+  if (value >= 400 && value < 500) return "warning";
+  if (value >= 300 && value < 400) return "info";
+  if (value >= 200 && value < 300) return "success";
+  return "neutral";
+}
+
+/** Clamp a user-resized bottom panel to its available host height. */
+export function clampDeveloperPanelHeight(height: number, available: number): number {
+  const limit = Math.max(0, available);
+  return Math.min(limit, Math.max(Math.min(160, limit), height));
+}
+
+/** Resize the horizontal separator with the keyboard; null leaves other keys alone. */
+export function developerPanelHeightForKey(key: string, height: number, available: number): number | null {
+  const step = Math.max(1, available * 0.02);
+  if (key === "ArrowUp") return clampDeveloperPanelHeight(height + step, available);
+  if (key === "ArrowDown") return clampDeveloperPanelHeight(height - step, available);
+  if (key === "Home") return clampDeveloperPanelHeight(available, available);
+  if (key === "End") return clampDeveloperPanelHeight(0, available);
+  return null;
 }

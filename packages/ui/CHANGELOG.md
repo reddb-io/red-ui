@@ -1,5 +1,12 @@
 # @reddb-io/ui
 
+## 0.8.3
+
+### Patch Changes
+
+- Restore the bottom developer bar using the Design System DeveloperPanel and request inspector. Inspect real request/response bodies, visible headers and measured duration, with workspace-scoped history, filtering, copy and clear actions. The resizable panel reserves editor space and replaces the navbar Activity popup.
+  - @reddb-io/ui-mcp@0.8.3
+
 ## 0.8.2
 
 ### Patch Changes

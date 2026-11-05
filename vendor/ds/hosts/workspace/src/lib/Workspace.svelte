@@ -424,7 +424,7 @@
 {#if !booted}
   <Splash contained onDone={() => (booted = true)} />
 {:else}
-  <div bind:this={shell} class="app relative grid min-w-0 grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto_minmax(0,1fr)] h-screen">
+  <div bind:this={shell} class="app relative grid min-w-0 grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto_minmax(0,1fr)_auto] h-screen">
     <GlobalProgressBar />
     <Topbar showConnect={showConnect} />
     <StatusBar />
@@ -456,6 +456,7 @@
       {/if}
     </svelte:element>
     </div>
+    <DevConsole contained store={devConsole} />
     <CommandPalette />
     <ShortcutOverlay />
     <MasterPasswordDialog />
@@ -468,9 +469,6 @@
      opens. -->
 <LoadingOverlay contained store={loading} />
 
-<!-- Instrumented developer console (#128): a collapsible, accent-free log of
-     every query/HTTP call the client made, toggled from the StatusBar. -->
-<DevConsole contained store={devConsole} />
 
 <div bind:this={portalTarget} data-workspace-portals={workspace.id}></div>
 </BitsConfig>
