@@ -4,6 +4,11 @@ on:
   push:
     tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      preview_platforms:
+        type: boolean
+        description: Show selected platforms without running builds, tests or publication
+        default: false
 
 concurrency:
   group: release-${{ github.ref }}
@@ -17,6 +22,107 @@ jobs:
   # Preflight: verify the pinned reddb release has all required sidecar assets
   # before the Tauri build matrix starts. A missing asset fails here in seconds
   # rather than after each platform runner has warmed up and run Rust compilation.
+  platforms:
+    name: Select platforms
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    permissions: {}
+    outputs:
+      linux_x64: ${{ steps.select.outputs.linux_x64 }}
+      linux_arm64: ${{ steps.select.outputs.linux_arm64 }}
+      windows_x64: ${{ steps.select.outputs.windows_x64 }}
+      windows_arm64: ${{ steps.select.outputs.windows_arm64 }}
+      macos_x64: ${{ steps.select.outputs.macos_x64 }}
+      macos_arm64: ${{ steps.select.outputs.macos_arm64 }}
+      linux_armv7: ${{ steps.select.outputs.linux_armv7 }}
+      linux_x86: ${{ steps.select.outputs.linux_x86 }}
+      any: ${{ steps.select.outputs.any }}
+      docker_platforms: ${{ steps.select.outputs.docker_platforms }}
+      matrix_tauri: ${{ steps.select.outputs.matrix_tauri }}
+      enabled_tauri: ${{ steps.select.outputs.enabled_tauri }}
+    steps:
+      - id: select
+        name: Filter platforms before allocating runners
+        shell: python
+        env:
+          PLATFORM_DEFAULTS: '{"linux_x64":true,"linux_arm64":true,"windows_x64":true,"windows_arm64":false,"macos_x64":false,"macos_arm64":false,"linux_armv7":false,"linux_x86":false}'
+          PLATFORM_AVAILABLE: '["linux_arm64", "linux_x64", "macos_arm64", "macos_x64", "windows_x64"]'
+          PLATFORM_MATRICES: |
+            {
+              "tauri": [
+                {
+                  "flag": "linux_x64",
+                  "row": {
+                    "platform": "ubuntu-24.04",
+                    "triple": "x86_64-unknown-linux-gnu",
+                    "args": ""
+                  }
+                },
+                {
+                  "flag": "linux_arm64",
+                  "row": {
+                    "platform": "ubuntu-24.04-arm",
+                    "triple": "aarch64-unknown-linux-gnu",
+                    "args": ""
+                  }
+                },
+                {
+                  "flag": "windows_x64",
+                  "row": {
+                    "platform": "windows-2025",
+                    "triple": "x86_64-pc-windows-msvc",
+                    "args": ""
+                  }
+                },
+                {
+                  "flag": "macos_x64",
+                  "row": {
+                    "platform": "macos-15-intel",
+                    "triple": "x86_64-apple-darwin",
+                    "args": "--target x86_64-apple-darwin"
+                  }
+                },
+                {
+                  "flag": "macos_arm64",
+                  "row": {
+                    "platform": "macos-15",
+                    "triple": "aarch64-apple-darwin",
+                    "args": "--target aarch64-apple-darwin"
+                  }
+                }
+              ]
+            }
+        run: |
+          import json
+          import os
+
+          defaults = json.loads(os.environ["PLATFORM_DEFAULTS"])
+          enabled = {}
+          for key in defaults:
+              name = "ENABLE_" + key.upper()
+              value = os.environ[name].lower()
+              if value not in ("true", "false"):
+                  raise SystemExit(f"{name} must be true or false, got {value!r}")
+              enabled[key] = value == "true"
+
+          matrices = json.loads(os.environ["PLATFORM_MATRICES"])
+          available = json.loads(os.environ["PLATFORM_AVAILABLE"])
+          output = {key: str(value).lower() for key, value in enabled.items()}
+          output["any"] = str(any(enabled[key] for key in available)).lower()
+          for job, entries in matrices.items():
+              selected = [entry["row"] for entry in entries if enabled[entry["flag"]]]
+              output["enabled_" + job] = str(bool(selected)).lower()
+              # A placeholder keeps GitHub's matrix schema valid when the job is skipped.
+              output["matrix_" + job] = json.dumps({"include": selected or [entries[0]["row"]]}, separators=(",", ":"))
+          docker = [target for key, target in (("linux_x64", "linux/amd64"), ("linux_arm64", "linux/arm64")) if enabled[key]]
+          output["docker_platforms"] = ",".join(docker)
+          with open(os.environ["GITHUB_OUTPUT"], "a") as handle:
+              for key, value in output.items():
+                  handle.write(f"{key}={value}\n")
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as handle:
+              handle.write("### Selected platforms\n\n")
+              for key in available:
+                  handle.write(f"- {key}: {str(enabled[key]).lower()}\n")
   preflight:
     name: preflight · reddb assets
     runs-on: ubuntu-latest
@@ -27,32 +133,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash scripts/preflight-release-assets.sh
 
+    needs:
+      - platforms
+    if: ${{ !inputs.preview_platforms && (needs.platforms.outputs.any == 'true') }}
   tauri:
     name: tauri · ${{ matrix.triple }}
-    needs: preflight
+    needs:
+      - preflight
+      - platforms
     permissions:
       contents: write
     strategy:
       fail-fast: false
-      matrix:
-        # One entry per shipped architecture. `triple` drives the sidecar
-        # fetch, the rust-cache key, and (on macOS) the build target. Linux
-        # aarch64 builds natively on GitHub's public ARM runner rather than
-        # cross-compiling — cross-building webkit2gtk is not worth the pain.
-        include:
-          - platform: ubuntu-24.04
-            triple: x86_64-unknown-linux-gnu
-            args: ""
-          - platform: ubuntu-24.04-arm
-            triple: aarch64-unknown-linux-gnu
-            args: ""
-          - platform: macos-15
-            triple: universal-apple-darwin
-            args: "--target universal-apple-darwin"
-          - platform: windows-2025
-            triple: x86_64-pc-windows-msvc
-            args: ""
-
+      matrix: ${{ fromJSON(needs.platforms.outputs.matrix_tauri) }}
     runs-on: ${{ matrix.platform }}
     env:
       RED_BUILD_VERSION: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || '' }}
@@ -81,7 +174,7 @@ jobs:
       - name: install rust
         uses: dtolnay/rust-toolchain@1.95.0
         with:
-          targets: ${{ contains(matrix.platform, 'macos') && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ contains(matrix.platform, 'macos') && matrix.triple || '' }}
 
       - name: install mold (linux link speedup)
         if: contains(matrix.platform, 'ubuntu')
@@ -214,11 +307,9 @@ jobs:
               stage "$(find "$target" -path '*/bundle/appimage/*.AppImage' -print -quit)" "red-ui-linux-${arch}.AppImage"
               ;;
             Darwin*)
-              # The macOS leg builds universal-apple-darwin — one dmg serves
-              # both arches, so stage it under both stable names.
               dmg="$(find "$target" -path '*/bundle/dmg/*.dmg' -print -quit)"
-              stage "$dmg" "red-ui-darwin-aarch64.dmg"
-              stage "$dmg" "red-ui-darwin-x86_64.dmg"
+              arch="${{ startsWith(matrix.triple, 'aarch64') && 'aarch64' || 'x86_64' }}"
+              stage "$dmg" "red-ui-darwin-${arch}.dmg"
               ;;
             MINGW*|MSYS*|CYGWIN*)
               stage "$(find "$target" -path '*/bundle/nsis/*-setup.exe' -print -quit)" "red-ui-windows-x86_64-setup.exe"
@@ -227,6 +318,7 @@ jobs:
           [ "${#staged[@]}" -gt 0 ] || { echo "::warning::nothing staged"; exit 0; }
           gh release upload "$TAG" "${staged[@]}" --clobber
 
+    if: ${{ !inputs.preview_platforms && (needs.platforms.outputs.enabled_tauri == 'true') }}
   pwa-build:
     name: pwa · build + zip
     runs-on: ubuntu-latest
@@ -241,7 +333,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: pnpm }
+        with: {node-version: 22, cache: pnpm}
       - run: pnpm install --frozen-lockfile
 
       # The "root" build is for the `red` binary to embed (BASE_PATH=''),
@@ -280,6 +372,7 @@ jobs:
   # by install.sh's verify step. Runs after both producers so every asset is
   # already attached to the (draft) release. gh resolves draft releases by
   # tag for authenticated maintainers, so draft-then-publish keeps working.
+    if: ${{ !inputs.preview_platforms }}
   checksums:
     name: checksums.txt
     needs: [tauri, pwa-build]
@@ -307,10 +400,11 @@ jobs:
   # Publishing is what makes the release installable at all: /releases/latest
   # and the releases API skip drafts, so install.sh, install.ps1 (and winget,
   # scoop, homebrew…) cannot see a tag until this step flips it.
+    if: ${{ !inputs.preview_platforms }}
   publish:
     name: publish · undraft
     needs: [tauri, pwa-build, checksums]
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: ${{ !inputs.preview_platforms && (startsWith(github.ref, 'refs/tags/v')) }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -326,3 +420,12 @@ jobs:
 
   # GitHub Pages deployment for https://ui.reddb.io is handled by
   # .github/workflows/pages.yml on pushes to main.
+env:
+  ENABLE_LINUX_X64: ${{ vars.ENABLE_LINUX_X64 || 'true' }}
+  ENABLE_LINUX_ARM64: ${{ vars.ENABLE_LINUX_ARM64 || 'true' }}
+  ENABLE_WINDOWS_X64: ${{ vars.ENABLE_WINDOWS_X64 || 'true' }}
+  ENABLE_WINDOWS_ARM64: ${{ vars.ENABLE_WINDOWS_ARM64 || 'false' }}
+  ENABLE_MACOS_X64: ${{ vars.ENABLE_MACOS_X64 || 'false' }}
+  ENABLE_MACOS_ARM64: ${{ vars.ENABLE_MACOS_ARM64 || 'false' }}
+  ENABLE_LINUX_ARMV7: ${{ vars.ENABLE_LINUX_ARMV7 || 'false' }}
+  ENABLE_LINUX_X86: ${{ vars.ENABLE_LINUX_X86 || 'false' }}
