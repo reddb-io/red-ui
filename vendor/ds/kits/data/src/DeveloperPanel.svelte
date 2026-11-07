@@ -27,7 +27,7 @@
     /** Extra root classes. */
     class?: string;
   }
-  let { label, requests, open = $bindable(false), contained = false, onopenchange, onrequestschange, children: extraTools, contexts = [], contextContent, contextToolbar, toolbarContexts, headerActions, requestActions, class: className = "" }: Props = $props();
+  let { label = "Developer panel", desktopOnly = false, requests, open = $bindable(false), contained = false, onopenchange, onrequestschange, children: extraTools, contexts = [], contextContent, contextToolbar, toolbarContexts, headerActions, requestActions, class: className = "" }: Props = $props();
   const panelId = $props.id();
   let root = $state<HTMLElement>();
   let maximized = $state(false);
@@ -67,6 +67,19 @@
   const contextItems = $derived([...(hasRequests ? [{ value: "requests", label: "Requests" }] : []), ...contexts.filter((item) => !hasRequests || item.value !== "requests")]);
   $effect(() => { if (hasRequests) warnDeprecated("DeveloperPanel", "requests", "DeveloperRequestInspector inside a Requests context"); });
   function toggle() { open = !open; onopenchange?.(open); }
+  // Empty header space is a pointer target; nested tabs and controls keep their own actions.
+  $effect(() => {
+    if (!root) return;
+    const element = root;
+    const handleHeader = (event: MouseEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element) || target.closest("button, a, input, select, textarea, [role=tab]")) return;
+      const header = target.closest("[data-developer-toolbar], [data-tabs-header]");
+      if (header && (header.parentElement === element || header.parentElement?.parentElement?.parentElement === element)) toggle();
+    };
+    element.addEventListener("click", handleHeader);
+    return () => element.removeEventListener("click", handleHeader);
+  });
 
 </script>
 
@@ -74,18 +87,18 @@
   <div class={styles.headerActions}>{@render headerActions?.()}<Button variant="ghost" size="md" class="w-[var(--reddb-spatial-control-height-md)] min-w-[var(--reddb-spatial-control-height-md)] p-0" aria-label={maximized ? "Restore panel size" : "Maximize panel"} title={maximized ? "Restore panel size" : "Maximize panel"} onclick={() => maximized = !maximized}><Icon icon={maximized ? "restore" : "maximize"} size="md" color="current" aria-hidden="true" /></Button><Button variant="ghost" size="lg" class="w-[var(--reddb-spatial-control-height-lg)] min-w-[var(--reddb-spatial-control-height-lg)] p-0" aria-label="Close" title="Close" onclick={toggle}><Icon icon="x" size="md" color="current" aria-hidden="true" /></Button></div>
 {/snippet}
 
-<section bind:this={root} id={panelId} aria-label={label} data-developer-panel data-maximized={maximized && open} style:height={!open || resizedHeight === undefined || maximized ? undefined : `${resizedHeight}px`} class={`${styles.root} ${contained ? "absolute max-h-full" : "fixed max-h-[100dvh]"} ${open ? (maximized ? styles.maximized : styles.expanded) : ""} ${className}`}>
+<section bind:this={root} id={panelId} aria-label={label} data-developer-panel data-maximized={maximized && open} style:height={!open || resizedHeight === undefined || maximized ? undefined : `${resizedHeight}px`} class={`${styles.root} ${desktopOnly ? "hidden md:flex" : ""} ${contained ? "absolute max-h-full" : "fixed max-h-[100dvh]"} ${open ? (maximized ? styles.maximized : styles.expanded) : ""} ${className}`}>
   {#if open && !maximized}
     <!-- svelte-ignore a11y_no_noninteractive_tabindex: adjustable ARIA separator -->
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions: adjustable ARIA separator -->
     <div class={styles.resize} role="separator" tabindex="0" aria-label="Resize developer panel" aria-controls={panelId} aria-orientation="horizontal" aria-valuemin={Math.min(160, Math.round(availableHeight))} aria-valuemax={Math.round(availableHeight)} aria-valuenow={Math.round(measuredHeight)} onpointerdown={startResize} onpointermove={moveResize} onpointerup={() => drag = undefined} onpointercancel={() => drag = undefined} onlostpointercapture={() => drag = undefined} onkeydown={resizeKey}></div>
   {/if}
   {#if !open}
-    <div class={styles.toolbar}>
-      <Button variant="ghost" size="sm" class="text-body font-medium text-foreground" onclick={toggle} aria-expanded={false}>{label}{hasRequests ? ` · ${entries.length}` : ""}</Button>
+    <div data-developer-toolbar class={styles.collapsedToolbar}>
+      <Button variant="ghost" size="sm" class="w-full justify-start text-caption font-medium text-foreground" onclick={toggle} aria-expanded={false}>{label}{hasRequests ? ` · ${entries.length}` : ""}</Button>
     </div>
   {:else if contextItems.length === 0}
-    <div class={styles.toolbar}><Button variant="ghost" size="sm" class="text-body font-medium text-foreground" onclick={toggle} aria-expanded={true}>{label}</Button>{@render panelControls()}</div>
+    <div data-developer-toolbar class={styles.toolbar}><Button variant="ghost" size="sm" class="text-body font-medium text-foreground" onclick={toggle} aria-expanded={true}>{label}</Button>{@render panelControls()}</div>
     <div class="flex min-h-0 flex-1 flex-col overflow-hidden">
       {#if contextToolbar && (!toolbarContexts || toolbarContexts.includes("content"))}<div class={styles.contextToolbar}>{@render contextToolbar({ value: "content" })}</div>{/if}
       <div class={styles.customBody}>{#if contextContent}{@render contextContent({ value: "content" })}{:else}{@render extraTools?.()}{/if}</div>

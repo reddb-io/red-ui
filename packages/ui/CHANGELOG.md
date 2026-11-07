@@ -1,5 +1,12 @@
 # @reddb-io/ui
 
+## 0.8.5
+
+### Patch Changes
+
+- Resolve each collection model before the first preview read. Config, Vault and KV use their native commands; table-backed key/value data keeps SELECT. Presentation detection retains loaded results without a second read, and older RedDB parsers keep their compatible SELECT fallback.
+  - @reddb-io/ui-mcp@0.8.5
+
 ## 0.8.4
 
 ### Patch Changes

@@ -15,6 +15,8 @@ export { default as Alert } from "./Alert.svelte";
 export { default as AlertDialog } from "./AlertDialog.svelte";
 export { default as AppearanceSwitch } from "./AppearanceSwitch.svelte";
 export { default as AspectRatio } from "./AspectRatio.svelte";
+export { default as AudioMeter } from "./AudioMeter.svelte";
+export { default as VoiceInput } from "./VoiceInput.svelte";
 export { default as Avatar } from "./Avatar.svelte";
 export { default as Badge } from "./Badge.svelte";
 export { default as BrowserMockup } from "./BrowserMockup.svelte";
@@ -182,6 +184,7 @@ export const BASE_COMPONENTS = [
   "AlertDialog",
   "AppearanceSwitch",
   "AspectRatio",
+  "AudioMeter",
   "Avatar",
   "Badge",
   "Breadcrumbs",
@@ -284,6 +287,7 @@ export const BASE_COMPONENTS = [
   "Tooltip",
   "Transfer",
   "TwoColumnSlide",
+  "VoiceInput",
   "WindowMockup",
 ] as const;
 
@@ -333,6 +337,8 @@ export const BASE_COMPONENT_PURPOSES = {
   AlertDialog: "Actions",
   AppearanceSwitch: "Actions",
   AspectRatio: "Layout",
+  AudioMeter: "Data display",
+  VoiceInput: "Data input",
   Avatar: "Data display",
   Badge: "Data display",
   Breadcrumbs: "Navigation",
@@ -530,6 +536,7 @@ export const BASE_COMPOSITES = [
   "ToggleButton",
   "ToggleGroup",
   "TwoColumnSlide",
+  "VoiceInput",
   "WindowMockup",
 ] as const satisfies readonly BaseComponentName[];
 export type BaseCompositeName = (typeof BASE_COMPOSITES)[number];

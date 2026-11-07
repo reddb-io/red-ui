@@ -4,6 +4,7 @@ export const developerPanelClasses = {
   expanded: "h-[min(50vh,35rem)] overflow-hidden",
   maximized: "top-0 h-auto overflow-hidden",
   resize: "absolute inset-x-0 top-0 z-10 h-1 cursor-row-resize touch-none select-none bg-muted hover:bg-control-edge focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus before:absolute before:inset-x-0 before:-inset-y-2.5 before:content-[\'\']",
+  collapsedToolbar: "flex items-center bg-elevation-raised-surface",
   toolbar: "flex min-h-[var(--reddb-spatial-control-height-md)] flex-wrap items-center gap-[var(--reddb-spatial-gap-sm)] border-b border-muted bg-elevation-raised-surface px-[var(--reddb-spatial-inset-md)]",
   contexts: "min-h-0 min-w-0 flex-1 [&>div]:flex [&>div]:h-full [&>div]:min-h-0 [&>div]:flex-col [&_[data-tabs-header]]:bg-elevation-raised-surface [&>div>[data-tabs-header]]:items-end [&>div>[data-tabs-header]]:gap-0 [&>div>[data-tabs-header]]:ps-[var(--reddb-spatial-inset-sm)] [&>div>[data-tabs-header]]:pe-0",
   contextBody: "flex min-h-0 flex-1 flex-col overflow-hidden p-0 [&[hidden]]:hidden",

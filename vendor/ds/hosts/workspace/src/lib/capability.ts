@@ -45,6 +45,9 @@ const ALIASES: Record<string, Capability> = {
   timeseries: 'hypertable',
   'time-series': 'hypertable',
   kv: 'kv',
+  // Shared presentation, distinct model-specific query commands.
+  config: 'kv',
+  vault: 'kv',
   'key-value': 'kv',
   vector: 'vector',
   embedding: 'vector',

@@ -40,12 +40,24 @@ describe('collection capability detection', () => {
     expect(capabilityFromCatalogModel('time_series')).toBe('hypertable')
     expect(capabilityFromCatalogModel('queue')).toBe('queue')
     expect(capabilityFromCatalogModel('kv')).toBe('kv')
+    expect(capabilityFromCatalogModel('config')).toBe('kv')
+    expect(capabilityFromCatalogModel('vault')).toBe('kv')
     expect(capabilityFromCatalogModel('vector')).toBe('vector')
     expect(capabilityFromCatalogModel('document')).toBe('document')
     expect(capabilityFromCatalogModel('hll')).toBe('stats')
     expect(capabilityFromCatalogModel('sketch')).toBe('stats')
     expect(capabilityFromCatalogModel('filter')).toBe('stats')
     expect(capabilityFromCatalogModel('table')).toBe('table')
+  })
+
+  it.each(['config', 'vault'])('detects an empty %s collection without scanning its data', async model => {
+    const query = vi.fn(async (sql: string) => ({
+      ...result(undefined),
+      result: { columns: ['model'], records: [{ values: { model } }] },
+    }))
+    await expect(detectCapability({query} as unknown as RedClient, `red.${model}`)).resolves.toBe('kv')
+    expect(query).toHaveBeenCalledTimes(1)
+    expect(query.mock.calls[0][0]).toContain('SELECT model FROM red.collections')
   })
 
   it('can use metadata before probing rows, so empty typed collections work when requested', async () => {

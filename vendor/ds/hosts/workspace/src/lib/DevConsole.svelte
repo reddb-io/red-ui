@@ -18,7 +18,7 @@
   let spacer = $state<HTMLDivElement>()
   let height = $state(0)
   const requests = $derived(consoleRequests(entries))
-  const label = $derived(`Developer tools · ${entries.length} requests${workspace.activity.inflight ? ` · ${workspace.activity.inflight} active` : ''}`)
+  const label = $derived(`Developer panel · ${entries.length} requests${workspace.activity.inflight ? ` · ${workspace.activity.inflight} active` : ''}`)
 
   $effect(() => store.subscribe(snapshot => entries = snapshot))
   $effect(() => workspace.on('red:toggle-dev-console', () => open = !open))

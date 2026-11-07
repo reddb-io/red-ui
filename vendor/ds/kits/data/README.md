@@ -672,7 +672,7 @@ quadrant with the exact `highlights` configuration displayed inline.
 
 ### DeveloperPanel and DeveloperRequestInspector
 
-`DeveloperPanel` docks arbitrary caller-owned content at the bottom of the viewport or a containing host. It can render plain children without tabs, or host-defined `contexts` and `contextContent`; optional `contextToolbar` and `headerActions` let the host compose its own controls. The panel owns resizing, maximizing and restoring its previous height. It does not need requests or any particular application content.
+`DeveloperPanel` docks arbitrary caller-owned content at the bottom of the viewport or a containing host. It can render plain children without tabs, or host-defined `contexts` and `contextContent`; optional `contextToolbar` and `headerActions` let the host compose its own controls. The panel owns resizing, maximizing and restoring its previous height. Its default name is Developer panel. The entire collapsed bar and empty header space toggle it; tabs and actions retain their behavior. Set `desktopOnly` to hide it below the desktop breakpoint (768 CSS pixels). It does not need requests or any particular application content.
 
 `DeveloperRequestInspector` is an optional Data Kit Composite. It composes the existing ListRow, Badge, Input, Tabs, Toolbar and DescriptionList to inspect a sanitized request snapshot. It can be placed in a panel context or any bounded surface; the application owns collection, redaction, retention and action behavior. Optional `timeLabel` and `source` are display-ready host data and participate in filtering. `requestActions` receives the selected request, while child content supplies an optional Tools view.
 
@@ -683,7 +683,7 @@ quadrant with the exact `highlights` configuration displayed inline.
   const requests = [{ id: "1", method: "GET", target: "/health", status: "200" }];
   const contexts = [{ value: "requests", label: "Requests" }, { value: "console", label: "Console" }];
 </script>
-<DeveloperPanel label="Developer tools" {contexts}>
+<DeveloperPanel label="Developer panel" {contexts}>
   {#snippet contextContent({ value })}
     {#if value === "requests"}<DeveloperRequestInspector {requests} />{:else}<p>Console output</p>{/if}
   {/snippet}
