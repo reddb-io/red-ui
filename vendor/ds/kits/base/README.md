@@ -1726,3 +1726,24 @@ The gallery compares scene/compact compositions and downloads the selected one.
 
 `Tabs` can also place a `leading` snippet (React: `leading` node) before its
  tablist, outside the arrow-key navigation, for controls such as a panel title.
+
+### Voice input and audio feedback
+
+`VoiceInput` is a controlled microphone button. Supply `recording` and respond to
+`onrecordingchange` (`onRecordingChange` in React); only set recording after the
+application has actually started capture. `value` is a linear level from 0 to 1.
+The compact indicator is decorative inside the accessible pressed-state button.
+
+`AudioMeter` displays the current level as a segmented scale or, with
+`mode="waveform"`, the host's oldest-to-newest signed samples in the range -1 to
+1. The host determines the sampling rate and duration, for example the last
+second; the component does not collect audio, request permission, or own a timer.
+Values are clamped and non-finite values become silence. These are linear values,
+not calibrated dB measurements. The meter exposes its current level without a
+live announcement for every frame.
+
+```svelte
+<VoiceInput {recording} value={level} onrecordingchange={requestRecordingChange} />
+<AudioMeter value={level} label="Microphone" />
+<AudioMeter value={level} mode="waveform" samples={lastSecond} label="Microphone waveform" />
+```

@@ -9,8 +9,8 @@ export interface DeveloperPanelContext {
 
 /** Portable developer panel properties. The application owns the source and sanitization of all data. */
 export interface DeveloperPanelContract {
-  /** Accessible name for the panel. */
-  label: string;
+  /** Accessible and visible name; defaults to Developer panel. */
+  label?: string;
   /** Legacy request snapshot, enabling the built-in Requests context.
    * @deprecated Use `contextContent` to compose DeveloperRequestInspector; removed next release. */
   requests?: readonly DeveloperRequest[];
@@ -20,6 +20,8 @@ export interface DeveloperPanelContract {
   toolbarContexts?: readonly string[];
   /** Whether the bottom panel is expanded. */
   open?: boolean;
+  /** Hide the panel below the desktop breakpoint. Defaults to false. */
+  desktopOnly?: boolean;
   /** Whether the panel is positioned within its host instead of the viewport. */
   contained?: boolean;
 }

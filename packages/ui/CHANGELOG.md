@@ -1,5 +1,12 @@
 # @reddb-io/ui
 
+## 0.8.5
+
+### Patch Changes
+
+- Keep Config and Vault collection previews on their native read commands instead of switching them to KV queries after renderer detection. Resolve the actual catalog model, preserve SELECT for table-shaped key/value data, and retain read compatibility with older RedDB parsers.
+  - @reddb-io/ui-mcp@0.8.5
+
 ## 0.8.4
 
 ### Patch Changes

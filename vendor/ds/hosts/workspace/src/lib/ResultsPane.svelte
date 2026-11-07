@@ -9,7 +9,7 @@
   import { type Tab } from './tabs.svelte'
 
   import { defaultSubpage, rendererSelection, subpageCapability } from './collection-pages'
-  import { collectionPreviewQuery, safeCollectionName } from './collection-preview'
+  import { collectionPreviewQuery, fetchCollectionPreview, safeCollectionName } from './collection-preview'
   import {
     collectionCatalogBadges,
     collectionCatalogFromRow,
@@ -297,8 +297,8 @@
             )
         : shouldFetchKv
           ? activity.track(
-              `${collection} · LIST KV (LIMIT 200)`,
-              () => client.query(collectionPreviewQuery(collection, 'kv')),
+              `${collection} · keyed preview (LIMIT 200)`,
+              () => fetchCollectionPreview(client, collection, 'kv'),
             )
         : activity.track(
             `${collection} · SELECT * (LIMIT 200)`,

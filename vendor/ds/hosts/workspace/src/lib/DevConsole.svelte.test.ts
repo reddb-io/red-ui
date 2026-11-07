@@ -29,13 +29,13 @@ function button(target: HTMLElement, label: string) {
 
 test('bottom bar remains discoverable while collapsed and supports the existing toggle event', () => {
   const target = render(new DevConsoleStore())
-  expect(button(target, 'Developer tools').getAttribute('aria-expanded')).toBe('false')
+  expect(button(target, 'Developer panel').getAttribute('aria-expanded')).toBe('false')
   window.dispatchEvent(new CustomEvent('red:toggle-dev-console'))
   flushSync()
-  expect(button(target, 'Developer tools').getAttribute('aria-expanded')).toBe('true')
+  expect(button(target, 'Developer panel').getAttribute('aria-expanded')).toBe('true')
   target.querySelector<HTMLButtonElement>('[aria-label="Close"]')!.click()
   flushSync()
-  expect(button(target, 'Developer tools').getAttribute('aria-expanded')).toBe('false')
+  expect(button(target, 'Developer panel').getAttribute('aria-expanded')).toBe('false')
 })
 
 test('inspects real bodies, redacted headers, row count and measured duration through canonical tabs', () => {
@@ -64,7 +64,7 @@ test('filter, clear and live counts remain scoped to each workspace store', () =
   expect(b.textContent).not.toContain('/only-first')
   record(first, '/new')
   flushSync()
-  expect(button(a, 'Developer tools').textContent).toContain('2 requests')
+  expect(button(a, 'Developer panel').textContent).toContain('2 requests')
   const input = a.querySelector<HTMLInputElement>('[aria-label="Filter requests"]')!
   input.value = 'no-match'
   input.dispatchEvent(new Event('input', { bubbles: true }))
