@@ -1,4 +1,3 @@
-import type { Capability } from "./renderers/types";
 import type { RedClient } from "./reddb/index";
 import { sqlString } from "./collection-catalog";
 
@@ -8,21 +7,18 @@ export function safeCollectionName(collection: string): string {
 
 export function collectionPreviewQuery(
   collection: string,
-  capability: Capability | undefined,
   model?: string | null,
 ): string {
   const safe = safeCollectionName(collection);
   // A key/value renderer also handles Config, Vault and table-shaped data.
   // Only the catalog model can authorize a model-specific read command.
-  if (capability === "kv") {
-    switch (model?.toLowerCase()) {
-      case "kv":
-        return `LIST KV ${safe} LIMIT 200`;
-      case "config":
-        return `LIST CONFIG ${safe} LIMIT 200`;
-      case "vault":
-        return `LIST VAULT ${safe} LIMIT 200`;
-    }
+  switch (model?.toLowerCase()) {
+    case "kv":
+      return `LIST KV ${safe} LIMIT 200`;
+    case "config":
+      return `LIST CONFIG ${safe} LIMIT 200`;
+    case "vault":
+      return `LIST VAULT ${safe} LIMIT 200`;
   }
   return `SELECT * FROM ${safe} LIMIT 200`;
 }
@@ -30,22 +26,19 @@ export function collectionPreviewQuery(
 export async function fetchCollectionPreview(
   client: RedClient,
   collection: string,
-  capability: Capability | undefined,
 ) {
   let model: string | null = null;
-  if (capability === "kv") {
-    try {
-      const catalog = await client.query(
-        `SELECT model FROM red.collections WHERE name = ${sqlString(collection)} LIMIT 1`,
-      );
-      const value = catalog.result.records[0]?.values.model;
-      if (typeof value === "string") model = value;
-    } catch {
-      // A missing catalog or denied metadata read must not turn a shape hint
-      // into LIST KV against an unknown physical collection model.
-    }
+  try {
+    const catalog = await client.query(
+      `SELECT model FROM red.collections WHERE name = ${sqlString(collection)} LIMIT 1`,
+    );
+    const value = catalog.result.records[0]?.values.model;
+    if (typeof value === "string") model = value;
+  } catch {
+    // A missing catalog or denied metadata read must not turn a shape hint
+    // into LIST KV against an unknown physical collection model.
   }
-  const query = collectionPreviewQuery(collection, capability, model);
+  const query = collectionPreviewQuery(collection, model);
   try {
     return await client.query(query);
   } catch (error) {

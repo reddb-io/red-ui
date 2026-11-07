@@ -9,7 +9,7 @@
   import { type Tab } from './tabs.svelte'
 
   import { defaultSubpage, rendererSelection, subpageCapability } from './collection-pages'
-  import { collectionPreviewQuery, fetchCollectionPreview, safeCollectionName } from './collection-preview'
+  import { fetchCollectionPreview, safeCollectionName } from './collection-preview'
   import {
     collectionCatalogBadges,
     collectionCatalogFromRow,
@@ -267,9 +267,10 @@
       const shouldFetchQueue = subpage === 'queue' || tab.capability === 'queue'
       const shouldFetchVector = subpage === 'vector' || tab.capability === 'vector'
       const shouldFetchStats = subpage === 'stats' || tab.capability === 'stats'
-      const shouldFetchKv = subpage === 'kv' || tab.capability === 'kv'
-      const fetchMode = shouldFetchGraph ? 'graph-subgraph' : shouldFetchQueue ? 'queue-peek' : shouldFetchVector ? 'vector-inspector' : shouldFetchStats ? 'stats-info' : shouldFetchKv ? 'kv-list' : tab.capability ?? 'unknown'
-      const cacheKey = `${tab.key}:${subpage}:${fetchMode}`
+      const fetchMode = shouldFetchGraph ? 'graph-subgraph' : shouldFetchQueue ? 'queue-peek' : shouldFetchVector ? 'vector-inspector' : shouldFetchStats ? 'stats-info' : 'collection-preview'
+      // Table, JSON and key/value views share the same model-aware data read.
+      // Resolving presentation must not clear a successful preview or refetch it.
+      const cacheKey = fetchMode === 'collection-preview' ? `${tab.key}:${fetchMode}` : `${tab.key}:${subpage}:${fetchMode}`
       if (resultKeys[tab.id] && resultKeys[tab.id] !== cacheKey) {
         delete results[tab.id]
         delete errors[tab.id]
@@ -295,14 +296,9 @@
               `${collection} · stats preview`,
               () => fetchStatsCollection(client, collection),
             )
-        : shouldFetchKv
-          ? activity.track(
-              `${collection} · keyed preview (LIMIT 200)`,
-              () => fetchCollectionPreview(client, collection, 'kv'),
-            )
         : activity.track(
-            `${collection} · SELECT * (LIMIT 200)`,
-            () => client.query(collectionPreviewQuery(collection, tab.capability)),
+            `${collection} · collection preview (LIMIT 200)`,
+            () => fetchCollectionPreview(client, collection),
           )
       job
         .then((r) => { results[tab.id] = r })

@@ -8,7 +8,7 @@ import type { QueryResult, RedClient } from "./reddb/index";
 
 describe("collectionPreviewQuery", () => {
   it("uses LIST KV for native key-value collections", () => {
-    expect(collectionPreviewQuery("rr_requests", "kv", "kv")).toBe(
+    expect(collectionPreviewQuery("rr_requests", "kv")).toBe(
       "LIST KV rr_requests LIMIT 200",
     );
   });
@@ -21,14 +21,14 @@ describe("collectionPreviewQuery", () => {
   ])(
     "reads %s using its catalog model rather than its key/value renderer",
     (collection, model, expected) => {
-      expect(collectionPreviewQuery(collection, "kv", model)).toBe(expected);
+      expect(collectionPreviewQuery(collection, model)).toBe(expected);
     },
   );
 
   it.each(["table", "document", null, undefined])(
     "does not infer a KV model from key/value-shaped results (%s)",
     (model) => {
-      expect(collectionPreviewQuery("settings", "kv", model)).toBe(
+      expect(collectionPreviewQuery("settings", model)).toBe(
         "SELECT * FROM settings LIMIT 200",
       );
     },
@@ -56,11 +56,7 @@ describe("collectionPreviewQuery", () => {
           }) as QueryResult,
       );
       const client = { query } as unknown as RedClient;
-      const result = await fetchCollectionPreview(
-        client,
-        "app's_settings",
-        "kv",
-      );
+      const result = await fetchCollectionPreview(client, "app's_settings");
       expect(query.mock.calls[0][0]).toContain(
         "WHERE name = 'app''s_settings'",
       );
@@ -90,7 +86,6 @@ describe("collectionPreviewQuery", () => {
     await fetchCollectionPreview(
       { query } as unknown as RedClient,
       "red.config",
-      "kv",
     );
     expect(query.mock.calls.map(([sql]) => sql)).toEqual([
       "SELECT model FROM red.collections WHERE name = 'red.config' LIMIT 1",
@@ -113,7 +108,6 @@ describe("collectionPreviewQuery", () => {
       await fetchCollectionPreview(
         { query } as unknown as RedClient,
         "red.vault",
-        "kv",
       );
       expect(query.mock.calls.map(([sql]) => sql)).toEqual([
         "SELECT model FROM red.collections WHERE name = 'red.vault' LIMIT 1",
@@ -136,11 +130,7 @@ describe("collectionPreviewQuery", () => {
         } as QueryResult;
       });
       await expect(
-        fetchCollectionPreview(
-          { query } as unknown as RedClient,
-          "red.config",
-          "kv",
-        ),
+        fetchCollectionPreview({ query } as unknown as RedClient, "red.config"),
       ).rejects.toThrow(message);
       expect(query).toHaveBeenCalledTimes(2);
     },
