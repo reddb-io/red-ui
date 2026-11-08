@@ -1,0 +1,25 @@
+name: Prepare the public web/package runner
+description: Explicit tools and writable job caches for the bounded Ubuntu ARC container.
+inputs:
+  node-version:
+    description: Node version required by the repository
+    default: '24'
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        set -euo pipefail
+        . /etc/os-release
+        test "$ID" = ubuntu && test "$VERSION_ID" = 24.04
+        test "$(uname -m)" = x86_64
+        test ! -e /var/run/secrets/kubernetes.io/serviceaccount/token
+        mkdir -p "$RUNNER_TEMP/tool-cache"
+        echo "RUNNER_TOOL_CACHE=$RUNNER_TEMP/tool-cache" >> "$GITHUB_ENV"
+        echo "AGENT_TOOLSDIRECTORY=$RUNNER_TEMP/tool-cache" >> "$GITHUB_ENV"
+        sudo apt-get -qq update
+        sudo apt-get install -y --no-install-recommends python3 python3-venv build-essential pkg-config libssl-dev jq gh unzip zip xz-utils
+        sudo rm -rf /var/lib/apt/lists/*
+    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      with:
+        node-version: ${{ inputs.node-version }}

@@ -17,10 +17,15 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON((github.repository == 'reddb-io/red-ui' && github.ref == 'refs/heads/main') && '"reddb-public-linux-x64"' || '"ubuntu-latest"') }}
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-runner
+        if: runner.environment == 'self-hosted'
+        with:
+          node-version: '22'
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
       - name: Setup Node
