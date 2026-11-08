@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.8.7
+
+### Patch Changes
+
+- 0fe8743: Bound collection discovery during connection startup so Free databases no longer exhaust their request-admission queue, and avoid probing optional VCS routes absent from modern capability discovery.
+- Updated dependencies [0fe8743]
+  - @reddb-io/ui-mcp@0.8.7
+
 ## 0.8.6
 
 ### Patch Changes
