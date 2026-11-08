@@ -60,6 +60,28 @@ test('a resolved connection waits for local documents before mounting the connec
   expect(target.querySelector('[data-workspace-entry]')).toBeNull()
 })
 
+test('a direct query route repairs a restored snapshot whose active document is not a query', async () => {
+  const storage = new MemoryStorage()
+  const endpoint = {id:'test',label:'test',url:'https://db.test'}
+  const client = new RedClient(endpoint.url, {fetch: async () => Response.json({collections:[]})})
+  const provider: ConnectionProvider = {list:async () => [endpoint], connect:async () => ({connection:endpoint,client,rtt_ms:1}), whoami:async () => ({authenticated:true,username:'tester',role:'admin'})}
+  const runtime = createWorkspaceRuntime({connectionProvider:provider,persistenceKey:'route-repair',storage,resumeStorage:new MemoryStorage()})
+  const query = runtime.tabs.open({kind:'query',label:'Saved SQL',key:'Saved SQL'},true)
+  runtime.queryTabs.ensure(query.id)
+  runtime.queryTabs.setSql(query.id, 'SELECT preserve_this_query')
+  const collection = runtime.tabs.open({kind:'welcome',label:'Workspace',key:'workspace'},true)
+  runtime.workspaceSession.flush({
+    view:'query', collection:null, subpage:null, tabs:runtime.tabs.tabs,
+    activeTabId:collection.id, queries:runtime.queryTabs.snapshot(runtime.tabs.tabs),
+  })
+
+  const target = render(runtime)
+
+  await vi.waitFor(() => expect(runtime.connection.connected).toBe(true))
+  await vi.waitFor(() => expect(runtime.tabs.active?.kind).toBe('query'))
+  expect((target.querySelector('textarea') as HTMLTextAreaElement).value).toBe('SELECT preserve_this_query')
+})
+
 test('pending host discovery shows a startup state and enters only after the host connection is ready', async () => {
   const discovery = deferred<Awaited<ReturnType<ConnectionProvider['list']>>>()
   const provider: ConnectionProvider = {list:() => discovery.promise, connect:vi.fn(), whoami:async () => ({authenticated:false,username:'',role:''})}
