@@ -1,5 +1,13 @@
 # @reddb-io/ui
 
+## 0.8.8
+
+### Patch Changes
+
+- b13cde6: Restore the query editor when a direct `/query` launch encounters an incompatible saved workspace, and reduce background database traffic with visibility-aware, non-overlapping health polling.
+- Updated dependencies [b13cde6]
+  - @reddb-io/ui-mcp@0.8.8
+
 ## 0.8.7
 
 ### Patch Changes
