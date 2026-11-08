@@ -1,0 +1,547 @@
+{
+  "schemaVersion": 1,
+  "id": "data/Diagram",
+  "topics": [],
+  "related": [
+    "data/ActivityTimeline",
+    "data/BarChart",
+    "data/BreakdownBar",
+    "data/Candlestick",
+    "data/CompositeChart",
+    "data/DeveloperPanel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-color-series-${series}",
+          "sources": [
+            "kits/data/src/visualization.ts"
+          ]
+        }
+      ],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/data/src/visualization.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-raised-surface",
+          "sources": [
+            "kits/data/src/visualization.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/react/src/VisualizationMark.tsx",
+            "kits/data/src/internal/VisualizationFrame.svelte",
+            "kits/data/src/internal/VisualizationMark.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/internal/VisualizationFrame.svelte",
+            "kits/data/src/visualization.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/internal/VisualizationFrame.svelte",
+            "kits/data/src/visualization.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/internal/VisualizationFrame.svelte",
+            "kits/data/src/visualization.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/internal/VisualizationFrame.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/data/react/src/Diagram.tsx",
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/Diagram.svelte",
+            "kits/data/src/internal/VisualizationFrame.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/data/react/src/Diagram.tsx",
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/Diagram.svelte",
+            "kits/data/src/internal/VisualizationFrame.svelte",
+            "kits/data/src/visualization-controls.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/Diagram.tsx",
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/Diagram.svelte",
+            "kits/data/src/internal/VisualizationFrame.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-regular",
+          "sources": [
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/internal/VisualizationFrame.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/data/react/src/Diagram.tsx",
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/Diagram.svelte",
+            "kits/data/src/internal/VisualizationFrame.svelte",
+            "kits/data/src/visualization-controls.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/internal/VisualizationFrame.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/internal/VisualizationFrame.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/data/src/visualization-controls.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/internal/VisualizationFrame.svelte",
+            "kits/data/src/visualization-controls.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/internal/VisualizationFrame.svelte",
+            "kits/data/src/visualization-controls.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/internal/VisualizationFrame.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/internal/VisualizationFrame.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/data/src/visualization-controls.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** A CSS custom property supplied by the DS or the host application. */\nexport type ColorToken = `--${string}`;",
+          "name": "ColorToken",
+          "source": "kits/base/src/core/color-token.ts"
+        },
+        {
+          "declaration": "export interface DiagramData { nodes: readonly DiagramNode[]; edges: readonly DiagramEdge[] }",
+          "name": "DiagramData",
+          "source": "kits/data/src/diagram.ts"
+        },
+        {
+          "declaration": "export interface DiagramEdge extends VisualizationItem { source: string; target: string; dashed?: boolean }",
+          "name": "DiagramEdge",
+          "source": "kits/data/src/diagram.ts"
+        },
+        {
+          "declaration": "export interface DiagramNode extends VisualizationItem { kind?: \"process\" | \"decision\" | \"store\" | \"terminal\"; group?: string }",
+          "name": "DiagramNode",
+          "source": "kits/data/src/diagram.ts"
+        },
+        {
+          "declaration": "export interface VisualizationItem {\n  /** Explicit scheme-aware color custom-property name. */\n  color?: ColorToken;\n  id: string;\n  label: string;\n  description?: string;\n  series?: VisualizationSeries;\n  href?: string;\n}",
+          "name": "VisualizationItem",
+          "source": "kits/data/src/visualization.ts"
+        },
+        {
+          "declaration": "export type VisualizationSeries = 1 | 2 | 3 | 4 | 5 | 6;",
+          "name": "VisualizationSeries",
+          "source": "kits/data/src/visualization.ts"
+        },
+        {
+          "declaration": "/** Shared, browser-safe contracts. No renderer, layout engine or component registry. */\nexport type VisualizationSize = \"sm\" | \"md\" | \"lg\";",
+          "name": "VisualizationSize",
+          "source": "kits/data/src/visualization.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Reports selection for application-owned filtering or detail navigation.",
+        "dialect": "state",
+        "name": "onselectedchange",
+        "type": "(id: string) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "data",
+          "name": "Diagram",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Declarative nodes and named directed edges for flows and architecture.",
+              "name": "data",
+              "required": true,
+              "type": "DiagramData"
+            },
+            {
+              "default": "\"right\"",
+              "description": "Primary reading direction of the automatic layered layout.",
+              "name": "direction",
+              "required": false,
+              "type": "\"right\" | \"down\"",
+              "vocabulary": [
+                "right",
+                "down"
+              ]
+            },
+            {
+              "default": "\"Diagram\"",
+              "description": "Visible title and accessible name of the visualization.",
+              "name": "label",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Supporting context, units, aggregation or sampling information.",
+              "name": "description",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Explicit drawing width in pixels; omitted, follows the container with contained horizontal overflow on small screens.",
+              "name": "width",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Explicit drawing height in pixels; omitted, follows Density and size.",
+              "name": "height",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "\"md\"",
+              "description": "Density-relative drawing height, shared across the visualization family.",
+              "name": "size",
+              "required": false,
+              "type": "VisualizationSize",
+              "vocabulary": [
+                "sm",
+                "md",
+                "lg"
+              ]
+            },
+            {
+              "default": "\"\"",
+              "description": "Selected item id, bindable and retained across data refreshes.",
+              "name": "selected",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "true",
+              "description": "Enables pointer and keyboard activation; false keeps a static readable figure.",
+              "name": "interactive",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Optional native link to the application's detailed view.",
+              "name": "detailHref",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Reports selection for application-owned filtering or detail navigation.",
+              "name": "onSelectedChange",
+              "required": false,
+              "type": "(id: string) => void"
+            },
+            {
+              "default": "\"\"",
+              "description": "Extra classes on the outer figure.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/data/react/src/Diagram.tsx",
+          "specifier": "@reddb-io/design-system/data/Diagram"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/react/src/Diagram.tsx",
+        "specifier": "@reddb-io/design-system/data/Diagram",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/src/Diagram.svelte",
+        "specifier": "@reddb-io/design-system/data/Diagram",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "data",
+    "name": "Diagram",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Declarative nodes and named directed edges for flows and architecture.",
+        "name": "data",
+        "required": true,
+        "type": "DiagramData"
+      },
+      {
+        "bindable": false,
+        "default": "\"right\"",
+        "description": "Primary reading direction of the automatic layered layout.",
+        "name": "direction",
+        "required": false,
+        "type": "\"right\" | \"down\"",
+        "vocabulary": [
+          "right",
+          "down"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"Diagram\"",
+        "description": "Visible title and accessible name of the visualization.",
+        "name": "label",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Supporting context, units, aggregation or sampling information.",
+        "name": "description",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Explicit drawing width in pixels; omitted, follows the container with contained horizontal overflow on small screens.",
+        "name": "width",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Explicit drawing height in pixels; omitted, follows Density and size.",
+        "name": "height",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "Density-relative drawing height, shared across the visualization family.",
+        "name": "size",
+        "required": false,
+        "type": "VisualizationSize",
+        "vocabulary": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      {
+        "bindable": true,
+        "default": "\"\"",
+        "description": "Selected item id, bindable and retained across data refreshes.",
+        "name": "selected",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "true",
+        "description": "Enables pointer and keyboard activation; false keeps a static readable figure.",
+        "name": "interactive",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Optional native link to the application's detailed view.",
+        "name": "detailHref",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Reports selection for application-owned filtering or detail navigation.",
+        "name": "onselectedchange",
+        "required": false,
+        "type": "(id: string) => void"
+      },
+      {
+        "bindable": false,
+        "default": "\"\"",
+        "description": "Extra classes on the outer figure.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Directed connections and stable automatic layout for architecture and flows.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/data/src/core/contracts/diagram.ts"
+      ],
+      "tests": [
+        "kits/data/test/framework-visualizations.test.ts",
+        "apps/showcase/test/component-flavors-graphical.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/data/src/Diagram.svelte",
+    "specifier": "@reddb-io/design-system/data/Diagram"
+  }
+}

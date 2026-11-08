@@ -1,0 +1,1 @@
+const s=["stacked","inline"];function a({id:e,help:o,error:r,required:t}){const n=`${e}-help`,i=`${e}-error`;return{control:{id:e,required:t||void 0,"aria-describedby":[o?n:void 0,r?i:void 0].filter(Boolean).join(" ")||void 0,"aria-invalid":r?"true":void 0,"aria-errormessage":r?i:void 0},helpId:n,errorId:i}}export{s as FIELD_LAYOUTS,a as fieldAssociation};

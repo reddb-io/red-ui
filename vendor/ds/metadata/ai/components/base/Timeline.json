@@ -1,0 +1,282 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Timeline",
+  "topics": [],
+  "related": [
+    "base/Accordion",
+    "base/AudioMeter",
+    "base/Avatar",
+    "base/Badge",
+    "base/Card",
+    "base/Carousel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/link.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/link.variants.ts",
+            "kits/base/src/timeline.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/base/src/link.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/link.variants.ts",
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export interface TimelineItem {\n  /** Stable entry identity. */\n  id: string;\n  /** Visible entry heading. */\n  title: string;\n  /** Machine-readable date or time accepted by native `<time>`. */\n  datetime: string;\n  /** Caller-owned visible rendering of the date or time. */\n  time: string;\n  /** Supporting event detail. */\n  description?: string;\n  /** Optional destination for the entry heading. */\n  href?: string;\n}",
+          "name": "TimelineItem",
+          "source": "kits/base/src/core/timeline.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<ol>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Composite",
+          "kit": "base",
+          "name": "Timeline",
+          "nativeAttributes": [
+            "ol"
+          ],
+          "props": [
+            {
+              "description": "The entries in display order; each has a `title`, a machine-readable `datetime`, visible `time` text, and optionally a `description` and an `href` that makes the title a link.",
+              "name": "items",
+              "required": true,
+              "type": "readonly TimelineItem[]"
+            },
+            {
+              "default": "\"Timeline\"",
+              "description": "Accessible name of the list; defaults to `Timeline`.",
+              "name": "label",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Extra classes, merged over the root slot's own.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/base/react/src/Timeline.tsx",
+          "specifier": "@reddb-io/design-system/base/Timeline"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Timeline.tsx",
+        "specifier": "@reddb-io/design-system/base/Timeline",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "timeline"
+        },
+        "source": "kits/base/src/Timeline.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "base",
+    "name": "Timeline",
+    "props": [
+      {
+        "bindable": false,
+        "description": "The entries in display order; each has a `title`, a machine-readable `datetime`, visible `time` text, and optionally a `description` and an `href` that makes the title a link.",
+        "name": "items",
+        "required": true,
+        "type": "readonly TimelineItem[]"
+      },
+      {
+        "bindable": false,
+        "default": "\"Timeline\"",
+        "description": "Accessible name of the list; defaults to `Timeline`.",
+        "name": "label",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the root slot's own.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Caller-owned events in native chronological order, with machine-readable times and canonical links where events have destinations.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "timeline"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/timeline.variants.ts",
+        "kits/base/src/core/timeline.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-readings.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/Timeline.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

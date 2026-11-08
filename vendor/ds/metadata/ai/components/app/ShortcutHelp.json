@@ -1,0 +1,705 @@
+{
+  "schemaVersion": 1,
+  "id": "app/ShortcutHelp",
+  "topics": [],
+  "related": [
+    "app/BottomNavigation",
+    "app/CategoryPreview",
+    "app/CommandPalette",
+    "app/NavItem",
+    "app/SidebarNavigation",
+    "app/SidebarPanel"
+  ],
+  "contract": {
+    "category": "Navigation",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-border",
+          "sources": [
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-surface",
+          "sources": [
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dialog.variants.ts",
+            "kits/base/src/kbd.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts",
+            "kits/base/src/Dialog.svelte",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/kbd.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts",
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-scrim",
+          "sources": [
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-container-wide",
+          "sources": [
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-shadow-elevation-overlay",
+          "sources": [
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/Dialog.svelte",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/base/src/Dialog.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts",
+            "kits/base/src/Dialog.svelte",
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-md",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts",
+            "kits/base/src/Dialog.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts",
+            "kits/base/src/Dialog.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts",
+            "kits/base/src/Dialog.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/app/src/shortcut-help.variants.ts",
+            "kits/base/src/Dialog.svelte"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export interface ShortcutCommand {\n  /** Stable identity within its group. */\n  id: string;\n  /** Visible purpose of the command. */\n  label: string;\n  /** Ordered keys of one chord, supplied for the application's platform. */\n  keys: readonly string[];\n}",
+          "name": "ShortcutCommand",
+          "source": "kits/app/src/core/shortcut-help.ts"
+        },
+        {
+          "declaration": "export interface ShortcutGroup {\n  /** Unique group identity. */\n  id: string;\n  /** Context in which these commands apply. */\n  label: string;\n  /** Optional context explanation. */\n  description?: string;\n  /** Displayed commands; this component registers no keyboard handlers. */\n  items: readonly ShortcutCommand[];\n}",
+          "name": "ShortcutGroup",
+          "source": "kits/app/src/core/shortcut-help.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Reports any requested open-state change, including Escape and dismissal.",
+        "dialect": "open",
+        "name": "onopenchange",
+        "type": "(open: boolean) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "app",
+          "name": "ShortcutHelp",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Accessible and visible dialog title.",
+              "name": "title",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Contextual groups with caller-supplied platform-specific key labels.",
+              "name": "groups",
+              "required": true,
+              "type": "readonly ShortcutGroup[]"
+            },
+            {
+              "description": "Optional invoking control; omit to drive open from the application.",
+              "name": "triggerLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "false",
+              "description": "Whether the keyboard reference is open.",
+              "name": "open",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Reports any requested open-state change, including Escape and dismissal.",
+              "name": "onopenchange",
+              "required": false,
+              "type": "(open: boolean) => void"
+            },
+            {
+              "default": "\"No shortcuts available\"",
+              "description": "Empty reference explanation.",
+              "name": "emptyLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Additional classes on the reference list.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/app/react/src/ShortcutHelp.tsx",
+          "specifier": "@reddb-io/design-system/app/ShortcutHelp"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/react/src/ShortcutHelp.tsx",
+        "specifier": "@reddb-io/design-system/app/ShortcutHelp",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/src/composites/ShortcutHelp.svelte",
+        "specifier": "@reddb-io/design-system/app",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "app",
+    "name": "ShortcutHelp",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible and visible dialog title.",
+        "name": "title",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Contextual groups with caller-supplied platform-specific key labels.",
+        "name": "groups",
+        "required": true,
+        "type": "readonly ShortcutGroup[]"
+      },
+      {
+        "bindable": false,
+        "description": "Optional invoking control; omit to drive open from the application.",
+        "name": "triggerLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": true,
+        "default": "false",
+        "description": "Whether the keyboard reference is open.",
+        "name": "open",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Reports any requested open-state change, including Escape and dismissal.",
+        "name": "onopenchange",
+        "required": false,
+        "type": "(open: boolean) => void"
+      },
+      {
+        "bindable": false,
+        "default": "\"No shortcuts available\"",
+        "description": "Empty reference explanation.",
+        "name": "emptyLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Additional classes on the reference list.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Contextual keyboard reference inside the canonical Dialog without registering application commands.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/app/src/core/contracts/shortcuthelp.ts",
+        "kits/app/src/shortcut-help.variants.ts",
+        "kits/app/src/core/shortcut-help.ts"
+      ],
+      "tests": [
+        "kits/app/test/workspace-harvest.test.ts",
+        "apps/showcase/test/operations-workbench.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/app/src/composites/ShortcutHelp.svelte",
+    "specifier": "@reddb-io/design-system/app"
+  }
+}

@@ -1,0 +1,632 @@
+{
+  "schemaVersion": 1,
+  "id": "base/CodeBlock",
+  "topics": [
+    "bloco codigo sintaxe copiar",
+    "code syntax highlight copy"
+  ],
+  "related": [
+    "base/BrowserMockup",
+    "base/PhoneMockup",
+    "base/WindowMockup"
+  ],
+  "contract": {
+    "category": "Mockup",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/code-block.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/code-block.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/code-block.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/code-block.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/code-block.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/code-block.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-text",
+          "sources": [
+            "kits/base/src/code-block.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/base/src/code-block.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/code-block.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/code-block.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-relaxed",
+          "sources": [
+            "kits/base/src/code-block.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/code-block.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-none",
+          "sources": [
+            "kits/base/src/code-block.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/code-block.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/code-block.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/code-block.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** One span of highlighted source: its exact text and the grammar's kind for it. */\nexport interface CodeToken {\n  /** Grammar-owned kind; `keyword`, `string`, `number` and `comment` have a role, the rest read as text. */\n  kind: string;\n  /** Exact source text of the span; the spans concatenate back to the code. */\n  value: string;\n}",
+          "name": "CodeToken",
+          "source": "kits/base/src/code-block.variants.ts"
+        },
+        {
+          "declaration": "/**\n * A synchronous tokenizer. It runs wherever the CodeBlock renders — on the\n * server too — so the highlighted spans are in the prerendered HTML and\n * hydration adopts them instead of repainting the block. The Data Kit's\n * `CodeFieldGrammar` satisfies it, so one grammar highlights both.\n */\nexport interface CodeTokenizer {\n  tokenize(code: string): readonly CodeToken[];\n}",
+          "name": "CodeTokenizer",
+          "source": "kits/base/src/code-block.variants.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<div>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Composite",
+          "kit": "base",
+          "name": "CodeBlock",
+          "nativeAttributes": [
+            "div"
+          ],
+          "props": [
+            {
+              "description": "Exact source shown and copied; whitespace is never normalised.",
+              "name": "code",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Optional human-readable language label.",
+              "name": "language",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Synchronous exact-source tokenizer, rendered on the server as well as in the browser.",
+              "name": "grammar",
+              "required": false,
+              "type": "CodeTokenizer"
+            },
+            {
+              "default": "false",
+              "description": "Show non-selectable, decorative line numbers.",
+              "name": "lineNumbers",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "default": "\"Copy code\"",
+              "description": "Accessible and visible copy label. Defaults to `Copy code`.",
+              "name": "copyLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Copied\"",
+              "description": "Label shown and announced after a successful copy. Defaults to `Copied`.",
+              "name": "copiedLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Copy failed. Try again.\"",
+              "description": "Retry label announced if clipboard access fails. Defaults to `Copy failed. Try again.`.",
+              "name": "copyErrorLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Name of the overflowing code region; defaults to `<language> code` or `Code sample`.",
+              "name": "regionLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Extra classes merged onto the code block root.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/base/react/src/CodeBlock.tsx",
+          "specifier": "@reddb-io/design-system/base/CodeBlock"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/CodeBlock.tsx",
+        "specifier": "@reddb-io/design-system/base/CodeBlock",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "code-block"
+        },
+        "source": "kits/base/src/CodeBlock.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "base",
+    "name": "CodeBlock",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Exact source shown and copied; whitespace is never normalised.",
+        "name": "code",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Optional human-readable language label.",
+        "name": "language",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "A synchronous tokenizer (a Data Kit `CodeFieldGrammar` fits) that highlights the code into token spans during render — on the server too, so the prerendered HTML is already highlighted. Omitted, the code renders as plain text.",
+        "name": "grammar",
+        "required": false,
+        "type": "CodeTokenizer"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Show non-selectable, decorative line numbers.",
+        "name": "lineNumbers",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"Copy code\"",
+        "description": "Accessible and visible copy labels.",
+        "name": "copyLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Copied\"",
+        "description": "Label shown and announced after the code is copied. Defaults to `Copied`.",
+        "name": "copiedLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Copy failed. Try again.\"",
+        "description": "Retry label announced if clipboard access fails. Defaults to `Copy failed. Try again.`.",
+        "name": "copyErrorLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Accessible name of the scrolling code region, announced when a keyboard user tabs into a block too wide to show at once. Defaults to `<language> code`, or `Code sample` without one.",
+        "name": "regionLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the code block root.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Preformatted source whose exact whitespace and canonical Button copy affordance travel together.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "code-block"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/code-block.variants.ts",
+        "kits/base/src/core/code-block.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-code-actions.test.ts",
+        "apps/showcase/test/component-flavors-code.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/CodeBlock.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

@@ -1,0 +1,1 @@
+function u(r){let e=null,n;return{get current(){return e},load(){return n??=r().then(t=>{e=t.default}),n}}}import{CHART_LOAD_MARGIN as a,whenNear as l}from"./chart-loading.js";function o(r,e,n){let t=!1;return{get Engine(){return t?r.current:null}}}export{a as CHART_LOAD_MARGIN,u as chartEngine,o as lazyChart,l as whenNear};

@@ -1,0 +1,324 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Alert",
+  "topics": [
+    "aviso erro sucesso mensagem",
+    "alert feedback message"
+  ],
+  "related": [
+    "base/ContentState",
+    "base/EmptyState",
+    "base/LoadingIndicator",
+    "base/Notification",
+    "base/Progress",
+    "base/RadialProgress"
+  ],
+  "contract": {
+    "category": "Feedback",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/react/src/Alert.tsx",
+            "kits/base/src/Alert.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/react/src/Alert.tsx",
+            "kits/base/src/Alert.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** @deprecated Alert's meaning is `tone` (ADR 0026); use `AlertTone`. Removed next release. */\nexport type AlertFeedbackRole = FeedbackTone;",
+          "name": "AlertFeedbackRole",
+          "source": "kits/base/src/alert.variants.ts"
+        },
+        {
+          "declaration": "export type AlertTone = Tone;",
+          "name": "AlertTone",
+          "source": "kits/base/src/alert.variants.ts"
+        },
+        {
+          "declaration": "export type FeedbackTone = (typeof FEEDBACK_TONES)[number];",
+          "name": "FeedbackTone",
+          "source": "kits/base/src/tone.ts"
+        },
+        {
+          "declaration": "export type Tone = (typeof TONES)[number];",
+          "name": "Tone",
+          "source": "kits/base/src/tone.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<div>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Alert",
+          "nativeAttributes": [
+            "div"
+          ],
+          "props": [
+            {
+              "description": "What the message means: the shared tone vocabulary (ADR 0026). Defaults to `neutral`.",
+              "name": "tone",
+              "required": false,
+              "type": "Tone",
+              "vocabulary": [
+                "neutral",
+                "info",
+                "success",
+                "warning",
+                "danger"
+              ]
+            },
+            {
+              "description": "Optional visible heading; this is message content, not the native title tooltip.",
+              "name": "title",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Extra classes, merged over the canonical tone appearance.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "The message body, rendered below the optional `title`. Nothing is rendered for it when omitted.",
+              "name": "children",
+              "required": false,
+              "type": "ReactNode"
+            }
+          ],
+          "source": "kits/base/react/src/Alert.tsx",
+          "specifier": "@reddb-io/design-system/base/Alert"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Alert.tsx",
+        "specifier": "@reddb-io/design-system/base/Alert",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "alert"
+        },
+        "source": "kits/base/src/Alert.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Alert",
+    "props": [
+      {
+        "bindable": false,
+        "description": "What the message means: the shared tone vocabulary (ADR 0026). Defaults to `neutral`.",
+        "name": "tone",
+        "required": false,
+        "type": "Tone",
+        "vocabulary": [
+          "neutral",
+          "info",
+          "success",
+          "warning",
+          "danger"
+        ]
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `tone` (ADR 0026); removed next release.",
+          "replacement": "tone"
+        },
+        "description": "Deprecated alias. Renamed `tone` (ADR 0026); removed next release.",
+        "name": "feedback",
+        "required": false,
+        "type": "AlertFeedbackRole",
+        "vocabulary": [
+          "info",
+          "success",
+          "warning",
+          "danger"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Optional visible heading; this is message content, not the native title tooltip.",
+        "name": "title",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the canonical tone appearance.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "The message body, rendered below the optional `title`. Nothing is rendered for it when omitted.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "purpose": "A success, warning, or danger message whose announcement behavior and Theme-independent meaning travel together.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "alert"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/alert.variants.ts",
+        "kits/base/src/core/feedback.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-composition.test.ts"
+      ]
+    },
+    "snippets": [
+      {
+        "description": "The message body, rendered below the optional `title`. Nothing is rendered for it when omitted.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/Alert.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

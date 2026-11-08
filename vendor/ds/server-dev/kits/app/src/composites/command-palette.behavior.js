@@ -1,0 +1,1 @@
+function i(a,s){const t=s.trim().toLocaleLowerCase(),n=new Map;for(const o of a){if(t&&![o.label,o.description,o.group,...o.keywords??[]].filter(Boolean).join(" ").toLocaleLowerCase().includes(t))continue;const e=o.group??"",r=n.get(e)??[];r.push(o),n.set(e,r)}return[...n].map(([o,e])=>({label:o,items:e}))}export{i as commandGroups};

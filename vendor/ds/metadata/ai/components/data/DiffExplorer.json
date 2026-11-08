@@ -1,0 +1,422 @@
+{
+  "schemaVersion": 1,
+  "id": "data/DiffExplorer",
+  "topics": [],
+  "related": [
+    "data/ActivityTimeline",
+    "data/BarChart",
+    "data/BreakdownBar",
+    "data/Candlestick",
+    "data/CompositeChart",
+    "data/DeveloperPanel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-lg",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-md",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-sm",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/input.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/DiffExplorer.tsx",
+            "kits/data/src/DiffExplorer.svelte",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** A caller-supplied change to inspect. It is independent of a database or transport. */\nexport interface DiffExplorerEntry {\n  /** Stable identity, unique within the current list. */\n  id: string;\n  /** Human-readable change category, such as added or modified. */\n  change: string;\n  /** Optional item identity shown in the list and detail. */\n  entityId?: string | null;\n  /** Optional group or collection containing the item. */\n  group?: string | null;\n  /** Optional description of the change. */\n  note?: string | null;\n  /** Earlier item value. */\n  before: unknown;\n  /** Later item value. */\n  after: unknown;\n  /** Original caller-supplied record for the raw view. */\n  raw: unknown;\n}",
+          "name": "DiffExplorerEntry",
+          "source": "kits/data/src/diff-explorer.ts"
+        }
+      ]
+    },
+    "events": [],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "data",
+          "name": "DiffExplorer",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Accessible name of the change explorer.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Changes supplied by the caller, in display order.",
+              "name": "entries",
+              "required": true,
+              "type": "readonly DiffExplorerEntry[]"
+            },
+            {
+              "description": "Optional context displayed alongside the change counts.",
+              "name": "context",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"No changes to inspect.\"",
+              "description": "Message when the supplied list is empty.",
+              "name": "emptyLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"\"",
+              "description": "Extra root classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/data/react/src/DiffExplorer.tsx",
+          "specifier": "@reddb-io/design-system/data/DiffExplorer"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/react/src/DiffExplorer.tsx",
+        "specifier": "@reddb-io/design-system/data/DiffExplorer",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/src/DiffExplorer.svelte",
+        "specifier": "@reddb-io/design-system/data/DiffExplorer",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "data",
+    "name": "DiffExplorer",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible name of the change explorer.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Changes supplied by the caller, in display order.",
+        "name": "entries",
+        "required": true,
+        "type": "readonly DiffExplorerEntry[]"
+      },
+      {
+        "bindable": false,
+        "description": "Optional context displayed alongside the change counts.",
+        "name": "context",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"No changes to inspect.\"",
+        "description": "Message when the supplied list is empty.",
+        "name": "emptyLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"\"",
+        "description": "Extra root classes.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Explore caller-supplied changes with search, selection, field comparison and raw records.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/data/src/core/contracts/diffexplorer.ts",
+        "kits/data/src/diff-explorer.ts",
+        "kits/data/src/diff-explorer.variants.ts"
+      ],
+      "tests": [
+        "kits/data/test/diff-explorer.test.ts",
+        "kits/data/test/diff-explorer-native.test.ts",
+        "apps/showcase/test/diff-explorer.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/data/src/DiffExplorer.svelte",
+    "specifier": "@reddb-io/design-system/data/DiffExplorer"
+  }
+}

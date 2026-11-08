@@ -1,0 +1,377 @@
+{
+  "schemaVersion": 1,
+  "id": "app/PageHeading",
+  "topics": [],
+  "related": [
+    "app/ActivityFeed",
+    "app/CardHeading",
+    "app/ChangeReview",
+    "app/ChatMessage",
+    "app/Diff",
+    "app/EntityInspector"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-elevation-sunken-border",
+          "sources": [
+            "kits/app/src/composites/page-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/app/src/composites/page-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/app/src/composites/page-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/app/src/composites/page-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/app/src/composites/page-heading.variants.ts",
+            "kits/base/src/stack.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/app/src/composites/page-heading.variants.ts",
+            "kits/base/src/stack.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/stack.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/app/src/composites/page-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-lg",
+          "sources": [
+            "kits/base/src/stack.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-md",
+          "sources": [
+            "kits/base/src/stack.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-sm",
+          "sources": [
+            "kits/base/src/stack.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-section-gap",
+          "sources": [
+            "kits/base/src/stack.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-font-size",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-font-weight",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-letter-spacing",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-line-height",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        }
+      ],
+      "types": []
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<div>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Composite",
+          "kit": "app",
+          "name": "PageHeading",
+          "nativeAttributes": [
+            "div"
+          ],
+          "props": [
+            {
+              "description": "The page's title, rendered as the page's one level-1 heading.",
+              "name": "title",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Supporting line under the title. Nothing is rendered when omitted.",
+              "name": "description",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Context such as canonical Breadcrumbs.",
+              "name": "context",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Canonical links and controls.",
+              "name": "actions",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Additional root classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/app/react/src/PageHeading.tsx",
+          "specifier": "@reddb-io/design-system/app/PageHeading"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/react/src/PageHeading.tsx",
+        "specifier": "@reddb-io/design-system/app/PageHeading",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "page-heading"
+        },
+        "source": "kits/app/src/composites/PageHeading.svelte",
+        "specifier": "@reddb-io/design-system/app",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "app",
+    "name": "PageHeading",
+    "props": [
+      {
+        "bindable": false,
+        "description": "The page's title, rendered as the page's one level-1 heading.",
+        "name": "title",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Supporting line under the title. Nothing is rendered when omitted.",
+        "name": "description",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned context such as canonical Breadcrumbs.",
+        "name": "context",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned canonical links and controls, kept in document order.",
+        "name": "actions",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the root slot's own, onto the wrapper around the title and actions.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "The one h1 at the root of an application page, pairing caller-owned context and actions without owning the page assembly.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "page-heading"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/app/src/core/contracts/pageheading.ts"
+      ],
+      "tests": [
+        "kits/app/test/framework-app.test.ts",
+        "apps/showcase/test/component-flavors-workspace.browser.test.ts"
+      ],
+      "typeMappings": {
+        "actions": {
+          "react": "ReactNode",
+          "reason": "Native caller content for PageHeading.actions; shared adapter scenarios exercise named seams, accessible content and the same close or item context where supplied.",
+          "svelte": "Snippet"
+        },
+        "context": {
+          "react": "ReactNode",
+          "reason": "Native caller content for PageHeading.context; shared adapter scenarios exercise named seams, accessible content and the same close or item context where supplied.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Caller-owned context such as canonical Breadcrumbs.",
+        "name": "context",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "Caller-owned canonical links and controls, kept in document order.",
+        "name": "actions",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/app/src/composites/PageHeading.svelte",
+    "specifier": "@reddb-io/design-system/app"
+  }
+}

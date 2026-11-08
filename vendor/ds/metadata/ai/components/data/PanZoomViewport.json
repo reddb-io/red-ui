@@ -1,0 +1,807 @@
+{
+  "schemaVersion": 1,
+  "id": "data/PanZoomViewport",
+  "topics": [],
+  "related": [
+    "data/ActivityTimeline",
+    "data/BarChart",
+    "data/BreakdownBar",
+    "data/Candlestick",
+    "data/CompositeChart",
+    "data/DeveloperPanel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-sunken-surface",
+          "sources": [
+            "kits/data/src/pan-zoom.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/src/pan-zoom.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/pan-zoom.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/src/pan-zoom.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/data/src/pan-zoom.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/data/src/pan-zoom.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/data/src/pan-zoom.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/data/react/src/PanZoomViewport.tsx",
+            "kits/data/src/PanZoomViewport.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/data/src/pan-zoom.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/pan-zoom.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/pan-zoom.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/pan-zoom.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/pan-zoom.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** Canonical operations passed to caller-owned viewport controls. */\nexport interface PanZoomControls { zoomIn:()=>void;zoomOut:()=>void;reset:()=>void;view:PanZoomView; }",
+          "name": "PanZoomControls",
+          "source": "kits/data/src/pan-zoom.ts"
+        },
+        {
+          "declaration": "export interface PanZoomView { x: number; y: number; scale: number }",
+          "name": "PanZoomView",
+          "source": "kits/data/src/pan-zoom.ts"
+        },
+        {
+          "declaration": "/** Shared, browser-safe contracts. No renderer, layout engine or component registry. */\nexport type VisualizationSize = \"sm\" | \"md\" | \"lg\";",
+          "name": "VisualizationSize",
+          "source": "kits/data/src/visualization.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Reports manual pan, zoom, fit or focus reveal; initial fitting is excluded.",
+        "dialect": "discrete",
+        "name": "onnavigate",
+        "type": "() => void"
+      },
+      {
+        "description": "Reports fit, keyboard, pointer and control changes to the view.",
+        "dialect": "state",
+        "name": "onviewchange",
+        "type": "(view: PanZoomView) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "data",
+          "name": "PanZoomViewport",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Accessible name of the keyboard-operable drawing viewport.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Logical width of the caller's drawing, independent of Density.",
+              "name": "contentWidth",
+              "required": true,
+              "type": "number"
+            },
+            {
+              "description": "Logical height of the caller's drawing, independent of Density.",
+              "name": "contentHeight",
+              "required": true,
+              "type": "number"
+            },
+            {
+              "description": "Current translation and scale. Omitted, fits the drawing on first mount.",
+              "name": "view",
+              "required": false,
+              "type": "PanZoomView"
+            },
+            {
+              "description": "Reports manual pan, zoom, fit or focus reveal; initial fitting is excluded.",
+              "name": "onnavigate",
+              "required": false,
+              "type": "() => void"
+            },
+            {
+              "default": "0.05",
+              "description": "Smallest allowed scale, a positive factor.",
+              "name": "minScale",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "8",
+              "description": "Largest allowed scale, at least minScale.",
+              "name": "maxScale",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "\"md\"",
+              "description": "Height in the visualization family's Density-relative scale.",
+              "name": "size",
+              "required": false,
+              "type": "VisualizationSize",
+              "vocabulary": [
+                "sm",
+                "md",
+                "lg"
+              ]
+            },
+            {
+              "description": "Optional viewport width/height ratio; size then caps its Density-relative height.",
+              "name": "aspectRatio",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "true",
+              "description": "Show zoom and fit controls; a supplied controls snippet replaces the defaults.",
+              "name": "showControls",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "default": "\"Zoom in\"",
+              "description": "Visible and accessible zoom-in control label.",
+              "name": "zoomInLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Zoom out\"",
+              "description": "Visible and accessible zoom-out control label.",
+              "name": "zoomOutLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Fit\"",
+              "description": "Visible fit-to-content control label.",
+              "name": "fitLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Drag to pan. Use arrow keys to move, plus or minus to zoom, and Home to fit. Control or Command plus wheel zooms around the pointer.\"",
+              "description": "Instructions announced when the viewport receives focus.",
+              "name": "instructions",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Reports fit, keyboard, pointer and control changes to the view.",
+              "name": "onViewChange",
+              "required": false,
+              "type": "(view: PanZoomView) => void"
+            },
+            {
+              "description": "Replacement controls receiving the canonical view operations.",
+              "name": "controls",
+              "required": false,
+              "type": "(controls: PanZoomControls) => ReactNode"
+            },
+            {
+              "description": "Unscaled viewport content receiving the current camera transform.",
+              "name": "overlay",
+              "required": false,
+              "type": "(view: PanZoomView) => ReactNode"
+            },
+            {
+              "description": "Caller-owned drawing, preserving its children's native interactions.",
+              "name": "children",
+              "required": true,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Additional outer composition classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/data/react/src/PanZoomViewport.tsx",
+          "specifier": "@reddb-io/design-system/data/PanZoomViewport"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/react/src/PanZoomViewport.tsx",
+        "specifier": "@reddb-io/design-system/data/PanZoomViewport",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/src/PanZoomViewport.svelte",
+        "specifier": "@reddb-io/design-system/data/PanZoomViewport",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "data",
+    "name": "PanZoomViewport",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible name of the keyboard-operable drawing viewport.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Logical width of the caller's drawing, independent of Density.",
+        "name": "contentWidth",
+        "required": true,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Logical height of the caller's drawing, independent of Density.",
+        "name": "contentHeight",
+        "required": true,
+        "type": "number"
+      },
+      {
+        "bindable": true,
+        "description": "Current translation and scale. Omitted, fits the drawing on first mount.",
+        "name": "view",
+        "required": false,
+        "type": "PanZoomView"
+      },
+      {
+        "bindable": false,
+        "description": "Reports manual pan, zoom, fit or focus reveal; initial fitting is excluded.",
+        "name": "onnavigate",
+        "required": false,
+        "type": "() => void"
+      },
+      {
+        "bindable": false,
+        "default": "0.05",
+        "description": "Smallest allowed scale, a positive factor.",
+        "name": "minScale",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "8",
+        "description": "Largest allowed scale, at least minScale.",
+        "name": "maxScale",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "Height in the visualization family's Density-relative scale.",
+        "name": "size",
+        "required": false,
+        "type": "VisualizationSize",
+        "vocabulary": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Optional viewport width/height ratio; size then caps its Density-relative height.",
+        "name": "aspectRatio",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "true",
+        "description": "Show zoom and fit controls; a supplied controls snippet replaces the defaults.",
+        "name": "showControls",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"Zoom in\"",
+        "description": "Visible and accessible zoom-in control label.",
+        "name": "zoomInLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Zoom out\"",
+        "description": "Visible and accessible zoom-out control label.",
+        "name": "zoomOutLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Fit\"",
+        "description": "Visible fit-to-content control label.",
+        "name": "fitLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Drag to pan. Use arrow keys to move, plus or minus to zoom, and Home to fit. Control or Command plus wheel zooms around the pointer.\"",
+        "description": "Instructions announced when the viewport receives focus.",
+        "name": "instructions",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Reports fit, keyboard, pointer and control changes to the view.",
+        "name": "onviewchange",
+        "required": false,
+        "type": "(view: PanZoomView) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Replacement controls receiving the canonical view operations.",
+        "name": "controls",
+        "required": false,
+        "type": "Snippet<[PanZoomControls]>"
+      },
+      {
+        "bindable": false,
+        "description": "Unscaled viewport content receiving the current camera transform.",
+        "name": "overlay",
+        "required": false,
+        "type": "Snippet<[PanZoomView]>"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned drawing. Interactive children retain their native behavior.",
+        "name": "children",
+        "required": true,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes on the outer composition.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A caller-owned drawing with fit, anchored zoom, keyboard navigation and pointer pan or pinch, without a rendering engine.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/data/src/core/contracts/panzoomviewport.ts"
+      ],
+      "tests": [
+        "kits/data/test/framework-data.test.ts",
+        "apps/showcase/test/component-flavors-graphical.browser.test.ts"
+      ],
+      "typeMappings": {
+        "controls": {
+          "react": "(controls: PanZoomControls) => ReactNode",
+          "reason": "Native caller content with the same data and control context; shared scenarios exercise composition, focus and caller-owned behavior.",
+          "svelte": "Snippet<[PanZoomControls]>"
+        },
+        "overlay": {
+          "react": "(view: PanZoomView) => ReactNode",
+          "reason": "Both adapters project constant-size content inside the viewport with the same camera transform; scene follow browser scenarios exercise it.",
+          "svelte": "Snippet<[PanZoomView]>"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Replacement controls receiving the canonical view operations.",
+        "name": "controls",
+        "required": false,
+        "type": "Snippet<[PanZoomControls]>"
+      },
+      {
+        "description": "Unscaled viewport content receiving the current camera transform.",
+        "name": "overlay",
+        "required": false,
+        "type": "Snippet<[PanZoomView]>"
+      },
+      {
+        "description": "Caller-owned drawing. Interactive children retain their native behavior.",
+        "name": "children",
+        "required": true,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/data/src/PanZoomViewport.svelte",
+    "specifier": "@reddb-io/design-system/data/PanZoomViewport"
+  }
+}

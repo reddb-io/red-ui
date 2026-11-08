@@ -1,0 +1,825 @@
+{
+  "schemaVersion": 1,
+  "id": "data/EventSeriesExplorer",
+  "topics": [],
+  "related": [
+    "data/ActivityTimeline",
+    "data/BarChart",
+    "data/BreakdownBar",
+    "data/Candlestick",
+    "data/CompositeChart",
+    "data/DeveloperPanel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-color-series-${item.series ?? 1}",
+          "sources": [
+            "kits/data/src/core/chart-color.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-${series}",
+          "sources": [
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        }
+      ],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/src/chart.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-base-border",
+          "sources": [
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-border",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-foreground",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-surface",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/chart-layout.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-sunken-surface",
+          "sources": [
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/chart.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/chart.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts",
+            "kits/data/src/chart-layout.variants.ts",
+            "kits/data/src/chart.ts",
+            "kits/data/src/chart.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/data/src/chart.ts",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/time-series.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-1",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-2",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-3",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-4",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-5",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-6",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-lg",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-md",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-sm",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-regular",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/base/src/skeleton.variants.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/skeleton.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-shadow-elevation-overlay",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/skeleton.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/chart-layout.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/EventSeriesExplorer.tsx",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/EventSeriesExplorer.svelte",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/chart-layout.variants.ts",
+            "kits/data/src/chart.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-sm",
+          "sources": [
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export interface EventSeries {\n  id: string;\n  label: string;\n  points: readonly HypertablePoint[];\n}",
+          "name": "EventSeries",
+          "source": "kits/data/src/event-series-explorer.ts"
+        },
+        {
+          "declaration": "export interface HypertablePoint {\n  t: number;\n  v: number;\n  raw: Record<string, unknown>;\n}",
+          "name": "HypertablePoint",
+          "source": "kits/data/src/event-series-explorer.ts"
+        }
+      ]
+    },
+    "events": [],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "data",
+          "name": "EventSeriesExplorer",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Accessible name of the data region.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Named series with time-sorted observations and original event fields.",
+              "name": "series",
+              "required": true,
+              "type": "readonly EventSeries[]"
+            },
+            {
+              "description": "Optional collection or dataset name.",
+              "name": "context",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"No time series to inspect.\"",
+              "description": "Message when the result has no time and value shape.",
+              "name": "emptyLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"\"",
+              "description": "Extra root classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/data/react/src/EventSeriesExplorer.tsx",
+          "specifier": "@reddb-io/design-system/data/EventSeriesExplorer"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/react/src/EventSeriesExplorer.tsx",
+        "specifier": "@reddb-io/design-system/data/EventSeriesExplorer",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/src/EventSeriesExplorer.svelte",
+        "specifier": "@reddb-io/design-system/data/EventSeriesExplorer",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "data",
+    "name": "EventSeriesExplorer",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible name of the data region.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Named series with time-sorted observations and original event fields.",
+        "name": "series",
+        "required": true,
+        "type": "readonly EventSeries[]"
+      },
+      {
+        "bindable": false,
+        "description": "Optional collection or dataset name.",
+        "name": "context",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"No time series to inspect.\"",
+        "description": "Message when the result has no time and value shape.",
+        "name": "emptyLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"\"",
+        "description": "Extra root classes.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Inspect event rates, metric values and records with bounded time buckets.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/data/src/core/contracts/eventseriesexplorer.ts",
+        "kits/data/src/event-series-explorer.ts",
+        "kits/data/src/diff-explorer.variants.ts"
+      ],
+      "tests": [
+        "kits/data/test/remaining-explorers.test.ts",
+        "kits/data/test/remaining-explorers-native.test.ts",
+        "apps/showcase/test/remaining-explorers.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/data/src/EventSeriesExplorer.svelte",
+    "specifier": "@reddb-io/design-system/data/EventSeriesExplorer"
+  }
+}

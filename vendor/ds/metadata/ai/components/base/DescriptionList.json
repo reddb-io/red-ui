@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "id": "base/DescriptionList",
+  "topics": [],
+  "related": [
+    "base/Accordion",
+    "base/AudioMeter",
+    "base/Avatar",
+    "base/Badge",
+    "base/Card",
+    "base/Carousel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/description-list.appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/description-list.appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/description-list.appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/base/src/description-list.appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/description-list.appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/description-list.appearance.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type DescriptionListContent = string | Snippet;",
+          "name": "DescriptionListContent",
+          "source": "kits/base/src/description-list.variants.ts"
+        },
+        {
+          "declaration": "/** A term/detail association; each renderer supplies its native content type. */\nexport interface DescriptionListEntry<Content> {\n  term: Content;\n  detail: Content;\n}",
+          "name": "DescriptionListEntry",
+          "source": "kits/base/src/core/description-list.ts"
+        },
+        {
+          "declaration": "export type DescriptionListGap = NonNullable<DescriptionListVariants[\"gap\"]>;",
+          "name": "DescriptionListGap",
+          "source": "kits/base/src/description-list.appearance.ts"
+        },
+        {
+          "declaration": "export type DescriptionListItem = DescriptionListEntry<ReactNode>;",
+          "name": "DescriptionListItem",
+          "source": "kits/base/react/src/DescriptionList.tsx"
+        },
+        {
+          "declaration": "export interface DescriptionListItem extends DescriptionListEntry<DescriptionListContent> {}",
+          "name": "DescriptionListItem",
+          "source": "kits/base/src/description-list.variants.ts"
+        },
+        {
+          "declaration": "export type DescriptionListVariants = VariantProps<typeof descriptionList>;",
+          "name": "DescriptionListVariants",
+          "source": "kits/base/src/description-list.appearance.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<dl>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "DescriptionList",
+          "nativeAttributes": [
+            "dl"
+          ],
+          "props": [
+            {
+              "default": "[]",
+              "description": "Ordered term/detail pairs, rendered with native dt and dd semantics.",
+              "name": "items",
+              "required": false,
+              "type": "readonly DescriptionListItem[]"
+            },
+            {
+              "default": "\"md\"",
+              "description": "Density-owned space within and between entries.",
+              "name": "gap",
+              "required": false,
+              "type": "DescriptionListGap",
+              "vocabulary": [
+                "sm",
+                "md",
+                "lg"
+              ]
+            }
+          ],
+          "source": "kits/base/react/src/DescriptionList.tsx",
+          "specifier": "@reddb-io/design-system/base/DescriptionList"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/DescriptionList.tsx",
+        "specifier": "@reddb-io/design-system/base/DescriptionList",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "description-list"
+        },
+        "source": "kits/base/src/DescriptionList.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "DescriptionList",
+    "props": [
+      {
+        "bindable": false,
+        "default": "[]",
+        "description": "The term and detail pairs, in order; each side is a string or a Snippet. Renders nothing when omitted.",
+        "name": "items",
+        "required": false,
+        "type": "readonly DescriptionListItem[]"
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "Density-owned space between and within items: `sm`, `md` (the default) or `lg`.",
+        "name": "gap",
+        "required": false,
+        "type": "DescriptionListGap",
+        "vocabulary": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the `dl` root.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Native term and detail pairs whose content stays caller-owned while Density controls their spacing.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "description-list"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/description-list.appearance.ts",
+        "kits/base/src/core/description-list.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-base.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/DescriptionList.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

@@ -1,0 +1,1 @@
+import{tv as t}from"tailwind-variants";const e=16/9,a=t({base:["relative box-border w-full overflow-hidden","p-[var(--reddb-spatial-inset-sm)]","[&>*]:h-full [&>*]:w-full"].join(" ")});export{e as DEFAULT_ASPECT_RATIO,a as aspectRatio};

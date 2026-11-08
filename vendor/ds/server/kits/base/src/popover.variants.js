@@ -1,0 +1,1 @@
+import{tv as o}from"tailwind-variants";const r=o({base:["z-50 w-80 max-w-sm rounded-lg border border-elevation-overlay-border bg-elevation-overlay-surface text-elevation-overlay-foreground shadow-elevation-overlay","p-[var(--reddb-spatial-inset-md)] outline-hidden","motion-safe:transition-opacity motion-reduce:transition-none"].join(" ")});export{r as popover};

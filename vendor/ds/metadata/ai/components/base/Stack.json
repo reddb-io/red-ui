@@ -1,0 +1,307 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Stack",
+  "topics": [],
+  "related": [
+    "base/AspectRatio",
+    "base/BulletsSlide",
+    "base/Container",
+    "base/ContentMask",
+    "base/ControlGroup",
+    "base/Deck"
+  ],
+  "contract": {
+    "category": "Layout",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/base/src/stack.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/stack.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/stack.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-lg",
+          "sources": [
+            "kits/base/src/stack.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-md",
+          "sources": [
+            "kits/base/src/stack.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-sm",
+          "sources": [
+            "kits/base/src/stack.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-section-gap",
+          "sources": [
+            "kits/base/src/stack.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type StackAlign = NonNullable<StackVariants[\"align\"]>;",
+          "name": "StackAlign",
+          "source": "kits/base/src/stack.variants.ts"
+        },
+        {
+          "declaration": "export type StackDirection = NonNullable<StackVariants[\"direction\"]>;",
+          "name": "StackDirection",
+          "source": "kits/base/src/stack.variants.ts"
+        },
+        {
+          "declaration": "export type StackGap = NonNullable<StackVariants[\"gap\"]>;",
+          "name": "StackGap",
+          "source": "kits/base/src/stack.variants.ts"
+        },
+        {
+          "declaration": "export type StackJustify = NonNullable<StackVariants[\"justify\"]>;",
+          "name": "StackJustify",
+          "source": "kits/base/src/stack.variants.ts"
+        },
+        {
+          "declaration": "export type StackVariants = VariantProps<typeof stack>;",
+          "name": "StackVariants",
+          "source": "kits/base/src/stack.variants.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<div>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Stack",
+          "nativeAttributes": [
+            "div"
+          ],
+          "props": [
+            {
+              "default": "\"layout-md\"",
+              "description": "Density-owned child spacing; layout-md by default.",
+              "name": "gap",
+              "required": false,
+              "type": "StackGap",
+              "vocabulary": [
+                "none",
+                "sm",
+                "md",
+                "lg",
+                "layout-sm",
+                "layout-md",
+                "layout-lg",
+                "section"
+              ]
+            },
+            {
+              "default": "\"column\"",
+              "description": "Main axis, column by default.",
+              "name": "direction",
+              "required": false,
+              "type": "StackDirection",
+              "vocabulary": [
+                "column",
+                "row"
+              ]
+            },
+            {
+              "default": "\"stretch\"",
+              "description": "Cross-axis alignment.",
+              "name": "align",
+              "required": false,
+              "type": "StackAlign",
+              "vocabulary": [
+                "stretch",
+                "start",
+                "center",
+                "end",
+                "baseline"
+              ]
+            },
+            {
+              "default": "\"start\"",
+              "description": "Main-axis distribution.",
+              "name": "justify",
+              "required": false,
+              "type": "StackJustify",
+              "vocabulary": [
+                "start",
+                "center",
+                "end",
+                "between"
+              ]
+            },
+            {
+              "default": "false",
+              "description": "Allow wrapping when space runs out.",
+              "name": "wrap",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            }
+          ],
+          "source": "kits/base/react/src/Stack.tsx",
+          "specifier": "@reddb-io/design-system/base/Stack"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Stack.tsx",
+        "specifier": "@reddb-io/design-system/base/Stack",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "stack"
+        },
+        "source": "kits/base/src/Stack.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Stack",
+    "props": [
+      {
+        "bindable": false,
+        "default": "\"layout-md\"",
+        "description": "Space between children. Each value names a Density-owned role: the component tier (`sm`, `md`, `lg`), the layout tier (`layout-sm`, `layout-md`, `layout-lg`) or the section tier (`section`), or `none` for contiguous children. Defaults to `layout-md`.",
+        "name": "gap",
+        "required": false,
+        "type": "StackGap",
+        "vocabulary": [
+          "none",
+          "sm",
+          "md",
+          "lg",
+          "layout-sm",
+          "layout-md",
+          "layout-lg",
+          "section"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"column\"",
+        "description": "The main axis: `column` (the default) or `row`.",
+        "name": "direction",
+        "required": false,
+        "type": "StackDirection",
+        "vocabulary": [
+          "column",
+          "row"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"stretch\"",
+        "description": "Cross-axis alignment. Defaults to `stretch`.",
+        "name": "align",
+        "required": false,
+        "type": "StackAlign",
+        "vocabulary": [
+          "stretch",
+          "start",
+          "center",
+          "end",
+          "baseline"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"start\"",
+        "description": "Main-axis distribution. Defaults to `start`.",
+        "name": "justify",
+        "required": false,
+        "type": "StackJustify",
+        "vocabulary": [
+          "start",
+          "center",
+          "end",
+          "between"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Wrap children onto new lines when they run out of room.",
+        "name": "wrap",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the flow.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "The items the flow arranges, spaced by `gap`.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "purpose": "Vertical flow whose small, medium, and large gaps remain live Density roles in nested scopes.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "stack"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/stack.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-appearance.test.ts"
+      ]
+    },
+    "snippets": [
+      {
+        "description": "The items the flow arranges, spaced by `gap`.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/Stack.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

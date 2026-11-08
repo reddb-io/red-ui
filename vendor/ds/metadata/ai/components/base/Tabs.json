@@ -1,0 +1,748 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Tabs",
+  "topics": [
+    "abas navegacao conteudo",
+    "tabs panels"
+  ],
+  "related": [
+    "base/Breadcrumbs",
+    "base/Link",
+    "base/Navbar",
+    "base/NavigationMenu",
+    "base/NavigationScope",
+    "base/Pagination"
+  ],
+  "contract": {
+    "category": "Navigation",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/tabs.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-none",
+          "sources": [
+            "kits/base/src/tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export interface TabItem {\n  value: string;\n  label: string;\n  disabled?: boolean;\n}",
+          "name": "TabItem",
+          "source": "kits/base/src/tabs.variants.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Called with the newly selected value (ADR 0026's value dialect).",
+        "dialect": "value",
+        "name": "onvaluechange",
+        "type": "(value: string) => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `onvaluechange` (ADR 0026); removed next release.",
+          "replacement": "onvaluechange"
+        },
+        "description": "Deprecated alias. Renamed `onvaluechange` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onchange",
+        "type": "(value: string) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "base",
+          "name": "Tabs",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Accessible name for the tablist.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Stable values and visible labels; panel content remains caller-owned.",
+              "name": "items",
+              "required": true,
+              "type": "readonly TabItem[]"
+            },
+            {
+              "default": "\"\"",
+              "description": "Selected tab value; defaults to the first enabled tab.",
+              "name": "value",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"horizontal\"",
+              "description": "Axis of the tablist, which sets `aria-orientation` and the arrow keys that move between tabs. Defaults to `horizontal`.",
+              "name": "orientation",
+              "required": false,
+              "type": "\"horizontal\" | \"vertical\"",
+              "vocabulary": [
+                "horizontal",
+                "vertical"
+              ]
+            },
+            {
+              "default": "false",
+              "description": "Disables every tab, so none can be selected.",
+              "name": "disabled",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "default": "false",
+              "description": "Select the panel containing a same-page fragment target.",
+              "name": "followHash",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Extra classes merged onto the tablist.",
+              "name": "listClass",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Extra classes merged onto every tab trigger Button.",
+              "name": "triggerClass",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Extra classes merged onto every tab panel.",
+              "name": "contentClass",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Called with a newly selected tab value.",
+              "name": "onValueChange",
+              "required": false,
+              "type": "(value: string) => void"
+            },
+            {
+              "description": "Caller-owned content rendered in each panel, receiving its stable value.",
+              "name": "children",
+              "required": false,
+              "type": "(item: { value: string }) => ReactNode"
+            },
+            {
+              "description": "Optional content placed before the tablist, outside its keyboard navigation.",
+              "name": "leading",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Optional actions placed beside the tablist.",
+              "name": "actions",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Additional root classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/base/react/src/Tabs.tsx",
+          "specifier": "@reddb-io/design-system/base/Tabs"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Tabs.tsx",
+        "specifier": "@reddb-io/design-system/base/Tabs",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "tabs"
+        },
+        "source": "kits/base/src/Tabs.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "base",
+    "name": "Tabs",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible name for the tablist.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Stable values and visible labels; panel content remains caller-owned.",
+        "name": "items",
+        "required": true,
+        "type": "readonly TabItem[]"
+      },
+      {
+        "bindable": true,
+        "default": "\"\"",
+        "description": "Selected tab value; defaults to the first enabled tab.",
+        "name": "value",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"horizontal\"",
+        "description": "Axis of the tablist, which sets `aria-orientation` and the arrow keys that move between tabs. Defaults to `horizontal`.",
+        "name": "orientation",
+        "required": false,
+        "type": "\"horizontal\" | \"vertical\"",
+        "vocabulary": [
+          "horizontal",
+          "vertical"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Disables every tab, so none can be selected.",
+        "name": "disabled",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Select the panel containing a same-page fragment target.",
+        "name": "followHash",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the tablist.",
+        "name": "listClass",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto every tab trigger Button.",
+        "name": "triggerClass",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto every tab panel.",
+        "name": "contentClass",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Called with the newly selected value (ADR 0026's value dialect).",
+        "name": "onvaluechange",
+        "required": false,
+        "type": "(value: string) => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `onvaluechange` (ADR 0026); removed next release.",
+          "replacement": "onvaluechange"
+        },
+        "description": "Deprecated alias. Renamed `onvaluechange` (ADR 0026); removed next release.",
+        "name": "onchange",
+        "required": false,
+        "type": "(value: string) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Panel content, rendered once per item inside that tab's panel; receives `{ value }`, the tab's value, to choose what to show.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet<[{ value: string }]>"
+      },
+      {
+        "bindable": false,
+        "description": "Optional content placed before the tablist, outside its keyboard navigation.",
+        "name": "leading",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Optional actions placed beside the tablist.",
+        "name": "actions",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the root slot's own.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "One selected panel at a time, with associated labels and roving arrow-key focus over caller-owned content.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "tabs"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/core/contracts/tabs.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-managed.test.ts",
+        "kits/base/test/tabs.test.ts",
+        "apps/showcase/test/developer-panel.browser.test.ts"
+      ],
+      "typeMappings": {
+        "actions": {
+          "react": "ReactNode",
+          "reason": "Both native adapters render the caller-owned actions next to the tablist, outside the tab focus sequence.",
+          "svelte": "Snippet"
+        },
+        "children": {
+          "react": "(item: { value: string }) => ReactNode",
+          "reason": "The native render callback receives the same canonical context; shared adapter scenarios exercise its rendered content and associations.",
+          "svelte": "Snippet<[{ value: string }]>"
+        },
+        "leading": {
+          "react": "ReactNode",
+          "reason": "Both adapters place caller content before the tablist outside tab keyboard navigation.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Panel content, rendered once per item inside that tab's panel; receives `{ value }`, the tab's value, to choose what to show.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet<[{ value: string }]>"
+      },
+      {
+        "description": "Optional content placed before the tablist, outside its keyboard navigation.",
+        "name": "leading",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "Optional actions placed beside the tablist.",
+        "name": "actions",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/Tabs.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

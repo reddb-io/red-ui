@@ -1,0 +1,922 @@
+{
+  "schemaVersion": 1,
+  "id": "data/TimeSeries",
+  "topics": [
+    "serie temporal linhas areas realtime",
+    "time series streaming area"
+  ],
+  "related": [
+    "data/CompositeChart",
+    "data/Candlestick",
+    "data/ActivityTimeline",
+    "data/BarChart",
+    "data/BreakdownBar",
+    "data/DeveloperPanel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-color-series-${item.series ?? 1}",
+          "sources": [
+            "kits/data/src/core/chart-color.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-${series}",
+          "sources": [
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        }
+      ],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-surface",
+          "sources": [
+            "kits/data/src/chart-layout.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts",
+            "kits/data/src/chart-layout.variants.ts",
+            "kits/data/src/chart.ts",
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/data/src/chart.ts",
+            "kits/data/src/time-series.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-1",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-2",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-3",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-4",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-5",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-6",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-regular",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/base/src/skeleton.variants.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/skeleton.variants.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/chart-layout.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/chart-layout.variants.ts",
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-sm",
+          "sources": [
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** Smooth monotone interpolation, or literal straight segments between observations. */\nexport type ChartCurve = \"smooth\" | \"linear\";",
+          "name": "ChartCurve",
+          "source": "kits/data/src/chart.ts"
+        },
+        {
+          "declaration": "/** A fixed drawing height, or a chart that uses its bounded parent panel's remaining height. */\nexport type ChartHeight = number | \"fill\";",
+          "name": "ChartHeight",
+          "source": "kits/data/src/chart.ts"
+        },
+        {
+          "declaration": "/** Chart-local chrome configuration. All lengths still inherit the surrounding Density. */\nexport type ChartLayout = \"auto\" | \"dense\" | \"roomy\";",
+          "name": "ChartLayout",
+          "source": "kits/data/src/chart.ts"
+        },
+        {
+          "declaration": "/** Load as the figure nears the viewport, or immediately after mounting. */\nexport type ChartLoading = \"lazy\" | \"eager\";",
+          "name": "ChartLoading",
+          "source": "kits/data/src/chart-loading.ts"
+        },
+        {
+          "declaration": "/** Renders one numeric value as axis or bin text. */\nexport type ChartNumberFormat = (value: number) => string;",
+          "name": "ChartNumberFormat",
+          "source": "kits/data/src/chart.ts"
+        },
+        {
+          "declaration": "/** Stable entity ids mapped to color tokens; sorting never reassigns these colors. */\nexport type ChartPalette = Readonly<Record<string, ColorToken>>;",
+          "name": "ChartPalette",
+          "source": "kits/base/src/core/color-token.ts"
+        },
+        {
+          "declaration": "/** Exact sample details can stay inline, overlay the plot during inspection, or remain available to assistive technology only. */\nexport type ChartReadout = \"auto\" | \"inline\" | \"overlay\" | \"hidden\";",
+          "name": "ChartReadout",
+          "source": "kits/data/src/chart.ts"
+        },
+        {
+          "declaration": "/** Pure helpers shared by the Data Kit's LayerChart-powered charts (ADR 0013). */\n\n/** A Series Role position: the categorical hue a chart's marks are drawn in. */\nexport type ChartSeries = 1 | 2 | 3 | 4 | 5 | 6;",
+          "name": "ChartSeries",
+          "source": "kits/data/src/chart.ts"
+        },
+        {
+          "declaration": "/** Shared Density-relative plot height; `height` remains the explicit pixel override. */\nexport type ChartSize = \"sm\" | \"md\" | \"lg\";",
+          "name": "ChartSize",
+          "source": "kits/data/src/chart.ts"
+        },
+        {
+          "declaration": "/** Exact continuous sample-axis bounds shared between comparison panels. */\nexport type ChartTimeRange = readonly [ChartTimestamp, ChartTimestamp];",
+          "name": "ChartTimeRange",
+          "source": "kits/data/src/chart.ts"
+        },
+        {
+          "declaration": "/** Continuous chart coordinate: epoch milliseconds or an equivalent Date. */\nexport type ChartTimestamp = number | Date;",
+          "name": "ChartTimestamp",
+          "source": "kits/data/src/chart.ts"
+        },
+        {
+          "declaration": "/** A CSS custom property supplied by the DS or the host application. */\nexport type ColorToken = `--${string}`;",
+          "name": "ColorToken",
+          "source": "kits/base/src/core/color-token.ts"
+        },
+        {
+          "declaration": "/** One named measurement on a shared time and value scale. */\nexport interface TimeSeriesDataset {\n  /** Stable identity: visibility follows this id when data is refreshed or reordered. */\n  id: string;\n  /** Visible legend name. */\n  label: string;\n  /** Points in this measurement; missing timestamps are not interpolated in the readout. */\n  data: readonly TimeSeriesPoint[];\n  /** DS Series Role. Explicit role; omitted roles use the automatic 10/40 palette. */\n  series?: ChartSeries;\n  /** Explicit color custom-property name, overriding a palette entry. */\n  color?: ColorToken;\n}",
+          "name": "TimeSeriesDataset",
+          "source": "kits/data/src/time-series.ts"
+        },
+        {
+          "declaration": "export interface TimeSeriesPoint {\n  x: number | Date;\n  y: number;\n}",
+          "name": "TimeSeriesPoint",
+          "source": "kits/data/src/time-series.ts"
+        },
+        {
+          "declaration": "/** Shared temporal mark vocabulary. */\nexport type TimeSeriesVariant = \"line\" | \"area\" | \"stacked-area\" | \"bar\";",
+          "name": "TimeSeriesVariant",
+          "source": "kits/data/src/time-series.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Called after a legend action changes hidden dataset ids.",
+        "dialect": "state",
+        "name": "onhiddenserieschange",
+        "type": "(ids: readonly string[]) => void"
+      },
+      {
+        "description": "Reports linked inspection as an epoch timestamp, or null to clear it.",
+        "dialect": "state",
+        "name": "onactivexchange",
+        "type": "(value: number | null) => void"
+      },
+      {
+        "description": "Commits a sample with a pointer press or Enter/Space, independently of hover inspection.",
+        "dialect": "item-activation",
+        "name": "onselect",
+        "type": "(value: number) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "data",
+          "name": "TimeSeries",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Exact continuous sample-axis viewport, shared between panels. Omitted, fits the supplied observations. Value scales still describe the supplied data.",
+              "name": "timeRange",
+              "required": false,
+              "type": "ChartTimeRange"
+            },
+            {
+              "default": "null",
+              "description": "Linked inspection timestamp. Null clears the drawn cursor and reads the latest observation; omitted, inspection is local. The nearest retained observation supplies the exact reading. Bindable.",
+              "name": "activeX",
+              "required": false,
+              "type": "ChartTimestamp | null"
+            },
+            {
+              "default": "\"roomy\"",
+              "description": "`roomy` preserves the original chrome; `dense` moves details over the plot; `auto` uses dense geometry in narrow containers. Every mode inherits Density spatial roles without selecting Theme or Density.",
+              "name": "layout",
+              "required": false,
+              "type": "ChartLayout",
+              "vocabulary": [
+                "auto",
+                "dense",
+                "roomy"
+              ]
+            },
+            {
+              "default": "\"auto\"",
+              "description": "`auto` follows layout: inline when roomy, otherwise overlaid during pointer/keyboard inspection. Explicit modes override placement independently. Hidden details remain in the explorer's accessible reading.",
+              "name": "readout",
+              "required": false,
+              "type": "ChartReadout",
+              "vocabulary": [
+                "auto",
+                "inline",
+                "overlay",
+                "hidden"
+              ]
+            },
+            {
+              "description": "Points as `{ x, y }`, or named datasets `{ id, label, data, series? }` sharing the same axes. Dataset ids preserve legend visibility across refreshes.",
+              "name": "data",
+              "required": true,
+              "type": "readonly TimeSeriesPoint[] | readonly TimeSeriesDataset[]"
+            },
+            {
+              "default": "\"Time series\"",
+              "description": "Accessible description of the represented values.",
+              "name": "label",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"line\"",
+              "description": "`line` reads its own range, `area` fills each series to zero, and `stacked-area` or `bar` stack named contributions around zero. Stacked areas leave a gap wherever any visible contribution is unavailable.",
+              "name": "variant",
+              "required": false,
+              "type": "TimeSeriesVariant",
+              "vocabulary": [
+                "line",
+                "area",
+                "stacked-area",
+                "bar"
+              ]
+            },
+            {
+              "default": "\"smooth\"",
+              "description": "`smooth` (default) uses monotone curves through observations; `linear` draws straight segments. Applies to lines and areas; bars are unchanged.",
+              "name": "curve",
+              "required": false,
+              "type": "ChartCurve",
+              "vocabulary": [
+                "smooth",
+                "linear"
+              ]
+            },
+            {
+              "default": "\"full\"",
+              "description": "`full` includes axes and a grid; `minimal` keeps only the plotted marks and removes their gutters.",
+              "name": "presentation",
+              "required": false,
+              "type": "\"full\" | \"minimal\"",
+              "vocabulary": [
+                "full",
+                "minimal"
+              ]
+            },
+            {
+              "description": "Shared Density-relative plot height: three, six or ten control rows. An explicit `height` wins. Omitted, keeps the simple/interactive default.",
+              "name": "size",
+              "required": false,
+              "type": "ChartSize",
+              "vocabulary": [
+                "sm",
+                "md",
+                "lg"
+              ]
+            },
+            {
+              "default": "[]",
+              "description": "Stable dataset ids hidden from the plot. Bindable so a summary and its expanded view can share visibility.",
+              "name": "hiddenSeries",
+              "required": false,
+              "type": "readonly string[]"
+            },
+            {
+              "default": "(value: number) => formatChartNumber(value)",
+              "description": "Renders a value-axis tick. Defaults to a locale-free number of at most two decimals.",
+              "name": "format",
+              "required": false,
+              "type": "ChartNumberFormat"
+            },
+            {
+              "description": "Formats time-axis ticks and the shared readout; omitted, Date axes use compact UTC labels, numeric axes retain the engine's formatter, and the readout uses exact UTC timestamps.",
+              "name": "formatX",
+              "required": false,
+              "type": "(value: number | Date) => string"
+            },
+            {
+              "description": "Exact shared value-axis bounds, e.g. `[0, 100]` for percentages. Omitted, follows all datasets. Must be finite and increasing; an area domain must include zero.",
+              "name": "valueDomain",
+              "required": false,
+              "type": "readonly [ number, number ]"
+            },
+            {
+              "description": "Show legend toggles and a shared pointer/keyboard readout. Defaults to true for named datasets, false for a simple point array.",
+              "name": "interactive",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "default": "1",
+              "description": "The Series Role (1–6) the series is drawn in. Never the Brand red.",
+              "name": "series",
+              "required": false,
+              "type": "ChartSeries",
+              "vocabulary": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6"
+              ]
+            },
+            {
+              "description": "Explicit color custom-property name; omitted, keeps the DS series role.",
+              "name": "color",
+              "required": false,
+              "type": "ColorToken"
+            },
+            {
+              "default": "2",
+              "description": "Positive line/area outline width in drawing pixels; defaults to 2.",
+              "name": "strokeWidth",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Dataset-id palette, overridden by a dataset color.",
+              "name": "palette",
+              "required": false,
+              "type": "ChartPalette"
+            },
+            {
+              "description": "Fixed drawing width in px. Omitted, the series fills its figure's content width and follows it on resize (640 until the figure is measured); the container sets that width, and the chart never widens its container.",
+              "name": "width",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Drawing height in pixels, or `fill` to consume a bounded parent panel. Omitted, inherits Density-relative sizing; dense/auto narrow layouts use six rows.",
+              "name": "height",
+              "required": false,
+              "type": "ChartHeight"
+            },
+            {
+              "default": "\"lazy\"",
+              "description": "When LayerChart loads: `lazy` (default) once the figure nears the viewport, `eager` as soon as it mounts. Until then — and in the server render — the figure holds a placeholder of the chart's own Density-sized height under its accessible name.",
+              "name": "loading",
+              "required": false,
+              "type": "ChartLoading",
+              "vocabulary": [
+                "lazy",
+                "eager"
+              ]
+            },
+            {
+              "description": "Called after a legend action changes hidden dataset ids.",
+              "name": "onHiddenSeriesChange",
+              "required": false,
+              "type": "(ids: readonly string[]) => void"
+            },
+            {
+              "description": "Reports linked inspection as an epoch timestamp, or null to clear it.",
+              "name": "onActiveXChange",
+              "required": false,
+              "type": "(value: number | null) => void"
+            },
+            {
+              "description": "Commits a sample with a pointer press or Enter/Space, independently of hover inspection.",
+              "name": "onSelect",
+              "required": false,
+              "type": "(value: number) => void"
+            },
+            {
+              "default": "\"\"",
+              "description": "Extra classes, merged onto the chart's root `figure`.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/data/react/src/TimeSeries.tsx",
+          "specifier": "@reddb-io/design-system/data/TimeSeries"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/react/src/TimeSeries.tsx",
+        "specifier": "@reddb-io/design-system/data/TimeSeries",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/src/TimeSeries.svelte",
+        "specifier": "@reddb-io/design-system/data/TimeSeries",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "data",
+    "name": "TimeSeries",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Exact continuous sample-axis viewport, shared between panels. Omitted, fits the supplied observations. Value scales still describe the supplied data.",
+        "name": "timeRange",
+        "required": false,
+        "type": "ChartTimeRange"
+      },
+      {
+        "bindable": true,
+        "default": "null",
+        "description": "Linked inspection timestamp. Null clears the drawn cursor and reads the latest observation; omitted, inspection is local. The nearest retained observation supplies the exact reading. Bindable.",
+        "name": "activeX",
+        "required": false,
+        "type": "ChartTimestamp | null"
+      },
+      {
+        "bindable": false,
+        "default": "\"roomy\"",
+        "description": "`roomy` preserves the original chrome; `dense` moves details over the plot; `auto` uses dense geometry in narrow containers. Every mode inherits Density spatial roles without selecting Theme or Density.",
+        "name": "layout",
+        "required": false,
+        "type": "ChartLayout",
+        "vocabulary": [
+          "auto",
+          "dense",
+          "roomy"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"auto\"",
+        "description": "`auto` follows layout: inline when roomy, otherwise overlaid during pointer/keyboard inspection. Explicit modes override placement independently. Hidden details remain in the explorer's accessible reading.",
+        "name": "readout",
+        "required": false,
+        "type": "ChartReadout",
+        "vocabulary": [
+          "auto",
+          "inline",
+          "overlay",
+          "hidden"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Points as `{ x, y }`, or named datasets `{ id, label, data, series? }` sharing the same axes. Dataset ids preserve legend visibility across refreshes.",
+        "name": "data",
+        "required": true,
+        "type": "readonly TimeSeriesPoint[] | readonly TimeSeriesDataset[]"
+      },
+      {
+        "bindable": false,
+        "default": "\"Time series\"",
+        "description": "Accessible description of the represented values.",
+        "name": "label",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"line\"",
+        "description": "`line` reads its own range, `area` fills each series to zero, and `stacked-area` or `bar` stack named contributions around zero. Stacked areas leave a gap wherever any visible contribution is unavailable.",
+        "name": "variant",
+        "required": false,
+        "type": "TimeSeriesVariant",
+        "vocabulary": [
+          "line",
+          "area",
+          "stacked-area",
+          "bar"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"smooth\"",
+        "description": "`smooth` (default) uses monotone curves through observations; `linear` draws straight segments. Applies to lines and areas; bars are unchanged.",
+        "name": "curve",
+        "required": false,
+        "type": "ChartCurve",
+        "vocabulary": [
+          "smooth",
+          "linear"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"full\"",
+        "description": "`full` includes axes and a grid; `minimal` keeps only the plotted marks and removes their gutters.",
+        "name": "presentation",
+        "required": false,
+        "type": "\"full\" | \"minimal\"",
+        "vocabulary": [
+          "full",
+          "minimal"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Shared Density-relative plot height: three, six or ten control rows. An explicit `height` wins. Omitted, keeps the simple/interactive default.",
+        "name": "size",
+        "required": false,
+        "type": "ChartSize",
+        "vocabulary": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      {
+        "bindable": true,
+        "default": "[]",
+        "description": "Stable dataset ids hidden from the plot. Bindable so a summary and its expanded view can share visibility.",
+        "name": "hiddenSeries",
+        "required": false,
+        "type": "readonly string[]"
+      },
+      {
+        "bindable": false,
+        "default": "(value: number) => formatChartNumber(value)",
+        "description": "Renders a value-axis tick. Defaults to a locale-free number of at most two decimals.",
+        "name": "format",
+        "required": false,
+        "type": "ChartNumberFormat"
+      },
+      {
+        "bindable": false,
+        "description": "Formats time-axis ticks and the shared readout; omitted, Date axes use compact UTC labels, numeric axes retain the engine's formatter, and the readout uses exact UTC timestamps.",
+        "name": "formatX",
+        "required": false,
+        "type": "(value: number | Date) => string"
+      },
+      {
+        "bindable": false,
+        "description": "Exact shared value-axis bounds, e.g. `[0, 100]` for percentages. Omitted, follows all datasets. Must be finite and increasing; an area domain must include zero.",
+        "name": "valueDomain",
+        "required": false,
+        "type": "readonly [ number, number ]"
+      },
+      {
+        "bindable": false,
+        "description": "Show legend toggles and a shared pointer/keyboard readout. Defaults to true for named datasets, false for a simple point array.",
+        "name": "interactive",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "1",
+        "description": "The Series Role (1–6) the series is drawn in. Never the Brand red.",
+        "name": "series",
+        "required": false,
+        "type": "ChartSeries",
+        "vocabulary": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Explicit color custom-property name; omitted, keeps the DS series role.",
+        "name": "color",
+        "required": false,
+        "type": "ColorToken"
+      },
+      {
+        "bindable": false,
+        "default": "2",
+        "description": "Positive line/area outline width in drawing pixels; defaults to 2.",
+        "name": "strokeWidth",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Dataset-id palette, overridden by a dataset color.",
+        "name": "palette",
+        "required": false,
+        "type": "ChartPalette"
+      },
+      {
+        "bindable": false,
+        "description": "Fixed drawing width in px. Omitted, the series fills its figure's content width and follows it on resize (640 until the figure is measured); the container sets that width, and the chart never widens its container.",
+        "name": "width",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Drawing height in pixels, or `fill` to consume a bounded parent panel. Omitted, inherits Density-relative sizing; dense/auto narrow layouts use six rows.",
+        "name": "height",
+        "required": false,
+        "type": "ChartHeight"
+      },
+      {
+        "bindable": false,
+        "default": "\"lazy\"",
+        "description": "When LayerChart loads: `lazy` (default) once the figure nears the viewport, `eager` as soon as it mounts. Until then — and in the server render — the figure holds a placeholder of the chart's own Density-sized height under its accessible name.",
+        "name": "loading",
+        "required": false,
+        "type": "ChartLoading",
+        "vocabulary": [
+          "lazy",
+          "eager"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Called after a legend action changes hidden dataset ids.",
+        "name": "onhiddenserieschange",
+        "required": false,
+        "type": "(ids: readonly string[]) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Reports linked inspection as an epoch timestamp, or null to clear it.",
+        "name": "onactivexchange",
+        "required": false,
+        "type": "(value: number | null) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Commits a sample with a pointer press or Enter/Space, independently of hover inspection.",
+        "name": "onselect",
+        "required": false,
+        "type": "(value: number) => void"
+      },
+      {
+        "bindable": false,
+        "default": "\"\"",
+        "description": "Extra classes, merged onto the chart's root `figure`.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A token-painted LayerChart time series that supports line and area readings without an inline palette.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/data/src/core/contracts/timeseries.ts",
+        "kits/data/src/chart-layout.variants.ts",
+        "kits/data/src/core/chart-time.ts",
+        "kits/data/src/chart-stream.ts"
+      ],
+      "tests": [
+        "kits/data/test/framework-data.test.ts",
+        "apps/showcase/test/component-flavors-graphical.browser.test.ts",
+        "apps/showcase/test/chart-density.browser.test.ts",
+        "kits/data/test/chart-stream.test.ts",
+        "apps/showcase/test/realtime-charts.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/data/src/TimeSeries.svelte",
+    "specifier": "@reddb-io/design-system/data/TimeSeries"
+  }
+}

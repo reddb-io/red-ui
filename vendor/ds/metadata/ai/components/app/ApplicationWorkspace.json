@@ -1,0 +1,801 @@
+{
+  "schemaVersion": 1,
+  "id": "app/ApplicationWorkspace",
+  "topics": [],
+  "related": [
+    "app/ApplicationShell",
+    "app/MultiColumnLayout",
+    "app/SidebarLayout",
+    "app/SplitView"
+  ],
+  "contract": {
+    "category": "Layout",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-base-border",
+          "sources": [
+            "kits/app/src/application-workspace.variants.ts",
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-sunken-surface",
+          "sources": [
+            "kits/app/src/application-workspace.variants.ts",
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/app/src/application-workspace.variants.ts",
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export interface WorkspaceTab {\n  /** Stable application-owned identity. */\n  id: string;\n  /** Visible tab name. */\n  label: string;\n  /** Native destination. NavigationScope may intercept owned, unmodified clicks. */\n  href?: string;\n  /** Whether the application accepts close requests. */\n  closable?: boolean;\n  /** Caller-observed unsaved changes, independent of execution. */\n  dirty?: boolean;\n  /** Caller-observed operation in progress. */\n  busy?: boolean;\n  /** Prevent selection and closing. */\n  disabled?: boolean;\n}",
+          "name": "WorkspaceTab",
+          "source": "kits/app/src/core/workspace-tabs.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Request selection of a document.",
+        "dialect": "state",
+        "name": "onselectedchange",
+        "type": "(id: string) => void"
+      },
+      {
+        "description": "Request closing a document; the host decides whether to discard changes.",
+        "dialect": "discrete",
+        "name": "oncloserequest",
+        "type": "(id: string) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "app",
+          "name": "ApplicationWorkspace",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Accessible name distinguishing this workspace from other instances.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "default": "true",
+              "description": "Render landmarks; set false inside a host that already owns those landmarks.",
+              "name": "landmarks",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "default": "\"Navigation\"",
+              "description": "Accessible name for the resource navigation region.",
+              "name": "navigationLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Documents\"",
+              "description": "Accessible name for the document tab list.",
+              "name": "documentLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Caller-owned documents; omit to provide a custom content region.",
+              "name": "items",
+              "required": false,
+              "type": "readonly WorkspaceTab[]"
+            },
+            {
+              "description": "Controlled active document.",
+              "name": "selected",
+              "required": false,
+              "type": "string | null"
+            },
+            {
+              "description": "Request selection of a document.",
+              "name": "onselectedchange",
+              "required": false,
+              "type": "(id: string) => void"
+            },
+            {
+              "description": "Request closing a document; the host decides whether to discard changes.",
+              "name": "oncloserequest",
+              "required": false,
+              "type": "(id: string) => void"
+            },
+            {
+              "description": "Text shown when the supplied document list is empty.",
+              "name": "emptyLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Additional classes on the document panels.",
+              "name": "panelClass",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Caller-owned resource navigation.",
+              "name": "navigation",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Caller-owned commands or contextual controls above the documents.",
+              "name": "toolbar",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Content for each caller-owned document.",
+              "name": "children",
+              "required": false,
+              "type": "(item: { id: string }) => ReactNode"
+            },
+            {
+              "description": "Alternative caller-owned content when no document list is supplied.",
+              "name": "content",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Additional classes on the navigation region.",
+              "name": "navigationClass",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Additional classes on the content region.",
+              "name": "contentClass",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Additional classes on the workspace root.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/app/react/src/ApplicationWorkspace.tsx",
+          "specifier": "@reddb-io/design-system/app/ApplicationWorkspace"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/react/src/ApplicationWorkspace.tsx",
+        "specifier": "@reddb-io/design-system/app/ApplicationWorkspace",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/src/composites/ApplicationWorkspace.svelte",
+        "specifier": "@reddb-io/design-system/app",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "app",
+    "name": "ApplicationWorkspace",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible name distinguishing this workspace from other instances.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "true",
+        "description": "Render landmarks; set false inside a host that already owns those landmarks.",
+        "name": "landmarks",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"Navigation\"",
+        "description": "Accessible name for the resource navigation region.",
+        "name": "navigationLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Documents\"",
+        "description": "Accessible name for the document tab list.",
+        "name": "documentLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned documents; omit to provide a custom content region.",
+        "name": "items",
+        "required": false,
+        "type": "readonly WorkspaceTab[]"
+      },
+      {
+        "bindable": false,
+        "description": "Controlled active document.",
+        "name": "selected",
+        "required": false,
+        "type": "string | null"
+      },
+      {
+        "bindable": false,
+        "description": "Request selection of a document.",
+        "name": "onselectedchange",
+        "required": false,
+        "type": "(id: string) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Request closing a document; the host decides whether to discard changes.",
+        "name": "oncloserequest",
+        "required": false,
+        "type": "(id: string) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Text shown when the supplied document list is empty.",
+        "name": "emptyLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Additional classes on the document panels.",
+        "name": "panelClass",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned resource navigation.",
+        "name": "navigation",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned commands or contextual controls above the documents.",
+        "name": "toolbar",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Content for each caller-owned document.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet<[{ id: string }]>"
+      },
+      {
+        "bindable": false,
+        "description": "Alternative caller-owned content when no document list is supplied.",
+        "name": "content",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Additional classes on the navigation region.",
+        "name": "navigationClass",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Additional classes on the content region.",
+        "name": "contentClass",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Additional classes on the workspace root.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A named workspace composing caller-owned resource navigation, document tabs, commands and content with independent host state.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/app/src/core/contracts/applicationworkspace.ts",
+        "kits/app/src/application-workspace.variants.ts"
+      ],
+      "tests": [
+        "kits/app/test/application-workspace.test.ts",
+        "apps/showcase/test/application-workspace.browser.test.ts"
+      ],
+      "typeMappings": {
+        "children": {
+          "react": "(item: { id: string }) => ReactNode",
+          "reason": "Each adapter renders caller-owned document content.",
+          "svelte": "Snippet<[{ id: string }]>"
+        },
+        "content": {
+          "react": "ReactNode",
+          "reason": "Both adapters support caller-owned custom content.",
+          "svelte": "Snippet"
+        },
+        "navigation": {
+          "react": "ReactNode",
+          "reason": "Each native adapter receives caller-owned navigation.",
+          "svelte": "Snippet"
+        },
+        "toolbar": {
+          "react": "ReactNode",
+          "reason": "Each native adapter receives caller-owned commands.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Caller-owned resource navigation.",
+        "name": "navigation",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "Caller-owned commands or contextual controls above the documents.",
+        "name": "toolbar",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "Content for each caller-owned document.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet<[{ id: string }]>"
+      },
+      {
+        "description": "Alternative caller-owned content when no document list is supplied.",
+        "name": "content",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/app/src/composites/ApplicationWorkspace.svelte",
+    "specifier": "@reddb-io/design-system/app"
+  }
+}

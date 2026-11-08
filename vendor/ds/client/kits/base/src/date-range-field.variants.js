@@ -1,0 +1,1 @@
+import{tv as r}from"tailwind-variants";import{fieldset as e}from"./fieldset.variants.js";const o=r({slots:{root:e().root(),frame:"@container/range-field min-w-0",fields:"grid gap-[var(--reddb-spatial-layout-gap-sm)] @md/range-field:grid-cols-2",help:e().help(),error:e().error()}});export{o as dateRangeField};

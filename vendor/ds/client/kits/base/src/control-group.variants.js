@@ -1,0 +1,1 @@
+import{tv as t}from"tailwind-variants";const r=["horizontal","vertical"],a=t({base:"flex gap-[var(--reddb-spatial-gap-sm)]",variants:{orientation:{horizontal:"flex-row flex-wrap items-center",vertical:"flex-col items-stretch"}},defaultVariants:{orientation:"horizontal"}});export{r as CONTROL_GROUP_ORIENTATIONS,a as controlGroup};

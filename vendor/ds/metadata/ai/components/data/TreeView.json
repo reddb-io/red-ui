@@ -1,0 +1,559 @@
+{
+  "schemaVersion": 1,
+  "id": "data/TreeView",
+  "topics": [],
+  "related": [
+    "data/ActivityTimeline",
+    "data/BarChart",
+    "data/BreakdownBar",
+    "data/Candlestick",
+    "data/CompositeChart",
+    "data/DeveloperPanel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** Pure path operations for the Data Kit TreeView. This module has no Svelte or DOM dependency. */\n\nexport interface TreeNode<Value = unknown> {\n  /** Stable node identity. Path-built nodes use their normalized full path. */\n  id: string;\n  /** Visible node name. */\n  label: string;\n  /** Caller-owned value when this node represents an input path. */\n  value?: Value;\n  children: readonly TreeNode<Value>[];\n}",
+          "name": "TreeNode",
+          "source": "kits/data/src/tree.ts"
+        },
+        {
+          "declaration": "/** A caller-owned move proposed by the TreeView's drag-and-drop affordance. */\nexport interface TreeReorder {\n  sourceId: string;\n  targetId: string;\n  position: TreeReorderPosition;\n}",
+          "name": "TreeReorder",
+          "source": "kits/data/src/tree.ts"
+        },
+        {
+          "declaration": "export type TreeReorderPosition = \"before\" | \"after\" | \"inside\";",
+          "name": "TreeReorderPosition",
+          "source": "kits/data/src/tree.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Reports the expanded node ids after a node opens or closes.",
+        "dialect": "state",
+        "name": "onexpandedchange",
+        "type": "(expanded: readonly string[]) => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `onexpandedchange` (ADR 0026); removed next release.",
+          "replacement": "onexpandedchange"
+        },
+        "description": "Deprecated alias. Renamed `onexpandedchange` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onExpanded",
+        "type": "(expanded: readonly string[]) => void"
+      },
+      {
+        "description": "Reports the selected node id after the selection moves.",
+        "dialect": "state",
+        "name": "onselectedchange",
+        "type": "(selected: string | null) => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `onselectedchange` (ADR 0026); removed next release.",
+          "replacement": "onselectedchange"
+        },
+        "description": "Deprecated alias. Renamed `onselectedchange` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onSelected",
+        "type": "(selected: string | null) => void"
+      },
+      {
+        "description": "Receives a committed rename: the node and its new label.",
+        "dialect": "discrete",
+        "name": "onrename",
+        "type": "(node: TreeNode, label: string) => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `onrename` (ADR 0026); removed next release.",
+          "replacement": "onrename"
+        },
+        "description": "Deprecated alias. Renamed `onrename` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onRename",
+        "type": "(node: TreeNode, label: string) => void"
+      },
+      {
+        "description": "Receives a dropped move.",
+        "dialect": "discrete",
+        "name": "onreorder",
+        "type": "(move: TreeReorder) => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `onreorder` (ADR 0026); removed next release.",
+          "replacement": "onreorder"
+        },
+        "description": "Deprecated alias. Renamed `onreorder` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onReorder",
+        "type": "(move: TreeReorder) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Primitive",
+          "kit": "data",
+          "name": "TreeView",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Required visible name for the tree.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "The tree to show: root nodes, each with a stable `id`, a visible `label` and its `children`. Children render only while their parent's id is expanded.",
+              "name": "nodes",
+              "required": true,
+              "type": "readonly TreeNode[]"
+            },
+            {
+              "description": "Optional caller-controlled expanded node ids.",
+              "name": "expanded",
+              "required": false,
+              "type": "readonly string[]"
+            },
+            {
+              "description": "Optional caller-controlled selected node id.",
+              "name": "selected",
+              "required": false,
+              "type": "string | null"
+            },
+            {
+              "default": "true",
+              "description": "Rename capability, offered when `onrename` is given. A predicate can limit which nodes expose it.",
+              "name": "renamable",
+              "required": false,
+              "type": "boolean | ((node: TreeNode) => boolean)"
+            },
+            {
+              "default": "true",
+              "description": "Drag-and-drop reorder capability, offered when `onreorder` is given. A predicate can limit draggable nodes.",
+              "name": "reorderable",
+              "required": false,
+              "type": "boolean | ((node: TreeNode) => boolean)"
+            },
+            {
+              "description": "Reports caller-owned expanded identities after an expansion action.",
+              "name": "onExpandedChange",
+              "required": false,
+              "type": "(expanded: readonly string[]) => void"
+            },
+            {
+              "description": "Reports a selected node identity.",
+              "name": "onSelectedChange",
+              "required": false,
+              "type": "(selected: string | null) => void"
+            },
+            {
+              "description": "Receives a committed, trimmed rename without mutating the caller's nodes.",
+              "name": "onRename",
+              "required": false,
+              "type": "(node: TreeNode, label: string) => void"
+            },
+            {
+              "description": "Proposes a validated caller-owned tree move.",
+              "name": "onReorder",
+              "required": false,
+              "type": "(move: TreeReorder) => void"
+            },
+            {
+              "description": "Caller-owned decoration before a node label.",
+              "name": "leading",
+              "required": false,
+              "type": "(node: TreeNode) => ReactNode"
+            },
+            {
+              "description": "Caller-owned detail after a node label.",
+              "name": "trailing",
+              "required": false,
+              "type": "(node: TreeNode) => ReactNode"
+            },
+            {
+              "default": "\"\"",
+              "description": "Additional root tree classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/data/react/src/TreeView.tsx",
+          "specifier": "@reddb-io/design-system/data/TreeView"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/react/src/TreeView.tsx",
+        "specifier": "@reddb-io/design-system/data/TreeView",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/src/TreeView.svelte",
+        "specifier": "@reddb-io/design-system/data/TreeView",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "data",
+    "name": "TreeView",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Required visible name for the tree.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "The tree to show: root nodes, each with a stable `id`, a visible `label` and its `children`. Children render only while their parent's id is expanded.",
+        "name": "nodes",
+        "required": true,
+        "type": "readonly TreeNode[]"
+      },
+      {
+        "bindable": false,
+        "description": "Optional caller-controlled expanded node ids.",
+        "name": "expanded",
+        "required": false,
+        "type": "readonly string[]"
+      },
+      {
+        "bindable": false,
+        "description": "Optional caller-controlled selected node id.",
+        "name": "selected",
+        "required": false,
+        "type": "string | null"
+      },
+      {
+        "bindable": false,
+        "default": "true",
+        "description": "Rename capability, offered when `onrename` is given. A predicate can limit which nodes expose it.",
+        "name": "renamable",
+        "required": false,
+        "type": "boolean | ((node: TreeNode) => boolean)"
+      },
+      {
+        "bindable": false,
+        "default": "true",
+        "description": "Drag-and-drop reorder capability, offered when `onreorder` is given. A predicate can limit draggable nodes.",
+        "name": "reorderable",
+        "required": false,
+        "type": "boolean | ((node: TreeNode) => boolean)"
+      },
+      {
+        "bindable": false,
+        "description": "Reports the expanded node ids after a node opens or closes.",
+        "name": "onexpandedchange",
+        "required": false,
+        "type": "(expanded: readonly string[]) => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `onexpandedchange` (ADR 0026); removed next release.",
+          "replacement": "onexpandedchange"
+        },
+        "description": "Deprecated alias. Renamed `onexpandedchange` (ADR 0026); removed next release.",
+        "name": "onExpanded",
+        "required": false,
+        "type": "(expanded: readonly string[]) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Reports the selected node id after the selection moves.",
+        "name": "onselectedchange",
+        "required": false,
+        "type": "(selected: string | null) => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `onselectedchange` (ADR 0026); removed next release.",
+          "replacement": "onselectedchange"
+        },
+        "description": "Deprecated alias. Renamed `onselectedchange` (ADR 0026); removed next release.",
+        "name": "onSelected",
+        "required": false,
+        "type": "(selected: string | null) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Receives a committed rename: the node and its new label.",
+        "name": "onrename",
+        "required": false,
+        "type": "(node: TreeNode, label: string) => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `onrename` (ADR 0026); removed next release.",
+          "replacement": "onrename"
+        },
+        "description": "Deprecated alias. Renamed `onrename` (ADR 0026); removed next release.",
+        "name": "onRename",
+        "required": false,
+        "type": "(node: TreeNode, label: string) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Receives a dropped move.",
+        "name": "onreorder",
+        "required": false,
+        "type": "(move: TreeReorder) => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `onreorder` (ADR 0026); removed next release.",
+          "replacement": "onreorder"
+        },
+        "description": "Deprecated alias. Renamed `onreorder` (ADR 0026); removed next release.",
+        "name": "onReorder",
+        "required": false,
+        "type": "(move: TreeReorder) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned decoration before a node's label, such as a kind icon.",
+        "name": "leading",
+        "required": false,
+        "type": "Snippet<[TreeNode]>"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned detail after a node's label, such as a count or type.",
+        "name": "trailing",
+        "required": false,
+        "type": "Snippet<[TreeNode]>"
+      },
+      {
+        "bindable": false,
+        "default": "\"\"",
+        "description": "Extra classes, merged onto the root `ul` that is the tree.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A caller-owned hierarchy with roving focus, keyboard expansion, selection, rename, and reorder proposals.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/data/src/core/contracts/treeview.ts"
+      ],
+      "tests": [
+        "kits/data/test/framework-data.test.ts",
+        "apps/showcase/test/component-flavors-graphical.browser.test.ts"
+      ],
+      "typeMappings": {
+        "leading": {
+          "react": "(node: TreeNode) => ReactNode",
+          "reason": "Native caller content with the same data and control context; shared scenarios exercise composition, focus and caller-owned behavior.",
+          "svelte": "Snippet<[TreeNode]>"
+        },
+        "trailing": {
+          "react": "(node: TreeNode) => ReactNode",
+          "reason": "Native caller content with the same data and control context; shared scenarios exercise composition, focus and caller-owned behavior.",
+          "svelte": "Snippet<[TreeNode]>"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Caller-owned decoration before a node's label, such as a kind icon.",
+        "name": "leading",
+        "required": false,
+        "type": "Snippet<[TreeNode]>"
+      },
+      {
+        "description": "Caller-owned detail after a node's label, such as a count or type.",
+        "name": "trailing",
+        "required": false,
+        "type": "Snippet<[TreeNode]>"
+      }
+    ],
+    "source": "kits/data/src/TreeView.svelte",
+    "specifier": "@reddb-io/design-system/data/TreeView"
+  }
+}

@@ -1,0 +1,855 @@
+{
+  "schemaVersion": 1,
+  "id": "app/ChangeReview",
+  "topics": [],
+  "related": [
+    "app/ActivityFeed",
+    "app/CardHeading",
+    "app/ChatMessage",
+    "app/Diff",
+    "app/EntityInspector",
+    "app/EntityJourney"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-sunken-surface",
+          "sources": [
+            "kits/app/src/change-review.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/app/src/change-review.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/app/src/change-review.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/status-indicator.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/app/src/change-review.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/app/src/change-review.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/app/src/change-review.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/app/src/change-review.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/app/src/change-review.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/app/src/change-review.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/app/src/change-review.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/app/src/change-review.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/app/src/change-review.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-sm",
+          "sources": [
+            "kits/app/src/change-review.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/app/src/change-review.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/app/src/change-review.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/app/src/change-review.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/app/src/change-review.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/app/src/change-review.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/app/src/change-review.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/app/src/change-review.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/app/src/change-review.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/app/src/change-review.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/app/src/change-review.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/app/src/change-review.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/app/src/change-review.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export interface ReviewChange {\n  /** Unique stable identity; never a row position. */\n  id: string;\n  /** Human-readable changed entity or property. */\n  label: string;\n  /** Caller-formatted previous value; never executed. */\n  before: string;\n  /** Caller-formatted proposed value; never executed. */\n  after: string;\n  /** Observed result; omitted means pending. */\n  state?: ReviewState;\n  /** Caller-safe failure explanation. */\n  error?: string;\n  /** Optional context for the change. */\n  description?: string;\n}",
+          "name": "ReviewChange",
+          "source": "kits/app/src/core/change-review.ts"
+        },
+        {
+          "declaration": "export type ReviewState = \"pending\" | \"applying\" | \"applied\" | \"failed\";",
+          "name": "ReviewState",
+          "source": "kits/app/src/core/change-review.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Requests application of pending/failed ids; no mutation or success is inferred.",
+        "dialect": "discrete",
+        "name": "onapplyrequest",
+        "type": "(ids: readonly string[]) => void"
+      },
+      {
+        "description": "Requests discarding one or all pending/failed ids.",
+        "dialect": "discrete",
+        "name": "ondiscardrequest",
+        "type": "(ids: readonly string[]) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "app",
+          "name": "ChangeReview",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Visible and accessible review name.",
+              "name": "title",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Explicit proposed values and observed per-item results.",
+              "name": "items",
+              "required": true,
+              "type": "readonly ReviewChange[]"
+            },
+            {
+              "default": "false",
+              "description": "Disable actions during application-owned work.",
+              "name": "applying",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Explain why changes cannot be applied.",
+              "name": "blockedReason",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Requests application of pending/failed ids; no mutation or success is inferred.",
+              "name": "onapplyrequest",
+              "required": false,
+              "type": "(ids: readonly string[]) => void"
+            },
+            {
+              "description": "Requests discarding one or all pending/failed ids.",
+              "name": "ondiscardrequest",
+              "required": false,
+              "type": "(ids: readonly string[]) => void"
+            },
+            {
+              "default": "\"Before\"",
+              "description": "Name for previous values.",
+              "name": "beforeLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"After\"",
+              "description": "Name for proposed values.",
+              "name": "afterLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Apply changes\"",
+              "description": "Batch apply action label.",
+              "name": "applyLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Discard all\"",
+              "description": "Batch discard action label.",
+              "name": "discardLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Discard\"",
+              "description": "Per-item discard action prefix.",
+              "name": "discardItemLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"No pending changes\"",
+              "description": "Empty review explanation.",
+              "name": "emptyLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Pending\"",
+              "description": "Localized pending state.",
+              "name": "pendingLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Applying\"",
+              "description": "Localized applying state.",
+              "name": "applyingLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Applied\"",
+              "description": "Localized applied state.",
+              "name": "appliedLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Failed\"",
+              "description": "Localized failed state.",
+              "name": "failedLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "2",
+              "description": "Outline depth of the visible review title.",
+              "name": "headingLevel",
+              "required": false,
+              "type": "1 | 2 | 3 | 4 | 5 | 6",
+              "vocabulary": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6"
+              ]
+            },
+            {
+              "description": "Additional composition classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/app/react/src/ChangeReview.tsx",
+          "specifier": "@reddb-io/design-system/app/ChangeReview"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/react/src/ChangeReview.tsx",
+        "specifier": "@reddb-io/design-system/app/ChangeReview",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/src/composites/ChangeReview.svelte",
+        "specifier": "@reddb-io/design-system/app",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "app",
+    "name": "ChangeReview",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Visible and accessible review name.",
+        "name": "title",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Explicit proposed values and observed per-item results.",
+        "name": "items",
+        "required": true,
+        "type": "readonly ReviewChange[]"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Disable actions during application-owned work.",
+        "name": "applying",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Explain why changes cannot be applied.",
+        "name": "blockedReason",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Requests application of pending/failed ids; no mutation or success is inferred.",
+        "name": "onapplyrequest",
+        "required": false,
+        "type": "(ids: readonly string[]) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Requests discarding one or all pending/failed ids.",
+        "name": "ondiscardrequest",
+        "required": false,
+        "type": "(ids: readonly string[]) => void"
+      },
+      {
+        "bindable": false,
+        "default": "\"Before\"",
+        "description": "Name for previous values.",
+        "name": "beforeLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"After\"",
+        "description": "Name for proposed values.",
+        "name": "afterLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Apply changes\"",
+        "description": "Batch apply action label.",
+        "name": "applyLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Discard all\"",
+        "description": "Batch discard action label.",
+        "name": "discardLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Discard\"",
+        "description": "Per-item discard action prefix.",
+        "name": "discardItemLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"No pending changes\"",
+        "description": "Empty review explanation.",
+        "name": "emptyLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Pending\"",
+        "description": "Localized pending state.",
+        "name": "pendingLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Applying\"",
+        "description": "Localized applying state.",
+        "name": "applyingLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Applied\"",
+        "description": "Localized applied state.",
+        "name": "appliedLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Failed\"",
+        "description": "Localized failed state.",
+        "name": "failedLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "2",
+        "description": "Outline depth of the visible review title.",
+        "name": "headingLevel",
+        "required": false,
+        "type": "1 | 2 | 3 | 4 | 5 | 6",
+        "vocabulary": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Additional composition classes.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Explicit proposed values and observed per-item outcomes with request-only apply and discard actions.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/app/src/core/contracts/changereview.ts",
+        "kits/app/src/change-review.variants.ts",
+        "kits/app/src/core/change-review.ts"
+      ],
+      "tests": [
+        "kits/app/test/workspace-harvest.test.ts",
+        "apps/showcase/test/operations-workbench.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/app/src/composites/ChangeReview.svelte",
+    "specifier": "@reddb-io/design-system/app"
+  }
+}

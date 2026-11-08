@@ -21,7 +21,13 @@ for (const name of ["ui", "ui-kit"]) {
   assert.equal(pkg.dependencies["@reddb-io/design-system"], undefined);
   assert(!JSON.stringify(pkg.dependencies).includes("workspace:"));
   const ds = join(stage, "vendor/ds"),
+    dsManifest = JSON.parse(readFileSync(join(ds, "package.json"))),
     receipt = JSON.parse(readFileSync(join(ds, "design-system.receipt.json")));
+  assert.equal(
+    pkg.peerDependencies.svelte,
+    dsManifest.peerDependencies.svelte,
+    `${name}: Svelte peer must match the compiler/runtime contract of the embedded DS`
+  );
   for (const [file, expected] of Object.entries(receipt.files))
     assert.equal(
       createHash("sha256")

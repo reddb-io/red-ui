@@ -1,0 +1,1 @@
+import{tv as r}from"tailwind-variants";const o=r({slots:{root:"min-w-0 rounded-md border border-muted",trigger:"group w-full justify-between",indicator:"ml-auto text-ink-muted transition-transform group-aria-expanded:rotate-180 motion-reduce:transition-none",content:"border-t border-muted p-[var(--reddb-spatial-inset-md)] text-foreground"}});export{o as disclosure};

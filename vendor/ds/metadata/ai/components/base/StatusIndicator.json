@@ -1,0 +1,265 @@
+{
+  "schemaVersion": 1,
+  "id": "base/StatusIndicator",
+  "topics": [],
+  "related": [
+    "base/Accordion",
+    "base/AudioMeter",
+    "base/Avatar",
+    "base/Badge",
+    "base/Card",
+    "base/Carousel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type Tone = (typeof TONES)[number];",
+          "name": "Tone",
+          "source": "kits/base/src/tone.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<span>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "StatusIndicator",
+          "nativeAttributes": [
+            "span"
+          ],
+          "props": [
+            {
+              "description": "Status text that carries meaning independently of color.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Shared semantic meaning; neutral when omitted.",
+              "name": "tone",
+              "required": false,
+              "type": "Tone",
+              "vocabulary": [
+                "neutral",
+                "info",
+                "success",
+                "warning",
+                "danger"
+              ]
+            },
+            {
+              "default": "true",
+              "description": "Show the label beside the mark; otherwise retain it as screen-reader text.",
+              "name": "showLabel",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            }
+          ],
+          "source": "kits/base/react/src/StatusIndicator.tsx",
+          "specifier": "@reddb-io/design-system/base/StatusIndicator"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/StatusIndicator.tsx",
+        "specifier": "@reddb-io/design-system/base/StatusIndicator",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "status-indicator"
+        },
+        "source": "kits/base/src/StatusIndicator.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "StatusIndicator",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Consumer-owned status text; this is the semantic carrier.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "What the status means: the shared tone vocabulary (ADR 0026). Defaults to `neutral`.",
+        "name": "tone",
+        "required": false,
+        "type": "Tone",
+        "vocabulary": [
+          "neutral",
+          "info",
+          "success",
+          "warning",
+          "danger"
+        ]
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `tone` (ADR 0026); removed next release.",
+          "replacement": "tone"
+        },
+        "description": "Deprecated alias. Renamed `tone` (ADR 0026); removed next release.",
+        "name": "status",
+        "required": false,
+        "type": "Tone",
+        "vocabulary": [
+          "neutral",
+          "info",
+          "success",
+          "warning",
+          "danger"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "true",
+        "description": "Draw the label beside the mark. Hidden labels remain screen-reader text.",
+        "name": "showLabel",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the root slot.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A status mark whose required text remains available when the label is visually hidden, so colour is never the message.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "status-indicator"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/status-indicator.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-base.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/StatusIndicator.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

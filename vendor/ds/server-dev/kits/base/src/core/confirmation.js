@@ -1,0 +1,1 @@
+function u(t){let i=0,n=!1;return{reset(){i++,n=!1,t(!1)},confirm(r,s){if(n)return;const f=++i;n=!0,t(!0);const o=e=>{f===i&&(n=!1,t(!1),e&&s())};try{const e=r();if(e&&typeof e.then=="function")return Promise.resolve(e).then(()=>o(!0),()=>o(!1));o(!0)}catch{o(!1)}}}}export{u as createConfirmationSession};

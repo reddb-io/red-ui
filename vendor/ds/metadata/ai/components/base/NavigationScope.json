@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "id": "base/NavigationScope",
+  "topics": [],
+  "related": [
+    "base/Breadcrumbs",
+    "base/Link",
+    "base/Navbar",
+    "base/NavigationMenu",
+    "base/Pagination",
+    "base/SkipLink"
+  ],
+  "contract": {
+    "category": "Navigation",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [],
+      "types": []
+    },
+    "events": [],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "NavigationScope",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Activate an in-app destination instead of letting the browser follow it.",
+              "name": "navigate",
+              "required": true,
+              "type": "(href: string, event: MouseEvent) => void"
+            },
+            {
+              "description": "Turn a destination into the href a link renders. The Design System never builds a route itself; this is for the caller composing links in the scope.",
+              "name": "resolve",
+              "required": false,
+              "type": "(to: string) => string"
+            },
+            {
+              "description": "Whether this scope routes `href`. The default takes same-origin paths and leaves fragments, other origins and non-HTTP schemes to the browser.",
+              "name": "owns",
+              "required": false,
+              "type": "(href: string, anchor: HTMLAnchorElement) => boolean"
+            },
+            {
+              "description": "Content whose in-app links are activated through the injected seam.",
+              "name": "children",
+              "required": false,
+              "type": "ReactNode"
+            }
+          ],
+          "source": "kits/base/react/src/NavigationScope.tsx",
+          "specifier": "@reddb-io/design-system/base/NavigationScope"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/NavigationScope.tsx",
+        "specifier": "@reddb-io/design-system/base/NavigationScope",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/src/NavigationScope.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "NavigationScope",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Activate an in-app destination instead of letting the browser follow it.",
+        "name": "navigate",
+        "required": true,
+        "type": "(href: string, event: MouseEvent) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Turn a destination into the href a link renders. The Design System never builds a route itself; this is for the caller composing links in the scope.",
+        "name": "resolve",
+        "required": false,
+        "type": "(to: string) => string"
+      },
+      {
+        "bindable": false,
+        "description": "Whether this scope routes `href`. The default takes same-origin paths and leaves fragments, other origins and non-HTTP schemes to the browser.",
+        "name": "owns",
+        "required": false,
+        "type": "(href: string, anchor: HTMLAnchorElement) => boolean"
+      },
+      {
+        "bindable": false,
+        "description": "Content whose in-app links the scope routes through `navigate`; the scope adds no box of its own.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "purpose": "An injectable navigation seam: every in-app link inside it activates through the consumer's router instead of the browser, and nothing changes without one.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/core/navigation.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-managed.test.ts"
+      ]
+    },
+    "snippets": [
+      {
+        "description": "Content whose in-app links the scope routes through `navigate`; the scope adds no box of its own.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/NavigationScope.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

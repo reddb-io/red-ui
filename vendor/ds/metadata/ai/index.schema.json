@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:reddb:design-system:discovery:1",
+  "type": "object", "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "catalogueSha256", "components"],
+  "properties": {
+    "$schema": { "const": "./index.schema.json" },
+    "schemaVersion": { "const": 1 },
+    "catalogueSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "release": { "type": "object", "additionalProperties": false, "required": ["version", "revision"], "properties": { "version": { "type": "string" }, "revision": { "type": "string", "pattern": "^[a-f0-9]{40}$" } } },
+    "components": { "type": "array", "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "name", "kit", "purpose", "category", "topics", "imports", "required", "document", "sha256", "related"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^(base|app|data|marketing)/[A-Za-z][A-Za-z0-9]*$" },
+        "name": { "type": "string", "minLength": 1 }, "kit": { "enum": ["base", "app", "data", "marketing"] },
+        "purpose": { "type": "string" }, "category": { "type": "string" },
+        "topics": { "type": "array", "items": { "type": "string" } },
+        "imports": { "type": "object", "additionalProperties": false, "required": ["svelte", "react"], "properties": { "svelte": { "$ref": "#/definitions/import" }, "react": { "$ref": "#/definitions/import" } } },
+        "required": { "type": "array", "items": { "type": "string" } },
+        "document": { "type": "string", "pattern": "^components/(base|app|data|marketing)/[A-Za-z][A-Za-z0-9]*\\.json$" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "related": { "type": "array", "items": { "type": "string" } }
+      }
+    } }
+  },
+  "definitions": { "import": { "type": "object", "additionalProperties": false, "required": ["module", "exports"], "properties": { "module": { "type": "string", "pattern": "^(base|app|data|marketing)(/[A-Za-z][A-Za-z0-9-]*)?$" }, "exports": { "type": "array", "minItems": 1, "items": { "type": "string" } } } } }
+}

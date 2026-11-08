@@ -1,0 +1,385 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Select",
+  "topics": [],
+  "related": [
+    "base/Calendar",
+    "base/Checkbox",
+    "base/Combobox",
+    "base/DateField",
+    "base/DatePicker",
+    "base/DateRangeField"
+  ],
+  "contract": {
+    "category": "Data input",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/select.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/select.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/select.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/select.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/select.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-lg",
+          "sources": [
+            "kits/base/src/select.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-md",
+          "sources": [
+            "kits/base/src/select.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-sm",
+          "sources": [
+            "kits/base/src/select.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/select.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/select.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/select.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/select.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/select.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/select.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/select.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/select.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** One flat native Select option; richer groups arrive as native option children. */\nexport interface SelectOption {\n  /** Native serialized value. */\n  value: string;\n  /** Visible option name. */\n  label: string;\n  /** Keep this option unavailable to native selection. */\n  disabled?: boolean;\n}",
+          "name": "SelectOption",
+          "source": "kits/base/src/core/choices.ts"
+        },
+        {
+          "declaration": "export type SelectSize = NonNullable<SelectVariants[\"size\"]>;",
+          "name": "SelectSize",
+          "source": "kits/base/src/select.variants.ts"
+        },
+        {
+          "declaration": "export type SelectVariants = VariantProps<typeof select>;",
+          "name": "SelectVariants",
+          "source": "kits/base/src/select.variants.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Called with the newly selected value (ADR 0026's value dialect); the native `onchange` still receives the Event.",
+        "dialect": "value",
+        "name": "onvaluechange",
+        "type": "(value: string) => void"
+      }
+    ],
+    "forwardsAttributesTo": [
+      "<select>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Select",
+          "nativeAttributes": [
+            "select"
+          ],
+          "props": [
+            {
+              "default": "[]",
+              "description": "Flat caller-owned options; native children can append options and optgroups.",
+              "name": "options",
+              "required": false,
+              "type": "readonly SelectOption[]"
+            },
+            {
+              "description": "Controlled native value, including arrays for a multiple select.",
+              "name": "value",
+              "required": false,
+              "type": "ComponentPropsWithRef<\"select\">[\"value\"]"
+            },
+            {
+              "description": "Initial uncontrolled native value, including arrays for multiple selection.",
+              "name": "defaultValue",
+              "required": false,
+              "type": "ComponentPropsWithRef<\"select\">[\"defaultValue\"]"
+            },
+            {
+              "description": "Called with the first selected native value; onChange retains selectedOptions and its native React event.",
+              "name": "onValueChange",
+              "required": false,
+              "type": "(value: string) => void"
+            },
+            {
+              "default": "\"md\"",
+              "description": "Density-responsive height step, separate from native size.",
+              "name": "controlSize",
+              "required": false,
+              "type": "SelectSize"
+            }
+          ],
+          "source": "kits/base/react/src/Select.tsx",
+          "specifier": "@reddb-io/design-system/base/Select"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Select.tsx",
+        "specifier": "@reddb-io/design-system/base/Select",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "select"
+        },
+        "source": "kits/base/src/Select.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Select",
+    "props": [
+      {
+        "bindable": false,
+        "description": "The native option and optgroup content.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "default": "[]",
+        "description": "Flat caller-owned choices for compositions that do not need custom option markup.",
+        "name": "options",
+        "required": false,
+        "type": "readonly SelectOption[]"
+      },
+      {
+        "bindable": true,
+        "description": "The native select, available for imperative focus.",
+        "name": "ref",
+        "required": false,
+        "type": "HTMLSelectElement"
+      },
+      {
+        "bindable": true,
+        "description": "Current native value, bindable for canonical compositions.",
+        "name": "value",
+        "required": false,
+        "type": "HTMLSelectAttributes[\"value\"]"
+      },
+      {
+        "bindable": false,
+        "description": "Initial uncontrolled native value, including arrays for multiple selection.",
+        "name": "defaultValue",
+        "required": false,
+        "type": "HTMLSelectAttributes[\"value\"]"
+      },
+      {
+        "bindable": false,
+        "description": "Called with the newly selected value (ADR 0026's value dialect); the native `onchange` still receives the Event.",
+        "name": "onvaluechange",
+        "required": false,
+        "type": "(value: string) => void"
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "The control height step, matching Button's `size` (default `md`). Named apart from the native `size` attribute, which is still spread through.",
+        "name": "controlSize",
+        "required": false,
+        "type": "SelectSize"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the canonical appearance.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Native choice selection whose options, form value, keyboard interaction and focus stay under the platform contract.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "select"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/select.variants.ts",
+        "kits/base/src/core/native-controls.ts",
+        "kits/base/src/core/choices.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-choices.test.ts",
+        "apps/showcase/test/react-choices.browser.test.ts"
+      ],
+      "typeMappings": {
+        "defaultValue": {
+          "react": "ComponentPropsWithRef<\"select\">[\"defaultValue\"]",
+          "reason": "Native framework selection types; shared scenarios execute single and multiple selection, serialized values and native reset. Custom callbacks keep the first selected string.",
+          "svelte": "HTMLSelectAttributes[\"value\"]"
+        },
+        "value": {
+          "react": "ComponentPropsWithRef<\"select\">[\"value\"]",
+          "reason": "Native framework selection types; shared scenarios execute single and multiple selection, serialized values and native reset. Custom callbacks keep the first selected string.",
+          "svelte": "HTMLSelectAttributes[\"value\"]"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "The native option and optgroup content.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/Select.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

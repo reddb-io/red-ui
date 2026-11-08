@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Icon",
+  "topics": [],
+  "related": [
+    "base/Accordion",
+    "base/AudioMeter",
+    "base/Avatar",
+    "base/Badge",
+    "base/Card",
+    "base/Carousel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-color-${role}",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-${size}",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        }
+      ],
+      "cssVariables": [],
+      "types": [
+        {
+          "declaration": "/** @deprecated Use ink-muted; muted is a surface role. */\nexport type DeprecatedIconColor = \"muted\";",
+          "name": "DeprecatedIconColor",
+          "source": "kits/base/src/core/icon.ts"
+        },
+        {
+          "declaration": "export type IconColor = (typeof ICON_COLORS)[number];",
+          "name": "IconColor",
+          "source": "kits/base/src/core/icon.ts"
+        },
+        {
+          "declaration": "export type IconGlyph = ForwardRefExoticComponent<IconGlyphProps>;",
+          "name": "IconGlyph",
+          "source": "kits/base/react/src/Icon.tsx"
+        },
+        {
+          "declaration": "export type IconGlyph = Component<IconGlyphProps>;",
+          "name": "IconGlyph",
+          "source": "kits/base/src/Icon.svelte"
+        },
+        {
+          "declaration": "/** Structural Lucide seam, so unused optional peers are not needed by a consumer type-check. */\nexport interface IconGlyphProps extends SVGAttributes<SVGSVGElement>, RefAttributes<SVGSVGElement> {\n  /** Requested glyph size, owned by the DS wrapper at render time. */\n  size?: string | number;\n  /** Lucide's retained native stroke option. */\n  absoluteStrokeWidth?: boolean;\n  /** Keep stroke width independent of SVG scaling. */\n  nonScalingStroke?: boolean;\n}",
+          "name": "IconGlyphProps",
+          "source": "kits/base/react/src/Icon.tsx"
+        },
+        {
+          "declaration": "export type IconGlyphProps = LucideProps;",
+          "name": "IconGlyphProps",
+          "source": "kits/base/src/Icon.svelte"
+        },
+        {
+          "declaration": "export type IconSize = (typeof ICON_SIZES)[number];",
+          "name": "IconSize",
+          "source": "kits/base/src/core/icon.ts"
+        }
+      ]
+    },
+    "events": [],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Icon",
+          "nativeAttributes": [
+            "svg"
+          ],
+          "props": [
+            {
+              "description": "Consumer-supplied Lucide glyph, or a built-in glyph without the optional icon package.",
+              "name": "icon",
+              "required": true,
+              "type": "IconGlyph | \"menu\" | \"chevron-down\" | \"x\" | \"maximize\" | \"restore\" | \"mic\""
+            },
+            {
+              "default": "\"md\"",
+              "description": "Density-responsive DS size.",
+              "name": "size",
+              "required": false,
+              "type": "IconSize",
+              "vocabulary": [
+                "sm",
+                "md",
+                "lg"
+              ]
+            },
+            {
+              "default": "\"foreground\"",
+              "deprecatedValues": [
+                {
+                  "note": "Use ink-muted; muted is a surface role.",
+                  "value": "muted"
+                }
+              ],
+              "description": "Semantic Theme ink role. The deprecated muted alias draws in ink-muted.",
+              "name": "color",
+              "required": false,
+              "type": "IconColor | DeprecatedIconColor",
+              "vocabulary": [
+                "current",
+                "foreground",
+                "ink-muted",
+                "primary",
+                "on-primary",
+                "feedback-danger-foreground",
+                "feedback-success-foreground",
+                "feedback-warning-foreground",
+                "feedback-info-foreground"
+              ]
+            }
+          ],
+          "source": "kits/base/react/src/Icon.tsx",
+          "specifier": "@reddb-io/design-system/base/Icon"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Icon.tsx",
+        "specifier": "@reddb-io/design-system/base/Icon",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/src/Icon.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Icon",
+    "props": [
+      {
+        "bindable": false,
+        "description": "A consumer-supplied Lucide glyph, or a built-in glyph without loading the optional icon package.",
+        "name": "icon",
+        "required": true,
+        "type": "IconGlyph | \"menu\" | \"chevron-down\" | \"x\" | \"maximize\" | \"restore\" | \"mic\""
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "Density-responsive DS size.",
+        "name": "size",
+        "required": false,
+        "type": "IconSize",
+        "vocabulary": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"foreground\"",
+        "deprecatedValues": [
+          {
+            "note": "Use ink-muted; muted is a surface role.",
+            "value": "muted"
+          }
+        ],
+        "description": "Semantic Theme color; raw color values are deliberately not accepted. `current` inherits the surrounding ink, so a glyph follows its control's hover and selected states or a caller's token-backed text class. `muted` is a deprecated alias that draws in `ink-muted` for one release.",
+        "name": "color",
+        "required": false,
+        "type": "IconColor | DeprecatedIconColor",
+        "vocabulary": [
+          "current",
+          "foreground",
+          "ink-muted",
+          "primary",
+          "on-primary",
+          "feedback-danger-foreground",
+          "feedback-success-foreground",
+          "feedback-warning-foreground",
+          "feedback-info-foreground"
+        ]
+      }
+    ],
+    "purpose": "A lucide glyph whose size follows local Density and whose stroke color names a semantic Theme role.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/core/icon.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-media.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/Icon.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

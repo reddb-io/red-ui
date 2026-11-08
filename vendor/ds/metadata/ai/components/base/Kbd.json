@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Kbd",
+  "topics": [],
+  "related": [
+    "base/Accordion",
+    "base/AudioMeter",
+    "base/Avatar",
+    "base/Badge",
+    "base/Card",
+    "base/Carousel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type KbdSize = NonNullable<KbdVariants[\"size\"]>;",
+          "name": "KbdSize",
+          "source": "kits/base/src/kbd.variants.ts"
+        },
+        {
+          "declaration": "export type KbdVariants = VariantProps<typeof kbd>;",
+          "name": "KbdVariants",
+          "source": "kits/base/src/kbd.variants.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "native element"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Kbd",
+          "nativeAttributes": [
+            "kbd"
+          ],
+          "props": [
+            {
+              "default": "[]",
+              "description": "Ordered keys in a chord; children replace them with one custom key cap.",
+              "name": "keys",
+              "required": false,
+              "type": "readonly string[]"
+            },
+            {
+              "default": "\"+\"",
+              "description": "Decorative separator, hidden from assistive technology.",
+              "name": "separator",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"md\"",
+              "description": "Key cap size; follows surrounding type rather than Density.",
+              "name": "size",
+              "required": false,
+              "type": "KbdSize",
+              "vocabulary": [
+                "sm",
+                "md"
+              ]
+            }
+          ],
+          "source": "kits/base/react/src/Kbd.tsx",
+          "specifier": "@reddb-io/design-system/base/Kbd"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Kbd.tsx",
+        "specifier": "@reddb-io/design-system/base/Kbd",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "kbd"
+        },
+        "source": "kits/base/src/Kbd.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Kbd",
+    "props": [
+      {
+        "bindable": false,
+        "default": "[]",
+        "description": "One key, or the ordered parts of a chord.",
+        "name": "keys",
+        "required": false,
+        "type": "readonly string[]"
+      },
+      {
+        "bindable": false,
+        "default": "\"+\"",
+        "description": "Visual separator hidden from assistive technology.",
+        "name": "separator",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "Key cap size: `sm` or `md` (the default). It follows the surrounding type, not Density.",
+        "name": "size",
+        "required": false,
+        "type": "KbdSize",
+        "vocabulary": [
+          "sm",
+          "md"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto each key cap, not onto a chord's wrapper.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "A custom single key cap, replacing `keys`.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "purpose": "A key cap — or a chord, rendered as one cap per key with the separator between them.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "kbd"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/kbd.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-base.test.ts"
+      ]
+    },
+    "snippets": [
+      {
+        "description": "A custom single key cap, replacing `keys`.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/Kbd.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

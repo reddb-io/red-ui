@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Label",
+  "topics": [],
+  "related": [
+    "base/Calendar",
+    "base/Checkbox",
+    "base/Combobox",
+    "base/DateField",
+    "base/DatePicker",
+    "base/DateRangeField"
+  ],
+  "contract": {
+    "category": "Data input",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": []
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<label>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Label",
+          "nativeAttributes": [
+            "label"
+          ],
+          "props": [],
+          "source": "kits/base/react/src/Label.tsx",
+          "specifier": "@reddb-io/design-system/base/Label"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Label.tsx",
+        "specifier": "@reddb-io/design-system/base/Label",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "label"
+        },
+        "source": "kits/base/src/Label.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Label",
+    "props": [
+      {
+        "bindable": true,
+        "description": "The native label element for rare imperative access.",
+        "name": "ref",
+        "required": false,
+        "type": "HTMLLabelElement"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the canonical label appearance.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "The label's content, usually the text naming the control it targets.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "purpose": "Native control naming whose association, click-to-focus behavior, and caller-owned text remain intact.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "label"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/label.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-appearance.test.ts"
+      ]
+    },
+    "snippets": [
+      {
+        "description": "The label's content, usually the text naming the control it targets.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/Label.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

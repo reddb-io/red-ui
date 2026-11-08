@@ -1,0 +1,267 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Textarea",
+  "topics": [],
+  "related": [
+    "base/Calendar",
+    "base/Checkbox",
+    "base/Combobox",
+    "base/DateField",
+    "base/DatePicker",
+    "base/DateRangeField"
+  ],
+  "contract": {
+    "category": "Data input",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/textarea.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/textarea.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/textarea.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/textarea.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/textarea.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/textarea.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-md",
+          "sources": [
+            "kits/base/src/textarea.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/textarea.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/textarea.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/textarea.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/textarea.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/textarea.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": []
+    },
+    "events": [
+      {
+        "description": "Called with the new value on every input (ADR 0026's value dialect); the native `oninput` still receives the Event.",
+        "dialect": "value",
+        "name": "onvaluechange",
+        "type": "(value: string) => void"
+      }
+    ],
+    "forwardsAttributesTo": [
+      "<textarea>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Textarea",
+          "nativeAttributes": [
+            "textarea"
+          ],
+          "props": [
+            {
+              "description": "New native string value; onChange still receives its React event.",
+              "name": "onValueChange",
+              "required": false,
+              "type": "(value: string) => void"
+            }
+          ],
+          "source": "kits/base/react/src/Textarea.tsx",
+          "specifier": "@reddb-io/design-system/base/Textarea"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Textarea.tsx",
+        "specifier": "@reddb-io/design-system/base/Textarea",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "textarea"
+        },
+        "source": "kits/base/src/Textarea.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Textarea",
+    "props": [
+      {
+        "bindable": true,
+        "description": "The current value. Bindable: `bind:value` follows every keystroke.",
+        "name": "value",
+        "required": false,
+        "type": "HTMLTextareaAttributes[\"value\"]"
+      },
+      {
+        "bindable": false,
+        "description": "Called with the new value on every input (ADR 0026's value dialect); the native `oninput` still receives the Event.",
+        "name": "onvaluechange",
+        "required": false,
+        "type": "(value: string) => void"
+      },
+      {
+        "bindable": true,
+        "description": "The native textarea, available for imperative focus or selection.",
+        "name": "ref",
+        "required": false,
+        "type": "HTMLTextAreaElement"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the canonical appearance.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Native multiline entry with rows, wrapping, constraints, validity and resize behavior left intact.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "textarea"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/textarea.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-contracts.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/Textarea.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

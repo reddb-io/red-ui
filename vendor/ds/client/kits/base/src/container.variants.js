@@ -1,0 +1,1 @@
+import{tv as t}from"tailwind-variants";const e={prose:"max-w-prose",content:"max-w-content",wide:"max-w-wide",full:"max-w-none"},n=t({base:"mx-auto box-border w-full px-[var(--reddb-spatial-inset-md)]",variants:{size:e},defaultVariants:{size:"wide"}}),o=Object.keys(e);export{o as CONTAINER_SIZES,n as container};

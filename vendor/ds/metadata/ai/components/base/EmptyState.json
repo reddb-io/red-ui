@@ -1,0 +1,340 @@
+{
+  "schemaVersion": 1,
+  "id": "base/EmptyState",
+  "topics": [
+    "estado vazio sem dados",
+    "empty state no data"
+  ],
+  "related": [
+    "base/StateIllustration",
+    "base/Button",
+    "base/Alert",
+    "base/ContentState",
+    "base/LoadingIndicator",
+    "base/Notification"
+  ],
+  "contract": {
+    "category": "Feedback",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type EmptyStateSize = NonNullable<EmptyStateVariants[\"size\"]>;",
+          "name": "EmptyStateSize",
+          "source": "kits/base/src/empty-state.variants.ts"
+        },
+        {
+          "declaration": "export type EmptyStateVariants = VariantProps<typeof emptyState>;",
+          "name": "EmptyStateVariants",
+          "source": "kits/base/src/empty-state.variants.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<div>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "EmptyState",
+          "nativeAttributes": [
+            "div"
+          ],
+          "props": [
+            {
+              "description": "What is empty, in a few words.",
+              "name": "title",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Why it is empty, or what would fill it.",
+              "name": "description",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "A literal command, path, or key that would fill it.",
+              "name": "hint",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"md\"",
+              "description": "Defaults to `md`.",
+              "name": "size",
+              "required": false,
+              "type": "EmptyStateSize",
+              "vocabulary": [
+                "sm",
+                "md"
+              ]
+            },
+            {
+              "default": "true",
+              "description": "Draw the dashed outline around the region. Defaults to true.",
+              "name": "bordered",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "An icon or illustration, rendered decoratively above the title.",
+              "name": "media",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Caller-owned controls rendered after the explanation.",
+              "name": "actions",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Extra classes merged over the root slot.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/base/react/src/EmptyState.tsx",
+          "specifier": "@reddb-io/design-system/base/EmptyState"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/EmptyState.tsx",
+        "specifier": "@reddb-io/design-system/base/EmptyState",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "empty-state"
+        },
+        "source": "kits/base/src/EmptyState.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "EmptyState",
+    "props": [
+      {
+        "bindable": false,
+        "description": "What is empty, in a few words.",
+        "name": "title",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Why it is empty, or what would fill it.",
+        "name": "description",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "A literal command, path, or key that would fill it.",
+        "name": "hint",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "Defaults to `md`.",
+        "name": "size",
+        "required": false,
+        "type": "EmptyStateSize",
+        "vocabulary": [
+          "sm",
+          "md"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "true",
+        "description": "Draw the dashed outline around the region. Defaults to true.",
+        "name": "bordered",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "An icon or illustration, rendered decoratively above the title.",
+        "name": "media",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned controls rendered after the explanation.",
+        "name": "actions",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged over the root slot.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "What stands where a list has nothing in it: a sentence saying so, and the caller's own way out.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "empty-state"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/empty-state.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-composition.test.ts"
+      ],
+      "typeMappings": {
+        "actions": {
+          "react": "ReactNode",
+          "reason": "Native renderable slots retain the same semantic placement and precedence, exercised by shared adapter scenarios.",
+          "svelte": "Snippet"
+        },
+        "media": {
+          "react": "ReactNode",
+          "reason": "Native renderable slots retain the same semantic placement and precedence, exercised by shared adapter scenarios.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "An icon or illustration, rendered decoratively above the title.",
+        "name": "media",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "Caller-owned controls rendered after the explanation.",
+        "name": "actions",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/EmptyState.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

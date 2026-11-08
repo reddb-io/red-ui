@@ -1,0 +1,399 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Checkbox",
+  "topics": [],
+  "related": [
+    "base/Calendar",
+    "base/Combobox",
+    "base/DateField",
+    "base/DatePicker",
+    "base/DateRangeField",
+    "base/DateRangePicker"
+  ],
+  "contract": {
+    "category": "Data input",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": []
+    },
+    "events": [
+      {
+        "description": "Called with the next checked state after every toggle (ADR 0026). The native `onchange` still receives the Event.",
+        "dialect": "state",
+        "name": "oncheckedchange",
+        "type": "(checked: boolean) => void"
+      }
+    ],
+    "forwardsAttributesTo": [
+      "<input>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Composite",
+          "kit": "base",
+          "name": "Checkbox",
+          "nativeAttributes": [
+            "input"
+          ],
+          "props": [
+            {
+              "description": "Required visible accessible name supplied through Field.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Supporting text associated with the checkbox.",
+              "name": "help",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Current validation error associated with the checkbox.",
+              "name": "error",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "false",
+              "description": "Makes the requirement visible and native.",
+              "name": "required",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Controlled checked state; omit for native defaultChecked and form reset.",
+              "name": "checked",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Called with the user's next checked state after the native event callback.",
+              "name": "onCheckedChange",
+              "required": false,
+              "type": "(checked: boolean) => void"
+            },
+            {
+              "description": "Extra classes merged onto the containing Field.",
+              "name": "fieldClass",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/base/react/src/Checkbox.tsx",
+          "specifier": "@reddb-io/design-system/base/Checkbox"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Checkbox.tsx",
+        "specifier": "@reddb-io/design-system/base/Checkbox",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "checkbox"
+        },
+        "source": "kits/base/src/Checkbox.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "base",
+    "name": "Checkbox",
+    "props": [
+      {
+        "bindable": false,
+        "description": "The required visible accessible name supplied through Field.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Supporting text announced with the checkbox.",
+        "name": "help",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Current validation error announced with the checkbox.",
+        "name": "error",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Makes the requirement visible and native.",
+        "name": "required",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Explicit control id; otherwise Field supplies a stable generated one.",
+        "name": "id",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": true,
+        "description": "Whether it is checked. Bindable: `bind:checked` follows every toggle.",
+        "name": "checked",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Called with the next checked state after every toggle (ADR 0026). The native `onchange` still receives the Event.",
+        "name": "oncheckedchange",
+        "required": false,
+        "type": "(checked: boolean) => void"
+      },
+      {
+        "bindable": true,
+        "description": "The native input element for rare imperative access.",
+        "name": "ref",
+        "required": false,
+        "type": "HTMLInputElement"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the native checkbox.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the containing Field.",
+        "name": "fieldClass",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A visibly named native binary choice whose Field associations, validity, focus, and submitted value stay together.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "checkbox"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/checkbox.variants.ts",
+        "kits/base/src/core/native-controls.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-choices.test.ts",
+        "apps/showcase/test/react-choices.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/Checkbox.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

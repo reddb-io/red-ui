@@ -1,0 +1,597 @@
+{
+  "schemaVersion": 1,
+  "id": "app/Toolbar",
+  "topics": [],
+  "related": [
+    "app/ActionPanel",
+    "app/ContextMenu",
+    "app/Menubar",
+    "app/PlaybackControls",
+    "app/SpeedDial"
+  ],
+  "contract": {
+    "category": "Actions",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/link.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/link.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/app/react/src/Toolbar.tsx",
+            "kits/app/src/composites/Toolbar.svelte",
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/base/src/link.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/link.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "type Orientation = \"horizontal\" | \"vertical\";",
+          "name": "Orientation",
+          "source": "kits/app/src/core/contracts/toolbar.ts"
+        },
+        {
+          "declaration": "/** One action or destination in a Toolbar. */\nexport interface ToolbarItem {\n  id: string;\n  label: string;\n  href?: string;\n  disabled?: boolean;\n  onselect?: () => void;\n}",
+          "name": "ToolbarItem",
+          "source": "kits/app/src/composites/command-surfaces.behavior.ts"
+        },
+        {
+          "declaration": "export type ToolbarSize = NonNullable<ToolbarVariants[\"size\"]>;",
+          "name": "ToolbarSize",
+          "source": "kits/app/src/composites/toolbar.variants.ts"
+        },
+        {
+          "declaration": "export type ToolbarVariants = VariantProps<typeof toolbar>;",
+          "name": "ToolbarVariants",
+          "source": "kits/app/src/composites/toolbar.variants.ts"
+        }
+      ]
+    },
+    "events": [],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "app",
+          "name": "Toolbar",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Accessible name for the toolbar.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "default": "[]",
+              "description": "Actions and destinations in order; an enabled item with an `href` renders as a link, any other as a button that calls its `onselect`.",
+              "name": "items",
+              "required": false,
+              "type": "readonly ToolbarItem[]"
+            },
+            {
+              "default": "\"horizontal\"",
+              "description": "Layout direction and the arrow-key axis: `horizontal` or `vertical`. Defaults to `horizontal`.",
+              "name": "orientation",
+              "required": false,
+              "type": "Orientation",
+              "vocabulary": [
+                "horizontal",
+                "vertical"
+              ]
+            },
+            {
+              "default": "\"md\"",
+              "description": "Size of the item controls: `sm`, `md` or `lg`. Defaults to `md`.",
+              "name": "size",
+              "required": false,
+              "type": "ToolbarSize"
+            },
+            {
+              "default": "true",
+              "description": "Whether arrow-key focus wraps from the last item back to the first, and the reverse. Defaults to `true`.",
+              "name": "loop",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Additional toolbar classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/app/react/src/Toolbar.tsx",
+          "specifier": "@reddb-io/design-system/app/Toolbar"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/react/src/Toolbar.tsx",
+        "specifier": "@reddb-io/design-system/app/Toolbar",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "toolbar"
+        },
+        "source": "kits/app/src/composites/Toolbar.svelte",
+        "specifier": "@reddb-io/design-system/app",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "app",
+    "name": "Toolbar",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible name for the toolbar.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "[]",
+        "description": "Actions and destinations in order; an enabled item with an `href` renders as a link, any other as a button that calls its `onselect`.",
+        "name": "items",
+        "required": false,
+        "type": "readonly ToolbarItem[]"
+      },
+      {
+        "bindable": false,
+        "default": "\"horizontal\"",
+        "description": "Layout direction and the arrow-key axis: `horizontal` or `vertical`. Defaults to `horizontal`.",
+        "name": "orientation",
+        "required": false,
+        "type": "Orientation",
+        "vocabulary": [
+          "horizontal",
+          "vertical"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "Size of the item controls: `sm`, `md` or `lg`. Defaults to `md`.",
+        "name": "size",
+        "required": false,
+        "type": "ToolbarSize"
+      },
+      {
+        "bindable": false,
+        "default": "true",
+        "description": "Whether arrow-key focus wraps from the last item back to the first, and the reverse. Defaults to `true`.",
+        "name": "loop",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the root slot's own, onto the toolbar element.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A named row or column of canonical controls with one roving tab stop and native destinations left intact.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "toolbar"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/app/src/core/contracts/toolbar.ts"
+      ],
+      "tests": [
+        "kits/app/test/framework-app.test.ts",
+        "apps/showcase/test/component-flavors-workspace.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/app/src/composites/Toolbar.svelte",
+    "specifier": "@reddb-io/design-system/app"
+  }
+}

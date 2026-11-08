@@ -46,3 +46,30 @@ test("the credential lock retains focus and cannot be dismissed with Escape", ()
   expect(document.activeElement).toBe(input);
   expect(dialog.querySelector("[data-dialog-close]")).toBeNull();
 });
+
+test("the local Vault password form exposes a stable username to password managers", () => {
+  Object.assign(secureStore, {
+    backend: "web",
+    locked: true,
+    needsSetup: false,
+  });
+  const target = document.createElement("div");
+  document.body.append(target);
+  component = mount(MasterPasswordDialog, { target });
+  flushSync();
+
+  const form = target.querySelector("form")!;
+  const username = form.querySelector<HTMLInputElement>(
+    'input[autocomplete="username"]'
+  )!;
+  const password = form.querySelector<HTMLInputElement>(
+    'input[type="password"]'
+  )!;
+
+  expect(username).not.toBeNull();
+  expect(username.name).toBe("username");
+  expect(username.value).toBe("RedUI local Vault");
+  expect(username.hidden).toBe(true);
+  expect(username.tabIndex).toBe(-1);
+  expect(password.autocomplete).toBe("current-password");
+});

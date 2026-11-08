@@ -1,0 +1,531 @@
+{
+  "schemaVersion": 1,
+  "id": "app/Pill",
+  "topics": [],
+  "related": [
+    "app/ActivityFeed",
+    "app/CardHeading",
+    "app/ChangeReview",
+    "app/ChatMessage",
+    "app/Diff",
+    "app/EntityInspector"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-feedback",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** @deprecated `neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release. */\nexport type DeprecatedPillVariant = keyof typeof DEPRECATED_PILL_VARIANTS;",
+          "name": "DeprecatedPillVariant",
+          "source": "kits/app/src/primitives/pill.variants.ts"
+        },
+        {
+          "declaration": "export type PillSize = keyof typeof SIZE;",
+          "name": "PillSize",
+          "source": "kits/app/src/primitives/pill.variants.ts"
+        },
+        {
+          "declaration": "export type PillVariant = (typeof PILL_VARIANTS)[number];",
+          "name": "PillVariant",
+          "source": "kits/app/src/primitives/pill.variants.ts"
+        },
+        {
+          "declaration": "export type Tone = (typeof TONES)[number];",
+          "name": "Tone",
+          "source": "kits/base/src/tone.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "When given, the Pill renders a dismiss affordance and calls this. Absent, it renders none — a Pill nobody can remove should not pretend otherwise.",
+        "dialect": "discrete",
+        "name": "ondismiss",
+        "type": "() => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `ondismiss` (ADR 0026); removed next release.",
+          "replacement": "ondismiss"
+        },
+        "description": "Deprecated alias. Renamed `ondismiss` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onDismiss",
+        "type": "() => void"
+      }
+    ],
+    "forwardsAttributesTo": [
+      "<span>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "app",
+          "name": "Pill",
+          "nativeAttributes": [
+            "span"
+          ],
+          "props": [
+            {
+              "default": "\"neutral\"",
+              "description": "What the Pill means: the shared tone vocabulary (ADR 0026). Defaults to `neutral`.",
+              "name": "tone",
+              "required": false,
+              "type": "Tone",
+              "vocabulary": [
+                "neutral",
+                "info",
+                "success",
+                "warning",
+                "danger"
+              ]
+            },
+            {
+              "default": "\"tinted\"",
+              "deprecatedValues": [
+                {
+                  "note": "`neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release.",
+                  "replacement": "tinted",
+                  "value": "neutral"
+                },
+                {
+                  "note": "`neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release.",
+                  "replacement": "filled",
+                  "value": "primary"
+                }
+              ],
+              "description": "How strongly the tone is drawn: `tinted` (default), `filled` or `outline`. `neutral` and `primary` are deprecated for one release.",
+              "name": "variant",
+              "required": false,
+              "type": "PillVariant | DeprecatedPillVariant",
+              "vocabulary": [
+                "tinted",
+                "filled",
+                "outline"
+              ]
+            },
+            {
+              "default": "\"md\"",
+              "description": "Defaults to `md`.",
+              "name": "size",
+              "required": false,
+              "type": "PillSize",
+              "vocabulary": [
+                "sm",
+                "md"
+              ]
+            },
+            {
+              "default": "\"Remove\"",
+              "description": "Accessible name for the dismiss affordance.",
+              "name": "dismissLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Remove affordance; omitted when the caller provides no removal action.",
+              "name": "onDismiss",
+              "required": false,
+              "type": "() => void"
+            },
+            {
+              "description": "Label content before the dismiss affordance.",
+              "name": "children",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Additional root classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/app/react/src/Pill.tsx",
+          "specifier": "@reddb-io/design-system/app/Pill"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/react/src/Pill.tsx",
+        "specifier": "@reddb-io/design-system/app/Pill",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/src/primitives/Pill.svelte",
+        "specifier": "@reddb-io/design-system/app",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "app",
+    "name": "Pill",
+    "props": [
+      {
+        "bindable": false,
+        "default": "\"neutral\"",
+        "description": "What the Pill means: the shared tone vocabulary (ADR 0026). Defaults to `neutral`.",
+        "name": "tone",
+        "required": false,
+        "type": "Tone",
+        "vocabulary": [
+          "neutral",
+          "info",
+          "success",
+          "warning",
+          "danger"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"tinted\"",
+        "deprecatedValues": [
+          {
+            "note": "`neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release.",
+            "replacement": "tinted",
+            "value": "neutral"
+          },
+          {
+            "note": "`neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release.",
+            "replacement": "filled",
+            "value": "primary"
+          }
+        ],
+        "description": "How strongly the tone is drawn: `tinted` (default), `filled` or `outline`. `neutral` and `primary` are deprecated for one release.",
+        "name": "variant",
+        "required": false,
+        "type": "PillVariant | DeprecatedPillVariant",
+        "vocabulary": [
+          "tinted",
+          "filled",
+          "outline"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "Defaults to `md`.",
+        "name": "size",
+        "required": false,
+        "type": "PillSize",
+        "vocabulary": [
+          "sm",
+          "md"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"Remove\"",
+        "description": "Accessible name for the dismiss affordance.",
+        "name": "dismissLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "When given, the Pill renders a dismiss affordance and calls this. Absent, it renders none — a Pill nobody can remove should not pretend otherwise.",
+        "name": "ondismiss",
+        "required": false,
+        "type": "() => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `ondismiss` (ADR 0026); removed next release.",
+          "replacement": "ondismiss"
+        },
+        "description": "Deprecated alias. Renamed `ondismiss` (ADR 0026); removed next release.",
+        "name": "onDismiss",
+        "required": false,
+        "type": "() => void"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the variant's own.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "The Pill's label content, rendered before the dismiss affordance.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "purpose": "A round-ended token for a filter or a tag, optionally dismissible.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/app/src/core/contracts/pill.ts"
+      ],
+      "tests": [
+        "kits/app/test/framework-app.test.ts",
+        "apps/showcase/test/component-flavors-workspace.browser.test.ts"
+      ]
+    },
+    "snippets": [
+      {
+        "description": "The Pill's label content, rendered before the dismiss affordance.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/app/src/primitives/Pill.svelte",
+    "specifier": "@reddb-io/design-system/app"
+  }
+}

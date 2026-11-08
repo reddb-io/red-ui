@@ -1,0 +1,30 @@
+/** Shared token-backed presentation for both developer panel adapters. */
+export declare const developerPanelClasses: {
+    root: string;
+    expanded: string;
+    maximized: string;
+    resize: string;
+    collapsedToolbar: string;
+    toolbar: string;
+    contexts: string;
+    contextBody: string;
+    contextToolbar: string;
+    headerActions: string;
+    customBody: string;
+    content: string;
+    list: string;
+    listToolbar: string;
+    listRows: string;
+    detail: string;
+    detailBody: string;
+    row: string;
+    tabs: string;
+    summary: string;
+    summaryTarget: string;
+    requestActions: string;
+    tabActions: string;
+    text: string;
+    muted: string;
+    cell: string;
+    stack: string;
+};

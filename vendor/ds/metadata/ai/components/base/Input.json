@@ -1,0 +1,365 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Input",
+  "topics": [
+    "entrada texto digitar",
+    "text input"
+  ],
+  "related": [
+    "base/Field",
+    "base/Form",
+    "base/Calendar",
+    "base/Checkbox",
+    "base/Combobox",
+    "base/DateField"
+  ],
+  "contract": {
+    "category": "Data input",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-lg",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-md",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-sm",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type InputSize = NonNullable<InputVariants[\"size\"]>;",
+          "name": "InputSize",
+          "source": "kits/base/src/input.variants.ts"
+        },
+        {
+          "declaration": "/** The numeric native input types report numbers; an empty number reports null. */\nexport type InputValue<Type extends string> = string extends Type ? string | number | null : Type extends \"number\" | \"range\" ? number | null : string;",
+          "name": "InputValue",
+          "source": "kits/base/src/core/input.ts"
+        },
+        {
+          "declaration": "export type InputVariants = VariantProps<typeof input>;",
+          "name": "InputVariants",
+          "source": "kits/base/src/input.variants.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Called with the new value on every input (ADR 0026's value dialect); the native `oninput` still receives the Event.",
+        "dialect": "value",
+        "name": "onvaluechange",
+        "type": "(value: HTMLInputAttributes[\"value\"]) => void"
+      }
+    ],
+    "forwardsAttributesTo": [
+      "<input>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Input",
+          "nativeAttributes": [
+            "input"
+          ],
+          "props": [
+            {
+              "description": "Native input type, text by default.",
+              "name": "type",
+              "required": false,
+              "type": "Type"
+            },
+            {
+              "description": "Controlled native value; null clears a numeric input.",
+              "name": "value",
+              "required": false,
+              "type": "ComponentPropsWithRef<\"input\">[\"value\"] | null"
+            },
+            {
+              "default": "\"md\"",
+              "description": "Height step, separate from the native size attribute.",
+              "name": "controlSize",
+              "required": false,
+              "type": "InputSize",
+              "vocabulary": [
+                "sm",
+                "md",
+                "lg"
+              ]
+            },
+            {
+              "description": "Native value: numbers/null for number and range, strings otherwise. onChange still receives its React event.",
+              "name": "onValueChange",
+              "required": false,
+              "type": "(value: InputValue<Type>) => void"
+            }
+          ],
+          "source": "kits/base/react/src/Input.tsx",
+          "specifier": "@reddb-io/design-system/base/Input"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Input.tsx",
+        "specifier": "@reddb-io/design-system/base/Input",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "text-input"
+        },
+        "source": "kits/base/src/Input.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Input",
+    "props": [
+      {
+        "bindable": true,
+        "description": "The current value. Bindable: `bind:value` follows every keystroke.",
+        "name": "value",
+        "required": false,
+        "type": "HTMLInputAttributes[\"value\"]"
+      },
+      {
+        "bindable": false,
+        "description": "Called with the new value on every input (ADR 0026's value dialect); the native `oninput` still receives the Event.",
+        "name": "onvaluechange",
+        "required": false,
+        "type": "(value: HTMLInputAttributes[\"value\"]) => void"
+      },
+      {
+        "bindable": true,
+        "description": "The native input element, available for imperative focus or selection.",
+        "name": "ref",
+        "required": false,
+        "type": "HTMLInputElement"
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "The control height step, matching Button's `size` (default `md`). Named apart from the native `size` attribute, which is still spread through.",
+        "name": "controlSize",
+        "required": false,
+        "type": "InputSize",
+        "vocabulary": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the canonical appearance.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Native text entry with the platform's attributes, validity and focus behavior left intact.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "text-input"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/core/input.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-contracts.test.ts"
+      ],
+      "typeMappings": {
+        "onvaluechange": {
+          "react": "(value: InputValue<Type>) => void",
+          "reason": "Shared scenarios verify string, decimal, zero and empty numeric/null payloads; React narrows its callback by native type.",
+          "svelte": "(value: HTMLInputAttributes[\"value\"]) => void"
+        },
+        "value": {
+          "react": "ComponentPropsWithRef<\"input\">[\"value\"] | null",
+          "reason": "Framework-native input attributes; both normalize null to an empty native input and use the shared inputValue reader.",
+          "svelte": "HTMLInputAttributes[\"value\"]"
+        }
+      }
+    },
+    "snippets": [],
+    "source": "kits/base/src/Input.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

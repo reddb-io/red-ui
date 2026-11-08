@@ -1,0 +1,1 @@
+function p(n){return Array.isArray(n.items)}function t(n){const o=[];let e;for(const r of n){if(p(r)){e=void 0,r.items.length>0&&o.push(r);continue}e===void 0&&(e=[],o.push({items:e})),e.push(r)}return o}function u(n){return t(n).flatMap(o=>[...o.items])}export{t as dropdownMenuGroups,u as dropdownMenuItems,p as isDropdownMenuGroup};

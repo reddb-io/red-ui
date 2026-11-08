@@ -1,0 +1,790 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Popover",
+  "topics": [],
+  "related": [
+    "base/AlertDialog",
+    "base/AppearanceSwitch",
+    "base/Button",
+    "base/Dialog",
+    "base/DropdownMenu",
+    "base/Swap"
+  ],
+  "contract": {
+    "category": "Actions",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-border",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-foreground",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-surface",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-shadow-elevation-overlay",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "type Align = \"start\" | \"center\" | \"end\";",
+          "name": "Align",
+          "source": "kits/base/src/core/contracts/popover.ts"
+        },
+        {
+          "declaration": "export type ButtonSize = NonNullable<ButtonVariants[\"size\"]>;",
+          "name": "ButtonSize",
+          "source": "kits/base/src/button.variants.ts"
+        },
+        {
+          "declaration": "export type ButtonVariant = NonNullable<ButtonVariants[\"variant\"]>;",
+          "name": "ButtonVariant",
+          "source": "kits/base/src/button.variants.ts"
+        },
+        {
+          "declaration": "export type ButtonVariants = VariantProps<typeof button>;",
+          "name": "ButtonVariants",
+          "source": "kits/base/src/button.variants.ts"
+        },
+        {
+          "declaration": "type Side = \"top\" | \"right\" | \"bottom\" | \"left\";",
+          "name": "Side",
+          "source": "kits/base/src/core/contracts/popover.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Called with the next open state whenever the Popover opens or closes.",
+        "dialect": "open",
+        "name": "onopenchange",
+        "type": "(open: boolean) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "base",
+          "name": "Popover",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Accessible name for the Button that opens the Popover.",
+              "name": "triggerLabel",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Accessible name for the opened non-modal dialog.",
+              "name": "contentLabel",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "default": "false",
+              "description": "Whether the Popover is open. Bindable for controlled consumers.",
+              "name": "open",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "default": "false",
+              "description": "Disables the canonical trigger Button.",
+              "name": "disabled",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "default": "\"secondary\"",
+              "description": "Button emphasis for the trigger.",
+              "name": "variant",
+              "required": false,
+              "type": "ButtonVariant",
+              "vocabulary": [
+                "primary",
+                "secondary",
+                "ghost"
+              ]
+            },
+            {
+              "default": "\"md\"",
+              "description": "Button size for the trigger.",
+              "name": "size",
+              "required": false,
+              "type": "ButtonSize",
+              "vocabulary": [
+                "sm",
+                "md",
+                "lg"
+              ]
+            },
+            {
+              "default": "\"bottom\"",
+              "description": "Preferred side of the trigger; collision handling may flip it.",
+              "name": "side",
+              "required": false,
+              "type": "Side",
+              "vocabulary": [
+                "top",
+                "right",
+                "bottom",
+                "left"
+              ]
+            },
+            {
+              "default": "\"start\"",
+              "description": "Preferred alignment along the selected side.",
+              "name": "align",
+              "required": false,
+              "type": "Align",
+              "vocabulary": [
+                "start",
+                "center",
+                "end"
+              ]
+            },
+            {
+              "default": "8",
+              "description": "Distance from the trigger in pixels.",
+              "name": "sideOffset",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "8",
+              "description": "Safe distance from viewport collision edges in pixels.",
+              "name": "collisionPadding",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Extra classes merged onto the canonical trigger Button.",
+              "name": "triggerClass",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Custom trigger content named by triggerLabel.",
+              "name": "trigger",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Caller-owned Popover content.",
+              "name": "children",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Extra classes on the anchored surface.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Called when the Popover requests an open-state change.",
+              "name": "onOpenChange",
+              "required": false,
+              "type": "(open: boolean) => void"
+            }
+          ],
+          "source": "kits/base/react/src/Popover.tsx",
+          "specifier": "@reddb-io/design-system/base/Popover"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Popover.tsx",
+        "specifier": "@reddb-io/design-system/base/Popover",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "popover"
+        },
+        "source": "kits/base/src/Popover.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "base",
+    "name": "Popover",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible name for the Button that opens the Popover.",
+        "name": "triggerLabel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Accessible name for the opened non-modal dialog.",
+        "name": "contentLabel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": true,
+        "default": "false",
+        "description": "Whether the Popover is open. Bindable for controlled consumers.",
+        "name": "open",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Disables the canonical trigger Button.",
+        "name": "disabled",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"secondary\"",
+        "description": "Button emphasis for the trigger.",
+        "name": "variant",
+        "required": false,
+        "type": "ButtonVariant",
+        "vocabulary": [
+          "primary",
+          "secondary",
+          "ghost"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "Button size for the trigger.",
+        "name": "size",
+        "required": false,
+        "type": "ButtonSize",
+        "vocabulary": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"bottom\"",
+        "description": "Preferred side of the trigger; collision handling may flip it.",
+        "name": "side",
+        "required": false,
+        "type": "Side",
+        "vocabulary": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"start\"",
+        "description": "Preferred alignment along the selected side.",
+        "name": "align",
+        "required": false,
+        "type": "Align",
+        "vocabulary": [
+          "start",
+          "center",
+          "end"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "8",
+        "description": "Distance from the trigger in pixels.",
+        "name": "sideOffset",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "8",
+        "description": "Safe distance from viewport collision edges in pixels.",
+        "name": "collisionPadding",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the canonical trigger Button.",
+        "name": "triggerClass",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Optional custom Button content; `triggerLabel` stays its accessible name, so words it shows must appear, in order, in `triggerLabel`, ideally first (WCAG 2.5.3, Label in Name).",
+        "name": "trigger",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned Popover content.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the anchored surface.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Called with the next open state whenever the Popover opens or closes.",
+        "name": "onopenchange",
+        "required": false,
+        "type": "(open: boolean) => void"
+      }
+    ],
+    "purpose": "A collision-aware non-modal dialog whose canonical Button trigger, dismissal, and focus return travel together.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "popover"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/core/contracts/popover.ts",
+        "kits/base/src/core/portal-appearance.ts",
+        "kits/base/src/core/focus-scope.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-managed.test.ts"
+      ],
+      "typeMappings": {
+        "trigger": {
+          "react": "ReactNode",
+          "reason": "Caller-owned content is a Svelte Snippet or a ReactNode in the native adapter; SSR and shared interaction scenarios retain its semantics and accessible naming.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Optional custom Button content; `triggerLabel` stays its accessible name, so words it shows must appear, in order, in `triggerLabel`, ideally first (WCAG 2.5.3, Label in Name).",
+        "name": "trigger",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "Caller-owned Popover content.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/Popover.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

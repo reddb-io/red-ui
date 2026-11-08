@@ -1,0 +1,1 @@
+import{tv as e}from"tailwind-variants";const t=e({base:["aria-pressed:bg-foreground/10 aria-pressed:text-foreground","aria-pressed:border-b-2 aria-pressed:border-b-foreground"].join(" "),variants:{pressed:{true:"font-medium",false:""}},defaultVariants:{pressed:!1}});export{t as toggleButton};

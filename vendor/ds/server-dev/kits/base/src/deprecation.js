@@ -1,0 +1,1 @@
+const t=new Set;function d(e,n,a){if(!import.meta.env?.DEV)return;const r=`${e}\0${n}`;t.has(r)||(t.add(r),console.warn(`[reddb ${e}] ${n} is deprecated and is removed in the next release. Use ${a}.`))}export{d as warnDeprecated};

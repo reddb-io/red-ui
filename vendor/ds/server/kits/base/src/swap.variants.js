@@ -1,0 +1,1 @@
+import{tv as e}from"tailwind-variants";const a=e({base:"inline-grid place-items-center"}),p=e({base:"inline-flex items-center justify-center gap-[var(--reddb-spatial-gap-md)]"});export{a as swap,p as swapFace};

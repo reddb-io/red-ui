@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 1,
+  "id": "base/StateIllustration",
+  "topics": [
+    "ilustracao svg zero state empty state vazio arte busca conexao permissao",
+    "state artwork illustration SVG empty search connection success"
+  ],
+  "related": [
+    "base/EmptyState",
+    "base/Button",
+    "base/Alert",
+    "base/ContentState",
+    "base/LoadingIndicator",
+    "base/Notification"
+  ],
+  "contract": {
+    "category": "Feedback",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/core/state-illustration.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/state-illustration.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** A CSS custom property supplied by the DS or the host application. */\nexport type ColorToken = `--${string}`;",
+          "name": "ColorToken",
+          "source": "kits/base/src/core/color-token.ts"
+        },
+        {
+          "declaration": "/** A small tree of static geometry; it never contains text, scripts, HTML or remote resources. */\nexport interface IllustrationNode {\n  /** Passive SVG element. */\n  readonly tag: IllustrationTag;\n  /** Geometry and token-backed paint attributes. */\n  readonly attrs: Readonly<Record<string, string>>;\n  /** Nested geometry, used for transforms. */\n  readonly children?: readonly IllustrationNode[];\n}",
+          "name": "IllustrationNode",
+          "source": "kits/base/src/core/state-illustration.ts"
+        },
+        {
+          "declaration": "/** Only passive SVG geometry is admitted in an illustration asset. */\nexport type IllustrationTag = \"g\" | \"path\" | \"circle\" | \"ellipse\" | \"rect\" | \"line\" | \"polyline\" | \"polygon\";",
+          "name": "IllustrationTag",
+          "source": "kits/base/src/core/state-illustration.ts"
+        },
+        {
+          "declaration": "/** Import a named asset from base/illustrations; its geometry is shared across frameworks. */\nexport interface StateIllustrationAsset {\n  /** Stable identity for exports and downloads. */\n  readonly name: string;\n  /** Short English catalogue label, separate from application copy. */\n  readonly label: string;\n  /** Meaning and suggested use, never inserted into the illustration. */\n  readonly description: string;\n  /** Passive geometry, with a 480 by 300 viewBox. */\n  readonly nodes: readonly IllustrationNode[];\n}",
+          "name": "StateIllustrationAsset",
+          "source": "kits/base/src/core/state-illustration.ts"
+        },
+        {
+          "declaration": "export type StateIllustrationSize = NonNullable<VariantProps<typeof stateIllustration>[\"size\"]>;",
+          "name": "StateIllustrationSize",
+          "source": "kits/base/src/state-illustration.variants.ts"
+        }
+      ]
+    },
+    "events": [],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "StateIllustration",
+          "nativeAttributes": [
+            "svg"
+          ],
+          "props": [
+            {
+              "description": "Named artwork imported individually from base/illustrations, for example searchEmpty.",
+              "name": "art",
+              "required": true,
+              "type": "StateIllustrationAsset"
+            },
+            {
+              "default": "\"md\"",
+              "description": "Density-responsive bounds; full fits its parent. Defaults to md.",
+              "name": "size",
+              "required": false,
+              "type": "StateIllustrationSize"
+            },
+            {
+              "description": "Optional CSS colour token for the accent; omitted, uses the primary role.",
+              "name": "accent",
+              "required": false,
+              "type": "ColorToken"
+            },
+            {
+              "default": "true",
+              "description": "Hide artwork from assistive technology when nearby text carries its meaning. Defaults to true.",
+              "name": "decorative",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Accessible description required when decorative is false; never drawn inside the SVG.",
+              "name": "label",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Extra classes merged over the Density-owned artwork bounds.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/base/react/src/StateIllustration.tsx",
+          "specifier": "@reddb-io/design-system/base/StateIllustration"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/StateIllustration.tsx",
+        "specifier": "@reddb-io/design-system/base/StateIllustration",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/src/StateIllustration.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "StateIllustration",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Named artwork imported individually from base/illustrations, for example searchEmpty.",
+        "name": "art",
+        "required": true,
+        "type": "StateIllustrationAsset"
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "Density-responsive bounds; full fits its parent. Defaults to md.",
+        "name": "size",
+        "required": false,
+        "type": "StateIllustrationSize"
+      },
+      {
+        "bindable": false,
+        "description": "Optional CSS colour token for the accent; omitted, uses the primary role.",
+        "name": "accent",
+        "required": false,
+        "type": "ColorToken"
+      },
+      {
+        "bindable": false,
+        "default": "true",
+        "description": "Hide artwork from assistive technology when nearby text carries its meaning. Defaults to true.",
+        "name": "decorative",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Accessible description required when decorative is false; never drawn inside the SVG.",
+        "name": "label",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged over the Density-owned artwork bounds.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Token-coloured SVG state artwork, individually imported for errors, zero states and confirmations, without fonts or external resources.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/core/state-illustration.ts",
+        "kits/base/src/state-illustration.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/state-illustration.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/StateIllustration.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

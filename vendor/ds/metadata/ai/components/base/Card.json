@@ -1,0 +1,927 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Card",
+  "topics": [],
+  "related": [
+    "base/Accordion",
+    "base/AudioMeter",
+    "base/Avatar",
+    "base/Badge",
+    "base/Carousel",
+    "base/Countdown"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-color-${role}",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-${size}",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        }
+      ],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/react/src/Card.tsx",
+            "kits/base/src/Card.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-raised-border",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-raised-surface",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/card.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-text",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/card.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/card.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/card.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/card.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-shadow-elevation-raised",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/card.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/react/src/Card.tsx",
+            "kits/base/src/Card.svelte",
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-sm",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type CardActionsAlign = NonNullable<CardVariants[\"actionsAlign\"]>;",
+          "name": "CardActionsAlign",
+          "source": "kits/base/src/card.variants.ts"
+        },
+        {
+          "declaration": "export type CardMediaFit = NonNullable<CardVariants[\"fit\"]>;",
+          "name": "CardMediaFit",
+          "source": "kits/base/src/card.variants.ts"
+        },
+        {
+          "declaration": "export type CardMediaPosition = NonNullable<CardVariants[\"position\"]>;",
+          "name": "CardMediaPosition",
+          "source": "kits/base/src/card.variants.ts"
+        },
+        {
+          "declaration": "export type CardMediaRatio = NonNullable<CardVariants[\"ratio\"]>;",
+          "name": "CardMediaRatio",
+          "source": "kits/base/src/card.variants.ts"
+        },
+        {
+          "declaration": "export type CardMediaSpan = NonNullable<CardVariants[\"span\"]>;",
+          "name": "CardMediaSpan",
+          "source": "kits/base/src/card.variants.ts"
+        },
+        {
+          "declaration": "export type CardOrientation = NonNullable<CardVariants[\"orientation\"]>;",
+          "name": "CardOrientation",
+          "source": "kits/base/src/card.variants.ts"
+        },
+        {
+          "declaration": "export type CardPadding = NonNullable<CardVariants[\"padding\"]>;",
+          "name": "CardPadding",
+          "source": "kits/base/src/card.variants.ts"
+        },
+        {
+          "declaration": "export type CardTone = Tone;",
+          "name": "CardTone",
+          "source": "kits/base/src/card.variants.ts"
+        },
+        {
+          "declaration": "export type CardVariant = NonNullable<CardVariants[\"variant\"]>;",
+          "name": "CardVariant",
+          "source": "kits/base/src/card.variants.ts"
+        },
+        {
+          "declaration": "export type CardVariants = VariantProps<typeof card>;",
+          "name": "CardVariants",
+          "source": "kits/base/src/card.variants.ts"
+        },
+        {
+          "declaration": "/** @deprecated `brand` is an emphasis, not a tone (ADR 0026). Removed next release. */\nexport type DeprecatedCardTone = (typeof DEPRECATED_CARD_TONES)[number];",
+          "name": "DeprecatedCardTone",
+          "source": "kits/base/src/card.variants.ts"
+        },
+        {
+          "declaration": "export type IconGlyph = ForwardRefExoticComponent<IconGlyphProps>;",
+          "name": "IconGlyph",
+          "source": "kits/base/react/src/Icon.tsx"
+        },
+        {
+          "declaration": "export type IconGlyph = Component<IconGlyphProps>;",
+          "name": "IconGlyph",
+          "source": "kits/base/src/Icon.svelte"
+        },
+        {
+          "declaration": "/** Structural Lucide seam, so unused optional peers are not needed by a consumer type-check. */\nexport interface IconGlyphProps extends SVGAttributes<SVGSVGElement>, RefAttributes<SVGSVGElement> {\n  /** Requested glyph size, owned by the DS wrapper at render time. */\n  size?: string | number;\n  /** Lucide's retained native stroke option. */\n  absoluteStrokeWidth?: boolean;\n  /** Keep stroke width independent of SVG scaling. */\n  nonScalingStroke?: boolean;\n}",
+          "name": "IconGlyphProps",
+          "source": "kits/base/react/src/Icon.tsx"
+        },
+        {
+          "declaration": "export type IconGlyphProps = LucideProps;",
+          "name": "IconGlyphProps",
+          "source": "kits/base/src/Icon.svelte"
+        },
+        {
+          "declaration": "/**\n * The image an application's asset pipeline produced, as a composite accepts it.\n *\n * The DS never resizes or re-encodes anything: the application owns its\n * pipeline and passes the URLs (and the intrinsic size) that pipeline wrote.\n */\nexport interface ImageAsset {\n  /** Fallback URL, used when no `srcset` candidate or `source` applies. */\n  src: string;\n  /** Text alternative. Empty only together with `decorative`. */\n  alt: string;\n  /** The image carries no information; renders `alt=\"\"`. */\n  decorative?: boolean;\n  /** Intrinsic width in px of `src`. */\n  width?: number;\n  /** Intrinsic height in px of `src`. */\n  height?: number;\n  /** Width divided by height, when the intrinsic size is unknown. */\n  ratio?: number;\n  /** Width- or density-described candidates of the same picture. */\n  srcset?: string;\n  /** Slot widths for the `srcset` candidates. */\n  sizes?: string;\n  /** `<picture>` sources tried before the `img`, in order (AVIF, then WebP, …). */\n  sources?: readonly ImageSource[];\n}",
+          "name": "ImageAsset",
+          "source": "kits/base/src/image.variants.ts"
+        },
+        {
+          "declaration": "/** One `<source>` of a `<picture>`: a modern format or an art-directed crop the app produced. */\nexport interface ImageSource {\n  /** Candidate URLs with `w` or `x` descriptors, as the app's asset pipeline wrote them. */\n  srcset: string;\n  /** MIME type the browser checks before choosing this source, such as `image/avif`. */\n  type?: string;\n  /** Media condition for an art-directed crop, such as `(min-width: 48rem)`. */\n  media?: string;\n  /** Slot widths for this source's `w` descriptors; the Image's `sizes` when omitted. */\n  sizes?: string;\n}",
+          "name": "ImageSource",
+          "source": "kits/base/src/image.variants.ts"
+        },
+        {
+          "declaration": "export type Tone = (typeof TONES)[number];",
+          "name": "Tone",
+          "source": "kits/base/src/tone.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<div>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Composite",
+          "kit": "base",
+          "name": "Card",
+          "nativeAttributes": [
+            "div"
+          ],
+          "props": [
+            {
+              "default": "\"outline\"",
+              "description": "Edge treatment. Defaults to `outline`.",
+              "name": "variant",
+              "required": false,
+              "type": "CardVariant",
+              "vocabulary": [
+                "outline",
+                "plain"
+              ]
+            },
+            {
+              "default": "false",
+              "description": "Lift the Card onto the raised elevation level.",
+              "name": "raised",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "default": "false",
+              "description": "Retain the Card content while announcing background work.",
+              "name": "busy",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "default": "\"Loading card content\"",
+              "description": "Text announced while `busy`, naming what is loading. Defaults to `Loading card content`.",
+              "name": "busyLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "false",
+              "description": "Hides the busy text visually while keeping it announced to assistive technology.",
+              "name": "busyLabelHidden",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "default": "\"neutral\"",
+              "deprecatedValues": [
+                {
+                  "note": "`brand` is an emphasis, not a tone (ADR 0026). Removed next release.",
+                  "value": "brand"
+                }
+              ],
+              "description": "What the Card means: the shared tone vocabulary (ADR 0026), each on its Feedback Role's surface and paired readable foreground. Defaults to `neutral`. `brand` is deprecated for one release.",
+              "name": "tone",
+              "required": false,
+              "type": "CardTone | DeprecatedCardTone",
+              "vocabulary": [
+                "neutral",
+                "info",
+                "success",
+                "warning",
+                "danger"
+              ]
+            },
+            {
+              "default": "\"md\"",
+              "description": "Density-owned inset applied to every section. Defaults to `md`.",
+              "name": "padding",
+              "required": false,
+              "type": "CardPadding",
+              "vocabulary": [
+                "none",
+                "sm",
+                "md"
+              ]
+            },
+            {
+              "default": "\"start\"",
+              "description": "Main-axis alignment for footer actions. Defaults to `start`.",
+              "name": "actionsAlign",
+              "required": false,
+              "type": "CardActionsAlign",
+              "vocabulary": [
+                "start",
+                "center",
+                "end",
+                "between"
+              ]
+            },
+            {
+              "default": "\"vertical\"",
+              "description": "Media/content arrangement. Defaults to `vertical`.",
+              "name": "orientation",
+              "required": false,
+              "type": "CardOrientation",
+              "vocabulary": [
+                "vertical",
+                "horizontal"
+              ]
+            },
+            {
+              "default": "\"cover\"",
+              "description": "How media fills its ratio-bound region without distortion. Defaults to `cover`.",
+              "name": "fit",
+              "required": false,
+              "type": "CardMediaFit",
+              "vocabulary": [
+                "cover",
+                "contain"
+              ]
+            },
+            {
+              "default": "\"center\"",
+              "description": "Focal position retained when covered media crops. Defaults to `center`.",
+              "name": "position",
+              "required": false,
+              "type": "CardMediaPosition",
+              "vocabulary": [
+                "center",
+                "top",
+                "bottom",
+                "start",
+                "end"
+              ]
+            },
+            {
+              "default": "\"16/9\"",
+              "description": "Aspect ratio of the media region. Defaults to `16/9`.",
+              "name": "ratio",
+              "required": false,
+              "type": "CardMediaRatio",
+              "vocabulary": [
+                "16/9",
+                "4/3",
+                "1/1",
+                "auto"
+              ]
+            },
+            {
+              "default": "\"two-fifths\"",
+              "description": "Media width or layering treatment. Defaults to `two-fifths`.",
+              "name": "span",
+              "required": false,
+              "type": "CardMediaSpan",
+              "vocabulary": [
+                "third",
+                "two-fifths",
+                "half",
+                "background"
+              ]
+            },
+            {
+              "description": "Header title, rendered when no `header` content is given.",
+              "name": "title",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Decorative glyph rendered beside the title through the DS Icon contract.",
+              "name": "icon",
+              "required": false,
+              "type": "IconGlyph"
+            },
+            {
+              "description": "Supporting line under the title.",
+              "name": "description",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Full control over the header. Replaces `icon`, `title`, and `description`.",
+              "name": "header",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Caller-owned media rendered as a vertical band, horizontal lead, or background.",
+              "name": "media",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "The media as an image the app's pipeline produced, rendered through the Base Image inside the media region with the Card's `fit` and `position`; ignored when a `media` content is given.",
+              "name": "image",
+              "required": false,
+              "type": "ImageAsset"
+            },
+            {
+              "default": "false",
+              "description": "The `image` is the page's Largest Contentful Paint: fetched eagerly at high priority.",
+              "name": "priority",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Caller-owned actions or content rendered after the body.",
+              "name": "footer",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Extra classes merged onto the canonical surface.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "The Card body, rendered between the header and the footer.",
+              "name": "children",
+              "required": false,
+              "type": "ReactNode"
+            }
+          ],
+          "source": "kits/base/react/src/Card.tsx",
+          "specifier": "@reddb-io/design-system/base/Card"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Card.tsx",
+        "specifier": "@reddb-io/design-system/base/Card",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "card"
+        },
+        "source": "kits/base/src/Card.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "base",
+    "name": "Card",
+    "props": [
+      {
+        "bindable": false,
+        "default": "\"outline\"",
+        "description": "Edge treatment. Defaults to `outline`.",
+        "name": "variant",
+        "required": false,
+        "type": "CardVariant",
+        "vocabulary": [
+          "outline",
+          "plain"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Lift the Card onto the raised elevation level.",
+        "name": "raised",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Retain the Card content while announcing background work.",
+        "name": "busy",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"Loading card content\"",
+        "description": "Text announced while `busy`, naming what is loading. Defaults to `Loading card content`.",
+        "name": "busyLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Hides the busy text visually while keeping it announced to assistive technology.",
+        "name": "busyLabelHidden",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"neutral\"",
+        "deprecatedValues": [
+          {
+            "note": "`brand` is an emphasis, not a tone (ADR 0026). Removed next release.",
+            "value": "brand"
+          }
+        ],
+        "description": "What the Card means: the shared tone vocabulary (ADR 0026), each on its Feedback Role's surface and paired readable foreground. Defaults to `neutral`. `brand` is deprecated for one release.",
+        "name": "tone",
+        "required": false,
+        "type": "CardTone | DeprecatedCardTone",
+        "vocabulary": [
+          "neutral",
+          "info",
+          "success",
+          "warning",
+          "danger"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "Density-owned inset applied to every section. Defaults to `md`.",
+        "name": "padding",
+        "required": false,
+        "type": "CardPadding",
+        "vocabulary": [
+          "none",
+          "sm",
+          "md"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"start\"",
+        "description": "Main-axis alignment for footer actions. Defaults to `start`.",
+        "name": "actionsAlign",
+        "required": false,
+        "type": "CardActionsAlign",
+        "vocabulary": [
+          "start",
+          "center",
+          "end",
+          "between"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"vertical\"",
+        "description": "Media/content arrangement. Defaults to `vertical`.",
+        "name": "orientation",
+        "required": false,
+        "type": "CardOrientation",
+        "vocabulary": [
+          "vertical",
+          "horizontal"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"cover\"",
+        "description": "How media fills its ratio-bound region without distortion. Defaults to `cover`.",
+        "name": "fit",
+        "required": false,
+        "type": "CardMediaFit",
+        "vocabulary": [
+          "cover",
+          "contain"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"center\"",
+        "description": "Focal position retained when covered media crops. Defaults to `center`.",
+        "name": "position",
+        "required": false,
+        "type": "CardMediaPosition",
+        "vocabulary": [
+          "center",
+          "top",
+          "bottom",
+          "start",
+          "end"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"16/9\"",
+        "description": "Aspect ratio of the media region. Defaults to `16/9`.",
+        "name": "ratio",
+        "required": false,
+        "type": "CardMediaRatio",
+        "vocabulary": [
+          "16/9",
+          "4/3",
+          "1/1",
+          "auto"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"two-fifths\"",
+        "description": "Media width or layering treatment. Defaults to `two-fifths`.",
+        "name": "span",
+        "required": false,
+        "type": "CardMediaSpan",
+        "vocabulary": [
+          "third",
+          "two-fifths",
+          "half",
+          "background"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Header title, rendered when no `header` snippet is given.",
+        "name": "title",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Decorative glyph rendered beside the title through the DS Icon contract.",
+        "name": "icon",
+        "required": false,
+        "type": "IconGlyph"
+      },
+      {
+        "bindable": false,
+        "description": "Supporting line under the title.",
+        "name": "description",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Full control over the header. Replaces `icon`, `title`, and `description`.",
+        "name": "header",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned media rendered as a vertical band, horizontal lead, or background.",
+        "name": "media",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "The media as an image the app's pipeline produced, rendered through the Base Image inside the media region with the Card's `fit` and `position`; ignored when a `media` snippet is given.",
+        "name": "image",
+        "required": false,
+        "type": "ImageAsset"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "The `image` is the page's Largest Contentful Paint: fetched eagerly at high priority.",
+        "name": "priority",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned actions or content rendered after the body.",
+        "name": "footer",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the canonical surface.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "The Card body, rendered between the header and the footer.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "purpose": "A bounded surface whose header, body and footer stay in step through one variant.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "card"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/card.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-media.test.ts"
+      ],
+      "typeMappings": {
+        "footer": {
+          "react": "ReactNode",
+          "reason": "Native renderable content; shared adapter scenarios verify slot precedence and placement.",
+          "svelte": "Snippet"
+        },
+        "header": {
+          "react": "ReactNode",
+          "reason": "Native renderable content; shared adapter scenarios verify slot precedence and placement.",
+          "svelte": "Snippet"
+        },
+        "media": {
+          "react": "ReactNode",
+          "reason": "Native renderable content; shared adapter scenarios verify slot precedence and placement.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Full control over the header. Replaces `icon`, `title`, and `description`.",
+        "name": "header",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "Caller-owned media rendered as a vertical band, horizontal lead, or background.",
+        "name": "media",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "Caller-owned actions or content rendered after the body.",
+        "name": "footer",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "The Card body, rendered between the header and the footer.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/Card.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}
