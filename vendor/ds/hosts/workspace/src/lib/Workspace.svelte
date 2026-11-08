@@ -27,6 +27,7 @@
   import { createStateRouter, pathToLocation, setRouter, type Router, type View } from './router.svelte'
   import type { WorkspacePersistence } from './workspace-persistence'
   import type { WorkspaceSnapshot } from './workspace-session'
+  import { startVisiblePoll } from './visible-poll'
 
   let {
     router: injectedRouter,
@@ -128,7 +129,13 @@
       applySnapshot(snap)
       // A reload of the same route must retain the selected result document,
       // even when that document is a query in the collections workspace.
-      if (snap.tabs.some(tab => tab.id === snap.activeTabId) && router.view === snap.view && router.collection === snap.collection && router.subpage === snap.subpage) {
+    const active = snap.tabs.find(tab => tab.id === snap.activeTabId)
+    const activeOwnsRoute = router.view === 'query'
+      ? active?.kind === 'query'
+      : router.collection
+        ? active?.kind === 'collection' && active.key === router.collection
+        : true
+    if (activeOwnsRoute && router.view === snap.view && router.collection === snap.collection && router.subpage === snap.subpage) {
         lastView = router.view
         lastCollectionKey = router.collection ? `${router.collection}::${router.subpage ?? ''}` : null
       }
@@ -253,7 +260,7 @@
     )
   })
 
-  const REFRESH_MS = 5000
+  const REFRESH_MS = 30_000
 
   onMount(() => {
     void workspace.ready.then(() => {
@@ -272,13 +279,12 @@
   // default it was never pointed at.
   $effect(() => {
     if (secureStore.requiresUnlock || !connection.targetResolved) return
-    // Poll only an acquired client. Re-entering connect here races with the
-    // boot/login token exchange; tracking refresh reads also retriggers this
-    // effect whenever a probe changes instead of waiting for the interval.
-    const refresh = () => { if (connection.client) void connection.refresh() }
-    untrack(refresh)
-    const id = setInterval(refresh, REFRESH_MS)
-    return () => clearInterval(id)
+    // Poll only an acquired client. The connect flow already fetched an
+    // initial snapshot, so the first background refresh waits one interval.
+    // Hidden tabs make no requests and a slow request never overlaps itself.
+    const client = connection.client
+    if (!client) return
+    return startVisiblePoll(() => connection.refresh(), REFRESH_MS)
   })
 
   // Once the secure store binds (Tauri at boot / web after unlock), hydrate

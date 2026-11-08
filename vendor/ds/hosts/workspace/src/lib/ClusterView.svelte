@@ -11,6 +11,7 @@
 
   import { useRouter } from './router.svelte'
   import { POLICY_READ_CHECK } from './policies'
+  import { startVisiblePoll } from './visible-poll'
   import {
     RedClient,
     type ClusterStatus,
@@ -120,9 +121,8 @@
       return
     }
     loading = true
-    probeAll()
-    const id = setInterval(probeAll, 5000)
-    return () => clearInterval(id)
+    if (!document.hidden) void probeAll()
+    return startVisiblePoll(probeAll, 30_000)
   })
 
   const liveNodes = $derived(known.filter((k) => k.reachable))

@@ -85,6 +85,22 @@ describe("connection seam (ADR-0001)", () => {
     connection.disconnect();
     expect(connection.client).toBeNull(); // no URL-built fallback
   });
+
+  it("refreshes health with one stats request and no background replication probe", async () => {
+    const client = fakeClient();
+    setConnectionProvider(new InjectedClientProvider({ client }));
+    await connection.adoptInjected();
+    vi.mocked(client.ping).mockClear();
+    vi.mocked(client.stats).mockClear();
+    vi.mocked(client.replication).mockClear();
+
+    await connection.refresh();
+
+    expect(client.ping).not.toHaveBeenCalled();
+    expect(client.stats).toHaveBeenCalledTimes(1);
+    expect(client.replication).not.toHaveBeenCalled();
+    expect(connection.probe.reachable).toBe(true);
+  });
 });
 
 describe("read-only state (#23)", () => {

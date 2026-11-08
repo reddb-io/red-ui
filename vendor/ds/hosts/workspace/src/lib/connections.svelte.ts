@@ -811,29 +811,21 @@ export function createConnections(services: ConnectionServices = {}) {
         return;
       }
       try {
-        const ping = await activity.track(
-          `heartbeat · ${this.active.label}`,
-          () => client.ping()
+        // `/stats` is the health signal and the data we need. Calling ping()
+        // first duplicated the same endpoint, then a global replication probe
+        // added a third request every five seconds even outside Cluster.
+        const start = performance.now();
+        const stats = await activity.track(`heartbeat · stats`, () =>
+          client.stats()
         );
-        if (this.disposed || epoch !== this.epoch) return;
-        if (!ping.ok) {
-          this.probe = { reachable: false, error: ping.error };
-          return;
-        }
-        const [stats, replication] = await Promise.all([
-          activity
-            .track(`heartbeat · stats`, () => client.stats())
-            .catch(() => undefined),
-          activity
-            .track(`heartbeat · replication`, () => client.replication())
-            .catch(() => undefined),
-        ]);
         if (this.disposed || epoch !== this.epoch) return;
         this.probe = {
           reachable: true,
-          rtt_ms: ping.rtt_ms,
+          rtt_ms: Math.round(performance.now() - start),
           stats,
-          replication,
+          // Retain the connect-time role/LSN snapshot. Cluster owns live
+          // replication refreshes; ordinary query workspaces do not need them.
+          replication: this.probe.replication,
         };
         this.connected = true;
       } catch (e) {
