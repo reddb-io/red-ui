@@ -76,3 +76,20 @@ Inspect the `Select platforms` job summary to see the effective selection.
 
 Select `preview_platforms: true` in Run workflow to execute only the lightweight
 platform selector. Builds, tests and publication are all skipped in this mode.
+
+
+## Bounded company workers
+
+Reviewed Linux web/package workflows on main select `reddb-ci-public` /
+`reddb-public-linux-x64`. One public job at a time shares the existing two
+dedicated CI nodes with the private repositories; no new node or disk is added.
+The GitHub group admits exact workflow paths at `refs/heads/main`, not PR refs,
+forks, arbitrary branches or tag-defined workflows. Quick checks retain hosted
+routing so untrusted contributions cannot reach the privileged DinD environment.
+Manual `runner_qualification` is only useful while rio-infra explicitly admits
+the reviewed qualification ref; that temporary admission is revoked afterwards.
+No automatic quality trigger, platform flag or publication gate is enabled.
+Desktop/native/multiplatform lanes, Docker publication, integration/browser
+qualification and npm provenance publication retain their existing hosted lanes.
+Public runner limits: 3 CPU / 8 GiB RAM, 8 GiB workspace; DinD 1 CPU / 4 GiB RAM
+and 4 GiB disk. RedRouter build heap is bounded to 6 GiB on the main build lane.

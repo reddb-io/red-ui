@@ -2,6 +2,11 @@ name: ci
 
 on:
   workflow_dispatch:
+    inputs:
+      runner_qualification:
+        type: boolean
+        description: Qualify the reviewed ARC web lane without desktop builds or publication
+        default: false
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -9,11 +14,14 @@ concurrency:
 
 jobs:
   check:
-    # Public repo — ubuntu-latest is free; this pnpm lane is light enough
-    # that a paid Blacksmith runner buys nothing (cost policy, July 2026).
-    runs-on: ubuntu-latest
+    # Reviewed main workflow only; other refs retain hosted execution.
+    runs-on: ${{ fromJSON((github.repository == 'reddb-io/red-ui' && (github.ref == 'refs/heads/main' || inputs.runner_qualification == true)) && '{"group":"reddb-ci-public","labels":"reddb-public-linux-x64"}' || '"ubuntu-latest"') }}
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-runner
+        if: runner.environment == 'self-hosted'
+        with:
+          node-version: '22'
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: pnpm }
@@ -76,7 +84,7 @@ jobs:
     # Cost policy (July 2026, Blacksmith bill): the slowest job runs
     # POST-MERGE on push to main only — never on an open PR. Rust shell
     # breakage surfaces after merge; release.yml still hard-gates on tags.
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && inputs.runner_qualification != true
     # Public repo: the post-merge compile check is free on GitHub-hosted Linux.
     runs-on: ubuntu-latest
     env:
