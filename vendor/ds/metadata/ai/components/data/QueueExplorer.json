@@ -1,0 +1,794 @@
+{
+  "schemaVersion": 1,
+  "id": "data/QueueExplorer",
+  "topics": [],
+  "related": [
+    "data/ActivityTimeline",
+    "data/BarChart",
+    "data/BreakdownBar",
+    "data/Candlestick",
+    "data/CompositeChart",
+    "data/DeveloperPanel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/textarea.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/textarea.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-base-border",
+          "sources": [
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-border",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-foreground",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-surface",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-sunken-surface",
+          "sources": [
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/textarea.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/textarea.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/textarea.variants.ts",
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/textarea.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/core/state-illustration.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-lg",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-md",
+          "sources": [
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/textarea.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-sm",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/textarea.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/textarea.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-shadow-elevation-overlay",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/textarea.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/state-illustration.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/textarea.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/textarea.variants.ts",
+            "kits/data/react/src/QueueExplorer.tsx",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/QueueExplorer.svelte",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-sm",
+          "sources": [
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export interface QueueCommand {\n  label: string;\n  query: string;\n  mutates: boolean;\n  note: string;\n}",
+          "name": "QueueCommand",
+          "source": "kits/data/src/queue-explorer.ts"
+        },
+        {
+          "declaration": "export interface QueueEvent {\n  messageId: string;\n  collection: string;\n  op: string;\n  entityId: string;\n  lsn: number | null;\n  ts: number | null;\n  before: unknown;\n  after: unknown;\n  payload: Record<string, unknown>;\n}",
+          "name": "QueueEvent",
+          "source": "kits/data/src/queue-explorer.ts"
+        },
+        {
+          "declaration": "export interface QueueMessage {\n  index: number;\n  id: string;\n  messageColumn: string | null;\n  message: unknown;\n  state: string;\n  consumer: string | null;\n  dlc: string | null;\n  values: Record<string, unknown>;\n}",
+          "name": "QueueMessage",
+          "source": "kits/data/src/queue-explorer.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Enqueues a message. Reject on failure to retain the draft. Omit for read-only inspection.",
+        "dialect": "discrete",
+        "name": "onenqueue",
+        "type": "(payload: unknown, signal: AbortSignal) => Promise<void>"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "data",
+          "name": "QueueExplorer",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Accessible name of the explorer.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Original messages and delivery metadata.",
+              "name": "messages",
+              "required": true,
+              "type": "readonly QueueMessage[]"
+            },
+            {
+              "description": "Event envelopes extracted by the caller's adapter.",
+              "name": "events",
+              "required": true,
+              "type": "readonly QueueEvent[]"
+            },
+            {
+              "default": "[]",
+              "description": "Commands are documentation only; the component never executes them.",
+              "name": "commands",
+              "required": false,
+              "type": "readonly QueueCommand[]"
+            },
+            {
+              "description": "Optional collection identity. Changes cancel pending completion callbacks.",
+              "name": "context",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Caller-reported query error, distinct from an empty result.",
+              "name": "error",
+              "required": false,
+              "type": "string | null"
+            },
+            {
+              "description": "Enqueues a message. Reject on failure to retain the draft. Omit for read-only inspection.",
+              "name": "onenqueue",
+              "required": false,
+              "type": "(payload: unknown, signal: AbortSignal) => Promise<void>"
+            },
+            {
+              "default": "\"\"",
+              "description": "Extra root classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/data/react/src/QueueExplorer.tsx",
+          "specifier": "@reddb-io/design-system/data/QueueExplorer"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/react/src/QueueExplorer.tsx",
+        "specifier": "@reddb-io/design-system/data/QueueExplorer",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/src/QueueExplorer.svelte",
+        "specifier": "@reddb-io/design-system/data/QueueExplorer",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "data",
+    "name": "QueueExplorer",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible name of the explorer.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Original messages and delivery metadata.",
+        "name": "messages",
+        "required": true,
+        "type": "readonly QueueMessage[]"
+      },
+      {
+        "bindable": false,
+        "description": "Event envelopes extracted by the caller's adapter.",
+        "name": "events",
+        "required": true,
+        "type": "readonly QueueEvent[]"
+      },
+      {
+        "bindable": false,
+        "default": "[]",
+        "description": "Commands are documentation only; the component never executes them.",
+        "name": "commands",
+        "required": false,
+        "type": "readonly QueueCommand[]"
+      },
+      {
+        "bindable": false,
+        "description": "Optional collection identity. Changes cancel pending completion callbacks.",
+        "name": "context",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-reported query error, distinct from an empty result.",
+        "name": "error",
+        "required": false,
+        "type": "string | null"
+      },
+      {
+        "bindable": false,
+        "description": "Enqueues a message. Reject on failure to retain the draft. Omit for read-only inspection.",
+        "name": "onenqueue",
+        "required": false,
+        "type": "(payload: unknown, signal: AbortSignal) => Promise<void>"
+      },
+      {
+        "bindable": false,
+        "default": "\"\"",
+        "description": "Extra root classes.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Inspect queue messages, delivery metadata and event envelopes with caller-owned insertion.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/data/src/core/contracts/queueexplorer.ts",
+        "kits/data/src/queue-explorer.ts",
+        "kits/data/src/diff-explorer.variants.ts"
+      ],
+      "tests": [
+        "kits/data/test/remaining-explorers.test.ts",
+        "kits/data/test/remaining-explorers-native.test.ts",
+        "apps/showcase/test/remaining-explorers.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/data/src/QueueExplorer.svelte",
+    "specifier": "@reddb-io/design-system/data/QueueExplorer"
+  }
+}

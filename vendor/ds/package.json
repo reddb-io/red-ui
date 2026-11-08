@@ -32,108 +32,220 @@
     "./adapters/reddb/uri": "./adapters/reddb/src/uri.ts",
     "./adapters/reddb/vector-results": "./adapters/reddb/src/vector-results.ts",
     "./app": {
-      "svelte": "./kits/app/src/index.ts",
-      "default": "./kits/app/src/index.ts"
+      "types": "./types/kits/app/src/index.d.ts",
+      "browser": "./client/kits/app/src/index.js",
+      "development": "./server-dev/kits/app/src/index.js",
+      "default": "./server/kits/app/src/index.js"
     },
     "./app/ApplicationWorkspace": {
-      "svelte": "./kits/app/src/composites/ApplicationWorkspace.svelte",
-      "default": "./kits/app/src/composites/ApplicationWorkspace.svelte"
-    },
-    "./app/OutcomeScreen": {
-      "svelte": "./kits/app/src/composites/OutcomeScreen.svelte",
-      "default": "./kits/app/src/composites/OutcomeScreen.svelte"
-    },
-    "./app/recipes": {
-      "types": "./kits/app/src/recipes.ts",
-      "default": "./kits/app/src/recipes.ts"
+      "types": "./types/kits/app/src/composites/ApplicationWorkspace.svelte.d.ts",
+      "browser": "./client/kits/app/src/composites/ApplicationWorkspace.svelte-component.js",
+      "development": "./server-dev/kits/app/src/composites/ApplicationWorkspace.svelte-component.js",
+      "default": "./server/kits/app/src/composites/ApplicationWorkspace.svelte-component.js"
     },
     "./app/workspace": {
-      "types": "./kits/app/src/core/workspace-session.ts",
-      "default": "./kits/app/src/core/workspace-session.ts"
+      "types": "./types/kits/app/src/core/workspace-session.d.ts",
+      "browser": "./client/kits/app/src/core/workspace-session.js",
+      "development": "./server-dev/kits/app/src/core/workspace-session.js",
+      "default": "./server/kits/app/src/core/workspace-session.js"
     },
     "./app/workspace/changes": {
-      "types": "./kits/app/src/core/workspace-changes.ts",
-      "default": "./kits/app/src/core/workspace-changes.ts"
+      "types": "./types/kits/app/src/core/workspace-changes.d.ts",
+      "browser": "./client/kits/app/src/core/workspace-changes.js",
+      "development": "./server-dev/kits/app/src/core/workspace-changes.js",
+      "default": "./server/kits/app/src/core/workspace-changes.js"
     },
     "./app/workspace/documents": {
-      "types": "./kits/app/src/core/workspace-documents.ts",
-      "default": "./kits/app/src/core/workspace-documents.ts"
+      "types": "./types/kits/app/src/core/workspace-documents.d.ts",
+      "browser": "./client/kits/app/src/core/workspace-documents.js",
+      "development": "./server-dev/kits/app/src/core/workspace-documents.js",
+      "default": "./server/kits/app/src/core/workspace-documents.js"
     },
     "./app/workspace/execution": {
-      "types": "./kits/app/src/core/workspace-execution.ts",
-      "default": "./kits/app/src/core/workspace-execution.ts"
+      "types": "./types/kits/app/src/core/workspace-execution.d.ts",
+      "browser": "./client/kits/app/src/core/workspace-execution.js",
+      "development": "./server-dev/kits/app/src/core/workspace-execution.js",
+      "default": "./server/kits/app/src/core/workspace-execution.js"
     },
     "./app/workspace/renderers": {
-      "types": "./kits/app/src/core/workspace-renderers.ts",
-      "default": "./kits/app/src/core/workspace-renderers.ts"
+      "types": "./types/kits/app/src/core/workspace-renderers.d.ts",
+      "browser": "./client/kits/app/src/core/workspace-renderers.js",
+      "development": "./server-dev/kits/app/src/core/workspace-renderers.js",
+      "default": "./server/kits/app/src/core/workspace-renderers.js"
     },
     "./app/workspace/storage": {
-      "types": "./kits/app/src/core/workspace-storage.ts",
-      "default": "./kits/app/src/core/workspace-storage.ts"
+      "types": "./types/kits/app/src/core/workspace-storage.d.ts",
+      "browser": "./client/kits/app/src/core/workspace-storage.js",
+      "development": "./server-dev/kits/app/src/core/workspace-storage.js",
+      "default": "./server/kits/app/src/core/workspace-storage.js"
     },
     "./base": {
-      "svelte": "./kits/base/src/index.ts",
-      "default": "./kits/base/src/index.ts"
+      "types": "./types/kits/base/src/index.d.ts",
+      "browser": "./client/kits/base/src/index.js",
+      "development": "./server-dev/kits/base/src/index.js",
+      "default": "./server/kits/base/src/index.js"
     },
     "./base/illustrations": {
-      "types": "./kits/base/src/illustrations.ts",
-      "default": "./kits/base/src/illustrations.ts"
+      "types": "./types/kits/base/src/illustrations.d.ts",
+      "browser": "./client/kits/base/src/illustrations.js",
+      "development": "./server-dev/kits/base/src/illustrations.js",
+      "default": "./server/kits/base/src/illustrations.js"
     },
     "./base/interaction": {
-      "types": "./kits/base/src/interaction.ts",
-      "default": "./kits/base/src/interaction.ts"
+      "types": "./types/kits/base/src/interaction.d.ts",
+      "browser": "./client/kits/base/src/interaction.js",
+      "development": "./server-dev/kits/base/src/interaction.js",
+      "default": "./server/kits/base/src/interaction.js"
     },
     "./base/recipes": {
-      "types": "./kits/base/src/recipes.ts",
-      "default": "./kits/base/src/recipes.ts"
+      "types": "./types/kits/base/src/recipes.d.ts",
+      "browser": "./client/kits/base/src/recipes.js",
+      "development": "./server-dev/kits/base/src/recipes.js",
+      "default": "./server/kits/base/src/recipes.js"
     },
-    "./data/*": {
-      "svelte": "./kits/data/src/*.svelte",
-      "default": "./kits/data/src/*.svelte"
+    "./data/DeveloperPanel": {
+      "types": "./types/kits/data/src/DeveloperPanel.svelte.d.ts",
+      "browser": "./client/kits/data/src/DeveloperPanel.svelte-component.js",
+      "development": "./server-dev/kits/data/src/DeveloperPanel.svelte-component.js",
+      "default": "./server/kits/data/src/DeveloperPanel.svelte-component.js"
+    },
+    "./data/DeveloperRequestInspector": {
+      "types": "./types/kits/data/src/DeveloperRequestInspector.svelte.d.ts",
+      "browser": "./client/kits/data/src/DeveloperRequestInspector.svelte-component.js",
+      "development": "./server-dev/kits/data/src/DeveloperRequestInspector.svelte-component.js",
+      "default": "./server/kits/data/src/DeveloperRequestInspector.svelte-component.js"
+    },
+    "./data/Diagram": {
+      "types": "./types/kits/data/src/Diagram.svelte.d.ts",
+      "browser": "./client/kits/data/src/Diagram.svelte-component.js",
+      "development": "./server-dev/kits/data/src/Diagram.svelte-component.js",
+      "default": "./server/kits/data/src/Diagram.svelte-component.js"
+    },
+    "./data/DiffExplorer": {
+      "types": "./types/kits/data/src/DiffExplorer.svelte.d.ts",
+      "browser": "./client/kits/data/src/DiffExplorer.svelte-component.js",
+      "development": "./server-dev/kits/data/src/DiffExplorer.svelte-component.js",
+      "default": "./server/kits/data/src/DiffExplorer.svelte-component.js"
+    },
+    "./data/DocumentViewer": {
+      "types": "./types/kits/data/src/DocumentViewer.svelte.d.ts",
+      "browser": "./client/kits/data/src/DocumentViewer.svelte-component.js",
+      "development": "./server-dev/kits/data/src/DocumentViewer.svelte-component.js",
+      "default": "./server/kits/data/src/DocumentViewer.svelte-component.js"
+    },
+    "./data/EventSeriesExplorer": {
+      "types": "./types/kits/data/src/EventSeriesExplorer.svelte.d.ts",
+      "browser": "./client/kits/data/src/EventSeriesExplorer.svelte-component.js",
+      "development": "./server-dev/kits/data/src/EventSeriesExplorer.svelte-component.js",
+      "default": "./server/kits/data/src/EventSeriesExplorer.svelte-component.js"
+    },
+    "./data/GraphExplorer": {
+      "types": "./types/kits/data/src/GraphExplorer.svelte.d.ts",
+      "browser": "./client/kits/data/src/GraphExplorer.svelte-component.js",
+      "development": "./server-dev/kits/data/src/GraphExplorer.svelte-component.js",
+      "default": "./server/kits/data/src/GraphExplorer.svelte-component.js"
+    },
+    "./data/KeyValueExplorer": {
+      "types": "./types/kits/data/src/KeyValueExplorer.svelte.d.ts",
+      "browser": "./client/kits/data/src/KeyValueExplorer.svelte-component.js",
+      "development": "./server-dev/kits/data/src/KeyValueExplorer.svelte-component.js",
+      "default": "./server/kits/data/src/KeyValueExplorer.svelte-component.js"
+    },
+    "./data/KpiCard": {
+      "types": "./types/kits/data/src/KpiCard.svelte.d.ts",
+      "browser": "./client/kits/data/src/KpiCard.svelte-component.js",
+      "development": "./server-dev/kits/data/src/KpiCard.svelte-component.js",
+      "default": "./server/kits/data/src/KpiCard.svelte-component.js"
+    },
+    "./data/PanZoomViewport": {
+      "types": "./types/kits/data/src/PanZoomViewport.svelte.d.ts",
+      "browser": "./client/kits/data/src/PanZoomViewport.svelte-component.js",
+      "development": "./server-dev/kits/data/src/PanZoomViewport.svelte-component.js",
+      "default": "./server/kits/data/src/PanZoomViewport.svelte-component.js"
+    },
+    "./data/QueueExplorer": {
+      "types": "./types/kits/data/src/QueueExplorer.svelte.d.ts",
+      "browser": "./client/kits/data/src/QueueExplorer.svelte-component.js",
+      "development": "./server-dev/kits/data/src/QueueExplorer.svelte-component.js",
+      "default": "./server/kits/data/src/QueueExplorer.svelte-component.js"
+    },
+    "./data/StatsExplorer": {
+      "types": "./types/kits/data/src/StatsExplorer.svelte.d.ts",
+      "browser": "./client/kits/data/src/StatsExplorer.svelte-component.js",
+      "development": "./server-dev/kits/data/src/StatsExplorer.svelte-component.js",
+      "default": "./server/kits/data/src/StatsExplorer.svelte-component.js"
+    },
+    "./data/Table": {
+      "types": "./types/kits/data/src/Table.svelte.d.ts",
+      "browser": "./client/kits/data/src/Table.svelte-component.js",
+      "development": "./server-dev/kits/data/src/Table.svelte-component.js",
+      "default": "./server/kits/data/src/Table.svelte-component.js"
+    },
+    "./data/TableExplorer": {
+      "types": "./types/kits/data/src/TableExplorer.svelte.d.ts",
+      "browser": "./client/kits/data/src/TableExplorer.svelte-component.js",
+      "development": "./server-dev/kits/data/src/TableExplorer.svelte-component.js",
+      "default": "./server/kits/data/src/TableExplorer.svelte-component.js"
+    },
+    "./data/TimeSeries": {
+      "types": "./types/kits/data/src/TimeSeries.svelte.d.ts",
+      "browser": "./client/kits/data/src/TimeSeries.svelte-component.js",
+      "development": "./server-dev/kits/data/src/TimeSeries.svelte-component.js",
+      "default": "./server/kits/data/src/TimeSeries.svelte-component.js"
+    },
+    "./data/VectorExplorer": {
+      "types": "./types/kits/data/src/VectorExplorer.svelte.d.ts",
+      "browser": "./client/kits/data/src/VectorExplorer.svelte-component.js",
+      "development": "./server-dev/kits/data/src/VectorExplorer.svelte-component.js",
+      "default": "./server/kits/data/src/VectorExplorer.svelte-component.js"
     },
     "./data/diff-explorer": {
-      "types": "./kits/data/src/diff-explorer.ts",
-      "default": "./kits/data/src/diff-explorer.ts"
+      "types": "./types/kits/data/src/diff-explorer.d.ts",
+      "browser": "./client/kits/data/src/diff-explorer.js",
+      "development": "./server-dev/kits/data/src/diff-explorer.js",
+      "default": "./server/kits/data/src/diff-explorer.js"
     },
     "./data/event-series-explorer": {
-      "types": "./kits/data/src/event-series-explorer.ts",
-      "default": "./kits/data/src/event-series-explorer.ts"
+      "types": "./types/kits/data/src/event-series-explorer.d.ts",
+      "browser": "./client/kits/data/src/event-series-explorer.js",
+      "development": "./server-dev/kits/data/src/event-series-explorer.js",
+      "default": "./server/kits/data/src/event-series-explorer.js"
     },
     "./data/graph-explorer": {
-      "types": "./kits/data/src/graph-explorer.ts",
-      "default": "./kits/data/src/graph-explorer.ts"
+      "types": "./types/kits/data/src/graph-explorer.d.ts",
+      "browser": "./client/kits/data/src/graph-explorer.js",
+      "development": "./server-dev/kits/data/src/graph-explorer.js",
+      "default": "./server/kits/data/src/graph-explorer.js"
     },
     "./data/key-value-explorer": {
-      "types": "./kits/data/src/key-value-explorer.ts",
-      "default": "./kits/data/src/key-value-explorer.ts"
-    },
-    "./data/queue-explorer": {
-      "types": "./kits/data/src/queue-explorer.ts",
-      "default": "./kits/data/src/queue-explorer.ts"
+      "types": "./types/kits/data/src/key-value-explorer.d.ts",
+      "browser": "./client/kits/data/src/key-value-explorer.js",
+      "development": "./server-dev/kits/data/src/key-value-explorer.js",
+      "default": "./server/kits/data/src/key-value-explorer.js"
     },
     "./data/recipes": {
-      "types": "./kits/data/src/recipes.ts",
-      "default": "./kits/data/src/recipes.ts"
-    },
-    "./data/static": {
-      "types": "./kits/data/src/static.server.ts",
-      "default": "./kits/data/src/static.server.ts"
+      "types": "./types/kits/data/src/recipes.d.ts",
+      "browser": "./client/kits/data/src/recipes.js",
+      "development": "./server-dev/kits/data/src/recipes.js",
+      "default": "./server/kits/data/src/recipes.js"
     },
     "./data/stats-explorer": {
-      "types": "./kits/data/src/stats-explorer.ts",
-      "default": "./kits/data/src/stats-explorer.ts"
-    },
-    "./data/stream": {
-      "types": "./kits/data/src/chart-stream.ts",
-      "default": "./kits/data/src/chart-stream.ts"
+      "types": "./types/kits/data/src/stats-explorer.d.ts",
+      "browser": "./client/kits/data/src/stats-explorer.js",
+      "development": "./server-dev/kits/data/src/stats-explorer.js",
+      "default": "./server/kits/data/src/stats-explorer.js"
     },
     "./data/table-explorer": {
-      "types": "./kits/data/src/table-explorer.ts",
-      "default": "./kits/data/src/table-explorer.ts"
+      "types": "./types/kits/data/src/table-explorer.d.ts",
+      "browser": "./client/kits/data/src/table-explorer.js",
+      "development": "./server-dev/kits/data/src/table-explorer.js",
+      "default": "./server/kits/data/src/table-explorer.js"
     },
     "./data/vector-explorer": {
-      "types": "./kits/data/src/vector-explorer.ts",
-      "default": "./kits/data/src/vector-explorer.ts"
+      "types": "./types/kits/data/src/vector-explorer.d.ts",
+      "browser": "./client/kits/data/src/vector-explorer.js",
+      "development": "./server-dev/kits/data/src/vector-explorer.js",
+      "default": "./server/kits/data/src/vector-explorer.js"
     },
     "./hosts/mcp": "./hosts/mcp/src/index.ts",
     "./hosts/workspace": "./hosts/workspace/src/index.ts",
@@ -153,31 +265,23 @@
     "./styles/base.css": "./styles/base.css"
   },
   "dependencies": {
-    "@internationalized/date": "^3.12.4",
     "@reddb-io/browser": "0.8.0",
     "@tauri-apps/api": "^2.5.0",
     "@tauri-apps/plugin-dialog": "^2.5.0",
     "@tauri-apps/plugin-http": "^2.5.9",
-    "@types/d3-hierarchy": "^3.1.7",
-    "@types/d3-sankey": "0.12.5",
-    "@types/d3-shape": "^3.2.0",
     "bits-ui": "^2.19.5",
     "clsx": "^2.1.1",
-    "libphonenumber-js": "1.13.15",
     "tailwind-merge": "^3.6.0",
     "tailwind-variants": "^3.1.1"
   },
   "peerDependencies": {
     "@aflsolutions/graphology-communities-leiden": "^1.1.1",
     "@lucide/svelte": "^1.0.1",
-    "d3-hierarchy": "^3.1.2",
-    "d3-sankey": "^0.12.3",
     "d3-shape": "^3.2.0",
     "graphology": "^0.26.0",
-    "graphology-layout-forceatlas2": "^0.10.1",
     "layerchart": "^2.5.1",
     "sigma": "^3.0.3",
-    "svelte": "^5.0.0"
+    "svelte": "5.57.1"
   },
   "peerDependenciesMeta": {
     "@aflsolutions/graphology-communities-leiden": {
@@ -186,19 +290,10 @@
     "@lucide/svelte": {
       "optional": true
     },
-    "d3-hierarchy": {
-      "optional": true
-    },
-    "d3-sankey": {
-      "optional": true
-    },
     "d3-shape": {
       "optional": true
     },
     "graphology": {
-      "optional": true
-    },
-    "graphology-layout-forceatlas2": {
       "optional": true
     },
     "layerchart": {
@@ -207,5 +302,6 @@
     "sigma": {
       "optional": true
     }
-  }
+  },
+  "sideEffects": []
 }

@@ -1,0 +1,228 @@
+{
+  "schemaVersion": 1,
+  "id": "base/LoadingIndicator",
+  "topics": [],
+  "related": [
+    "base/Alert",
+    "base/ContentState",
+    "base/EmptyState",
+    "base/Notification",
+    "base/Progress",
+    "base/RadialProgress"
+  ],
+  "contract": {
+    "category": "Feedback",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-text",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type LoadingIndicatorSize = NonNullable<LoadingIndicatorVariants[\"size\"]>;",
+          "name": "LoadingIndicatorSize",
+          "source": "kits/base/src/loading-indicator.variants.ts"
+        },
+        {
+          "declaration": "export type LoadingIndicatorVariants = VariantProps<typeof loadingIndicator>;",
+          "name": "LoadingIndicatorVariants",
+          "source": "kits/base/src/loading-indicator.variants.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<div>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "LoadingIndicator",
+          "nativeAttributes": [
+            "div"
+          ],
+          "props": [
+            {
+              "default": "\"Loading…\"",
+              "description": "What is being waited for.",
+              "name": "label",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"md\"",
+              "description": "Density-responsive glyph size.",
+              "name": "size",
+              "required": false,
+              "type": "LoadingIndicatorSize",
+              "vocabulary": [
+                "sm",
+                "md",
+                "lg"
+              ]
+            },
+            {
+              "default": "false",
+              "description": "Hide the sentence visually while retaining its announcement.",
+              "name": "labelHidden",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            }
+          ],
+          "source": "kits/base/react/src/LoadingIndicator.tsx",
+          "specifier": "@reddb-io/design-system/base/LoadingIndicator"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/LoadingIndicator.tsx",
+        "specifier": "@reddb-io/design-system/base/LoadingIndicator",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "loading-indicator"
+        },
+        "source": "kits/base/src/LoadingIndicator.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "LoadingIndicator",
+    "props": [
+      {
+        "bindable": false,
+        "default": "\"Loading…\"",
+        "description": "What is being waited for.",
+        "name": "label",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "Spinner and label size: `sm`, `md` (the default) or `lg`.",
+        "name": "size",
+        "required": false,
+        "type": "LoadingIndicatorSize",
+        "vocabulary": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Keep the announcement while visually hiding its sentence.",
+        "name": "labelHidden",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the indicator root.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A motion-aware spinner whose polite busy status and sentence travel together for every audience.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "loading-indicator"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/loading-indicator.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-appearance.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/LoadingIndicator.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

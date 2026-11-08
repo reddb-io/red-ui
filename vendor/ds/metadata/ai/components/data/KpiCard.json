@@ -1,0 +1,482 @@
+{
+  "schemaVersion": 1,
+  "id": "data/KpiCard",
+  "topics": [],
+  "related": [
+    "data/ActivityTimeline",
+    "data/BarChart",
+    "data/BreakdownBar",
+    "data/Candlestick",
+    "data/CompositeChart",
+    "data/DeveloperPanel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-elevation-raised-surface",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-font-size",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-font-weight",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-letter-spacing",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-line-height",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** @deprecated `brand` is an emphasis, not a tone (ADR 0026). Removed next release. */\nexport type DeprecatedKpiCardTone = (typeof DEPRECATED_KPI_CARD_TONES)[number];",
+          "name": "DeprecatedKpiCardTone",
+          "source": "kits/data/src/kpi-card.variants.ts"
+        },
+        {
+          "declaration": "/** The tones a KpiCard accepts: the shared vocabulary Base exports (ADR 0026). */\nexport type KpiCardTone = Tone;",
+          "name": "KpiCardTone",
+          "source": "kits/data/src/kpi-card.variants.ts"
+        },
+        {
+          "declaration": "/** Which direction of change is good news for this metric. */\nexport type KpiPolarity = \"higher-is-better\" | \"lower-is-better\" | \"neutral\";",
+          "name": "KpiPolarity",
+          "source": "kits/data/src/core/kpi-card.ts"
+        },
+        {
+          "declaration": "export type Tone = (typeof TONES)[number];",
+          "name": "Tone",
+          "source": "kits/base/src/tone.ts"
+        }
+      ]
+    },
+    "events": [],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Primitive",
+          "kit": "data",
+          "name": "KpiCard",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Name of the metric, shown above the value and used as the card's accessible name.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "The headline figure, shown as given: format it before passing it (a number is rendered as is).",
+              "name": "value",
+              "required": true,
+              "type": "string | number"
+            },
+            {
+              "description": "Change against the comparison period, as a number (`4.2` shows `+4.2%`). Its sign sets the direction and, with `polarity`, the colour; omitted or `null`, no delta is shown.",
+              "name": "delta",
+              "required": false,
+              "type": "number | null"
+            },
+            {
+              "default": "\"%\"",
+              "description": "Text appended to the delta in its visible figure, such as a unit. Defaults to `%`.",
+              "name": "deltaSuffix",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"versus previous period\"",
+              "description": "Visible comparison context, also read after the delta. Defaults to `versus previous period`.",
+              "name": "deltaLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Optional visible context below the value, such as the measured period or a short explanation. The comparison label appears alongside the delta when a delta is supplied.",
+              "name": "description",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"higher-is-better\"",
+              "description": "Which direction of change is good news. Delta colour follows meaning, not sign: a latency drop is an improvement under `lower-is-better`, and a `neutral` metric never claims a direction is good or bad.",
+              "name": "polarity",
+              "required": false,
+              "type": "KpiPolarity",
+              "vocabulary": [
+                "higher-is-better",
+                "lower-is-better",
+                "neutral"
+              ]
+            },
+            {
+              "default": "\"neutral\"",
+              "deprecatedValues": [
+                {
+                  "note": "`brand` is an emphasis, not a tone (ADR 0026). Removed next release.",
+                  "value": "brand"
+                }
+              ],
+              "description": "What the metric means: the shared tone vocabulary (ADR 0026), each on its Feedback Role's surface with its paired readable foreground. Defaults to `neutral`. `brand` is deprecated for one release.",
+              "name": "tone",
+              "required": false,
+              "type": "KpiCardTone | DeprecatedKpiCardTone",
+              "vocabulary": [
+                "neutral",
+                "info",
+                "success",
+                "warning",
+                "danger"
+              ]
+            },
+            {
+              "description": "Optional chart content, normally a Sparkline imported by the caller.",
+              "name": "sparkline",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "default": "\"\"",
+              "description": "Extra classes, merged over the root slot's own, onto the card's root `section`.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/data/react/src/KpiCard.tsx",
+          "specifier": "@reddb-io/design-system/data/KpiCard"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/react/src/KpiCard.tsx",
+        "specifier": "@reddb-io/design-system/data/KpiCard",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/src/KpiCard.svelte",
+        "specifier": "@reddb-io/design-system/data/KpiCard",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "data",
+    "name": "KpiCard",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Name of the metric, shown above the value and used as the card's accessible name.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "The headline figure, shown as given: format it before passing it (a number is rendered as is).",
+        "name": "value",
+        "required": true,
+        "type": "string | number"
+      },
+      {
+        "bindable": false,
+        "description": "Change against the comparison period, as a number (`4.2` shows `+4.2%`). Its sign sets the direction and, with `polarity`, the colour; omitted or `null`, no delta is shown.",
+        "name": "delta",
+        "required": false,
+        "type": "number | null"
+      },
+      {
+        "bindable": false,
+        "default": "\"%\"",
+        "description": "Text appended to the delta in its visible figure, such as a unit. Defaults to `%`.",
+        "name": "deltaSuffix",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"versus previous period\"",
+        "description": "Visible comparison context, also read after the delta. Defaults to `versus previous period`.",
+        "name": "deltaLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Optional visible context below the value, such as the measured period or a short explanation. The comparison label appears alongside the delta when a delta is supplied.",
+        "name": "description",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"higher-is-better\"",
+        "description": "Which direction of change is good news. Delta colour follows meaning, not sign: a latency drop is an improvement under `lower-is-better`, and a `neutral` metric never claims a direction is good or bad.",
+        "name": "polarity",
+        "required": false,
+        "type": "KpiPolarity",
+        "vocabulary": [
+          "higher-is-better",
+          "lower-is-better",
+          "neutral"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"neutral\"",
+        "deprecatedValues": [
+          {
+            "note": "`brand` is an emphasis, not a tone (ADR 0026). Removed next release.",
+            "value": "brand"
+          }
+        ],
+        "description": "What the metric means: the shared tone vocabulary (ADR 0026), each on its Feedback Role's surface with its paired readable foreground. Defaults to `neutral`. `brand` is deprecated for one release.",
+        "name": "tone",
+        "required": false,
+        "type": "KpiCardTone | DeprecatedKpiCardTone",
+        "vocabulary": [
+          "neutral",
+          "info",
+          "success",
+          "warning",
+          "danger"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Optional chart content, normally a Sparkline imported by the caller.",
+        "name": "sparkline",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "default": "\"\"",
+        "description": "Extra classes, merged over the root slot's own, onto the card's root `section`.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A DS-owned metric summary with textual delta direction and an optional caller-supplied sparkline.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/data/src/core/contracts/kpicard.ts"
+      ],
+      "tests": [
+        "kits/data/test/framework-visualizations.test.ts",
+        "apps/showcase/test/component-flavors-graphical.browser.test.ts"
+      ],
+      "typeMappings": {
+        "sparkline": {
+          "react": "ReactNode",
+          "reason": "Native caller content with the same data and control context; shared scenarios exercise composition, focus and caller-owned behavior.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Optional chart content, normally a Sparkline imported by the caller.",
+        "name": "sparkline",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/data/src/KpiCard.svelte",
+    "specifier": "@reddb-io/design-system/data/KpiCard"
+  }
+}

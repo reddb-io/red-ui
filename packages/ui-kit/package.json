@@ -27,10 +27,10 @@
     "prepack": "node ../../scripts/package-with-design-system.mjs ui-kit"
   },
   "peerDependencies": {
-    "svelte": "^5.0.0"
+    "svelte": "5.57.1"
   },
   "devDependencies": {
-    "svelte": "^5.20.0",
+    "svelte": "5.57.1",
     "svelte-check": "^4.1.4",
     "typescript": "^5.7.2",
     "vite": "^6.0.7"

@@ -1,0 +1,1 @@
+import{tv as t}from"tailwind-variants";const o=t({slots:{root:"flex w-full max-w-sm items-start gap-[var(--reddb-spatial-gap-sm)]",announcement:"min-w-0 flex-1",dismiss:"shrink-0"}});export{o as notification};

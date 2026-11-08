@@ -1,0 +1,1 @@
+import*as i from"svelte/internal/server";import{divider as n}from"./divider.variants.js";function d(o,r){o.component(s=>{const{orientation:t="horizontal",class:a,$$slots:l,$$events:c,...e}=r;s.push(`<div${i.attributes({...e,"data-divider":!0,role:"separator","aria-orientation":t,class:i.clsx(n({orientation:t,class:a}))})}></div>`)})}export{d as default};

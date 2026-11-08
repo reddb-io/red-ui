@@ -1,0 +1,1 @@
+const e=["neutral","info","success","warning","danger"],o=["info","success","warning","danger"];function s(n){return typeof n=="string"&&e.includes(n)}export{o as FEEDBACK_TONES,e as TONES,s as isTone};

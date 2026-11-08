@@ -1,0 +1,927 @@
+{
+  "schemaVersion": 1,
+  "id": "data/TableExplorer",
+  "topics": [],
+  "related": [
+    "data/ActivityTimeline",
+    "data/BarChart",
+    "data/BreakdownBar",
+    "data/Candlestick",
+    "data/CompositeChart",
+    "data/DeveloperPanel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/react/src/TableExplorer.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/TableExplorer.svelte",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-base-border",
+          "sources": [
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-border",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-foreground",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-surface",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-sunken-surface",
+          "sources": [
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/react/src/TableExplorer.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/TableExplorer.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/core/state-illustration.ts",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-lg",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-md",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-sm",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/data/react/src/TableExplorer.tsx",
+            "kits/data/src/TableExplorer.svelte",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/react/src/TableExplorer.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/TableExplorer.svelte",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-shadow-elevation-overlay",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/state-illustration.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/react/src/TableExplorer.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/TableExplorer.svelte",
+            "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/react/src/TableExplorer.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/TableExplorer.svelte",
+            "kits/data/src/diff-explorer.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-sm",
+          "sources": [
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export interface TableChange<Value = unknown> {\n  rowKey: TableRowKey;\n  columnKey: string;\n  previous: Value;\n  value: Value;\n}",
+          "name": "TableChange",
+          "source": "kits/data/src/table.ts"
+        },
+        {
+          "declaration": "export interface TableColumn<Row extends TableRow = TableRow> {\n  /** Stable property key used to read this column from a row. */\n  key: keyof Row & string;\n  /** Visible column heading. */\n  header: string;\n  /** Include this column in the sort cycle. */\n  sortable?: boolean;\n  /** Include a text field for this column in the filter row. */\n  filterable?: boolean;\n  /** Example query shown in this column's empty filter field. */\n  filterPlaceholder?: string;\n  /** Inline alignment. `end` also sets tabular numerals, for quantities that compare by column. */\n  align?: TableColumnAlign;\n  /** Allow this column to enter edit mode when the Table has editing capability. */\n  editable?: boolean;\n  /** Caller-owned comparison for values in this column. */\n  compare?: (left: unknown, right: unknown, leftRow: Row, rightRow: Row) => number;\n  /** Caller-owned filter predicate. The query has already been trimmed. */\n  filter?: (value: unknown, query: string, row: Row) => boolean;\n  /** Convert an editor's text back to the row's value type. */\n  parse?: (input: string, previous: unknown, row: Row) => unknown;\n  /** Format a value for read-only display and the initial editor text. */\n  format?: (value: unknown, row: Row) => string;\n}",
+          "name": "TableColumn",
+          "source": "kits/data/src/table.ts"
+        },
+        {
+          "declaration": "export type TableColumnAlign = \"start\" | \"end\";",
+          "name": "TableColumnAlign",
+          "source": "kits/data/src/table.ts"
+        },
+        {
+          "declaration": "export interface TableQueryRequest {\n  columns: readonly string[];\n  limit: number;\n}",
+          "name": "TableQueryRequest",
+          "source": "kits/data/src/table-explorer.ts"
+        },
+        {
+          "declaration": "/** Pure data operations for the Data Kit Table. This module has no Svelte or DOM dependency. */\n\nexport type TableRow = Record<string, unknown>;",
+          "name": "TableRow",
+          "source": "kits/data/src/table.ts"
+        },
+        {
+          "declaration": "export type TableRowKey = string | number;",
+          "name": "TableRowKey",
+          "source": "kits/data/src/table.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Reports a proposed staged change-set to the host.",
+        "dialect": "state",
+        "name": "onchangeschange",
+        "type": "(changes: readonly TableChange[]) => void"
+      },
+      {
+        "description": "Runs the projection and updates the caller-owned rows.",
+        "dialect": "discrete",
+        "name": "onquery",
+        "type": "(request: TableQueryRequest, signal: AbortSignal) => Promise<void>"
+      },
+      {
+        "description": "Restores the original caller-owned result.",
+        "dialect": "native",
+        "name": "onreset",
+        "type": "() => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "data",
+          "name": "TableExplorer",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Accessible result name.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Column display and editing contracts.",
+              "name": "columns",
+              "required": true,
+              "type": "readonly TableColumn[]"
+            },
+            {
+              "description": "Immutable source rows. Keys always address these source rows after filtering.",
+              "name": "rows",
+              "required": true,
+              "type": "readonly TableRow[]"
+            },
+            {
+              "description": "Stable key independent of filtering and display order.",
+              "name": "rowKey",
+              "required": true,
+              "type": "string | ((row: TableRow, index: number) => TableRowKey)"
+            },
+            {
+              "description": "Total result count, including rows outside the current source window.",
+              "name": "total",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Optional dataset name.",
+              "name": "context",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Query error, distinguished from an empty result.",
+              "name": "error",
+              "required": false,
+              "type": "string | null"
+            },
+            {
+              "default": "false",
+              "description": "Whether each source cell can be edited.",
+              "name": "editable",
+              "required": false,
+              "type": "boolean | ((row: TableRow, column: TableColumn) => boolean)"
+            },
+            {
+              "default": "[]",
+              "description": "Staged cells keyed by source identity.",
+              "name": "changes",
+              "required": false,
+              "type": "readonly TableChange[]"
+            },
+            {
+              "description": "Reports a proposed staged change-set to the host.",
+              "name": "onchangeschange",
+              "required": false,
+              "type": "(changes: readonly TableChange[]) => void"
+            },
+            {
+              "default": "[]",
+              "description": "Safe projection keys, if querying is supported by the host.",
+              "name": "queryColumns",
+              "required": false,
+              "type": "readonly string[]"
+            },
+            {
+              "description": "Runs the projection and updates the caller-owned rows.",
+              "name": "onquery",
+              "required": false,
+              "type": "(request: TableQueryRequest, signal: AbortSignal) => Promise<void>"
+            },
+            {
+              "description": "Restores the original caller-owned result.",
+              "name": "onreset",
+              "required": false,
+              "type": "() => void"
+            },
+            {
+              "description": "Formats the query preview without coupling the Kit to a query language.",
+              "name": "describequery",
+              "required": false,
+              "type": "(request: TableQueryRequest) => string"
+            },
+            {
+              "description": "Optional description of the source row identity.",
+              "name": "identityLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"\"",
+              "description": "Extra root classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/data/react/src/TableExplorer.tsx",
+          "specifier": "@reddb-io/design-system/data/TableExplorer"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/react/src/TableExplorer.tsx",
+        "specifier": "@reddb-io/design-system/data/TableExplorer",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/src/TableExplorer.svelte",
+        "specifier": "@reddb-io/design-system/data/TableExplorer",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "data",
+    "name": "TableExplorer",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible result name.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Column display and editing contracts.",
+        "name": "columns",
+        "required": true,
+        "type": "readonly TableColumn[]"
+      },
+      {
+        "bindable": false,
+        "description": "Immutable source rows. Keys always address these source rows after filtering.",
+        "name": "rows",
+        "required": true,
+        "type": "readonly TableRow[]"
+      },
+      {
+        "bindable": false,
+        "description": "Stable key independent of filtering and display order.",
+        "name": "rowKey",
+        "required": true,
+        "type": "string | ((row: TableRow, index: number) => TableRowKey)"
+      },
+      {
+        "bindable": false,
+        "description": "Total result count, including rows outside the current source window.",
+        "name": "total",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Optional dataset name.",
+        "name": "context",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Query error, distinguished from an empty result.",
+        "name": "error",
+        "required": false,
+        "type": "string | null"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Whether each source cell can be edited.",
+        "name": "editable",
+        "required": false,
+        "type": "boolean | ((row: TableRow, column: TableColumn) => boolean)"
+      },
+      {
+        "bindable": false,
+        "default": "[]",
+        "description": "Staged cells keyed by source identity.",
+        "name": "changes",
+        "required": false,
+        "type": "readonly TableChange[]"
+      },
+      {
+        "bindable": false,
+        "description": "Reports a proposed staged change-set to the host.",
+        "name": "onchangeschange",
+        "required": false,
+        "type": "(changes: readonly TableChange[]) => void"
+      },
+      {
+        "bindable": false,
+        "default": "[]",
+        "description": "Safe projection keys, if querying is supported by the host.",
+        "name": "queryColumns",
+        "required": false,
+        "type": "readonly string[]"
+      },
+      {
+        "bindable": false,
+        "description": "Runs the projection and updates the caller-owned rows.",
+        "name": "onquery",
+        "required": false,
+        "type": "(request: TableQueryRequest, signal: AbortSignal) => Promise<void>"
+      },
+      {
+        "bindable": false,
+        "description": "Restores the original caller-owned result.",
+        "name": "onreset",
+        "required": false,
+        "type": "() => void"
+      },
+      {
+        "bindable": false,
+        "description": "Formats the query preview without coupling the Kit to a query language.",
+        "name": "describequery",
+        "required": false,
+        "type": "(request: TableQueryRequest) => string"
+      },
+      {
+        "bindable": false,
+        "description": "Optional description of the source row identity.",
+        "name": "identityLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"\"",
+        "description": "Extra root classes.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Filter and edit result rows with stable source identity and caller-owned query projection.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/data/src/core/contracts/tableexplorer.ts",
+        "kits/data/src/table-explorer.ts",
+        "kits/data/src/diff-explorer.variants.ts"
+      ],
+      "tests": [
+        "kits/data/test/remaining-explorers.test.ts",
+        "kits/data/test/remaining-explorers-native.test.ts",
+        "apps/showcase/test/remaining-explorers.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/data/src/TableExplorer.svelte",
+    "specifier": "@reddb-io/design-system/data/TableExplorer"
+  }
+}

@@ -1,0 +1,1 @@
+import{tv as t}from"tailwind-variants";const e=t({slots:{root:"relative min-w-0",viewport:"overflow-hidden rounded-md",slide:"min-w-0",controls:["mt-[var(--reddb-spatial-gap-sm)] flex items-center justify-between","gap-[var(--reddb-spatial-gap-sm)]"].join(" "),position:"text-sm text-foreground",rotation:"ms-auto"}});export{e as carousel};

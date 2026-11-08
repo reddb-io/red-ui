@@ -1,0 +1,431 @@
+{
+  "schemaVersion": 1,
+  "id": "base/SectionHeading",
+  "topics": [],
+  "related": [
+    "base/Accordion",
+    "base/AudioMeter",
+    "base/Avatar",
+    "base/Badge",
+    "base/Card",
+    "base/Carousel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-lg",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type SectionHeadingLevel = (typeof SECTION_HEADING_LEVELS)[number];",
+          "name": "SectionHeadingLevel",
+          "source": "kits/base/src/section-heading.variants.ts"
+        },
+        {
+          "declaration": "export type SectionHeadingSize = NonNullable<SectionHeadingVariants[\"size\"]>;",
+          "name": "SectionHeadingSize",
+          "source": "kits/base/src/section-heading.variants.ts"
+        },
+        {
+          "declaration": "export type SectionHeadingVariants = VariantProps<typeof sectionHeading>;",
+          "name": "SectionHeadingVariants",
+          "source": "kits/base/src/section-heading.variants.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "native element"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "SectionHeading",
+          "nativeAttributes": [
+            "div"
+          ],
+          "props": [
+            {
+              "description": "Heading text.",
+              "name": "title",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Supporting paragraph, omitted when empty.",
+              "name": "description",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Heading id for an enclosing landmark's aria-labelledby.",
+              "name": "titleId",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "2",
+              "description": "Document outline depth, independent from visual size.",
+              "name": "level",
+              "required": false,
+              "type": "SectionHeadingLevel",
+              "vocabulary": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6"
+              ]
+            },
+            {
+              "default": "\"md\"",
+              "description": "Visual title size.",
+              "name": "size",
+              "required": false,
+              "type": "SectionHeadingSize",
+              "vocabulary": [
+                "sm",
+                "md",
+                "lg",
+                "display"
+              ]
+            },
+            {
+              "default": "true",
+              "description": "Draw the divider and retain its spacing.",
+              "name": "rule",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Decorative content placed before the heading text.",
+              "name": "leading",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Trailing caller-owned actions.",
+              "name": "actions",
+              "required": false,
+              "type": "ReactNode"
+            }
+          ],
+          "source": "kits/base/react/src/SectionHeading.tsx",
+          "specifier": "@reddb-io/design-system/base/SectionHeading"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/SectionHeading.tsx",
+        "specifier": "@reddb-io/design-system/base/SectionHeading",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "section-heading"
+        },
+        "source": "kits/base/src/SectionHeading.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "SectionHeading",
+    "props": [
+      {
+        "bindable": false,
+        "description": "The heading text, rendered in the `h1` to `h6` element that `level` selects.",
+        "name": "title",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Optional supporting paragraph shown under the title; omitted when empty.",
+        "name": "description",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Optional id for the rendered heading, for an enclosing landmark's aria-labelledby.",
+        "name": "titleId",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "2",
+        "description": "Outline depth from `1` to `6`, choosing the heading element independently of `size`. Defaults to `2`.",
+        "name": "level",
+        "required": false,
+        "type": "SectionHeadingLevel",
+        "vocabulary": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "Visual size of the title: `sm`, `md`, `lg` or the Theme's `display` role, independent of `level`. Defaults to `md`.",
+        "name": "size",
+        "required": false,
+        "type": "SectionHeadingSize",
+        "vocabulary": [
+          "sm",
+          "md",
+          "lg",
+          "display"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "true",
+        "description": "Whether a divider is drawn under the heading and its spacing kept. Defaults to `true`.",
+        "name": "rule",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Decorative content placed before the heading text.",
+        "name": "leading",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Trailing controls, such as Buttons, placed at the inline end of the heading.",
+        "name": "actions",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the root slot's own.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A heading whose visual weight and outline depth are set separately, so neither has to be sacrificed to the other.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "section-heading"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/section-heading.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-base.test.ts",
+        "apps/showcase/test/settings-row-extensions.browser.test.ts"
+      ],
+      "typeMappings": {
+        "actions": {
+          "react": "ReactNode",
+          "reason": "Native content for caller-owned actions; all heading levels and sizes are checked with an actual button.",
+          "svelte": "Snippet"
+        },
+        "leading": {
+          "react": "ReactNode",
+          "reason": "Decorative native content is hidden from assistive technology in both adapters.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Decorative content placed before the heading text.",
+        "name": "leading",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "Trailing controls, such as Buttons, placed at the inline end of the heading.",
+        "name": "actions",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/SectionHeading.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

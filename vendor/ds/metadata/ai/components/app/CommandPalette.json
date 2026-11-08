@@ -1,0 +1,809 @@
+{
+  "schemaVersion": 1,
+  "id": "app/CommandPalette",
+  "topics": [],
+  "related": [
+    "app/BottomNavigation",
+    "app/CategoryPreview",
+    "app/NavItem",
+    "app/ShortcutHelp",
+    "app/SidebarNavigation",
+    "app/SidebarPanel"
+  ],
+  "contract": {
+    "category": "Navigation",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-border",
+          "sources": [
+            "kits/base/src/dialog.variants.ts",
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-foreground",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-surface",
+          "sources": [
+            "kits/base/src/dialog.variants.ts",
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/app/src/composites/command-palette.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dialog.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/kbd.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/app/src/composites/command-palette.variants.ts",
+            "kits/base/src/Dialog.svelte",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/kbd.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-scrim",
+          "sources": [
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-container-wide",
+          "sources": [
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/kbd.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/dialog.variants.ts",
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-shadow-elevation-overlay",
+          "sources": [
+            "kits/base/src/dialog.variants.ts",
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/Dialog.svelte",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/base/src/Dialog.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/app/src/composites/command-palette.variants.ts",
+            "kits/base/src/Dialog.svelte",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/app/src/composites/command-palette.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/app/src/composites/command-palette.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/app/src/composites/command-palette.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/app/src/composites/command-palette.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/app/src/composites/command-palette.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/app/src/composites/command-palette.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/base/src/Dialog.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/base/src/Dialog.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/base/src/Dialog.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/base/src/Dialog.svelte"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** One caller-owned command offered by the global command search. */\nexport interface CommandPaletteCommand {\n  /** Stable identity returned when the command is selected. */\n  id: string;\n  /** Visible, searchable command name. */\n  label: string;\n  /** Visible category heading; commands retain their order within each category. */\n  group?: string;\n  /** Supporting, searchable explanation or destination. */\n  description?: string;\n  /** Visual shortcut reference; registration remains caller-owned. */\n  shortcut?: readonly string[];\n  /** Additional search terms, never rendered as labels. */\n  keywords?: readonly string[];\n  /** Removes only this command from interaction and selection. */\n  disabled?: boolean;\n  /** Caller-owned business action. */\n  onselect?: () => void;\n}",
+          "name": "CommandPaletteCommand",
+          "source": "kits/app/src/composites/command-palette.behavior.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Reports every open-state request.",
+        "dialect": "open",
+        "name": "onopenchange",
+        "type": "(open: boolean) => void"
+      },
+      {
+        "description": "Reports selection after the command action. Modal presentation closes before invoking actions.",
+        "dialect": "item-activation",
+        "name": "onselect",
+        "type": "(command: CommandPaletteCommand) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "app",
+          "name": "CommandPalette",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Accessible trigger label. Omit in dialog presentation for caller-owned invocation.",
+              "name": "triggerLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"popover\"",
+              "description": "Presentation surface. Defaults to anchored popover; dialog uses the native modal top layer.",
+              "name": "presentation",
+              "required": false,
+              "type": "\"popover\" | \"dialog\"",
+              "vocabulary": [
+                "popover",
+                "dialog"
+              ]
+            },
+            {
+              "description": "Search input placeholder.",
+              "name": "placeholder",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"No matching commands\"",
+              "description": "Explanation when no commands match. Defaults to \"No matching commands\".",
+              "name": "emptyLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Accessible name for the palette surface.",
+              "name": "contentLabel",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Visible Field label for command search.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "default": "[]",
+              "description": "Caller-owned command names and business actions.",
+              "name": "commands",
+              "required": false,
+              "type": "readonly CommandPaletteCommand[]"
+            },
+            {
+              "default": "false",
+              "description": "Whether the palette is open: `bind:open` (ADR 0026).",
+              "name": "open",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "default": "false",
+              "description": "Disables the trigger Button, so the palette cannot be opened. Defaults to `false`.",
+              "name": "disabled",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Extra classes, merged over the content slot's own, onto the Popover surface that holds the search.",
+              "name": "contentClass",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Extra classes merged onto the command search input.",
+              "name": "inputClass",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Reports every open-state request.",
+              "name": "onOpenChange",
+              "required": false,
+              "type": "(open: boolean) => void"
+            },
+            {
+              "description": "Reports selection after the command action. Modal presentation closes before invoking actions.",
+              "name": "onSelect",
+              "required": false,
+              "type": "(command: CommandPaletteCommand) => void"
+            },
+            {
+              "description": "Additional wrapper classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/app/react/src/CommandPalette.tsx",
+          "specifier": "@reddb-io/design-system/app/CommandPalette"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/react/src/CommandPalette.tsx",
+        "specifier": "@reddb-io/design-system/app/CommandPalette",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "command-palette"
+        },
+        "source": "kits/app/src/composites/CommandPalette.svelte",
+        "specifier": "@reddb-io/design-system/app",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "app",
+    "name": "CommandPalette",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible trigger label. Omit in dialog presentation for caller-owned invocation.",
+        "name": "triggerLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"popover\"",
+        "description": "Presentation surface. Defaults to anchored popover; dialog uses the native modal top layer.",
+        "name": "presentation",
+        "required": false,
+        "type": "\"popover\" | \"dialog\"",
+        "vocabulary": [
+          "popover",
+          "dialog"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Search input placeholder.",
+        "name": "placeholder",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"No matching commands\"",
+        "description": "Explanation when no commands match. Defaults to \"No matching commands\".",
+        "name": "emptyLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Accessible name for the palette surface.",
+        "name": "contentLabel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Visible Field label for command search.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "[]",
+        "description": "Caller-owned command names and business actions.",
+        "name": "commands",
+        "required": false,
+        "type": "readonly CommandPaletteCommand[]"
+      },
+      {
+        "bindable": true,
+        "default": "false",
+        "description": "Whether the palette is open: `bind:open` (ADR 0026).",
+        "name": "open",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Disables the trigger Button, so the palette cannot be opened. Defaults to `false`.",
+        "name": "disabled",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the content slot's own, onto the Popover surface that holds the search.",
+        "name": "contentClass",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the command search input.",
+        "name": "inputClass",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Reports every open-state request.",
+        "name": "onopenchange",
+        "required": false,
+        "type": "(open: boolean) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Additional wrapper classes.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Reports selection after the command action. Modal presentation closes before invoking actions.",
+        "name": "onselect",
+        "required": false,
+        "type": "(command: CommandPaletteCommand) => void"
+      }
+    ],
+    "purpose": "Global caller-owned commands searched through the canonical Combobox inside the canonical Popover focus lifecycle.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "command-palette"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/app/src/core/contracts/commandpalette.ts"
+      ],
+      "tests": [
+        "kits/app/test/framework-app.test.ts",
+        "apps/showcase/test/component-flavors-workspace.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/app/src/composites/CommandPalette.svelte",
+    "specifier": "@reddb-io/design-system/app"
+  }
+}

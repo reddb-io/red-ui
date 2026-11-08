@@ -1,0 +1,1 @@
+function i(e){return e.multiple?Array.from(e.selectedOptions,t=>t.value):e.value}function a(e,t){const n=new Set((Array.isArray(t)?t:[t]).map(String));let l=!1;for(const r of e.options){const o=n.has(r.value)&&(e.multiple||!l);r.selected=o,l||=o}!l&&!e.multiple&&(e.selectedIndex=-1)}export{i as readSelectValue,a as writeSelectValue};

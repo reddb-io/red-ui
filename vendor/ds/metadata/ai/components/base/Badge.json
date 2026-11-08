@@ -1,0 +1,334 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Badge",
+  "topics": [],
+  "related": [
+    "base/Accordion",
+    "base/AudioMeter",
+    "base/Avatar",
+    "base/Card",
+    "base/Carousel",
+    "base/Countdown"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-feedback",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type BadgeVariant = (typeof BADGE_VARIANTS)[number];",
+          "name": "BadgeVariant",
+          "source": "kits/base/src/badge.variants.ts"
+        },
+        {
+          "declaration": "/** @deprecated `neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release. */\nexport type DeprecatedBadgeVariant = keyof typeof DEPRECATED_BADGE_VARIANTS;",
+          "name": "DeprecatedBadgeVariant",
+          "source": "kits/base/src/badge.variants.ts"
+        },
+        {
+          "declaration": "export type Tone = (typeof TONES)[number];",
+          "name": "Tone",
+          "source": "kits/base/src/tone.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<span>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Badge",
+          "nativeAttributes": [
+            "span"
+          ],
+          "props": [
+            {
+              "description": "Required status text; colour alone never carries meaning.",
+              "name": "children",
+              "required": true,
+              "type": "ReactNode"
+            },
+            {
+              "default": "\"neutral\"",
+              "description": "Shared semantic meaning.",
+              "name": "tone",
+              "required": false,
+              "type": "Tone",
+              "vocabulary": [
+                "neutral",
+                "info",
+                "success",
+                "warning",
+                "danger"
+              ]
+            },
+            {
+              "default": "\"tinted\"",
+              "description": "Status emphasis, tinted by default.",
+              "name": "variant",
+              "required": false,
+              "type": "BadgeVariant",
+              "vocabulary": [
+                "tinted",
+                "filled",
+                "outline"
+              ]
+            }
+          ],
+          "source": "kits/base/react/src/Badge.tsx",
+          "specifier": "@reddb-io/design-system/base/Badge"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Badge.tsx",
+        "specifier": "@reddb-io/design-system/base/Badge",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "badge"
+        },
+        "source": "kits/base/src/Badge.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Badge",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Status text; required so colour can never be the whole message.",
+        "name": "children",
+        "required": true,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "default": "\"neutral\"",
+        "description": "What the status means. Defaults to `neutral`.",
+        "name": "tone",
+        "required": false,
+        "type": "Tone",
+        "vocabulary": [
+          "neutral",
+          "info",
+          "success",
+          "warning",
+          "danger"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"tinted\"",
+        "deprecatedValues": [
+          {
+            "note": "`neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release.",
+            "replacement": "tinted",
+            "value": "neutral"
+          },
+          {
+            "note": "`neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release.",
+            "replacement": "filled",
+            "value": "primary"
+          }
+        ],
+        "description": "How strongly the tone is drawn: `tinted` (default), `filled` or `outline`. `neutral` and `primary` are deprecated for one release.",
+        "name": "variant",
+        "required": false,
+        "type": "BadgeVariant | DeprecatedBadgeVariant",
+        "vocabulary": [
+          "tinted",
+          "filled",
+          "outline"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the canonical appearance.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A rectangular status marker, sized to sit inside running text.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "badge"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/badge.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-appearance.test.ts"
+      ]
+    },
+    "snippets": [
+      {
+        "description": "Status text; required so colour can never be the whole message.",
+        "name": "children",
+        "required": true,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/Badge.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

@@ -1,0 +1,353 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Field",
+  "topics": [
+    "campo formulario erro validacao label",
+    "field validation label error association"
+  ],
+  "related": [
+    "base/Input",
+    "base/Form",
+    "base/Alert",
+    "base/Calendar",
+    "base/Checkbox",
+    "base/Combobox"
+  ],
+  "contract": {
+    "category": "Data input",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** The framework-neutral association passed by Field to its control. */\nexport interface FieldControlProps {\n  /** The id the label targets. */\n  id: string;\n  /** Native required semantics, when the Field declares them. */\n  required?: true;\n  /** Space-separated help and error ids. */\n  \"aria-describedby\"?: string;\n  /** Present only while the Field has an error. */\n  \"aria-invalid\"?: \"true\";\n  /** The Field's current error id. */\n  \"aria-errormessage\"?: string;\n}",
+          "name": "FieldControlProps",
+          "source": "kits/base/src/core/field.ts"
+        },
+        {
+          "declaration": "export type FieldLayout = (typeof FIELD_LAYOUTS)[number];",
+          "name": "FieldLayout",
+          "source": "kits/base/src/core/field.ts"
+        }
+      ]
+    },
+    "events": [],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "base",
+          "name": "Field",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Visible label text.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Supporting text announced with the control.",
+              "name": "help",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Current validation error, announced and associated with the control.",
+              "name": "error",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "false",
+              "description": "Makes the requirement visible and native.",
+              "name": "required",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Explicit control id; otherwise the renderer supplies a stable generated one.",
+              "name": "id",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"stacked\"",
+              "description": "Label placement: stacked above the control, or inline beside a binary choice.",
+              "name": "layout",
+              "required": false,
+              "type": "FieldLayout",
+              "vocabulary": [
+                "stacked",
+                "inline"
+              ]
+            },
+            {
+              "description": "Additional classes on the field root.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Render the control with the complete accessible association.",
+              "name": "children",
+              "required": true,
+              "type": "(control: FieldControlProps) => ReactNode"
+            }
+          ],
+          "source": "kits/base/react/src/Field.tsx",
+          "specifier": "@reddb-io/design-system/base/Field"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Field.tsx",
+        "specifier": "@reddb-io/design-system/base/Field",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "field-validation"
+        },
+        "source": "kits/base/src/Field.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "base",
+    "name": "Field",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Visible label text.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Supporting text announced with the control.",
+        "name": "help",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Current validation error, announced and associated with the control.",
+        "name": "error",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Makes the requirement visible and native.",
+        "name": "required",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Explicit control id; otherwise the renderer supplies a stable generated one.",
+        "name": "id",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"stacked\"",
+        "description": "Label placement: stacked above the control, or inline beside a binary choice.",
+        "name": "layout",
+        "required": false,
+        "type": "FieldLayout",
+        "vocabulary": [
+          "stacked",
+          "inline"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes on the Field root.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "The canonical Input or a consumer-owned control.",
+        "name": "children",
+        "required": true,
+        "type": "Snippet<[FieldControlProps]>"
+      }
+    ],
+    "purpose": "One accessible form relationship: label, help, error and required semantics passed intact to its control.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "field-validation"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/core/field.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-contracts.test.ts"
+      ],
+      "typeMappings": {
+        "children": {
+          "react": "(control: FieldControlProps) => ReactNode",
+          "reason": "Both render functions receive the same FieldControlProps association; shared scenarios verify label, required and error updates.",
+          "svelte": "Snippet<[FieldControlProps]>"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "The canonical Input or a consumer-owned control.",
+        "name": "children",
+        "required": true,
+        "type": "Snippet<[FieldControlProps]>"
+      }
+    ],
+    "source": "kits/base/src/Field.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

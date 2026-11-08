@@ -1,0 +1,342 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Progress",
+  "topics": [
+    "barra progresso carregamento",
+    "linear progress bar"
+  ],
+  "related": [
+    "base/Alert",
+    "base/ContentState",
+    "base/EmptyState",
+    "base/LoadingIndicator",
+    "base/Notification",
+    "base/RadialProgress"
+  ],
+  "contract": {
+    "category": "Feedback",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/meter.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/meter.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/meter.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/meter.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/meter.variants.ts",
+            "kits/base/src/progress.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/meter.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/meter.variants.ts",
+            "kits/base/src/progress.variants.ts",
+            "kits/base/src/segments.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/meter.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/meter.variants.ts",
+            "kits/base/src/progress.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/meter.variants.ts",
+            "kits/base/src/progress.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/meter.variants.ts",
+            "kits/base/src/progress.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/base/src/meter.variants.ts",
+            "kits/base/src/progress.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/meter.variants.ts",
+            "kits/base/src/progress.variants.ts",
+            "kits/base/src/segments.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/meter.variants.ts",
+            "kits/base/src/progress.variants.ts",
+            "kits/base/src/segments.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type Tone = (typeof TONES)[number];",
+          "name": "Tone",
+          "source": "kits/base/src/tone.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<div>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Progress",
+          "nativeAttributes": [
+            "div"
+          ],
+          "props": [
+            {
+              "description": "Omit or use null for indeterminate work.",
+              "name": "value",
+              "required": false,
+              "type": "number | null"
+            },
+            {
+              "default": "0",
+              "description": "Lower bound of the scale.",
+              "name": "min",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "100",
+              "description": "Upper bound; invalid or collapsed ranges are normalized safely.",
+              "name": "max",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "\"Progress\"",
+              "description": "Accessible name of the reading.",
+              "name": "label",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Formats the clamped value for visible and audible reading.",
+              "name": "formatValue",
+              "required": false,
+              "type": "(value: number) => string"
+            },
+            {
+              "default": "\"neutral\"",
+              "description": "Shared semantic meaning; neutral uses ink.",
+              "name": "tone",
+              "required": false,
+              "type": "Tone",
+              "vocabulary": [
+                "neutral",
+                "info",
+                "success",
+                "warning",
+                "danger"
+              ]
+            },
+            {
+              "default": "false",
+              "description": "Show the accessible name and normalized reading above the track.",
+              "name": "summary",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Decorative divisions, bounded to 128; exact readings are preserved.",
+              "name": "segments",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Maximum segments per row; omitted, keeps one row.",
+              "name": "segmentColumns",
+              "required": false,
+              "type": "number"
+            }
+          ],
+          "source": "kits/base/react/src/Progress.tsx",
+          "specifier": "@reddb-io/design-system/base/Progress"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Progress.tsx",
+        "specifier": "@reddb-io/design-system/base/Progress",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "progress"
+        },
+        "source": "kits/base/src/Progress.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Progress",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Omit the value for indeterminate work.",
+        "name": "value",
+        "required": false,
+        "type": "number | null"
+      },
+      {
+        "bindable": false,
+        "default": "0",
+        "description": "Lower bound of the scale, exposed as `aria-valuemin`; defaults to `0`.",
+        "name": "min",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "100",
+        "description": "Upper bound of the scale, exposed as `aria-valuemax`; defaults to `100`. A `max` not above `min` is widened to one unit.",
+        "name": "max",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "\"Progress\"",
+        "description": "Complete accessible name for the progress bar.",
+        "name": "label",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Show the label and normalized value beside the track.",
+        "name": "summary",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Audible value text; receives the clamped value.",
+        "name": "formatValue",
+        "required": false,
+        "type": "(value: number) => string"
+      },
+      {
+        "bindable": false,
+        "default": "\"neutral\"",
+        "description": "What the progress means: the shared tone vocabulary (ADR 0026). Defaults to `neutral` (ink).",
+        "name": "tone",
+        "required": false,
+        "type": "Tone",
+        "vocabulary": [
+          "neutral",
+          "info",
+          "success",
+          "warning",
+          "danger"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Decorative divisions, bounded to 128; omitted, uses the continuous track. The exact value remains accessible.",
+        "name": "segments",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Maximum segments per row; omitted, keeps one row.",
+        "name": "segmentColumns",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the root slot's own.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Determinate or indeterminate linear work whose visual fill and accessible value share one normalized range.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "progress"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/progress.variants.ts",
+        "kits/base/src/progress.behavior.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-base.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/Progress.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

@@ -1,0 +1,1 @@
+import{tv as e}from"tailwind-variants";import{typeRoleMerge as o}from"./type-roles.js";const t=e({base:["text-foreground underline decoration-current underline-offset-[var(--reddb-spatial-gap-sm)]","hover:decoration-2","focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"].join(" ")},o);export{t as link};

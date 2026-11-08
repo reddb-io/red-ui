@@ -1,0 +1,1009 @@
+{
+  "schemaVersion": 1,
+  "id": "data/Graph",
+  "topics": [],
+  "related": [
+    "data/ActivityTimeline",
+    "data/BarChart",
+    "data/BreakdownBar",
+    "data/Candlestick",
+    "data/CompositeChart",
+    "data/DeveloperPanel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/src/graph.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/toggle-button.variants.ts",
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte",
+            "kits/data/src/graph.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-1",
+          "sources": [
+            "kits/data/src/graph.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-2",
+          "sources": [
+            "kits/data/src/graph.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-3",
+          "sources": [
+            "kits/data/src/graph.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-4",
+          "sources": [
+            "kits/data/src/graph.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-5",
+          "sources": [
+            "kits/data/src/graph.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-6",
+          "sources": [
+            "kits/data/src/graph.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-lg",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-md",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-sm",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/toggle-button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type GraphColorToken =\n  | (typeof GRAPH_COLOR_TOKENS)[number]\n  | typeof GRAPH_EDGE_COLOR_TOKEN\n  | typeof GRAPH_MUTED_COLOR_TOKEN;",
+          "name": "GraphColorToken",
+          "source": "kits/data/src/graph.ts"
+        },
+        {
+          "declaration": "export interface GraphData {\n  nodes: readonly GraphNode[];\n  edges: readonly GraphEdge[];\n}",
+          "name": "GraphData",
+          "source": "kits/data/src/graph.ts"
+        },
+        {
+          "declaration": "export interface GraphEdge {\n  id?: string;\n  source: string;\n  target: string;\n  label?: string;\n  weight?: number;\n  /** Optional semantic DS token override. Raw colors are intentionally unsupported. */\n  color?: GraphColorToken;\n  /** Caller-owned domain data. The design system transports but never interprets it. */\n  metadata?: GraphMetadata;\n}",
+          "name": "GraphEdge",
+          "source": "kits/data/src/graph.ts"
+        },
+        {
+          "declaration": "export interface GraphInteraction {\n  kind: \"node\" | \"edge\";\n  action: \"click\" | \"focus\";\n  id: string;\n  metadata?: GraphMetadata;\n}",
+          "name": "GraphInteraction",
+          "source": "kits/data/src/graph.ts"
+        },
+        {
+          "declaration": "/** Deterministic arrangement selected by the graph contract. */\nexport type GraphLayout = \"stress\" | \"force\" | \"radial\";",
+          "name": "GraphLayout",
+          "source": "kits/data/src/graph.ts"
+        },
+        {
+          "declaration": "export type GraphMetadata = Record<string, unknown>;",
+          "name": "GraphMetadata",
+          "source": "kits/data/src/graph.ts"
+        },
+        {
+          "declaration": "export interface GraphNode {\n  /** Stable node identity. */\n  id: string;\n  label?: string;\n  /** Caller-owned community identity. Omit it to let the engine detect communities. */\n  community?: string;\n  /** Optional semantic DS token override. Raw colors are intentionally unsupported. */\n  color?: GraphColorToken;\n  size?: number;\n  x?: number;\n  y?: number;\n  /** Caller-owned domain data. The design system transports but never interprets it. */\n  metadata?: GraphMetadata;\n}",
+          "name": "GraphNode",
+          "source": "kits/data/src/graph.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Reports the focused node id after focus moves to a node, or clears.",
+        "dialect": "state",
+        "name": "onfocusednodechange",
+        "type": "(id: string | null) => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `onfocusednodechange` (ADR 0026); removed next release.",
+          "replacement": "onfocusednodechange"
+        },
+        "description": "Deprecated alias. Renamed `onfocusednodechange` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onFocusedNode",
+        "type": "(id: string | null) => void"
+      },
+      {
+        "description": "Reports the still-collapsed communities after one expands.",
+        "dialect": "state",
+        "name": "oncollapsedcommunitieschange",
+        "type": "(communities: readonly string[]) => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `oncollapsedcommunitieschange` (ADR 0026); removed next release.",
+          "replacement": "oncollapsedcommunitieschange"
+        },
+        "description": "Deprecated alias. Renamed `oncollapsedcommunitieschange` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onCollapsedCommunitiesChange",
+        "type": "(communities: readonly string[]) => void"
+      },
+      {
+        "description": "A discrete event: every click and keyboard focus on a node or edge, caller metadata intact.",
+        "dialect": "discrete",
+        "name": "oninteraction",
+        "type": "(interaction: GraphInteraction) => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `oninteraction` (ADR 0026); removed next release.",
+          "replacement": "oninteraction"
+        },
+        "description": "Deprecated alias. Renamed `oninteraction` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onInteraction",
+        "type": "(interaction: GraphInteraction) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "data",
+          "name": "Graph",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "default": "false",
+              "description": "Draw community boundaries and route edges between their borders.",
+              "name": "grouped",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "default": "false",
+              "description": "Bundle compatible edges, bounded to 1500 edges with an explicit fallback.",
+              "name": "bundled",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "default": "false",
+              "description": "Show zoom and fit controls for the canvas and accessible SVG fallback.",
+              "name": "controls",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "The network to draw: `nodes` (a stable `id` each, plus optional label, community, token colour, size, position and caller-owned `metadata`) and `edges` between node ids.",
+              "name": "data",
+              "required": true,
+              "type": "GraphData"
+            },
+            {
+              "default": "\"Network graph\"",
+              "description": "Accessible name for the complete network.",
+              "name": "label",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "640",
+              "description": "Logical width of the drawing area in px, used for layout and the SVG `viewBox`; the graph still stretches to its container's width. Defaults to `640`.",
+              "name": "width",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "400",
+              "description": "Height of the drawing area in px. Defaults to `400`.",
+              "name": "height",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "\"auto\"",
+              "description": "Force the dependency-free fallback for SSR, print, tests, or constrained clients.",
+              "name": "renderer",
+              "required": false,
+              "type": "\"auto\" | \"svg\"",
+              "vocabulary": [
+                "auto",
+                "svg"
+              ]
+            },
+            {
+              "default": "true",
+              "description": "Shows a search field above the graph that finds nodes by label and focuses the chosen match. Defaults to `true`.",
+              "name": "searchable",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Id of the focused node, or `null` for none. Passing it (even `null`) makes focus caller-controlled; omitted, the Graph tracks focus itself.",
+              "name": "focusedNode",
+              "required": false,
+              "type": "string | null"
+            },
+            {
+              "default": "[]",
+              "description": "Communities initially represented by one member-sized supernode.",
+              "name": "collapsedCommunities",
+              "required": false,
+              "type": "readonly string[]"
+            },
+            {
+              "default": "\"stress\"",
+              "description": "Sparse-stress arrangement; force and radial remain as legacy aliases.",
+              "name": "layout",
+              "required": false,
+              "type": "GraphLayout",
+              "vocabulary": [
+                "stress",
+                "force",
+                "radial"
+              ]
+            },
+            {
+              "default": "0",
+              "description": "Deterministic seed shared by the SVG fallback and lazy engine.",
+              "name": "layoutSeed",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Optional number of top-backbone-betweenness roots to separate.",
+              "name": "hubCount",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "false",
+              "description": "Surface metadata for the last interaction below the graph.",
+              "name": "showDetails",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Reports caller-owned focus.",
+              "name": "onFocusedNodeChange",
+              "required": false,
+              "type": "(id: string | null) => void"
+            },
+            {
+              "description": "Reports community expansion.",
+              "name": "onCollapsedCommunitiesChange",
+              "required": false,
+              "type": "(communities: readonly string[]) => void"
+            },
+            {
+              "description": "Reports discrete graph interaction with caller metadata.",
+              "name": "onInteraction",
+              "required": false,
+              "type": "(interaction: GraphInteraction) => void"
+            },
+            {
+              "default": "\"\"",
+              "description": "Additional root classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/data/react/src/Graph.tsx",
+          "specifier": "@reddb-io/design-system/data/Graph"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/react/src/Graph.tsx",
+        "specifier": "@reddb-io/design-system/data/Graph",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/src/Graph.svelte",
+        "specifier": "@reddb-io/design-system/data/Graph",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "data",
+    "name": "Graph",
+    "props": [
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Draw community boundaries and route edges between their borders.",
+        "name": "grouped",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Bundle compatible edges, bounded to 1500 edges with an explicit fallback.",
+        "name": "bundled",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Show zoom and fit controls for the canvas and accessible SVG fallback.",
+        "name": "controls",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "The network to draw: `nodes` (a stable `id` each, plus optional label, community, token colour, size, position and caller-owned `metadata`) and `edges` between node ids.",
+        "name": "data",
+        "required": true,
+        "type": "GraphData"
+      },
+      {
+        "bindable": false,
+        "default": "\"Network graph\"",
+        "description": "Accessible name for the complete network.",
+        "name": "label",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "640",
+        "description": "Logical width of the drawing area in px, used for layout and the SVG `viewBox`; the graph still stretches to its container's width. Defaults to `640`.",
+        "name": "width",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "400",
+        "description": "Height of the drawing area in px. Defaults to `400`.",
+        "name": "height",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "\"auto\"",
+        "description": "Force the dependency-free fallback for SSR, print, tests, or constrained clients.",
+        "name": "renderer",
+        "required": false,
+        "type": "\"auto\" | \"svg\"",
+        "vocabulary": [
+          "auto",
+          "svg"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "true",
+        "description": "Shows a search field above the graph that finds nodes by label and focuses the chosen match. Defaults to `true`.",
+        "name": "searchable",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Id of the focused node, or `null` for none. Passing it (even `null`) makes focus caller-controlled; omitted, the Graph tracks focus itself.",
+        "name": "focusedNode",
+        "required": false,
+        "type": "string | null"
+      },
+      {
+        "bindable": false,
+        "default": "[]",
+        "description": "Communities initially represented by one member-sized supernode.",
+        "name": "collapsedCommunities",
+        "required": false,
+        "type": "readonly string[]"
+      },
+      {
+        "bindable": false,
+        "default": "\"stress\"",
+        "description": "Sparse-stress arrangement; force and radial remain as legacy aliases.",
+        "name": "layout",
+        "required": false,
+        "type": "GraphLayout",
+        "vocabulary": [
+          "stress",
+          "force",
+          "radial"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "0",
+        "description": "Deterministic seed shared by the SVG fallback and lazy engine.",
+        "name": "layoutSeed",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Optional number of top-backbone-betweenness roots to separate.",
+        "name": "hubCount",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Surface metadata for the last interaction below the graph.",
+        "name": "showDetails",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Reports the focused node id after focus moves to a node, or clears.",
+        "name": "onfocusednodechange",
+        "required": false,
+        "type": "(id: string | null) => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `onfocusednodechange` (ADR 0026); removed next release.",
+          "replacement": "onfocusednodechange"
+        },
+        "description": "Deprecated alias. Renamed `onfocusednodechange` (ADR 0026); removed next release.",
+        "name": "onFocusedNode",
+        "required": false,
+        "type": "(id: string | null) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Reports the still-collapsed communities after one expands.",
+        "name": "oncollapsedcommunitieschange",
+        "required": false,
+        "type": "(communities: readonly string[]) => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `oncollapsedcommunitieschange` (ADR 0026); removed next release.",
+          "replacement": "oncollapsedcommunitieschange"
+        },
+        "description": "Deprecated alias. Renamed `oncollapsedcommunitieschange` (ADR 0026); removed next release.",
+        "name": "onCollapsedCommunitiesChange",
+        "required": false,
+        "type": "(communities: readonly string[]) => void"
+      },
+      {
+        "bindable": false,
+        "description": "A discrete event: every click and keyboard focus on a node or edge, caller metadata intact.",
+        "name": "oninteraction",
+        "required": false,
+        "type": "(interaction: GraphInteraction) => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `oninteraction` (ADR 0026); removed next release.",
+          "replacement": "oninteraction"
+        },
+        "description": "Deprecated alias. Renamed `oninteraction` (ADR 0026); removed next release.",
+        "name": "onInteraction",
+        "required": false,
+        "type": "(interaction: GraphInteraction) => void"
+      },
+      {
+        "bindable": false,
+        "default": "\"\"",
+        "description": "Extra classes, merged onto the root element that holds the search field and the drawing.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "An accessible network with a deterministic SVG first paint and a lazily loaded interactive engine.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/data/src/core/contracts/graph.ts"
+      ],
+      "tests": [
+        "kits/data/test/framework-data.test.ts",
+        "apps/showcase/test/component-flavors-graphical.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/data/src/Graph.svelte",
+    "specifier": "@reddb-io/design-system/data/Graph"
+  }
+}

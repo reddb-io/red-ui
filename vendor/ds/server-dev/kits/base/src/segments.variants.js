@@ -1,0 +1,1 @@
+import{tv as l}from"tailwind-variants";const r=l({slots:{track:"grid w-full gap-[var(--reddb-spatial-gap-sm)]",cell:"h-[var(--reddb-spatial-gap-md)] min-w-0 overflow-hidden bg-muted",fill:"h-full"}});export{r as segments};

@@ -1,0 +1,1 @@
+import{tv as a}from"tailwind-variants";import{dialog as t}from"./dialog.variants.js";const e=a({base:[t(),"max-w-md"].join(" ")}),i=a({base:["mt-[var(--reddb-spatial-gap-lg)]","flex flex-wrap justify-end gap-[var(--reddb-spatial-gap-md)]"].join(" ")});export{e as alertDialog,i as alertDialogActions};

@@ -80,6 +80,43 @@ if (receipt.fontLoading !== (manifest.fontLoading ?? "complete")) {
     "DS receipt does not match the manifest font policy. Run pnpm ds:sync."
   );
 }
+const expectedDistribution = {
+  format: manifest.distribution?.format ?? "source",
+  minify: manifest.distribution?.minify ?? false,
+  sourcemaps: manifest.distribution?.sourcemaps ?? false,
+};
+const receivedDistribution = {
+  format: receipt.distribution?.format,
+  minify: receipt.distribution?.minify,
+  sourcemaps: receipt.distribution?.sourcemaps,
+};
+if (
+  JSON.stringify(receivedDistribution) !== JSON.stringify(expectedDistribution)
+) {
+  throw new Error(
+    "DS receipt does not match the manifest distribution. Run pnpm ds:sync."
+  );
+}
+function normalized(value) {
+  if (Array.isArray(value)) return [...value].sort();
+  if (value && typeof value === "object")
+    return Object.fromEntries(
+      Object.entries(value)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([key, child]) => [key, normalized(child)])
+    );
+  return value;
+}
+const expectedSelection = manifest.distribution?.include;
+const receivedSelection = receipt.selection?.include;
+if (
+  JSON.stringify(normalized(receivedSelection)) !==
+  JSON.stringify(normalized(expectedSelection))
+) {
+  throw new Error(
+    "DS receipt does not match the manifest component selection. Run pnpm ds:sync."
+  );
+}
 for (const kit of manifest.kits) {
   if (!receipt.kits.includes(kit))
     throw new Error(`DS receipt is missing declared Kit ${kit}`);

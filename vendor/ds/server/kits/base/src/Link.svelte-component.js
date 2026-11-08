@@ -1,0 +1,1 @@
+import*as t from"svelte/internal/server";import{link as m}from"./link.variants.js";function p(a,l){a.component(s=>{const{href:o,class:c,children:i,$$slots:u,$$events:e,...n}=l;s.push(`<a${t.attributes({...n,href:o,"data-link":!0,class:t.clsx(m({class:c}))})}>`),i?.(s),s.push("<!----></a>")})}export{p as default};

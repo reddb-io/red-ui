@@ -1,2 +1,8 @@
-pnpm exec lint-staged
+# A compiled Design System Sync replaces thousands of generated files. Keep
+# Git's rename scan from leaking its warning into lint-staged's file list and
+# serialize formatter chunks so the hook stays inside workstation memory.
+GIT_CONFIG_COUNT=1 \
+  GIT_CONFIG_KEY_0=diff.renameLimit \
+  GIT_CONFIG_VALUE_0=5000 \
+  pnpm exec lint-staged --concurrent false
 pnpm run test

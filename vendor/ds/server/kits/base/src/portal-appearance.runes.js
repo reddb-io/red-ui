@@ -1,0 +1,1 @@
+import{createAttachmentKey as n}from"svelte/attachments";import{modalPortalContainer as i}from"./core/portal-appearance.js";function c(t){let r,e={},o;return{anchor:{[n()]:a=>(r=a,()=>{r=void 0})},get attributes(){return e},get container(){return t()&&r?i(r):o}}}export{c as portalAppearance};

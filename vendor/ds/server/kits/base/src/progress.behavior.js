@@ -1,0 +1,1 @@
+function o(n){return typeof n=="number"&&Number.isFinite(n)}function c(n,t=0,i=100){const e=Number.isFinite(t)?t:0,a=Number.isFinite(i)?i:e+100,r=a>e?a:e+1,m=Number.isFinite(n)?n:e,u=Math.min(r,Math.max(e,m));return{min:e,max:r,value:u,percent:(u-e)/(r-e)*100}}function s(n){return`${Math.round(n.percent)}%`}export{s as formatPercent,o as isDeterminate,c as normalizeRange};

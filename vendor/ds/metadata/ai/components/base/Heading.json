@@ -1,0 +1,305 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Heading",
+  "topics": [],
+  "related": [
+    "base/Accordion",
+    "base/AudioMeter",
+    "base/Avatar",
+    "base/Badge",
+    "base/Card",
+    "base/Carousel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-font-size",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-font-weight",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-letter-spacing",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-line-height",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type HeadingLevel = (typeof HEADING_LEVELS)[number];",
+          "name": "HeadingLevel",
+          "source": "kits/base/src/heading.variants.ts"
+        },
+        {
+          "declaration": "export type HeadingRole = NonNullable<HeadingVariants[\"role\"]>;",
+          "name": "HeadingRole",
+          "source": "kits/base/src/heading.variants.ts"
+        },
+        {
+          "declaration": "export type HeadingVariants = VariantProps<typeof heading>;",
+          "name": "HeadingVariants",
+          "source": "kits/base/src/heading.variants.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "native element"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Heading",
+          "nativeAttributes": [
+            "h2"
+          ],
+          "props": [
+            {
+              "description": "Heading text or inline content, required by the common contract.",
+              "name": "children",
+              "required": true,
+              "type": "ReactNode"
+            },
+            {
+              "default": "2",
+              "description": "Document outline level, independent from its appearance.",
+              "name": "level",
+              "required": false,
+              "type": "HeadingLevel",
+              "vocabulary": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6"
+              ]
+            },
+            {
+              "description": "Theme type role; title at level 1, heading otherwise.",
+              "name": "role",
+              "required": false,
+              "type": "HeadingRole",
+              "vocabulary": [
+                "display",
+                "title",
+                "heading"
+              ]
+            }
+          ],
+          "source": "kits/base/react/src/Heading.tsx",
+          "specifier": "@reddb-io/design-system/base/Heading"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Heading.tsx",
+        "specifier": "@reddb-io/design-system/base/Heading",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/src/Heading.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Heading",
+    "props": [
+      {
+        "bindable": false,
+        "default": "2",
+        "description": "Document outline depth: renders `h1`…`h6`.",
+        "name": "level",
+        "required": false,
+        "type": "HeadingLevel",
+        "vocabulary": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "The Theme type role it reads as — independent of `level`. Defaults to `title` at level 1 and `heading` below it.",
+        "name": "role",
+        "required": false,
+        "type": "HeadingRole",
+        "vocabulary": [
+          "display",
+          "title",
+          "heading"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the heading element.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "The heading text or inline content.",
+        "name": "children",
+        "required": true,
+        "type": "Snippet"
+      }
+    ],
+    "purpose": "A heading whose outline level and Theme type role are separate choices, so a section sits at the right depth and the right size.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/heading.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-appearance.test.ts"
+      ]
+    },
+    "snippets": [
+      {
+        "description": "The heading text or inline content.",
+        "name": "children",
+        "required": true,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/Heading.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

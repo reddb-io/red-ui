@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Indicator",
+  "topics": [],
+  "related": [
+    "base/AspectRatio",
+    "base/BulletsSlide",
+    "base/Container",
+    "base/ContentMask",
+    "base/ControlGroup",
+    "base/Deck"
+  ],
+  "contract": {
+    "category": "Layout",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [],
+      "types": [
+        {
+          "declaration": "export type IndicatorPosition = (typeof INDICATOR_POSITIONS)[number];",
+          "name": "IndicatorPosition",
+          "source": "kits/base/src/indicator.variants.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<span>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Indicator",
+          "nativeAttributes": [
+            "span"
+          ],
+          "props": [
+            {
+              "description": "Caller-owned marker placed around the anchored child.",
+              "name": "marker",
+              "required": true,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Content whose box establishes the placement boundary.",
+              "name": "children",
+              "required": true,
+              "type": "ReactNode"
+            },
+            {
+              "default": "\"top-end\"",
+              "description": "Logical marker anchor.",
+              "name": "position",
+              "required": false,
+              "type": "IndicatorPosition",
+              "vocabulary": [
+                "top-start",
+                "top-center",
+                "top-end",
+                "middle-start",
+                "middle-end",
+                "bottom-start",
+                "bottom-center",
+                "bottom-end"
+              ]
+            }
+          ],
+          "source": "kits/base/react/src/Indicator.tsx",
+          "specifier": "@reddb-io/design-system/base/Indicator"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Indicator.tsx",
+        "specifier": "@reddb-io/design-system/base/Indicator",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "indicator"
+        },
+        "source": "kits/base/src/Indicator.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Indicator",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Content placed around the anchored child.",
+        "name": "marker",
+        "required": true,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "The content whose box establishes the placement boundary.",
+        "name": "children",
+        "required": true,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "default": "\"top-end\"",
+        "description": "Logical marker anchor. Defaults to top-end.",
+        "name": "position",
+        "required": false,
+        "type": "IndicatorPosition",
+        "vocabulary": [
+          "top-start",
+          "top-center",
+          "top-end",
+          "middle-start",
+          "middle-end",
+          "bottom-start",
+          "bottom-center",
+          "bottom-end"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the placement root.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Caller-owned marker content placed at a logical edge without changing the anchored content's focus behavior.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "indicator"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/indicator.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-base.test.ts"
+      ],
+      "typeMappings": {
+        "marker": {
+          "react": "ReactNode",
+          "reason": "Framework-native content placed at the same marker anchor; all logical positions share DOM and appearance scenarios.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Content placed around the anchored child.",
+        "name": "marker",
+        "required": true,
+        "type": "Snippet"
+      },
+      {
+        "description": "The content whose box establishes the placement boundary.",
+        "name": "children",
+        "required": true,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/Indicator.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

@@ -1,0 +1,1 @@
+import{tv as t}from"tailwind-variants";const a=["horizontal","vertical"],i=t({base:"shrink-0 bg-muted",variants:{orientation:{horizontal:"my-[var(--reddb-spatial-gap-sm)] h-px w-full",vertical:"mx-[var(--reddb-spatial-gap-sm)] h-full w-px self-stretch"}},defaultVariants:{orientation:"horizontal"}});export{a as DIVIDER_ORIENTATIONS,i as divider};

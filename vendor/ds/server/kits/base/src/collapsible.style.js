@@ -1,0 +1,1 @@
+function i(e){if(typeof e!="string"||e.length===0)return;const t=e.split(";").map(n=>n.trim()).filter(n=>n.length>0&&!/:\s*undefined$/.test(n));return t.length>0?t.join("; "):void 0}export{i as sanitizeCollapsibleStyle};

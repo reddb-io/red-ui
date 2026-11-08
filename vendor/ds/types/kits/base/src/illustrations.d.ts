@@ -1,0 +1,18 @@
+export { type StateIllustrationAsset } from "./core/state-illustration";
+export { pageMissing } from "./illustrations/page-missing";
+export { accessLocked } from "./illustrations/access-locked";
+export { connectionLost } from "./illustrations/connection-lost";
+export { searchEmpty } from "./illustrations/search-empty";
+export { collectionEmpty } from "./illustrations/collection-empty";
+export { projectEmpty } from "./illustrations/project-empty";
+export { operationComplete } from "./illustrations/operation-complete";
+export { operationFailed } from "./illustrations/operation-failed";
+export { sessionExpired } from "./illustrations/session-expired";
+export { maintenance } from "./illustrations/maintenance";
+export { dataEmpty } from "./illustrations/data-empty";
+export { documentDraft } from "./illustrations/document-draft";
+export { integrationEmpty } from "./illustrations/integration-empty";
+export { tableEmptyCompact } from "./illustrations/table-empty-compact";
+export { graphEmptyCompact } from "./illustrations/graph-empty-compact";
+export { queueEmptyCompact } from "./illustrations/queue-empty-compact";
+export { documentCollectionEmptyCompact } from "./illustrations/document-collection-empty-compact";

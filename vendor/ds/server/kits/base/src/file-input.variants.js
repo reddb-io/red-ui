@@ -1,0 +1,1 @@
+import{tv as t}from"tailwind-variants";import{typeRoleMerge as o}from"./type-roles.js";import{field as r}from"./field.variants.js";import{input as e}from"./input.variants.js";const n=t({slots:{root:"grid gap-[var(--reddb-spatial-gap-sm)]",field:r().root(),control:e(),filename:"text-sm text-ink-muted"}},o);export{n as fileInput};

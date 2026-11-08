@@ -1,0 +1,460 @@
+{
+  "schemaVersion": 1,
+  "id": "app/OutcomeScreen",
+  "topics": [],
+  "related": [
+    "app/ErrorBoundary"
+  ],
+  "contract": {
+    "category": "Feedback",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/app/src/outcome-screen.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/app/src/outcome-screen.variants.ts",
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/app/src/outcome-screen.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/core/state-illustration.ts"
+          ]
+        },
+        {
+          "name": "--reddb-container-prose",
+          "sources": [
+            "kits/app/src/outcome-screen.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/state-illustration.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/app/src/outcome-screen.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/app/src/outcome-screen.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-section-inset",
+          "sources": [
+            "kits/app/src/outcome-screen.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/app/src/outcome-screen.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/app/src/outcome-screen.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/app/src/outcome-screen.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/app/src/outcome-screen.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-font-size",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-font-weight",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-letter-spacing",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-line-height",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** A small tree of static geometry; it never contains text, scripts, HTML or remote resources. */\nexport interface IllustrationNode {\n  /** Passive SVG element. */\n  readonly tag: IllustrationTag;\n  /** Geometry and token-backed paint attributes. */\n  readonly attrs: Readonly<Record<string, string>>;\n  /** Nested geometry, used for transforms. */\n  readonly children?: readonly IllustrationNode[];\n}",
+          "name": "IllustrationNode",
+          "source": "kits/base/src/core/state-illustration.ts"
+        },
+        {
+          "declaration": "/** Only passive SVG geometry is admitted in an illustration asset. */\nexport type IllustrationTag = \"g\" | \"path\" | \"circle\" | \"ellipse\" | \"rect\" | \"line\" | \"polyline\" | \"polygon\";",
+          "name": "IllustrationTag",
+          "source": "kits/base/src/core/state-illustration.ts"
+        },
+        {
+          "declaration": "/** Import a named asset from base/illustrations; its geometry is shared across frameworks. */\nexport interface StateIllustrationAsset {\n  /** Stable identity for exports and downloads. */\n  readonly name: string;\n  /** Short English catalogue label, separate from application copy. */\n  readonly label: string;\n  /** Meaning and suggested use, never inserted into the illustration. */\n  readonly description: string;\n  /** Passive geometry, with a 480 by 300 viewBox. */\n  readonly nodes: readonly IllustrationNode[];\n}",
+          "name": "StateIllustrationAsset",
+          "source": "kits/base/src/core/state-illustration.ts"
+        }
+      ]
+    },
+    "events": [],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "app",
+          "name": "OutcomeScreen",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Successful completion or a failure requiring explanation or recovery.",
+              "name": "outcome",
+              "required": true,
+              "type": "\"success\" | \"error\"",
+              "vocabulary": [
+                "success",
+                "error"
+              ]
+            },
+            {
+              "description": "The outcome in plain language; rendered as a heading.",
+              "name": "title",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "What happened and, when appropriate, what to do next.",
+              "name": "description",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "true",
+              "description": "Fill the viewport for a standalone result screen. Defaults to true.",
+              "name": "fullPage",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Optional extra guidance, such as whether the window can be closed.",
+              "name": "note",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "1",
+              "description": "Outline depth of the title. Defaults to 1 for a standalone screen.",
+              "name": "headingLevel",
+              "required": false,
+              "type": "1 | 2 | 3 | 4 | 5 | 6",
+              "vocabulary": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6"
+              ]
+            },
+            {
+              "description": "Override the default operation artwork with a context-specific DS illustration.",
+              "name": "illustration",
+              "required": false,
+              "type": "StateIllustrationAsset"
+            },
+            {
+              "description": "Optional product identity, supplied by the host.",
+              "name": "identity",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Caller-owned recovery, continuation or close controls.",
+              "name": "actions",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Extra classes on the outer region.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/app/react/src/OutcomeScreen.tsx",
+          "specifier": "@reddb-io/design-system/app/OutcomeScreen"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/react/src/OutcomeScreen.tsx",
+        "specifier": "@reddb-io/design-system/app/OutcomeScreen",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/src/composites/OutcomeScreen.svelte",
+        "specifier": "@reddb-io/design-system/app",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "app",
+    "name": "OutcomeScreen",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Successful completion or a failure requiring explanation or recovery.",
+        "name": "outcome",
+        "required": true,
+        "type": "\"success\" | \"error\"",
+        "vocabulary": [
+          "success",
+          "error"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "The outcome in plain language; rendered as a heading.",
+        "name": "title",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "What happened and, when appropriate, what to do next.",
+        "name": "description",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "true",
+        "description": "Fill the viewport for a standalone result screen. Defaults to true.",
+        "name": "fullPage",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Optional extra guidance, such as whether the window can be closed.",
+        "name": "note",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "1",
+        "description": "Outline depth of the title. Defaults to 1 for a standalone screen.",
+        "name": "headingLevel",
+        "required": false,
+        "type": "1 | 2 | 3 | 4 | 5 | 6",
+        "vocabulary": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Override the default operation artwork with a context-specific DS illustration.",
+        "name": "illustration",
+        "required": false,
+        "type": "StateIllustrationAsset"
+      },
+      {
+        "bindable": false,
+        "description": "Optional product identity, supplied by the host.",
+        "name": "identity",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned recovery, continuation or close controls.",
+        "name": "actions",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes on the outer region.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Present a successful or failed operation with an illustration, guidance and caller-owned actions.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/app/src/core/contracts/outcomescreen.ts",
+        "kits/app/src/outcome-screen.variants.ts"
+      ],
+      "tests": [
+        "kits/app/test/outcome-screen.test.ts",
+        "apps/showcase/test/outcome-screen.browser.test.ts"
+      ],
+      "typeMappings": {
+        "actions": {
+          "react": "ReactNode",
+          "reason": "Each native adapter renders the same caller-owned content.",
+          "svelte": "Snippet"
+        },
+        "identity": {
+          "react": "ReactNode",
+          "reason": "Each native adapter renders the same caller-owned content.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Optional product identity, supplied by the host.",
+        "name": "identity",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "Caller-owned recovery, continuation or close controls.",
+        "name": "actions",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/app/src/composites/OutcomeScreen.svelte",
+    "specifier": "@reddb-io/design-system/app"
+  }
+}

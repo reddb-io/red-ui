@@ -1,0 +1,1 @@
+import{tv as e}from"tailwind-variants";import{typeRoleMerge as t}from"./type-roles.js";const p=e({base:"text-eyebrow uppercase text-ink-muted"},t),E=["p","span","div"];export{E as EYEBROW_ELEMENTS,p as eyebrow};

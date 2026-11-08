@@ -1,0 +1,2547 @@
+{
+  "$schema": "./index.schema.json",
+  "schemaVersion": 1,
+  "catalogueSha256": "cef928b6bb87a07467659911d4def7c0c6c3d0815359a980376a9eb8423f7cec",
+  "components": [
+    {
+      "id": "base/Alert",
+      "name": "Alert",
+      "kit": "base",
+      "purpose": "A success, warning, or danger message whose announcement behavior and Theme-independent meaning travel together.",
+      "category": "Feedback",
+      "topics": [
+        "aviso erro sucesso mensagem",
+        "alert feedback message"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Alert"
+          ]
+        },
+        "react": {
+          "module": "base/Alert",
+          "exports": [
+            "Alert"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/base/Alert.json",
+      "sha256": "feb660d9dc2399d022368fd9fb180446846e4243c69073d62ce1ccd5d04a7e81",
+      "related": [
+        "base/ContentState",
+        "base/EmptyState",
+        "base/LoadingIndicator",
+        "base/Notification",
+        "base/Progress",
+        "base/RadialProgress"
+      ]
+    },
+    {
+      "id": "base/AlertDialog",
+      "name": "AlertDialog",
+      "kit": "base",
+      "purpose": "A destructive decision that stays modal until an explicit safe or confirming action restores invoking focus.",
+      "category": "Actions",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "AlertDialog"
+          ]
+        },
+        "react": {
+          "module": "base/AlertDialog",
+          "exports": [
+            "AlertDialog"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "confirmLabel"
+      ],
+      "document": "components/base/AlertDialog.json",
+      "sha256": "926fb5623ec39b8f6da5f4a2d519da827801f9fdad834add07d146b667223612",
+      "related": [
+        "base/AppearanceSwitch",
+        "base/Button",
+        "base/Dialog",
+        "base/DropdownMenu",
+        "base/Popover",
+        "base/Swap"
+      ]
+    },
+    {
+      "id": "base/Badge",
+      "name": "Badge",
+      "kit": "base",
+      "purpose": "A rectangular status marker, sized to sit inside running text.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Badge"
+          ]
+        },
+        "react": {
+          "module": "base/Badge",
+          "exports": [
+            "Badge"
+          ]
+        }
+      },
+      "required": [
+        "children"
+      ],
+      "document": "components/base/Badge.json",
+      "sha256": "21423d7dc7390bb9112f6fb8bdb654a25b5c1c6ec102c320588830779e60576f",
+      "related": [
+        "base/Accordion",
+        "base/AudioMeter",
+        "base/Avatar",
+        "base/Card",
+        "base/Carousel",
+        "base/Countdown"
+      ]
+    },
+    {
+      "id": "base/Button",
+      "name": "Button",
+      "kit": "base",
+      "purpose": "The Kit's only control: three emphases so a view can have exactly one affirmative action.",
+      "category": "Actions",
+      "topics": [
+        "botao enviar formulario",
+        "submit button action"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Button"
+          ]
+        },
+        "react": {
+          "module": "base/Button",
+          "exports": [
+            "Button"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/base/Button.json",
+      "sha256": "f79c7a4ec70a9612f01af01a27039b7d82e7a1f959178a7cea49317381d9d761",
+      "related": [
+        "base/AlertDialog",
+        "base/AppearanceSwitch",
+        "base/Dialog",
+        "base/DropdownMenu",
+        "base/Popover",
+        "base/Swap"
+      ]
+    },
+    {
+      "id": "base/Card",
+      "name": "Card",
+      "kit": "base",
+      "purpose": "A bounded surface whose header, body and footer stay in step through one variant.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Card"
+          ]
+        },
+        "react": {
+          "module": "base/Card",
+          "exports": [
+            "Card"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/base/Card.json",
+      "sha256": "d137a33741538d0aa2f3e5ea1fe65102f5f4ef441a02e1ba8364dc88efd2902a",
+      "related": [
+        "base/Accordion",
+        "base/AudioMeter",
+        "base/Avatar",
+        "base/Badge",
+        "base/Carousel",
+        "base/Countdown"
+      ]
+    },
+    {
+      "id": "base/Checkbox",
+      "name": "Checkbox",
+      "kit": "base",
+      "purpose": "A visibly named native binary choice whose Field associations, validity, focus, and submitted value stay together.",
+      "category": "Data input",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Checkbox"
+          ]
+        },
+        "react": {
+          "module": "base/Checkbox",
+          "exports": [
+            "Checkbox"
+          ]
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "document": "components/base/Checkbox.json",
+      "sha256": "d56397dc6486a6153cd47830214219ec91b085c175a88e7eda4f1bb183afb7e6",
+      "related": [
+        "base/Calendar",
+        "base/Combobox",
+        "base/DateField",
+        "base/DatePicker",
+        "base/DateRangeField",
+        "base/DateRangePicker"
+      ]
+    },
+    {
+      "id": "base/CodeBlock",
+      "name": "CodeBlock",
+      "kit": "base",
+      "purpose": "Preformatted source whose exact whitespace and canonical Button copy affordance travel together.",
+      "category": "Mockup",
+      "topics": [
+        "bloco codigo sintaxe copiar",
+        "code syntax highlight copy"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "CodeBlock"
+          ]
+        },
+        "react": {
+          "module": "base/CodeBlock",
+          "exports": [
+            "CodeBlock"
+          ]
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "document": "components/base/CodeBlock.json",
+      "sha256": "03ea512b49f45e0857ff9e96ab9eb6825b4fc7b04ecf09a86a11950f650595c1",
+      "related": [
+        "base/BrowserMockup",
+        "base/PhoneMockup",
+        "base/WindowMockup"
+      ]
+    },
+    {
+      "id": "base/DescriptionList",
+      "name": "DescriptionList",
+      "kit": "base",
+      "purpose": "Native term and detail pairs whose content stays caller-owned while Density controls their spacing.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "DescriptionList"
+          ]
+        },
+        "react": {
+          "module": "base/DescriptionList",
+          "exports": [
+            "DescriptionList"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/base/DescriptionList.json",
+      "sha256": "d9e8c975a33de8294e477f2fc776b833f7b69ff22b9892622518b67dedeb3335",
+      "related": [
+        "base/Accordion",
+        "base/AudioMeter",
+        "base/Avatar",
+        "base/Badge",
+        "base/Card",
+        "base/Carousel"
+      ]
+    },
+    {
+      "id": "base/Dialog",
+      "name": "Dialog",
+      "kit": "base",
+      "purpose": "A labeled modal that contains keyboard focus, dismisses with Escape, and returns focus to its trigger.",
+      "category": "Actions",
+      "topics": [
+        "modal confirmacao foco",
+        "dialog modal focus"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Dialog"
+          ]
+        },
+        "react": {
+          "module": "base/Dialog",
+          "exports": [
+            "Dialog"
+          ]
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "document": "components/base/Dialog.json",
+      "sha256": "c51d04fc15b59b7cbb8d4808680ceebbd156048f90f2cf6c7e9802a52ab0c4a2",
+      "related": [
+        "base/Button",
+        "base/Field",
+        "base/Form",
+        "base/AlertDialog",
+        "base/AppearanceSwitch",
+        "base/DropdownMenu"
+      ]
+    },
+    {
+      "id": "base/Disclosure",
+      "name": "Disclosure",
+      "kit": "base",
+      "purpose": "One canonical Button revealing one associated region while the surrounding arrangement and detail stay local.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Disclosure"
+          ]
+        },
+        "react": {
+          "module": "base/Disclosure",
+          "exports": [
+            "Disclosure"
+          ]
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "document": "components/base/Disclosure.json",
+      "sha256": "d789ab0e0932c829e52f68593e011e29ff213bb49173c7b63a89cc05d74402c8",
+      "related": [
+        "base/Accordion",
+        "base/AudioMeter",
+        "base/Avatar",
+        "base/Badge",
+        "base/Card",
+        "base/Carousel"
+      ]
+    },
+    {
+      "id": "base/Divider",
+      "name": "Divider",
+      "kit": "base",
+      "purpose": "A horizontal or vertical rule whose separator semantics travel with its visual direction.",
+      "category": "Layout",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Divider"
+          ]
+        },
+        "react": {
+          "module": "base/Divider",
+          "exports": [
+            "Divider"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/base/Divider.json",
+      "sha256": "11f0f965315af96ef23be32e92c69328287000b2730fae90768c0a79a7b8c340",
+      "related": [
+        "base/AspectRatio",
+        "base/BulletsSlide",
+        "base/Container",
+        "base/ContentMask",
+        "base/ControlGroup",
+        "base/Deck"
+      ]
+    },
+    {
+      "id": "base/EmptyState",
+      "name": "EmptyState",
+      "kit": "base",
+      "purpose": "What stands where a list has nothing in it: a sentence saying so, and the caller's own way out.",
+      "category": "Feedback",
+      "topics": [
+        "estado vazio sem dados",
+        "empty state no data"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "EmptyState"
+          ]
+        },
+        "react": {
+          "module": "base/EmptyState",
+          "exports": [
+            "EmptyState"
+          ]
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "document": "components/base/EmptyState.json",
+      "sha256": "68a74af8be91849672c0e8129ddaaba59f7b316050ef3c185f387c0361052ab2",
+      "related": [
+        "base/StateIllustration",
+        "base/Button",
+        "base/Alert",
+        "base/ContentState",
+        "base/LoadingIndicator",
+        "base/Notification"
+      ]
+    },
+    {
+      "id": "base/Field",
+      "name": "Field",
+      "kit": "base",
+      "purpose": "One accessible form relationship: label, help, error and required semantics passed intact to its control.",
+      "category": "Data input",
+      "topics": [
+        "campo formulario erro validacao label",
+        "field validation label error association"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Field"
+          ]
+        },
+        "react": {
+          "module": "base/Field",
+          "exports": [
+            "Field"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "children"
+      ],
+      "document": "components/base/Field.json",
+      "sha256": "9d758188ee3328d9a443b201dc16dfb54c5159bfd85b967511cbf422b16e6c22",
+      "related": [
+        "base/Input",
+        "base/Form",
+        "base/Alert",
+        "base/Calendar",
+        "base/Checkbox",
+        "base/Combobox"
+      ]
+    },
+    {
+      "id": "base/Heading",
+      "name": "Heading",
+      "kit": "base",
+      "purpose": "A heading whose outline level and Theme type role are separate choices, so a section sits at the right depth and the right size.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Heading"
+          ]
+        },
+        "react": {
+          "module": "base/Heading",
+          "exports": [
+            "Heading"
+          ]
+        }
+      },
+      "required": [
+        "children"
+      ],
+      "document": "components/base/Heading.json",
+      "sha256": "365e06513a80aecd412a54c5f3d9b5cf45d49cb6764f5a1c655cc78c026dc0d8",
+      "related": [
+        "base/Accordion",
+        "base/AudioMeter",
+        "base/Avatar",
+        "base/Badge",
+        "base/Card",
+        "base/Carousel"
+      ]
+    },
+    {
+      "id": "base/Icon",
+      "name": "Icon",
+      "kit": "base",
+      "purpose": "A lucide glyph whose size follows local Density and whose stroke color names a semantic Theme role.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Icon"
+          ]
+        },
+        "react": {
+          "module": "base/Icon",
+          "exports": [
+            "Icon"
+          ]
+        }
+      },
+      "required": [
+        "icon"
+      ],
+      "document": "components/base/Icon.json",
+      "sha256": "0f9c665b7e4390dce42e99981b2fb501db60a6cec382bf87192fcf2e97d325ef",
+      "related": [
+        "base/Accordion",
+        "base/AudioMeter",
+        "base/Avatar",
+        "base/Badge",
+        "base/Card",
+        "base/Carousel"
+      ]
+    },
+    {
+      "id": "base/Image",
+      "name": "Image",
+      "kit": "base",
+      "purpose": "A picture that requires its alternative, reserves its box from intrinsic dimensions or a ratio, and loads lazily unless marked as the priority (LCP) image; srcset and picture sources come from the app's own asset pipeline.",
+      "category": "Data display",
+      "topics": [
+        "imagem responsiva alt lazy lcp",
+        "responsive image priority loading"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Image"
+          ]
+        },
+        "react": {
+          "module": "base/Image",
+          "exports": [
+            "Image"
+          ]
+        }
+      },
+      "required": [
+        "src",
+        "alt"
+      ],
+      "document": "components/base/Image.json",
+      "sha256": "3541fc90b8f9d30dc2877454473402b65c84e2670909b35d46b37ecdc04fe4fa",
+      "related": [
+        "base/Accordion",
+        "base/AudioMeter",
+        "base/Avatar",
+        "base/Badge",
+        "base/Card",
+        "base/Carousel"
+      ]
+    },
+    {
+      "id": "base/Indicator",
+      "name": "Indicator",
+      "kit": "base",
+      "purpose": "Caller-owned marker content placed at a logical edge without changing the anchored content's focus behavior.",
+      "category": "Layout",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Indicator"
+          ]
+        },
+        "react": {
+          "module": "base/Indicator",
+          "exports": [
+            "Indicator"
+          ]
+        }
+      },
+      "required": [
+        "marker",
+        "children"
+      ],
+      "document": "components/base/Indicator.json",
+      "sha256": "7e9ebe6361124716599b69aec1e5192e457cad777f7f1d3a7fb2d00f88bf1368",
+      "related": [
+        "base/AspectRatio",
+        "base/BulletsSlide",
+        "base/Container",
+        "base/ContentMask",
+        "base/ControlGroup",
+        "base/Deck"
+      ]
+    },
+    {
+      "id": "base/Input",
+      "name": "Input",
+      "kit": "base",
+      "purpose": "Native text entry with the platform's attributes, validity and focus behavior left intact.",
+      "category": "Data input",
+      "topics": [
+        "entrada texto digitar",
+        "text input"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Input"
+          ]
+        },
+        "react": {
+          "module": "base/Input",
+          "exports": [
+            "Input"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/base/Input.json",
+      "sha256": "574591fdcce40fad02854a028206013698d267611818129bbd24146c33528662",
+      "related": [
+        "base/Field",
+        "base/Form",
+        "base/Calendar",
+        "base/Checkbox",
+        "base/Combobox",
+        "base/DateField"
+      ]
+    },
+    {
+      "id": "base/Kbd",
+      "name": "Kbd",
+      "kit": "base",
+      "purpose": "A key cap — or a chord, rendered as one cap per key with the separator between them.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Kbd"
+          ]
+        },
+        "react": {
+          "module": "base/Kbd",
+          "exports": [
+            "Kbd"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/base/Kbd.json",
+      "sha256": "2892f3a8b1245f59a6e39dc8f6a4a07faa11a64d0c3e46f0315f7043ac20326b",
+      "related": [
+        "base/Accordion",
+        "base/AudioMeter",
+        "base/Avatar",
+        "base/Badge",
+        "base/Card",
+        "base/Carousel"
+      ]
+    },
+    {
+      "id": "base/Label",
+      "name": "Label",
+      "kit": "base",
+      "purpose": "Native control naming whose association, click-to-focus behavior, and caller-owned text remain intact.",
+      "category": "Data input",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Label"
+          ]
+        },
+        "react": {
+          "module": "base/Label",
+          "exports": [
+            "Label"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/base/Label.json",
+      "sha256": "566ff14bdee04fe623565b5f524c9d6750a4a1b7539f2164acdb59924540737a",
+      "related": [
+        "base/Calendar",
+        "base/Checkbox",
+        "base/Combobox",
+        "base/DateField",
+        "base/DatePicker",
+        "base/DateRangeField"
+      ]
+    },
+    {
+      "id": "base/Link",
+      "name": "Link",
+      "kit": "base",
+      "purpose": "A native destination whose persistent underline and focus ring remain perceivable without colour.",
+      "category": "Navigation",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Link"
+          ]
+        },
+        "react": {
+          "module": "base/Link",
+          "exports": [
+            "Link"
+          ]
+        }
+      },
+      "required": [
+        "href"
+      ],
+      "document": "components/base/Link.json",
+      "sha256": "47d93774ef579dc15aa58c8fad3ba28a2e3408ac880e061320401fcb7ded286e",
+      "related": [
+        "base/Breadcrumbs",
+        "base/Navbar",
+        "base/NavigationMenu",
+        "base/NavigationScope",
+        "base/Pagination",
+        "base/SkipLink"
+      ]
+    },
+    {
+      "id": "base/LoadingIndicator",
+      "name": "LoadingIndicator",
+      "kit": "base",
+      "purpose": "A motion-aware spinner whose polite busy status and sentence travel together for every audience.",
+      "category": "Feedback",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "LoadingIndicator"
+          ]
+        },
+        "react": {
+          "module": "base/LoadingIndicator",
+          "exports": [
+            "LoadingIndicator"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/base/LoadingIndicator.json",
+      "sha256": "d6e0e0c2046dcc791eca64d9b86e26d2b57757f099b7ec58070c7323606c3791",
+      "related": [
+        "base/Alert",
+        "base/ContentState",
+        "base/EmptyState",
+        "base/Notification",
+        "base/Progress",
+        "base/RadialProgress"
+      ]
+    },
+    {
+      "id": "base/Logo",
+      "name": "Logo",
+      "kit": "base",
+      "purpose": "The DS's placement of a Brand-owned Mark: layout, surface, clearspace, and a refusal where the pinned release ships nothing.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Logo"
+          ]
+        },
+        "react": {
+          "module": "base/Logo",
+          "exports": [
+            "Logo"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/base/Logo.json",
+      "sha256": "d0168b10e1b1d7d5bbd8cdc787a8c7f695068a99a3c3f5ae5c6a6eaf4e936f25",
+      "related": [
+        "base/Accordion",
+        "base/AudioMeter",
+        "base/Avatar",
+        "base/Badge",
+        "base/Card",
+        "base/Carousel"
+      ]
+    },
+    {
+      "id": "base/NavigationScope",
+      "name": "NavigationScope",
+      "kit": "base",
+      "purpose": "An injectable navigation seam: every in-app link inside it activates through the consumer's router instead of the browser, and nothing changes without one.",
+      "category": "Navigation",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "NavigationScope"
+          ]
+        },
+        "react": {
+          "module": "base/NavigationScope",
+          "exports": [
+            "NavigationScope"
+          ]
+        }
+      },
+      "required": [
+        "navigate"
+      ],
+      "document": "components/base/NavigationScope.json",
+      "sha256": "6f0620a0c04cddbd3f65a99324675021ea4f024987c0d99b845918a41691b75e",
+      "related": [
+        "base/Breadcrumbs",
+        "base/Link",
+        "base/Navbar",
+        "base/NavigationMenu",
+        "base/Pagination",
+        "base/SkipLink"
+      ]
+    },
+    {
+      "id": "base/Popover",
+      "name": "Popover",
+      "kit": "base",
+      "purpose": "A collision-aware non-modal dialog whose canonical Button trigger, dismissal, and focus return travel together.",
+      "category": "Actions",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Popover"
+          ]
+        },
+        "react": {
+          "module": "base/Popover",
+          "exports": [
+            "Popover"
+          ]
+        }
+      },
+      "required": [
+        "triggerLabel",
+        "contentLabel"
+      ],
+      "document": "components/base/Popover.json",
+      "sha256": "42dd55b3a7f223b4ca99178494b136cdfa16479cd41f74a11ae020247ec000d6",
+      "related": [
+        "base/AlertDialog",
+        "base/AppearanceSwitch",
+        "base/Button",
+        "base/Dialog",
+        "base/DropdownMenu",
+        "base/Swap"
+      ]
+    },
+    {
+      "id": "base/Progress",
+      "name": "Progress",
+      "kit": "base",
+      "purpose": "Determinate or indeterminate linear work whose visual fill and accessible value share one normalized range.",
+      "category": "Feedback",
+      "topics": [
+        "barra progresso carregamento",
+        "linear progress bar"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Progress"
+          ]
+        },
+        "react": {
+          "module": "base/Progress",
+          "exports": [
+            "Progress"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/base/Progress.json",
+      "sha256": "24e9af97bf5975eb408d3da828201421a8313578c0a54a6fd509ee1df57ec02f",
+      "related": [
+        "base/Alert",
+        "base/ContentState",
+        "base/EmptyState",
+        "base/LoadingIndicator",
+        "base/Notification",
+        "base/RadialProgress"
+      ]
+    },
+    {
+      "id": "base/SectionHeading",
+      "name": "SectionHeading",
+      "kit": "base",
+      "purpose": "A heading whose visual weight and outline depth are set separately, so neither has to be sacrificed to the other.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "SectionHeading"
+          ]
+        },
+        "react": {
+          "module": "base/SectionHeading",
+          "exports": [
+            "SectionHeading"
+          ]
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "document": "components/base/SectionHeading.json",
+      "sha256": "b1c448f376b52c1e19a3ac4cdc6d9554ea033b1aaa0ebea49d0fae8af10be8f5",
+      "related": [
+        "base/Accordion",
+        "base/AudioMeter",
+        "base/Avatar",
+        "base/Badge",
+        "base/Card",
+        "base/Carousel"
+      ]
+    },
+    {
+      "id": "base/Select",
+      "name": "Select",
+      "kit": "base",
+      "purpose": "Native choice selection whose options, form value, keyboard interaction and focus stay under the platform contract.",
+      "category": "Data input",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Select"
+          ]
+        },
+        "react": {
+          "module": "base/Select",
+          "exports": [
+            "Select"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/base/Select.json",
+      "sha256": "6ce7714878a74b995b80592a66212c3494fa1d03c8a307e6bd814c0cccf114e9",
+      "related": [
+        "base/Calendar",
+        "base/Checkbox",
+        "base/Combobox",
+        "base/DateField",
+        "base/DatePicker",
+        "base/DateRangeField"
+      ]
+    },
+    {
+      "id": "base/Skeleton",
+      "name": "Skeleton",
+      "kit": "base",
+      "purpose": "Density-aware loading silhouettes for tables, KPIs, charts and content, with optional loading ownership and motion control.",
+      "category": "Feedback",
+      "topics": [
+        "esqueleto carregamento placeholder tabela kpi graficos barras colunas linhas area rosca radial",
+        "loading skeleton table metric card chart donut candlestick heatmap"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Skeleton"
+          ]
+        },
+        "react": {
+          "module": "base/Skeleton",
+          "exports": [
+            "Skeleton"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/base/Skeleton.json",
+      "sha256": "1b13725337f1182d86a9c154090249b2afc7c57939793d7f69531c51da09d28d",
+      "related": [
+        "base/Alert",
+        "base/ContentState",
+        "base/EmptyState",
+        "base/LoadingIndicator",
+        "base/Notification",
+        "base/Progress"
+      ]
+    },
+    {
+      "id": "base/Stack",
+      "name": "Stack",
+      "kit": "base",
+      "purpose": "Vertical flow whose small, medium, and large gaps remain live Density roles in nested scopes.",
+      "category": "Layout",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Stack"
+          ]
+        },
+        "react": {
+          "module": "base/Stack",
+          "exports": [
+            "Stack"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/base/Stack.json",
+      "sha256": "fe0ed3ae946f32513f246a7502f1892be4d8e59ac827baf6e100d9dac31dff14",
+      "related": [
+        "base/AspectRatio",
+        "base/BulletsSlide",
+        "base/Container",
+        "base/ContentMask",
+        "base/ControlGroup",
+        "base/Deck"
+      ]
+    },
+    {
+      "id": "base/StateIllustration",
+      "name": "StateIllustration",
+      "kit": "base",
+      "purpose": "Token-coloured SVG state artwork, individually imported for errors, zero states and confirmations, without fonts or external resources.",
+      "category": "Feedback",
+      "topics": [
+        "ilustracao svg zero state empty state vazio arte busca conexao permissao",
+        "state artwork illustration SVG empty search connection success"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "StateIllustration"
+          ]
+        },
+        "react": {
+          "module": "base/StateIllustration",
+          "exports": [
+            "StateIllustration"
+          ]
+        }
+      },
+      "required": [
+        "art"
+      ],
+      "document": "components/base/StateIllustration.json",
+      "sha256": "2027ef9963290303fb595ef5f3679ffdfaa847d7d245cb7b154d55e2a286274e",
+      "related": [
+        "base/EmptyState",
+        "base/Button",
+        "base/Alert",
+        "base/ContentState",
+        "base/LoadingIndicator",
+        "base/Notification"
+      ]
+    },
+    {
+      "id": "base/StatusIndicator",
+      "name": "StatusIndicator",
+      "kit": "base",
+      "purpose": "A status mark whose required text remains available when the label is visually hidden, so colour is never the message.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "StatusIndicator"
+          ]
+        },
+        "react": {
+          "module": "base/StatusIndicator",
+          "exports": [
+            "StatusIndicator"
+          ]
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "document": "components/base/StatusIndicator.json",
+      "sha256": "74cdda55a206da6c890edb933684bfd2e64e91f7596eaa13f8eec676b41b4f74",
+      "related": [
+        "base/Accordion",
+        "base/AudioMeter",
+        "base/Avatar",
+        "base/Badge",
+        "base/Card",
+        "base/Carousel"
+      ]
+    },
+    {
+      "id": "base/Tabs",
+      "name": "Tabs",
+      "kit": "base",
+      "purpose": "One selected panel at a time, with associated labels and roving arrow-key focus over caller-owned content.",
+      "category": "Navigation",
+      "topics": [
+        "abas navegacao conteudo",
+        "tabs panels"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Tabs"
+          ]
+        },
+        "react": {
+          "module": "base/Tabs",
+          "exports": [
+            "Tabs"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "items"
+      ],
+      "document": "components/base/Tabs.json",
+      "sha256": "81cf2ce17cb9d9fee3676e4486893e203c59dee92717021de347710d38523931",
+      "related": [
+        "base/Breadcrumbs",
+        "base/Link",
+        "base/Navbar",
+        "base/NavigationMenu",
+        "base/NavigationScope",
+        "base/Pagination"
+      ]
+    },
+    {
+      "id": "base/Textarea",
+      "name": "Textarea",
+      "kit": "base",
+      "purpose": "Native multiline entry with rows, wrapping, constraints, validity and resize behavior left intact.",
+      "category": "Data input",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Textarea"
+          ]
+        },
+        "react": {
+          "module": "base/Textarea",
+          "exports": [
+            "Textarea"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/base/Textarea.json",
+      "sha256": "9b8091c2a3f4dbeb29dea4c348f8e86899907c1c2f74975ccaedfac10343a786",
+      "related": [
+        "base/Calendar",
+        "base/Checkbox",
+        "base/Combobox",
+        "base/DateField",
+        "base/DatePicker",
+        "base/DateRangeField"
+      ]
+    },
+    {
+      "id": "base/Timeline",
+      "name": "Timeline",
+      "kit": "base",
+      "purpose": "Caller-owned events in native chronological order, with machine-readable times and canonical links where events have destinations.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Timeline"
+          ]
+        },
+        "react": {
+          "module": "base/Timeline",
+          "exports": [
+            "Timeline"
+          ]
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "document": "components/base/Timeline.json",
+      "sha256": "4b0c4cbf44f0633614494f39286e5099c27faa07d9608f42290fea147227bee0",
+      "related": [
+        "base/Accordion",
+        "base/AudioMeter",
+        "base/Avatar",
+        "base/Badge",
+        "base/Card",
+        "base/Carousel"
+      ]
+    },
+    {
+      "id": "base/ToggleButton",
+      "name": "ToggleButton",
+      "kit": "base",
+      "purpose": "A canonical Button whose pressed state is explicit to sighted and assistive-technology users.",
+      "category": "Actions",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "ToggleButton"
+          ]
+        },
+        "react": {
+          "module": "base/ToggleButton",
+          "exports": [
+            "ToggleButton"
+          ]
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "document": "components/base/ToggleButton.json",
+      "sha256": "f7a8f41828ffe8cac491a09576629b2f8deea95fd933eb8821b223f72d1ef3bf",
+      "related": [
+        "base/AlertDialog",
+        "base/AppearanceSwitch",
+        "base/Button",
+        "base/Dialog",
+        "base/DropdownMenu",
+        "base/Popover"
+      ]
+    },
+    {
+      "id": "base/Tooltip",
+      "name": "Tooltip",
+      "kit": "base",
+      "purpose": "Supplemental pointer and keyboard help for a trigger whose accessible name remains useful without it.",
+      "category": "Feedback",
+      "topics": [
+        "dica curta contextual",
+        "tooltip hint"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Tooltip"
+          ]
+        },
+        "react": {
+          "module": "base/Tooltip",
+          "exports": [
+            "Tooltip"
+          ]
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "document": "components/base/Tooltip.json",
+      "sha256": "cb8be296b03c3eda7611b7315d742caafbb51aed6e48aea2369d0581f71fd963",
+      "related": [
+        "base/Alert",
+        "base/ContentState",
+        "base/EmptyState",
+        "base/LoadingIndicator",
+        "base/Notification",
+        "base/Progress"
+      ]
+    },
+    {
+      "id": "app/ActivityFeed",
+      "name": "ActivityFeed",
+      "kit": "app",
+      "purpose": "Caller-owned application events presented through the canonical ordered Timeline and its machine-readable times.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "ActivityFeed"
+          ]
+        },
+        "react": {
+          "module": "app/ActivityFeed",
+          "exports": [
+            "ActivityFeed"
+          ]
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "document": "components/app/ActivityFeed.json",
+      "sha256": "e0f64788da5d2f80b5facc96a314fddd4a08da4b76a0fac49e288d65915d599e",
+      "related": [
+        "app/CardHeading",
+        "app/ChangeReview",
+        "app/ChatMessage",
+        "app/Diff",
+        "app/EntityInspector",
+        "app/EntityJourney"
+      ]
+    },
+    {
+      "id": "app/ApplicationWorkspace",
+      "name": "ApplicationWorkspace",
+      "kit": "app",
+      "purpose": "A named workspace composing caller-owned resource navigation, document tabs, commands and content with independent host state.",
+      "category": "Layout",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "ApplicationWorkspace"
+          ]
+        },
+        "react": {
+          "module": "app/ApplicationWorkspace",
+          "exports": [
+            "ApplicationWorkspace"
+          ]
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "document": "components/app/ApplicationWorkspace.json",
+      "sha256": "76e9845d614d8a4218b18b78203235b42e98353ea59131e6a58729d04f67373c",
+      "related": [
+        "app/ApplicationShell",
+        "app/MultiColumnLayout",
+        "app/SidebarLayout",
+        "app/SplitView"
+      ]
+    },
+    {
+      "id": "app/ChangeReview",
+      "name": "ChangeReview",
+      "kit": "app",
+      "purpose": "Explicit proposed values and observed per-item outcomes with request-only apply and discard actions.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "ChangeReview"
+          ]
+        },
+        "react": {
+          "module": "app/ChangeReview",
+          "exports": [
+            "ChangeReview"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "items"
+      ],
+      "document": "components/app/ChangeReview.json",
+      "sha256": "9a6af8926dbb4e919ca84d51856491b21d71d4ad112c78abe8e2545fc1f80bb6",
+      "related": [
+        "app/ActivityFeed",
+        "app/CardHeading",
+        "app/ChatMessage",
+        "app/Diff",
+        "app/EntityInspector",
+        "app/EntityJourney"
+      ]
+    },
+    {
+      "id": "app/CommandPalette",
+      "name": "CommandPalette",
+      "kit": "app",
+      "purpose": "Global caller-owned commands searched through the canonical Combobox inside the canonical Popover focus lifecycle.",
+      "category": "Navigation",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "CommandPalette"
+          ]
+        },
+        "react": {
+          "module": "app/CommandPalette",
+          "exports": [
+            "CommandPalette"
+          ]
+        }
+      },
+      "required": [
+        "contentLabel",
+        "label"
+      ],
+      "document": "components/app/CommandPalette.json",
+      "sha256": "9cc141e8624adfe3a4582578cc140fbc08786895c92fcd778e6af38d7e9ad4d9",
+      "related": [
+        "app/BottomNavigation",
+        "app/CategoryPreview",
+        "app/NavItem",
+        "app/ShortcutHelp",
+        "app/SidebarNavigation",
+        "app/SidebarPanel"
+      ]
+    },
+    {
+      "id": "app/ErrorBoundary",
+      "name": "ErrorBoundary",
+      "kit": "app",
+      "purpose": "Native client render recovery with safe fallback content and explicit retry or identity reset.",
+      "category": "Feedback",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "ErrorBoundary"
+          ]
+        },
+        "react": {
+          "module": "app/ErrorBoundary",
+          "exports": [
+            "ErrorBoundary"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/app/ErrorBoundary.json",
+      "sha256": "ebfac5a599ca96080147bc7188cd94132522e65672bcc3a580eb57713745c5b3",
+      "related": [
+        "app/OutcomeScreen"
+      ]
+    },
+    {
+      "id": "app/ListRow",
+      "name": "ListRow",
+      "kit": "app",
+      "purpose": "One row of a list, rendering the element its behavior calls for — a link, a button, or neither.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "ListRow"
+          ]
+        },
+        "react": {
+          "module": "app/ListRow",
+          "exports": [
+            "ListRow"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/app/ListRow.json",
+      "sha256": "f09ae9de1316c4fee7d812218ef44bb9fdf593c4ce1198db56e0876b794bd2b5",
+      "related": [
+        "app/ActivityFeed",
+        "app/CardHeading",
+        "app/ChangeReview",
+        "app/ChatMessage",
+        "app/Diff",
+        "app/EntityInspector"
+      ]
+    },
+    {
+      "id": "app/NavItem",
+      "name": "NavItem",
+      "kit": "app",
+      "purpose": "One entry in a navigation, which says where you are rather than only tinting itself.",
+      "category": "Navigation",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "NavItem"
+          ]
+        },
+        "react": {
+          "module": "app/NavItem",
+          "exports": [
+            "NavItem"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/app/NavItem.json",
+      "sha256": "c9fe4489272ecc01ca84d5ca6443109afed12eb6241f83ad7566431cb8aa8895",
+      "related": [
+        "app/BottomNavigation",
+        "app/CategoryPreview",
+        "app/CommandPalette",
+        "app/ShortcutHelp",
+        "app/SidebarNavigation",
+        "app/SidebarPanel"
+      ]
+    },
+    {
+      "id": "app/OutcomeScreen",
+      "name": "OutcomeScreen",
+      "kit": "app",
+      "purpose": "Present a successful or failed operation with an illustration, guidance and caller-owned actions.",
+      "category": "Feedback",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "OutcomeScreen"
+          ]
+        },
+        "react": {
+          "module": "app/OutcomeScreen",
+          "exports": [
+            "OutcomeScreen"
+          ]
+        }
+      },
+      "required": [
+        "outcome",
+        "title"
+      ],
+      "document": "components/app/OutcomeScreen.json",
+      "sha256": "88a62d322c7bf8bd445da349af0f67d5e57c6bb3b18d68bf14af70269d42e8b5",
+      "related": [
+        "app/ErrorBoundary"
+      ]
+    },
+    {
+      "id": "app/PageHeading",
+      "name": "PageHeading",
+      "kit": "app",
+      "purpose": "The one h1 at the root of an application page, pairing caller-owned context and actions without owning the page assembly.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "PageHeading"
+          ]
+        },
+        "react": {
+          "module": "app/PageHeading",
+          "exports": [
+            "PageHeading"
+          ]
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "document": "components/app/PageHeading.json",
+      "sha256": "5d0bd7509cc9bccf4bb13b4074bee13287948c6c7b0be595d3afd1397ae2f494",
+      "related": [
+        "app/ActivityFeed",
+        "app/CardHeading",
+        "app/ChangeReview",
+        "app/ChatMessage",
+        "app/Diff",
+        "app/EntityInspector"
+      ]
+    },
+    {
+      "id": "app/Pill",
+      "name": "Pill",
+      "kit": "app",
+      "purpose": "A round-ended token for a filter or a tag, optionally dismissible.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "Pill"
+          ]
+        },
+        "react": {
+          "module": "app/Pill",
+          "exports": [
+            "Pill"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/app/Pill.json",
+      "sha256": "af4ce34cd9821c480df400e2fc7b97c3adf421d3b7e0ca2f048ed6f8cb97f1a4",
+      "related": [
+        "app/ActivityFeed",
+        "app/CardHeading",
+        "app/ChangeReview",
+        "app/ChatMessage",
+        "app/Diff",
+        "app/EntityInspector"
+      ]
+    },
+    {
+      "id": "app/SettingsRow",
+      "name": "SettingsRow",
+      "kit": "app",
+      "purpose": "A setting label and separate description with a natively associated field and independently named actions.",
+      "category": "Data input",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "SettingsRow"
+          ]
+        },
+        "react": {
+          "module": "app/SettingsRow",
+          "exports": [
+            "SettingsRow"
+          ]
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "document": "components/app/SettingsRow.json",
+      "sha256": "d4764ecae0ef13ada7c256ea72b4a3395779a0305eba14170c3a74fbdb53b4c8",
+      "related": [
+        "app/CategoryFilter",
+        "app/CheckoutForm",
+        "app/Filter",
+        "app/ShoppingCart"
+      ]
+    },
+    {
+      "id": "app/ShortcutHelp",
+      "name": "ShortcutHelp",
+      "kit": "app",
+      "purpose": "Contextual keyboard reference inside the canonical Dialog without registering application commands.",
+      "category": "Navigation",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "ShortcutHelp"
+          ]
+        },
+        "react": {
+          "module": "app/ShortcutHelp",
+          "exports": [
+            "ShortcutHelp"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "groups"
+      ],
+      "document": "components/app/ShortcutHelp.json",
+      "sha256": "882fafcf8da532f8dfa1b7573c5d14d415b5b8e69cf2973c65276b9cf609293c",
+      "related": [
+        "app/BottomNavigation",
+        "app/CategoryPreview",
+        "app/CommandPalette",
+        "app/NavItem",
+        "app/SidebarNavigation",
+        "app/SidebarPanel"
+      ]
+    },
+    {
+      "id": "app/SidebarRail",
+      "name": "SidebarRail",
+      "kit": "app",
+      "purpose": "A compact application and workspace switcher whose labelled icon controls keep selection external and keyboard focus roving.",
+      "category": "Navigation",
+      "topics": [
+        "barra lateral tamanho icone densidade tamanho local",
+        "sidebar rail density local item icon sizing"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "SidebarRail"
+          ]
+        },
+        "react": {
+          "module": "app/SidebarRail",
+          "exports": [
+            "SidebarRail"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "items"
+      ],
+      "document": "components/app/SidebarRail.json",
+      "sha256": "1cc617dfdd42d450cc9d9f1136b5cf800c2a2f1c78de033ed0d1e753b88f5415",
+      "related": [
+        "app/BottomNavigation",
+        "app/CategoryPreview",
+        "app/CommandPalette",
+        "app/NavItem",
+        "app/ShortcutHelp",
+        "app/SidebarNavigation"
+      ]
+    },
+    {
+      "id": "app/SplitView",
+      "name": "SplitView",
+      "kit": "app",
+      "purpose": "Two panes and a divider you can move with a pointer or with the arrow keys, over arithmetic that needs no DOM.",
+      "category": "Layout",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "SplitView"
+          ]
+        },
+        "react": {
+          "module": "app/SplitView",
+          "exports": [
+            "SplitView"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/app/SplitView.json",
+      "sha256": "e339701a01810878dce36eefecea9ce472bc9d437105f5879dd47d723026f46a",
+      "related": [
+        "app/ApplicationShell",
+        "app/ApplicationWorkspace",
+        "app/MultiColumnLayout",
+        "app/SidebarLayout"
+      ]
+    },
+    {
+      "id": "app/Toolbar",
+      "name": "Toolbar",
+      "kit": "app",
+      "purpose": "A named row or column of canonical controls with one roving tab stop and native destinations left intact.",
+      "category": "Actions",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "Toolbar"
+          ]
+        },
+        "react": {
+          "module": "app/Toolbar",
+          "exports": [
+            "Toolbar"
+          ]
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "document": "components/app/Toolbar.json",
+      "sha256": "5bd962230d10571a51e6561ed0c7eda1361b337d77f40ec22801d47e286034f2",
+      "related": [
+        "app/ActionPanel",
+        "app/ContextMenu",
+        "app/Menubar",
+        "app/PlaybackControls",
+        "app/SpeedDial"
+      ]
+    },
+    {
+      "id": "app/WorkspaceTabs",
+      "name": "WorkspaceTabs",
+      "kit": "app",
+      "purpose": "Closable document tabs with independent draft and execution states, retained native panels and caller-owned close decisions.",
+      "category": "Navigation",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "WorkspaceTabs"
+          ]
+        },
+        "react": {
+          "module": "app/WorkspaceTabs",
+          "exports": [
+            "WorkspaceTabs"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "items"
+      ],
+      "document": "components/app/WorkspaceTabs.json",
+      "sha256": "66ee93bcfb2d4ae7d69b62c2365d49a829f25a3c2644b8cd8580a71c97a5c30d",
+      "related": [
+        "app/BottomNavigation",
+        "app/CategoryPreview",
+        "app/CommandPalette",
+        "app/NavItem",
+        "app/ShortcutHelp",
+        "app/SidebarNavigation"
+      ]
+    },
+    {
+      "id": "data/DeveloperPanel",
+      "name": "DeveloperPanel",
+      "kit": "data",
+      "purpose": "Dock and resize caller-owned developer content with optional context tabs.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/DeveloperPanel",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/DeveloperPanel",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [],
+      "document": "components/data/DeveloperPanel.json",
+      "sha256": "cf345a3f2071341df50e8948334371ab2fce71beb78a594cf75aa557ccb24b81",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperRequestInspector"
+      ]
+    },
+    {
+      "id": "data/DeveloperRequestInspector",
+      "name": "DeveloperRequestInspector",
+      "kit": "data",
+      "purpose": "Inspect caller-supplied request, response, headers and measured timings.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/DeveloperRequestInspector",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/DeveloperRequestInspector",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "requests"
+      ],
+      "document": "components/data/DeveloperRequestInspector.json",
+      "sha256": "e5d919f1dcb7dc5d98283ce56fa8c1c56ae4d2bd4f4775c4fb8a187793097a60",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/Diagram",
+      "name": "Diagram",
+      "kit": "data",
+      "purpose": "Directed connections and stable automatic layout for architecture and flows.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/Diagram",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/Diagram",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "document": "components/data/Diagram.json",
+      "sha256": "edb060f5a5f1878541360f9761746a1825ecae204dd777287c454a1f81541ae5",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/DiffExplorer",
+      "name": "DiffExplorer",
+      "kit": "data",
+      "purpose": "Explore caller-supplied changes with search, selection, field comparison and raw records.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/DiffExplorer",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/DiffExplorer",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "entries"
+      ],
+      "document": "components/data/DiffExplorer.json",
+      "sha256": "b8512af73ea1c863c0e1e15fe2548357793963575180d2aebbc27044715fba68",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/DocumentViewer",
+      "name": "DocumentViewer",
+      "kit": "data",
+      "purpose": "A searchable master-detail document surface with caller-controlled selection and body, field, or raw modes.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/DocumentViewer",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/DocumentViewer",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "documents"
+      ],
+      "document": "components/data/DocumentViewer.json",
+      "sha256": "ee0624f47d0e12528d7652c8ef57f1166c2c1914b0e6389b9e0913333fe954f3",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/EventSeriesExplorer",
+      "name": "EventSeriesExplorer",
+      "kit": "data",
+      "purpose": "Inspect event rates, metric values and records with bounded time buckets.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/EventSeriesExplorer",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/EventSeriesExplorer",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "series"
+      ],
+      "document": "components/data/EventSeriesExplorer.json",
+      "sha256": "3f9c077e40b4744cbccc954cc10ff8e324c638a6d2d6bd7a61a8ea1810e0b9f1",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/Graph",
+      "name": "Graph",
+      "kit": "data",
+      "purpose": "An accessible network with a deterministic SVG first paint and a lazily loaded interactive engine.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/Graph",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/Graph",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "document": "components/data/Graph.json",
+      "sha256": "4bfce3fcbb6f938f9627a014860be49914cd1aeaa6bf9b4a1f86899aa68baef5",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/GraphExplorer",
+      "name": "GraphExplorer",
+      "kit": "data",
+      "purpose": "Explore networks as canvas, SVG or tables with community grouping, relationship details and host-owned queries.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/GraphExplorer",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/GraphExplorer",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "data"
+      ],
+      "document": "components/data/GraphExplorer.json",
+      "sha256": "4e4dde523d2936dd1def2b3ca81d8415dcf91766a45c65dc2db228a2a4e70dcc",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/KeyValueExplorer",
+      "name": "KeyValueExplorer",
+      "kit": "data",
+      "purpose": "Browse slash-delimited keys, filter prefixes and inspect original or nested JSON values.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/KeyValueExplorer",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/KeyValueExplorer",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "entries"
+      ],
+      "document": "components/data/KeyValueExplorer.json",
+      "sha256": "200c0968a551cdf01cb1b9cd5f1c5bcd20e40fef62ef2c262645f6d1289e864e",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/KpiCard",
+      "name": "KpiCard",
+      "kit": "data",
+      "purpose": "A DS-owned metric summary with textual delta direction and an optional caller-supplied sparkline.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/KpiCard",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/KpiCard",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "value"
+      ],
+      "document": "components/data/KpiCard.json",
+      "sha256": "c783b6547865a48d73c6054959d397ea1dceccf837f1c09cf3010ec258535100",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/PanZoomViewport",
+      "name": "PanZoomViewport",
+      "kit": "data",
+      "purpose": "A caller-owned drawing with fit, anchored zoom, keyboard navigation and pointer pan or pinch, without a rendering engine.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/PanZoomViewport",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/PanZoomViewport",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "contentWidth",
+        "contentHeight",
+        "children"
+      ],
+      "document": "components/data/PanZoomViewport.json",
+      "sha256": "d63581c66c5e4d2d94ed540c39ed94101902d59960a06f582924cbb897b8c927",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/QueueExplorer",
+      "name": "QueueExplorer",
+      "kit": "data",
+      "purpose": "Inspect queue messages, delivery metadata and event envelopes with caller-owned insertion.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/QueueExplorer",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/QueueExplorer",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "messages",
+        "events"
+      ],
+      "document": "components/data/QueueExplorer.json",
+      "sha256": "46fd84b093598a74dc1ff198929c6576cae9309de1c67bcbee78ed9c22613353",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/Sparkline",
+      "name": "Sparkline",
+      "kit": "data",
+      "purpose": "A compact, accessible LayerChart trend that remains small enough to compose into dense summaries.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/Sparkline",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/Sparkline",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "values"
+      ],
+      "document": "components/data/Sparkline.json",
+      "sha256": "1d8998be4d8ad33ed35b579ff147d4512dd7b18ec7c94a03e090f5bb3d3a48ed",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/StatsExplorer",
+      "name": "StatsExplorer",
+      "kit": "data",
+      "purpose": "Inspect numeric statistics as KPIs, gauges or a table without changing their readings.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/StatsExplorer",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/StatsExplorer",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "metrics"
+      ],
+      "document": "components/data/StatsExplorer.json",
+      "sha256": "fe9937dd4d12bfe8cfdf717b2ece81b0fcb8a5ebac31336e2cc1a663802d9808",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/Table",
+      "name": "Table",
+      "kit": "data",
+      "purpose": "A state-local rich grid with sorting, filtering, paging, column visibility, virtualization, and explicitly staged edits.",
+      "category": "Data display",
+      "topics": [
+        "tabela dados filtros ordenar paginar",
+        "data table filtering sorting pagination"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "data/Table",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/Table",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "caption",
+        "columns",
+        "rows"
+      ],
+      "document": "components/data/Table.json",
+      "sha256": "bbd6cb7c02c18ec5f85df0016aae78ce039fb7a9d9174b5df4cbf134f1b49979",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/TableExplorer",
+      "name": "TableExplorer",
+      "kit": "data",
+      "purpose": "Filter and edit result rows with stable source identity and caller-owned query projection.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/TableExplorer",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/TableExplorer",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "columns",
+        "rows",
+        "rowKey"
+      ],
+      "document": "components/data/TableExplorer.json",
+      "sha256": "0afd1b0b62b940a6ae506d7c5231019ae8db7ebcf1dc9b1eeaf96b44ccdde450",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/TimeSeries",
+      "name": "TimeSeries",
+      "kit": "data",
+      "purpose": "A token-painted LayerChart time series that supports line and area readings without an inline palette.",
+      "category": "Data display",
+      "topics": [
+        "serie temporal linhas areas realtime",
+        "time series streaming area"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "data/TimeSeries",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/TimeSeries",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "document": "components/data/TimeSeries.json",
+      "sha256": "b09acb3638ff1fa864aae995aab67e92747b407e67ef896407f5ff9adf1ed66f",
+      "related": [
+        "data/CompositeChart",
+        "data/Candlestick",
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/TreeView",
+      "name": "TreeView",
+      "kit": "data",
+      "purpose": "A caller-owned hierarchy with roving focus, keyboard expansion, selection, rename, and reorder proposals.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/TreeView",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/TreeView",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "nodes"
+      ],
+      "document": "components/data/TreeView.json",
+      "sha256": "182cc1f6c4e183006df7b1e4516fed9503ce731989e0ac6a29318e6b1d045d9f",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    },
+    {
+      "id": "data/VectorExplorer",
+      "name": "VectorExplorer",
+      "kit": "data",
+      "purpose": "Browse vector metadata, coordinates and scores, and run caller-owned cancellable searches.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/VectorExplorer",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/VectorExplorer",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "rows"
+      ],
+      "document": "components/data/VectorExplorer.json",
+      "sha256": "619f2d274b19e5e3c2a8d2b6d42dea139227ec6d2150e42ceef6f2f2a50d997b",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
+      ]
+    }
+  ],
+  "release": {
+    "version": "v2026.11.19",
+    "revision": "4c5d84a187842b9642506c1c4c12947587598fad"
+  }
+}

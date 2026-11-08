@@ -1,0 +1,1 @@
+const i="320px";function s(r,n){if(typeof IntersectionObserver>"u")return n(),()=>{};const e=new IntersectionObserver(t=>{t.some(o=>o.isIntersecting)&&(e.disconnect(),n())},{rootMargin:i});return e.observe(r),()=>e.disconnect()}export{i as CHART_LOAD_MARGIN,s as whenNear};

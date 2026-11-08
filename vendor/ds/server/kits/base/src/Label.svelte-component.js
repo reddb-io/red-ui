@@ -1,0 +1,1 @@
+import*as l from"svelte/internal/server";import{label as b}from"./label.variants.js";function m(a,t){a.component(s=>{let{ref:o=void 0,class:e,children:c,$$slots:p,$$events:f,...i}=t;s.push(`<label${l.attributes({...i,class:l.clsx(b({class:e}))})}>`),c?.(s),s.push("<!----></label>"),l.bind_props(t,{ref:o})})}export{m as default};

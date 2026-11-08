@@ -1,0 +1,731 @@
+{
+  "schemaVersion": 1,
+  "id": "app/WorkspaceTabs",
+  "topics": [],
+  "related": [
+    "app/BottomNavigation",
+    "app/CategoryPreview",
+    "app/CommandPalette",
+    "app/NavItem",
+    "app/ShortcutHelp",
+    "app/SidebarNavigation"
+  ],
+  "contract": {
+    "category": "Navigation",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-base-border",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-sunken-surface",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export interface WorkspaceTab {\n  /** Stable application-owned identity. */\n  id: string;\n  /** Visible tab name. */\n  label: string;\n  /** Native destination. NavigationScope may intercept owned, unmodified clicks. */\n  href?: string;\n  /** Whether the application accepts close requests. */\n  closable?: boolean;\n  /** Caller-observed unsaved changes, independent of execution. */\n  dirty?: boolean;\n  /** Caller-observed operation in progress. */\n  busy?: boolean;\n  /** Prevent selection and closing. */\n  disabled?: boolean;\n}",
+          "name": "WorkspaceTab",
+          "source": "kits/app/src/core/workspace-tabs.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Requests selection without changing document contents.",
+        "dialect": "state",
+        "name": "onselectedchange",
+        "type": "(id: string) => void"
+      },
+      {
+        "description": "Requests closing; the application confirms dirty drafts and removes accepted items.",
+        "dialect": "discrete",
+        "name": "oncloserequest",
+        "type": "(id: string) => void"
+      },
+      {
+        "description": "Requests a new document from the action beside the tablist.",
+        "dialect": "discrete",
+        "name": "oncreaterequest",
+        "type": "() => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "app",
+          "name": "WorkspaceTabs",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Accessible name for the workspace tablist.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Documents in display order, with stable unique ids.",
+              "name": "items",
+              "required": true,
+              "type": "readonly WorkspaceTab[]"
+            },
+            {
+              "description": "Selected document; absent or removed selections fall back to the first enabled item.",
+              "name": "selected",
+              "required": false,
+              "type": "string | null"
+            },
+            {
+              "description": "Additional classes on each panel for bounded application layouts.",
+              "name": "panelClass",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Requests selection without changing document contents.",
+              "name": "onselectedchange",
+              "required": false,
+              "type": "(id: string) => void"
+            },
+            {
+              "description": "Requests closing; the application confirms dirty drafts and removes accepted items.",
+              "name": "oncloserequest",
+              "required": false,
+              "type": "(id: string) => void"
+            },
+            {
+              "description": "Requests a new document from the action beside the tablist.",
+              "name": "oncreaterequest",
+              "required": false,
+              "type": "() => void"
+            },
+            {
+              "default": "\"New document\"",
+              "description": "Accessible name of the new-document action.",
+              "name": "createLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Close\"",
+              "description": "Accessible prefix for each close action.",
+              "name": "closeLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Unsaved changes\"",
+              "description": "Accessible description for unsaved changes.",
+              "name": "dirtyLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Running\"",
+              "description": "Accessible description for active execution.",
+              "name": "busyLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"No open documents\"",
+              "description": "Explanation when no documents are open.",
+              "name": "emptyLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Native content per document; inactive panels remain mounted and hidden.",
+              "name": "children",
+              "required": false,
+              "type": "(item: { id: string }) => ReactNode"
+            },
+            {
+              "description": "Additional composition classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/app/react/src/WorkspaceTabs.tsx",
+          "specifier": "@reddb-io/design-system/app/WorkspaceTabs"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/react/src/WorkspaceTabs.tsx",
+        "specifier": "@reddb-io/design-system/app/WorkspaceTabs",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/src/composites/WorkspaceTabs.svelte",
+        "specifier": "@reddb-io/design-system/app",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "app",
+    "name": "WorkspaceTabs",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible name for the workspace tablist.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Documents in display order, with stable unique ids.",
+        "name": "items",
+        "required": true,
+        "type": "readonly WorkspaceTab[]"
+      },
+      {
+        "bindable": false,
+        "description": "Selected document; absent or removed selections fall back to the first enabled item.",
+        "name": "selected",
+        "required": false,
+        "type": "string | null"
+      },
+      {
+        "bindable": false,
+        "description": "Additional classes on each panel for bounded application layouts.",
+        "name": "panelClass",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Requests selection without changing document contents.",
+        "name": "onselectedchange",
+        "required": false,
+        "type": "(id: string) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Requests closing; the application confirms dirty drafts and removes accepted items.",
+        "name": "oncloserequest",
+        "required": false,
+        "type": "(id: string) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Requests a new document from the action beside the tablist.",
+        "name": "oncreaterequest",
+        "required": false,
+        "type": "() => void"
+      },
+      {
+        "bindable": false,
+        "default": "\"New document\"",
+        "description": "Accessible name of the new-document action.",
+        "name": "createLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Close\"",
+        "description": "Accessible prefix for each close action.",
+        "name": "closeLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Unsaved changes\"",
+        "description": "Accessible description for unsaved changes.",
+        "name": "dirtyLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Running\"",
+        "description": "Accessible description for active execution.",
+        "name": "busyLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"No open documents\"",
+        "description": "Explanation when no documents are open.",
+        "name": "emptyLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Native content per document; inactive panels remain mounted and hidden.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet<[{ id: string }]>"
+      },
+      {
+        "bindable": false,
+        "description": "Additional composition classes.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Closable document tabs with independent draft and execution states, retained native panels and caller-owned close decisions.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/app/src/core/contracts/workspacetabs.ts",
+        "kits/app/src/workspace-tabs.variants.ts",
+        "kits/app/src/core/workspace-tabs.ts"
+      ],
+      "tests": [
+        "kits/app/test/workspace-harvest.test.ts",
+        "apps/showcase/test/operations-workbench.browser.test.ts"
+      ],
+      "typeMappings": {
+        "children": {
+          "react": "(item: { id: string }) => ReactNode",
+          "reason": "Native projections keep document content mounted while inactive, exercised in both flavors.",
+          "svelte": "Snippet<[{ id: string }]>"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Native content per document; inactive panels remain mounted and hidden.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet<[{ id: string }]>"
+      }
+    ],
+    "source": "kits/app/src/composites/WorkspaceTabs.svelte",
+    "specifier": "@reddb-io/design-system/app"
+  }
+}

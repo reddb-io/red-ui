@@ -1,0 +1,883 @@
+{
+  "schemaVersion": 1,
+  "id": "app/SidebarRail",
+  "topics": [
+    "barra lateral tamanho icone densidade tamanho local",
+    "sidebar rail density local item icon sizing"
+  ],
+  "related": [
+    "app/BottomNavigation",
+    "app/CategoryPreview",
+    "app/CommandPalette",
+    "app/NavItem",
+    "app/ShortcutHelp",
+    "app/SidebarNavigation"
+  ],
+  "contract": {
+    "category": "Navigation",
+    "documentation": {
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-color-${role}",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-${size}",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        }
+      ],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-border",
+          "sources": [
+            "kits/base/src/tooltip.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-surface",
+          "sources": [
+            "kits/base/src/tooltip.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-sunken-border",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-sunken-surface",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/status-indicator.variants.ts",
+            "kits/base/src/tooltip.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/divider.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-feedback",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/tooltip.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts",
+            "kits/base/src/tooltip.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/tooltip.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-none",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-shadow-elevation-overlay",
+          "sources": [
+            "kits/base/src/tooltip.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-shadow-elevation-sunken",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/app/src/core/sidebar-rail-sizing.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/tooltip.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/divider.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/app/src/core/sidebar-rail-sizing.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/tooltip.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-sm",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/app/src/core/sidebar-rail-sizing.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/app/src/composites/sidebar-rail.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type IconGlyph = Component<IconGlyphProps>;",
+          "name": "IconGlyph",
+          "source": "kits/base/src/Icon.svelte"
+        },
+        {
+          "declaration": "export type IconGlyphProps = LucideProps;",
+          "name": "IconGlyphProps",
+          "source": "kits/base/src/Icon.svelte"
+        },
+        {
+          "declaration": "/** Optional notifications and status shared by the sidebar surfaces. */\nexport interface NavigationMarkers {\n  /** Notification count or short text; undefined omits it. Numeric counts above 99 display 99+ while retaining the exact accessible count. */\n  badge?: number | string;\n  /** Complete accessible notification description, e.g. 91 unread conversations. */\n  badgeLabel?: string;\n  /** Semantic notification tone. Defaults to neutral. */\n  badgeTone?: Tone;\n  /** Presence or health indicator; its required label carries meaning beyond colour. */\n  status?: NavigationStatus;\n}",
+          "name": "NavigationMarkers",
+          "source": "kits/app/src/composites/navigation.behavior.ts"
+        },
+        {
+          "declaration": "/** Application-owned presence or health, independent of navigation selection. */\nexport interface NavigationStatus {\n  /** Meaning announced alongside the destination, such as Online or Service unavailable. */\n  label: string;\n  /** Semantic tone of the status mark. Defaults to neutral. */\n  tone?: Tone;\n}",
+          "name": "NavigationStatus",
+          "source": "kits/app/src/composites/navigation.behavior.ts"
+        },
+        {
+          "declaration": "export interface SidebarRailItem extends NavigationMarkers {\n    /** Stable identity emitted when this item is chosen. */\n    id: string;\n    /**\n     * Accessible name and Tooltip content for the visually compact control. A tile that shows\n     * initials in icon-only mode is named `<initials>, <label>` unless `label` already holds them as words, so its\n     * name contains what it shows (WCAG 2.5.3). When a notification is present, its visible count precedes the initials.\n     */\n    label: string;\n    /** Native destination; omit for an action or contextual section menu. */\n    href?: string;\n    /** Optional glyph rendered only through the Base Icon contract. */\n    icon?: IconGlyph;\n    /**\n     * Initials or a short affordance such as \"+\" when no glyph is supplied; defaults to the first\n     * two letters of `label`, upper-cased.\n     */\n    fallback?: string;\n    /** Present but unavailable and omitted from the rail's roving focus order. */\n    disabled?: boolean;\n    /** Disclosure state when the selected rail item toggles an adjacent panel. */\n    expanded?: boolean;\n    /** Id of the adjacent panel controlled by this disclosure item. */\n    controls?: string;\n    /** Draw a horizontal divider before this destination to separate groups in the vertical rail. It adds no focus stop. */\n    separatorBefore?: boolean;\n  }",
+          "name": "SidebarRailItem",
+          "source": "kits/app/src/core/sidebar-rail.ts"
+        },
+        {
+          "declaration": "export type Tone = (typeof TONES)[number];",
+          "name": "Tone",
+          "source": "kits/base/src/tone.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Emits the chosen identity without retaining organization state.",
+        "dialect": "item-activation",
+        "name": "onselect",
+        "type": "(id: string) => void"
+      }
+    ],
+    "forwardsAttributesTo": [
+      "native element"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Composite",
+          "kit": "app",
+          "name": "SidebarRail",
+          "nativeAttributes": [
+            "nav"
+          ],
+          "props": [
+            {
+              "description": "Item size in CSS pixels, independent of Density. Labelled items grow to fit text. The pointer-target floor still applies (24px fine, 44px coarse).",
+              "name": "itemSize",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Glyph size in CSS pixels, independent of Density; constrained to fit the item.",
+              "name": "iconSize",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Space between destinations and direct children of the top/bottom regions in CSS pixels; zero is valid and explicit values win. Defaults to Density gap-md for icons, Density layout-gap-sm when labels are visible (twice gap-md at current stops).",
+              "name": "itemGap",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Space between the icon/initials and its visible label in CSS pixels; zero is valid. Omitted, labelled items use Density gap-sm.",
+              "name": "labelGap",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Requested rail width in CSS pixels. Grows only when needed to fit the item, padding and pointer-target floor.",
+              "name": "railWidth",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Rail inset in CSS pixels; zero is valid. Defaults to Density inset-sm.",
+              "name": "railPadding",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Label and fallback-initial font size in CSS pixels. Omitted, typography keeps its Theme role.",
+              "name": "labelSize",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Accessible name for this navigation landmark.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Caller-owned actions, organizations, and optional add affordance.",
+              "name": "items",
+              "required": true,
+              "type": "readonly SidebarRailItem[]"
+            },
+            {
+              "description": "Caller-owned current identity (ADR 0026); SidebarRail never changes it.",
+              "name": "currentId",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "false",
+              "description": "Show the destination label below its icon or initials. The rail widens and long labels wrap; defaults to icon-only.",
+              "name": "showLabels",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Reports the chosen identity; currentId remains caller-owned.",
+              "name": "onSelect",
+              "required": false,
+              "type": "(id: string) => void"
+            },
+            {
+              "description": "Brand or home control before the roving collection.",
+              "name": "top",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Account control after the roving collection.",
+              "name": "bottom",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Additional navigation classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/app/react/src/SidebarRail.tsx",
+          "specifier": "@reddb-io/design-system/app/SidebarRail"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/react/src/SidebarRail.tsx",
+        "specifier": "@reddb-io/design-system/app/SidebarRail",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/src/composites/SidebarRail.svelte",
+        "specifier": "@reddb-io/design-system/app",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "app",
+    "name": "SidebarRail",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Item size in CSS pixels, independent of Density. Labelled items grow to fit text. The pointer-target floor still applies (24px fine, 44px coarse).",
+        "name": "itemSize",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Glyph size in CSS pixels, independent of Density; constrained to fit the item.",
+        "name": "iconSize",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Space between destinations and direct children of the top/bottom regions in CSS pixels; zero is valid and explicit values win. Defaults to Density gap-md for icons, Density layout-gap-sm when labels are visible (twice gap-md at current stops).",
+        "name": "itemGap",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Space between the icon/initials and its visible label in CSS pixels; zero is valid. Omitted, labelled items use Density gap-sm.",
+        "name": "labelGap",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Requested rail width in CSS pixels. Grows only when needed to fit the item, padding and pointer-target floor.",
+        "name": "railWidth",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Rail inset in CSS pixels; zero is valid. Defaults to Density inset-sm.",
+        "name": "railPadding",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Label and fallback-initial font size in CSS pixels. Omitted, typography keeps its Theme role.",
+        "name": "labelSize",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Accessible name for this navigation landmark.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned actions, organizations, and optional add affordance.",
+        "name": "items",
+        "required": true,
+        "type": "readonly SidebarRailItem[]"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned current identity (ADR 0026); SidebarRail never changes it.",
+        "name": "currentId",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Show the destination label below its icon or initials. The rail widens and long labels wrap; defaults to icon-only.",
+        "name": "showLabels",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `currentId` (ADR 0026); removed next release.",
+          "replacement": "currentId"
+        },
+        "description": "Deprecated alias. Renamed `currentId` (ADR 0026); removed next release.",
+        "name": "selectedId",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Emits the chosen identity without retaining organization state.",
+        "name": "onselect",
+        "required": false,
+        "type": "(id: string) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Brand or home control placed above the roving item collection.",
+        "name": "top",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Account control placed below the roving item collection.",
+        "name": "bottom",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the navigation landmark.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A compact application and workspace switcher whose labelled icon controls keep selection external and keyboard focus roving.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/app/src/core/contracts/sidebarrail.ts"
+      ],
+      "tests": [
+        "kits/app/test/framework-app.test.ts",
+        "apps/showcase/test/component-flavors-workspace.browser.test.ts"
+      ],
+      "typeMappings": {
+        "bottom": {
+          "react": "ReactNode",
+          "reason": "Native caller content for SidebarRail.bottom; shared adapter scenarios exercise named seams, accessible content and the same close or item context where supplied.",
+          "svelte": "Snippet"
+        },
+        "top": {
+          "react": "ReactNode",
+          "reason": "Native caller content for SidebarRail.top; shared adapter scenarios exercise named seams, accessible content and the same close or item context where supplied.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Brand or home control placed above the roving item collection.",
+        "name": "top",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "Account control placed below the roving item collection.",
+        "name": "bottom",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/app/src/composites/SidebarRail.svelte",
+    "specifier": "@reddb-io/design-system/app"
+  }
+}

@@ -1,0 +1,1 @@
+import{fieldAssociation as o}from"@reddb-io/design-system/base/recipes";function e(t){return{...o({id:t.id,help:t.description,error:t.error,required:t.required}),labelId:`${t.id}-label`}}export{e as settingsRowAssociation};

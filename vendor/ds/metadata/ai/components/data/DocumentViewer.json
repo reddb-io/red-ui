@@ -1,0 +1,817 @@
+{
+  "schemaVersion": 1,
+  "id": "data/DocumentViewer",
+  "topics": [],
+  "related": [
+    "data/ActivityTimeline",
+    "data/BarChart",
+    "data/BreakdownBar",
+    "data/Candlestick",
+    "data/CompositeChart",
+    "data/DeveloperPanel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/tabs.variants.ts",
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/tabs.variants.ts",
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/tabs.variants.ts",
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-lg",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-md",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-sm",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/tabs.variants.ts",
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-radius-none",
+          "sources": [
+            "kits/base/src/tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/tabs.variants.ts",
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/tabs.variants.ts",
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/heading.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-font-size",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-font-weight",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-letter-spacing",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-line-height",
+          "sources": [
+            "kits/base/src/heading.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export interface DocumentField {\n  key: string;\n  value: unknown;\n  text: string;\n}",
+          "name": "DocumentField",
+          "source": "kits/data/src/document.ts"
+        },
+        {
+          "declaration": "/** Master-detail presentation modes shared by native renderers. */\nexport type DocumentMode = \"body\" | \"fields\" | \"raw\";",
+          "name": "DocumentMode",
+          "source": "kits/data/src/document.ts"
+        },
+        {
+          "declaration": "/** Caller-supplied document views keep domain-specific representation outside the Kit. */\nexport interface DocumentPresentation {\n  summary: DocumentSummary;\n  body: string;\n  fields: readonly DocumentField[];\n  raw: string;\n  /** Optional searchable content; title and subtitle are always included. */\n  searchText?: string;\n}",
+          "name": "DocumentPresentation",
+          "source": "kits/data/src/document.ts"
+        },
+        {
+          "declaration": "export type DocumentPresenter = (document: DocumentValue, index: number) => DocumentPresentation;",
+          "name": "DocumentPresenter",
+          "source": "kits/data/src/document.ts"
+        },
+        {
+          "declaration": "export interface DocumentSummary {\n  id: string;\n  title: string;\n  subtitle: string;\n}",
+          "name": "DocumentSummary",
+          "source": "kits/data/src/document.ts"
+        },
+        {
+          "declaration": "/** Pure extraction and filtering for the dependency-free Document viewer. */\n\nexport type DocumentValue = Readonly<Record<string, unknown>>;",
+          "name": "DocumentValue",
+          "source": "kits/data/src/document.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Item activation (ADR 0026's sanctioned `onselect`): the document chosen from the list.",
+        "dialect": "item-activation",
+        "name": "onselect",
+        "type": "(document: DocumentValue, index: number) => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `onselect` (ADR 0026); removed next release.",
+          "replacement": "onselect"
+        },
+        "description": "Deprecated alias. Renamed `onselect` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onSelected",
+        "type": "(document: DocumentValue, index: number) => void"
+      },
+      {
+        "description": "Reports the detail mode the reader switched to.",
+        "dialect": "state",
+        "name": "onmodechange",
+        "type": "(mode: DocumentMode) => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `onmodechange` (ADR 0026); removed next release.",
+          "replacement": "onmodechange"
+        },
+        "description": "Deprecated alias. Renamed `onmodechange` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onMode",
+        "type": "(mode: DocumentMode) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "data",
+          "name": "DocumentViewer",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "The documents to browse: JSON-like objects, each listed by a title and subtitle taken from common fields (`title`, `name`, `description`, `body` and similar), with an index fallback. The search field above the list filters them.",
+              "name": "documents",
+              "required": true,
+              "type": "readonly DocumentValue[]"
+            },
+            {
+              "default": "presentDocument",
+              "description": "Optional projection of caller-owned documents into summary, body, fields and raw views.",
+              "name": "present",
+              "required": false,
+              "type": "DocumentPresenter"
+            },
+            {
+              "default": "\"Documents\"",
+              "description": "Accessible name for the complete master-detail surface.",
+              "name": "label",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Controlled document index or extracted id; null intentionally selects nothing.",
+              "name": "selected",
+              "required": false,
+              "type": "number | string | null"
+            },
+            {
+              "description": "Controlled detail mode.",
+              "name": "mode",
+              "required": false,
+              "type": "DocumentMode",
+              "vocabulary": [
+                "body",
+                "fields",
+                "raw"
+              ]
+            },
+            {
+              "description": "Custom recovery content when no document matches; receives a clear-and-focus action.",
+              "name": "empty",
+              "required": false,
+              "type": "(context: { clear: () => void }) => ReactNode"
+            },
+            {
+              "description": "Item activation (ADR 0026's sanctioned `onSelect`): the document chosen from the list.",
+              "name": "onSelect",
+              "required": false,
+              "type": "(document: DocumentValue, index: number) => void"
+            },
+            {
+              "description": "Reports the detail mode the reader switched to.",
+              "name": "onModeChange",
+              "required": false,
+              "type": "(mode: DocumentMode) => void"
+            },
+            {
+              "default": "\"\"",
+              "description": "Extra classes, merged onto the root `section` that holds both the list and the detail pane.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/data/react/src/DocumentViewer.tsx",
+          "specifier": "@reddb-io/design-system/data/DocumentViewer"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/react/src/DocumentViewer.tsx",
+        "specifier": "@reddb-io/design-system/data/DocumentViewer",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/src/DocumentViewer.svelte",
+        "specifier": "@reddb-io/design-system/data/DocumentViewer",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "data",
+    "name": "DocumentViewer",
+    "props": [
+      {
+        "bindable": false,
+        "description": "The documents to browse: JSON-like objects, each listed by a title and subtitle taken from common fields (`title`, `name`, `description`, `body` and similar), with an index fallback. The search field above the list filters them.",
+        "name": "documents",
+        "required": true,
+        "type": "readonly DocumentValue[]"
+      },
+      {
+        "bindable": false,
+        "default": "presentDocument",
+        "description": "Optional projection of caller-owned documents into summary, body, fields and raw views.",
+        "name": "present",
+        "required": false,
+        "type": "DocumentPresenter"
+      },
+      {
+        "bindable": false,
+        "default": "\"Documents\"",
+        "description": "Accessible name for the complete master-detail surface.",
+        "name": "label",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Controlled document index or extracted id; null intentionally selects nothing.",
+        "name": "selected",
+        "required": false,
+        "type": "number | string | null"
+      },
+      {
+        "bindable": false,
+        "description": "Controlled detail mode.",
+        "name": "mode",
+        "required": false,
+        "type": "DocumentMode",
+        "vocabulary": [
+          "body",
+          "fields",
+          "raw"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Custom recovery content when no document matches; receives a clear-and-focus action.",
+        "name": "empty",
+        "required": false,
+        "type": "Snippet<[{ clear: () => void }]>"
+      },
+      {
+        "bindable": false,
+        "description": "Item activation (ADR 0026's sanctioned `onselect`): the document chosen from the list.",
+        "name": "onselect",
+        "required": false,
+        "type": "(document: DocumentValue, index: number) => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `onselect` (ADR 0026); removed next release.",
+          "replacement": "onselect"
+        },
+        "description": "Deprecated alias. Renamed `onselect` (ADR 0026); removed next release.",
+        "name": "onSelected",
+        "required": false,
+        "type": "(document: DocumentValue, index: number) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Reports the detail mode the reader switched to.",
+        "name": "onmodechange",
+        "required": false,
+        "type": "(mode: DocumentMode) => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `onmodechange` (ADR 0026); removed next release.",
+          "replacement": "onmodechange"
+        },
+        "description": "Deprecated alias. Renamed `onmodechange` (ADR 0026); removed next release.",
+        "name": "onMode",
+        "required": false,
+        "type": "(mode: DocumentMode) => void"
+      },
+      {
+        "bindable": false,
+        "default": "\"\"",
+        "description": "Extra classes, merged onto the root `section` that holds both the list and the detail pane.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A searchable master-detail document surface with caller-controlled selection and body, field, or raw modes.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/data/src/core/contracts/documentviewer.ts",
+        "kits/data/src/document.ts"
+      ],
+      "tests": [
+        "kits/data/test/framework-data.test.ts",
+        "apps/showcase/test/component-flavors-graphical.browser.test.ts",
+        "apps/showcase/test/data-coherence.browser.test.ts"
+      ],
+      "typeMappings": {
+        "empty": {
+          "react": "(context: { clear: () => void }) => ReactNode",
+          "reason": "Native content projection receives the same clear and focus action in both frameworks.",
+          "svelte": "Snippet<[{ clear: () => void }]>"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Custom recovery content when no document matches; receives a clear-and-focus action.",
+        "name": "empty",
+        "required": false,
+        "type": "Snippet<[{ clear: () => void }]>"
+      }
+    ],
+    "source": "kits/data/src/DocumentViewer.svelte",
+    "specifier": "@reddb-io/design-system/data/DocumentViewer"
+  }
+}

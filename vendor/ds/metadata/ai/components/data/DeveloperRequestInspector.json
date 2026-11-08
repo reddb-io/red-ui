@@ -1,0 +1,720 @@
+{
+  "schemaVersion": 1,
+  "id": "data/DeveloperRequestInspector",
+  "topics": [],
+  "related": [
+    "data/ActivityTimeline",
+    "data/BarChart",
+    "data/BreakdownBar",
+    "data/Candlestick",
+    "data/CompositeChart",
+    "data/DeveloperPanel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-base-surface",
+          "sources": [
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-raised-surface",
+          "sources": [
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-sunken-surface",
+          "sources": [
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/link.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/tabs.variants.ts",
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/app/src/primitives/list-row.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/link.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/tabs.variants.ts",
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/app/src/primitives/list-row.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/tabs.variants.ts",
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/app/src/primitives/list-row.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/tabs.variants.ts",
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-feedback",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-lg",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-md",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-sm",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/app/src/primitives/list-row.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/app/src/primitives/list-row.variants.ts",
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/app/src/primitives/list-row.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/tabs.variants.ts",
+            "kits/data/react/src/DeveloperRequestInspector.tsx",
+            "kits/data/src/DeveloperRequestInspector.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/app/src/primitives/list-row.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/app/src/composites/Toolbar.svelte",
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-none",
+          "sources": [
+            "kits/base/src/tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/base/src/link.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-shadow-xl",
+          "sources": [
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/app/src/primitives/list-row.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/tabs.variants.ts",
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/app/src/primitives/list-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/app/src/primitives/list-row.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/link.variants.ts",
+            "kits/base/src/tabs.variants.ts",
+            "kits/data/react/src/DeveloperRequestInspector.tsx",
+            "kits/data/src/DeveloperRequestInspector.svelte",
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/app/src/primitives/list-row.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/tabs.variants.ts",
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/app/src/primitives/list-row.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/DeveloperRequestInspector.tsx",
+            "kits/data/src/DeveloperRequestInspector.svelte",
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/DeveloperRequestInspector.tsx",
+            "kits/data/src/DeveloperRequestInspector.svelte",
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/DeveloperRequestInspector.tsx",
+            "kits/data/src/DeveloperRequestInspector.svelte",
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/DeveloperRequestInspector.tsx",
+            "kits/data/src/DeveloperRequestInspector.svelte",
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** A caller-supplied request. The caller owns collection, redaction and retention. */\nexport interface DeveloperRequest {\n  /** Stable identifier within the request list. */\n  id: string;\n  /** Method or operation, for example GET or SELECT. */\n  method: string;\n  /** Sanitized URL or logical target. */\n  target: string;\n  /** Response status or transport state. */\n  status: string;\n  /** Optional source or category supplied by the host, such as an API name. */\n  source?: string;\n  /** Optional display-ready capture time supplied by the host. */\n  timeLabel?: string;\n  /** Total duration in milliseconds when measured. */\n  durationMs?: number;\n  /** Sanitized request headers, preserving duplicate names. */\n  requestHeaders?: readonly (readonly [string, string])[];\n  /** Sanitized response headers, preserving duplicate names. */\n  responseHeaders?: readonly (readonly [string, string])[];\n  /** Sanitized request body, if supplied. */\n  requestBody?: string;\n  /** Sanitized response body, if supplied. */\n  responseBody?: string;\n  /** Measured request phases. Missing phases are not inferred. */\n  phases?: readonly RequestPhase[];\n  /** Caller-supplied connection facts such as protocol, remote address or TLS version. */\n  connection?: readonly (readonly [string, string])[];\n  /** Transport failure, if any. */\n  error?: string;\n}",
+          "name": "DeveloperRequest",
+          "source": "kits/data/src/developer-panel.ts"
+        },
+        {
+          "declaration": "/** A measured phase of a request. Times are offsets and durations in milliseconds. */\nexport interface RequestPhase {\n  /** Human-readable phase, such as DNS, TCP or TLS. */\n  label: string;\n  /** Offset from the start of the request in milliseconds. */\n  startMs: number;\n  /** Duration of this phase in milliseconds. */\n  durationMs: number;\n}",
+          "name": "RequestPhase",
+          "source": "kits/data/src/developer-panel.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Called when the user asks to clear the request log.",
+        "dialect": "state",
+        "name": "onrequestschange",
+        "type": "(requests: readonly DeveloperRequest[]) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "data",
+          "name": "DeveloperRequestInspector",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Sanitized request snapshot in chronological order, owned by the host.",
+              "name": "requests",
+              "required": true,
+              "type": "readonly DeveloperRequest[]"
+            },
+            {
+              "description": "Called when the user asks to clear the request log.",
+              "name": "onRequestsChange",
+              "required": false,
+              "type": "(requests: readonly DeveloperRequest[]) => void"
+            },
+            {
+              "description": "Host-owned controls for the selected request.",
+              "name": "requestActions",
+              "required": false,
+              "type": "(request: DeveloperRequest) => ReactNode"
+            },
+            {
+              "description": "Optional host content in the Tools detail view.",
+              "name": "children",
+              "required": false,
+              "type": "ReactNode"
+            }
+          ],
+          "source": "kits/data/react/src/DeveloperRequestInspector.tsx",
+          "specifier": "@reddb-io/design-system/data/DeveloperRequestInspector"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/react/src/DeveloperRequestInspector.tsx",
+        "specifier": "@reddb-io/design-system/data/DeveloperRequestInspector",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/src/DeveloperRequestInspector.svelte",
+        "specifier": "@reddb-io/design-system/data/DeveloperRequestInspector",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "data",
+    "name": "DeveloperRequestInspector",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Sanitized request snapshot in chronological order, owned by the host.",
+        "name": "requests",
+        "required": true,
+        "type": "readonly DeveloperRequest[]"
+      },
+      {
+        "bindable": false,
+        "description": "Called when the user asks to clear the request log.",
+        "name": "onrequestschange",
+        "required": false,
+        "type": "(requests: readonly DeveloperRequest[]) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Host-owned controls for the selected request.",
+        "name": "requestActions",
+        "required": false,
+        "type": "Snippet<[DeveloperRequest]>"
+      },
+      {
+        "bindable": false,
+        "description": "Optional host content in the Tools detail view.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "purpose": "Inspect caller-supplied request, response, headers and measured timings.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/data/src/developer-panel.ts",
+        "kits/data/src/developer-panel.variants.ts"
+      ],
+      "tests": [
+        "kits/data/test/developer-panel.test.ts",
+        "apps/showcase/test/developer-panel.browser.test.ts"
+      ],
+      "typeMappings": {
+        "children": {
+          "react": "ReactNode",
+          "reason": "Both adapters accept host content for the Tools view.",
+          "svelte": "Snippet"
+        },
+        "requestActions": {
+          "react": "(request: DeveloperRequest) => ReactNode",
+          "reason": "Both adapters render host actions for the selected request.",
+          "svelte": "Snippet<[DeveloperRequest]>"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Host-owned controls for the selected request.",
+        "name": "requestActions",
+        "required": false,
+        "type": "Snippet<[DeveloperRequest]>"
+      },
+      {
+        "description": "Optional host content in the Tools detail view.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/data/src/DeveloperRequestInspector.svelte",
+    "specifier": "@reddb-io/design-system/data/DeveloperRequestInspector"
+  }
+}

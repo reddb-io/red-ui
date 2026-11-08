@@ -1,0 +1,1 @@
+const e=["display","title","heading","body","caption","eyebrow"],t={twMergeConfig:{extend:{classGroups:{"font-size":[{text:[...e,"editable-sm","editable-md","editable-lg"]}]}}}};export{e as TYPE_ROLE_UTILITIES,t as typeRoleMerge};

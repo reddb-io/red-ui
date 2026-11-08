@@ -1,0 +1,329 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Image",
+  "topics": [
+    "imagem responsiva alt lazy lcp",
+    "responsive image priority loading"
+  ],
+  "related": [
+    "base/Accordion",
+    "base/AudioMeter",
+    "base/Avatar",
+    "base/Badge",
+    "base/Card",
+    "base/Carousel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [],
+      "types": [
+        {
+          "declaration": "export type ImageFit = NonNullable<ImageVariants[\"fit\"]>;",
+          "name": "ImageFit",
+          "source": "kits/base/src/image.variants.ts"
+        },
+        {
+          "declaration": "export type ImagePosition = NonNullable<ImageVariants[\"position\"]>;",
+          "name": "ImagePosition",
+          "source": "kits/base/src/image.variants.ts"
+        },
+        {
+          "declaration": "/** One `<source>` of a `<picture>`: a modern format or an art-directed crop the app produced. */\nexport interface ImageSource {\n  /** Candidate URLs with `w` or `x` descriptors, as the app's asset pipeline wrote them. */\n  srcset: string;\n  /** MIME type the browser checks before choosing this source, such as `image/avif`. */\n  type?: string;\n  /** Media condition for an art-directed crop, such as `(min-width: 48rem)`. */\n  media?: string;\n  /** Slot widths for this source's `w` descriptors; the Image's `sizes` when omitted. */\n  sizes?: string;\n}",
+          "name": "ImageSource",
+          "source": "kits/base/src/image.variants.ts"
+        },
+        {
+          "declaration": "export type ImageVariants = VariantProps<typeof image>;",
+          "name": "ImageVariants",
+          "source": "kits/base/src/image.variants.ts"
+        }
+      ]
+    },
+    "events": [],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Image",
+          "nativeAttributes": [
+            "img"
+          ],
+          "props": [
+            {
+              "description": "Fallback URL, used when no `srcset` candidate or `source` applies.",
+              "name": "src",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Text alternative. Empty only together with `decorative`.",
+              "name": "alt",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "default": "false",
+              "description": "The image carries no information; renders `alt=\"\"`.",
+              "name": "decorative",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Intrinsic width in px of `src`.",
+              "name": "width",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Intrinsic height in px of `src`.",
+              "name": "height",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Width divided by height, when the intrinsic size is unknown.",
+              "name": "ratio",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Width- or density-described candidates of the same picture.",
+              "name": "srcset",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Slot widths for the `srcset` candidates.",
+              "name": "sizes",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "[]",
+              "description": "`<picture>` sources tried before the `img`, in order (AVIF, then WebP, …).",
+              "name": "sources",
+              "required": false,
+              "type": "readonly ImageSource[]"
+            },
+            {
+              "default": "false",
+              "description": "Largest Contentful Paint candidate: eager loading, high fetch priority and synchronous decode.",
+              "name": "priority",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Override the loading strategy priority implies.",
+              "name": "loading",
+              "required": false,
+              "type": "\"lazy\" | \"eager\"",
+              "vocabulary": [
+                "lazy",
+                "eager"
+              ]
+            },
+            {
+              "default": "\"cover\"",
+              "description": "How the image fills its reserved box.",
+              "name": "fit",
+              "required": false,
+              "type": "ImageFit",
+              "vocabulary": [
+                "cover",
+                "contain"
+              ]
+            },
+            {
+              "default": "\"center\"",
+              "description": "Focal point preserved when cropping.",
+              "name": "position",
+              "required": false,
+              "type": "ImagePosition",
+              "vocabulary": [
+                "center",
+                "top",
+                "bottom",
+                "start",
+                "end"
+              ]
+            }
+          ],
+          "source": "kits/base/react/src/Image.tsx",
+          "specifier": "@reddb-io/design-system/base/Image"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Image.tsx",
+        "specifier": "@reddb-io/design-system/base/Image",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/src/Image.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Image",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Fallback URL, used when no `srcset` candidate or `source` applies.",
+        "name": "src",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Text alternative, required. `alt=\"\"` is refused unless `decorative` says the image carries no information.",
+        "name": "alt",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "The image carries no information: renders `alt=\"\"`, and `alt` must be empty.",
+        "name": "decorative",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Intrinsic width in px of `src`; with `height` it reserves the box before the bytes arrive.",
+        "name": "width",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Intrinsic height in px of `src`; with `width` it reserves the box before the bytes arrive.",
+        "name": "height",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Width divided by height, reserved when the intrinsic size is unknown (or to crop to another shape with `fit`). One of `ratio` or `width` and `height` is required.",
+        "name": "ratio",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Width- or density-described candidates of the same picture, from the app's pipeline.",
+        "name": "srcset",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Slot widths the browser uses to pick a `w`-described candidate.",
+        "name": "sizes",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "[]",
+        "description": "`<picture>` sources tried in order before the `img` — a modern format (AVIF, then WebP) or an art-directed crop. Omitted, a bare `img` renders.",
+        "name": "sources",
+        "required": false,
+        "type": "readonly ImageSource[]"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "The Largest Contentful Paint candidate: fetched at high priority, eagerly, and decoded synchronously. Defaults to `false` — lazy loading and async decoding.",
+        "name": "priority",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Overrides the loading strategy `priority` implies; rarely needed.",
+        "name": "loading",
+        "required": false,
+        "type": "\"lazy\" | \"eager\"",
+        "vocabulary": [
+          "lazy",
+          "eager"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"cover\"",
+        "description": "How the picture fills its reserved box: `cover` (default) crops, `contain` letterboxes.",
+        "name": "fit",
+        "required": false,
+        "type": "ImageFit",
+        "vocabulary": [
+          "cover",
+          "contain"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"center\"",
+        "description": "The focal point kept in frame when `cover` crops. Defaults to `center`.",
+        "name": "position",
+        "required": false,
+        "type": "ImagePosition",
+        "vocabulary": [
+          "center",
+          "top",
+          "bottom",
+          "start",
+          "end"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the `img`.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A picture that requires its alternative, reserves its box from intrinsic dimensions or a ratio, and loads lazily unless marked as the priority (LCP) image; srcset and picture sources come from the app's own asset pipeline.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/image.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-media.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/Image.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

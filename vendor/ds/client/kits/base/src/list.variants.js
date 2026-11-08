@@ -1,0 +1,1 @@
+import{tv as t}from"tailwind-variants";const a={sm:"gap-[var(--reddb-spatial-gap-sm)]",md:"gap-[var(--reddb-spatial-gap-md)]",lg:"gap-[var(--reddb-spatial-gap-lg)]"},s=t({base:"flex flex-col",variants:{gap:a},defaultVariants:{gap:"md"}}),r=Object.keys(a);export{r as LIST_GAPS,s as list};

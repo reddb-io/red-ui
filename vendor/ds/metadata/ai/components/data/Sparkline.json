@@ -1,0 +1,429 @@
+{
+  "schemaVersion": 1,
+  "id": "data/Sparkline",
+  "topics": [],
+  "related": [
+    "data/ActivityTimeline",
+    "data/BarChart",
+    "data/BreakdownBar",
+    "data/Candlestick",
+    "data/CompositeChart",
+    "data/DeveloperPanel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-color-series-${series}",
+          "sources": [
+            "kits/data/react/src/Sparkline.tsx",
+            "kits/data/src/Sparkline.svelte"
+          ]
+        }
+      ],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts",
+            "kits/data/src/chart.ts",
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/data/src/chart.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-1",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-2",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-3",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-4",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-5",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-series-6",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-regular",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/data/src/chart.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts",
+            "kits/data/react/src/Sparkline.tsx",
+            "kits/data/src/Sparkline.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/data/react/src/Sparkline.tsx",
+            "kits/data/src/Sparkline.svelte",
+            "kits/data/src/chart.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** Smooth monotone interpolation, or literal straight segments between observations. */\nexport type ChartCurve = \"smooth\" | \"linear\";",
+          "name": "ChartCurve",
+          "source": "kits/data/src/chart.ts"
+        },
+        {
+          "declaration": "/** Load as the figure nears the viewport, or immediately after mounting. */\nexport type ChartLoading = \"lazy\" | \"eager\";",
+          "name": "ChartLoading",
+          "source": "kits/data/src/chart-loading.ts"
+        },
+        {
+          "declaration": "/** Pure helpers shared by the Data Kit's LayerChart-powered charts (ADR 0013). */\n\n/** A Series Role position: the categorical hue a chart's marks are drawn in. */\nexport type ChartSeries = 1 | 2 | 3 | 4 | 5 | 6;",
+          "name": "ChartSeries",
+          "source": "kits/data/src/chart.ts"
+        },
+        {
+          "declaration": "/** A CSS custom property supplied by the DS or the host application. */\nexport type ColorToken = `--${string}`;",
+          "name": "ColorToken",
+          "source": "kits/base/src/core/color-token.ts"
+        },
+        {
+          "declaration": "/** Compact trend presentation, shared by both native renderers. */\nexport type SparklineVariant = \"line\" | \"area\" | \"bar\";",
+          "name": "SparklineVariant",
+          "source": "kits/data/src/chart.ts"
+        }
+      ]
+    },
+    "events": [],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "data",
+          "name": "Sparkline",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "The observations to plot, in order from left to right; the position in the array is the x position.",
+              "name": "values",
+              "required": true,
+              "type": "readonly number[]"
+            },
+            {
+              "default": "\"line\"",
+              "description": "`line` (default) shows the trend; `area` fills it to zero; `bar` draws one vertical column per observation, diverging around zero for negative values.",
+              "name": "variant",
+              "required": false,
+              "type": "SparklineVariant",
+              "vocabulary": [
+                "line",
+                "area",
+                "bar"
+              ]
+            },
+            {
+              "default": "\"Trend\"",
+              "description": "Accessible description of the trend.",
+              "name": "label",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "1",
+              "description": "The Series Role (1–6) the trend is drawn in. Never the Brand red.",
+              "name": "series",
+              "required": false,
+              "type": "ChartSeries",
+              "vocabulary": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6"
+              ]
+            },
+            {
+              "description": "Explicit color custom-property name; omitted, keeps the DS series role.",
+              "name": "color",
+              "required": false,
+              "type": "ColorToken"
+            },
+            {
+              "default": "2",
+              "description": "Positive line/area outline width in drawing pixels; defaults to 2.",
+              "name": "strokeWidth",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "\"smooth\"",
+              "description": "`smooth` (default) uses monotone interpolation through the observations without local overshoot; `linear` joins them with straight segments. Applies to line and area; columns are unchanged. Values and statistics are unchanged.",
+              "name": "curve",
+              "required": false,
+              "type": "ChartCurve",
+              "vocabulary": [
+                "smooth",
+                "linear"
+              ]
+            },
+            {
+              "description": "Drawing width in px. Omitted, fills its container; an explicit width keeps a fixed drawing.",
+              "name": "width",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Fixed drawing height in px. Omitted, one and a half rows of the Density's control height.",
+              "name": "height",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "\"lazy\"",
+              "description": "When LayerChart loads: `lazy` (default) once the figure nears the viewport, `eager` as soon as it mounts. Until then — and in the server render — the figure holds a placeholder of the chart's own Density-sized height under its accessible name.",
+              "name": "loading",
+              "required": false,
+              "type": "ChartLoading",
+              "vocabulary": [
+                "lazy",
+                "eager"
+              ]
+            },
+            {
+              "default": "\"\"",
+              "description": "Extra classes merged onto the chart's root figure.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/data/react/src/Sparkline.tsx",
+          "specifier": "@reddb-io/design-system/data/Sparkline"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/react/src/Sparkline.tsx",
+        "specifier": "@reddb-io/design-system/data/Sparkline",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/src/Sparkline.svelte",
+        "specifier": "@reddb-io/design-system/data/Sparkline",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "data",
+    "name": "Sparkline",
+    "props": [
+      {
+        "bindable": false,
+        "description": "The observations to plot, in order from left to right; the position in the array is the x position.",
+        "name": "values",
+        "required": true,
+        "type": "readonly number[]"
+      },
+      {
+        "bindable": false,
+        "default": "\"line\"",
+        "description": "`line` (default) shows the trend; `area` fills it to zero; `bar` draws one vertical column per observation, diverging around zero for negative values.",
+        "name": "variant",
+        "required": false,
+        "type": "SparklineVariant",
+        "vocabulary": [
+          "line",
+          "area",
+          "bar"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"Trend\"",
+        "description": "Accessible description of the trend.",
+        "name": "label",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "1",
+        "description": "The Series Role (1–6) the trend is drawn in. Never the Brand red.",
+        "name": "series",
+        "required": false,
+        "type": "ChartSeries",
+        "vocabulary": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Explicit color custom-property name; omitted, keeps the DS series role.",
+        "name": "color",
+        "required": false,
+        "type": "ColorToken"
+      },
+      {
+        "bindable": false,
+        "default": "2",
+        "description": "Positive line/area outline width in drawing pixels; defaults to 2.",
+        "name": "strokeWidth",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "\"smooth\"",
+        "description": "`smooth` (default) uses monotone interpolation through the observations without local overshoot; `linear` joins them with straight segments. Applies to line and area; columns are unchanged. Values and statistics are unchanged.",
+        "name": "curve",
+        "required": false,
+        "type": "ChartCurve",
+        "vocabulary": [
+          "smooth",
+          "linear"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Drawing width in px. Omitted, fills its container; an explicit width keeps a fixed drawing.",
+        "name": "width",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Fixed drawing height in px. Omitted, one and a half rows of the Density's control height.",
+        "name": "height",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "\"lazy\"",
+        "description": "When LayerChart loads: `lazy` (default) once the figure nears the viewport, `eager` as soon as it mounts. Until then — and in the server render — the figure holds a placeholder of the chart's own Density-sized height under its accessible name.",
+        "name": "loading",
+        "required": false,
+        "type": "ChartLoading",
+        "vocabulary": [
+          "lazy",
+          "eager"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"\"",
+        "description": "Extra classes, merged onto the chart's root `figure`.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A compact, accessible LayerChart trend that remains small enough to compose into dense summaries.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/data/src/core/contracts/sparkline.ts"
+      ],
+      "tests": [
+        "kits/data/test/framework-data.test.ts",
+        "apps/showcase/test/component-flavors-graphical.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/data/src/Sparkline.svelte",
+    "specifier": "@reddb-io/design-system/data/Sparkline"
+  }
+}

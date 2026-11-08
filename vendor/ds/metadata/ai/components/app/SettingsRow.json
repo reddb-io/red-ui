@@ -1,0 +1,434 @@
+{
+  "schemaVersion": 1,
+  "id": "app/SettingsRow",
+  "topics": [],
+  "related": [
+    "app/CategoryFilter",
+    "app/CheckoutForm",
+    "app/Filter",
+    "app/ShoppingCart"
+  ],
+  "contract": {
+    "category": "Data input",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-sm",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/app/src/composites/settings-row.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** The framework-neutral association passed by Field to its control. */\nexport interface FieldControlProps {\n  /** The id the label targets. */\n  id: string;\n  /** Native required semantics, when the Field declares them. */\n  required?: true;\n  /** Space-separated help and error ids. */\n  \"aria-describedby\"?: string;\n  /** Present only while the Field has an error. */\n  \"aria-invalid\"?: \"true\";\n  /** The Field's current error id. */\n  \"aria-errormessage\"?: string;\n}",
+          "name": "FieldControlProps",
+          "source": "kits/base/src/core/field.ts"
+        }
+      ]
+    },
+    "events": [],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "app",
+          "name": "SettingsRow",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Visible setting name, used to label the field when a control snippet is supplied.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Optional short identifier shown beside the setting name.",
+              "name": "hint",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "false",
+              "description": "Place independent actions below the field row, spanning its width.",
+              "name": "wide",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Supporting text, associated as a description rather than included in the control name.",
+              "name": "description",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Validation message associated with the field and announced as an alert.",
+              "name": "error",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "false",
+              "description": "Marks the field as required, visually and through native attributes.",
+              "name": "required",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Stable control id. Generated by the native adapter when omitted.",
+              "name": "id",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Field content receiving only its native id, requirement and description/error association.",
+              "name": "children",
+              "required": false,
+              "type": "(control: FieldControlProps) => ReactNode"
+            },
+            {
+              "description": "Independently named actions or controls. Their visible labels are never overwritten by the row.",
+              "name": "actions",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Additional classes on the row's container.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/app/react/src/SettingsRow.tsx",
+          "specifier": "@reddb-io/design-system/app/SettingsRow"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/react/src/SettingsRow.tsx",
+        "specifier": "@reddb-io/design-system/app/SettingsRow",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "settings-row"
+        },
+        "source": "kits/app/src/composites/SettingsRow.svelte",
+        "specifier": "@reddb-io/design-system/app",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "app",
+    "name": "SettingsRow",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Visible setting name, used to label the field when a control snippet is supplied.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Optional short identifier shown beside the setting name.",
+        "name": "hint",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Place independent actions below the field row, spanning its width.",
+        "name": "wide",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Supporting text, associated as a description rather than included in the control name.",
+        "name": "description",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Validation message associated with the field and announced as an alert.",
+        "name": "error",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Marks the field as required, visually and through native attributes.",
+        "name": "required",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Stable control id. Generated by the native adapter when omitted.",
+        "name": "id",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Field content receiving only its native id, requirement and description/error association.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet<[FieldControlProps]>"
+      },
+      {
+        "bindable": false,
+        "description": "Independently named actions or controls. Their visible labels are never overwritten by the row.",
+        "name": "actions",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Additional classes on the row's container.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A setting label and separate description with a natively associated field and independently named actions.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "settings-row"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/app/src/core/contracts/settingsrow.ts",
+        "kits/app/src/core/settings-row.ts",
+        "kits/app/src/composites/settings-row.variants.ts"
+      ],
+      "tests": [
+        "kits/app/test/settings-row.test.ts",
+        "apps/showcase/test/settings-composition.browser.test.ts",
+        "apps/showcase/test/settings-row-extensions.browser.test.ts"
+      ],
+      "typeMappings": {
+        "actions": {
+          "react": "ReactNode",
+          "reason": "Actions project native content without field naming overrides, verified by role and visible name.",
+          "svelte": "Snippet"
+        },
+        "children": {
+          "react": "(control: FieldControlProps) => ReactNode",
+          "reason": "Native field projection receives the same portable association, exercised in both renderers.",
+          "svelte": "Snippet<[FieldControlProps]>"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Field content receiving only its native id, requirement and description/error association.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet<[FieldControlProps]>"
+      },
+      {
+        "description": "Independently named actions or controls. Their visible labels are never overwritten by the row.",
+        "name": "actions",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/app/src/composites/SettingsRow.svelte",
+    "specifier": "@reddb-io/design-system/app"
+  }
+}

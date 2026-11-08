@@ -1,0 +1,795 @@
+{
+  "schemaVersion": 1,
+  "id": "base/AlertDialog",
+  "topics": [],
+  "related": [
+    "base/AppearanceSwitch",
+    "base/Button",
+    "base/Dialog",
+    "base/DropdownMenu",
+    "base/Popover",
+    "base/Swap"
+  ],
+  "contract": {
+    "category": "Actions",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-border",
+          "sources": [
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-surface",
+          "sources": [
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dialog.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/react/src/Dialog.tsx",
+            "kits/base/src/Dialog.svelte",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-scrim",
+          "sources": [
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-container-wide",
+          "sources": [
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-shadow-elevation-overlay",
+          "sources": [
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/react/src/Dialog.tsx",
+            "kits/base/src/Dialog.svelte",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/base/react/src/Dialog.tsx",
+            "kits/base/src/Dialog.svelte",
+            "kits/base/src/alert-dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/alert-dialog.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/react/src/Dialog.tsx",
+            "kits/base/src/Dialog.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/base/react/src/Dialog.tsx",
+            "kits/base/src/Dialog.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/base/react/src/Dialog.tsx",
+            "kits/base/src/Dialog.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/base/react/src/Dialog.tsx",
+            "kits/base/src/Dialog.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/base/react/src/Dialog.tsx",
+            "kits/base/src/Dialog.svelte"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type DialogSize = NonNullable<DialogVariants[\"size\"]>;",
+          "name": "DialogSize",
+          "source": "kits/base/src/dialog.variants.ts"
+        },
+        {
+          "declaration": "export type DialogVariants = VariantProps<typeof dialog>;",
+          "name": "DialogVariants",
+          "source": "kits/base/src/dialog.variants.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Called whenever the Dialog opens or closes, by any path.",
+        "dialect": "open",
+        "name": "onopenchange",
+        "type": "(open: boolean) => void"
+      },
+      {
+        "description": "Called once when the destructive action is confirmed. Return a promise to keep the dialog open, with the confirmation busy, until it settles: it closes on fulfilment and stays open on rejection so the caller can report the failure.",
+        "dialect": "discrete",
+        "name": "onconfirm",
+        "type": "(event: MouseEvent) => void | Promise<unknown>"
+      }
+    ],
+    "forwardsAttributesTo": [
+      "<dialog>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "base",
+          "name": "AlertDialog",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Accessible name for the DS-owned trigger. Omit it to render no trigger and open the Dialog through `bind:open` instead.",
+              "name": "triggerLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Visible Dialog title and its accessible name.",
+              "name": "title",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Optional visible detail associated with the Dialog.",
+              "name": "description",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "false",
+              "description": "Whether the Dialog is open. Bindable; defaults to closed.",
+              "name": "open",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Whether a click outside the surface dismisses it. Defaults to true.",
+              "name": "dismissible",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Maximum inline size of the surface. Defaults to `md`.",
+              "name": "size",
+              "required": false,
+              "type": "DialogSize",
+              "vocabulary": [
+                "sm",
+                "md",
+                "lg",
+                "xl"
+              ]
+            },
+            {
+              "description": "Replaces the visible title and standard close control; receives the canonical close operation.",
+              "name": "header",
+              "required": false,
+              "type": "(actions: { close: () => void }) => ReactNode"
+            },
+            {
+              "description": "Custom trigger content named by triggerLabel.",
+              "name": "trigger",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Dialog body.",
+              "name": "children",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Called whenever the Dialog requests an open-state change.",
+              "name": "onOpenChange",
+              "required": false,
+              "type": "(open: boolean) => void"
+            },
+            {
+              "description": "Extra classes merged onto the alert surface.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Visible label for the destructive confirmation action.",
+              "name": "confirmLabel",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "default": "\"Cancel\"",
+              "description": "Visible label for the safe action.",
+              "name": "cancelLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Confirm once; fulfilment closes the overlay, rejection keeps it open for retry.",
+              "name": "onConfirm",
+              "required": false,
+              "type": "(event: MouseEvent) => void | Promise<unknown>"
+            }
+          ],
+          "source": "kits/base/react/src/AlertDialog.tsx",
+          "specifier": "@reddb-io/design-system/base/AlertDialog"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/AlertDialog.tsx",
+        "specifier": "@reddb-io/design-system/base/AlertDialog",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "alert-dialog"
+        },
+        "source": "kits/base/src/AlertDialog.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "base",
+    "name": "AlertDialog",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible name for the DS-owned trigger. Omit it to render no trigger and open the Dialog through `bind:open` instead.",
+        "name": "triggerLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Visible Dialog title and its accessible name.",
+        "name": "title",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Optional visible detail associated with the Dialog.",
+        "name": "description",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": true,
+        "default": "false",
+        "description": "Whether the Dialog is open. Bindable; defaults to closed.",
+        "name": "open",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Whether a click outside the surface dismisses it. Defaults to true.",
+        "name": "dismissible",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Maximum inline size of the surface. Defaults to `md`.",
+        "name": "size",
+        "required": false,
+        "type": "DialogSize",
+        "vocabulary": [
+          "sm",
+          "md",
+          "lg",
+          "xl"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Replaces the visible title and default close control with a caller-owned header. The required title remains the accessible name; the header receives the canonical close operation. A custom header keeps the body in its own scrolling region.",
+        "name": "header",
+        "required": false,
+        "type": "Snippet<[{ close: () => void }]>"
+      },
+      {
+        "bindable": false,
+        "description": "Optional custom trigger content; `triggerLabel` remains its accessible name. Words it shows must appear, in order, in `triggerLabel`, ideally first (WCAG 2.5.3, Label in Name).",
+        "name": "trigger",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Dialog body.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Called whenever the Dialog opens or closes, by any path.",
+        "name": "onopenchange",
+        "required": false,
+        "type": "(open: boolean) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Visible label for the destructive confirmation action.",
+        "name": "confirmLabel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Cancel\"",
+        "description": "Visible label for the safe action. Defaults to `Cancel`.",
+        "name": "cancelLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Called once when the destructive action is confirmed. Return a promise to keep the dialog open, with the confirmation busy, until it settles: it closes on fulfilment and stays open on rejection so the caller can report the failure.",
+        "name": "onconfirm",
+        "required": false,
+        "type": "(event: MouseEvent) => void | Promise<unknown>"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the alert surface.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A destructive decision that stays modal until an explicit safe or confirming action restores invoking focus.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "alert-dialog"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/core/confirmation.ts",
+        "kits/base/src/core/modal.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-managed.test.ts"
+      ],
+      "typeMappings": {
+        "header": {
+          "react": "(actions: { close: () => void }) => ReactNode",
+          "reason": "The native render callback receives the same canonical context; shared adapter scenarios exercise its rendered content and associations.",
+          "svelte": "Snippet<[{ close: () => void }]>"
+        },
+        "trigger": {
+          "react": "ReactNode",
+          "reason": "Caller-owned content is a Svelte Snippet or a ReactNode in the native adapter; SSR and shared interaction scenarios retain its semantics and accessible naming.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Replaces the visible title and default close control with a caller-owned header. The required title remains the accessible name; the header receives the canonical close operation. A custom header keeps the body in its own scrolling region.",
+        "name": "header",
+        "required": false,
+        "type": "Snippet<[{ close: () => void }]>"
+      },
+      {
+        "description": "Optional custom trigger content; `triggerLabel` remains its accessible name. Words it shows must appear, in order, in `triggerLabel`, ideally first (WCAG 2.5.3, Label in Name).",
+        "name": "trigger",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "Dialog body.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/AlertDialog.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

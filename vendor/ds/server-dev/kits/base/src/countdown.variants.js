@@ -1,0 +1,1 @@
+import{tv as t}from"tailwind-variants";const e=t({slots:{root:"inline-flex items-baseline gap-[var(--reddb-spatial-gap-sm)] text-foreground",label:"text-sm text-ink-muted",value:"font-mono text-2xl font-medium tabular-nums"}});export{e as countdown};

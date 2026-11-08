@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Logo",
+  "topics": [],
+  "related": [
+    "base/Accordion",
+    "base/AudioMeter",
+    "base/Avatar",
+    "base/Badge",
+    "base/Card",
+    "base/Carousel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/logo.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/logo.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/logo.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type LogoLayout = (typeof LOGO_LAYOUTS)[number];",
+          "name": "LogoLayout",
+          "source": "kits/base/src/logo.marks.ts"
+        },
+        {
+          "declaration": "export type LogoSurface = (typeof LOGO_SURFACES)[number];",
+          "name": "LogoSurface",
+          "source": "kits/base/src/logo.marks.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<span>",
+      "<a>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Logo",
+          "nativeAttributes": [
+            "span",
+            "a"
+          ],
+          "props": [
+            {
+              "default": "\"horizontal\"",
+              "description": "How the Brand Mark is laid out.",
+              "name": "layout",
+              "required": false,
+              "type": "LogoLayout",
+              "vocabulary": [
+                "horizontal",
+                "stacked",
+                "icon",
+                "symbol",
+                "wordmark"
+              ]
+            },
+            {
+              "description": "Local surface behind the Mark; omitted, follows the document Color Scheme.",
+              "name": "on",
+              "required": false,
+              "type": "LogoSurface",
+              "vocabulary": [
+                "light",
+                "dark"
+              ]
+            },
+            {
+              "default": "DEFAULT_SYMBOL_PX",
+              "description": "Symbol height in CSS pixels, with mandatory clearspace added to the box.",
+              "name": "size",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "\"eager\"",
+              "description": "Fetch the Mark eagerly in a masthead or lazily in a footer.",
+              "name": "loading",
+              "required": false,
+              "type": "\"eager\" | \"lazy\"",
+              "vocabulary": [
+                "eager",
+                "lazy"
+              ]
+            },
+            {
+              "description": "Browser fetch priority for the Mark.",
+              "name": "fetchpriority",
+              "required": false,
+              "type": "\"high\" | \"low\" | \"auto\"",
+              "vocabulary": [
+                "high",
+                "low",
+                "auto"
+              ]
+            },
+            {
+              "description": "Destination of the accessible home link.",
+              "name": "href",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"reddb.io home\"",
+              "description": "Accessible link name.",
+              "name": "label",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/base/react/src/Logo.tsx",
+          "specifier": "@reddb-io/design-system/base/Logo"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Logo.tsx",
+        "specifier": "@reddb-io/design-system/base/Logo",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "logo"
+        },
+        "source": "kits/base/src/Logo.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Logo",
+    "props": [
+      {
+        "bindable": false,
+        "default": "\"horizontal\"",
+        "description": "How the Mark is laid out. Defaults to `horizontal`.",
+        "name": "layout",
+        "required": false,
+        "type": "LogoLayout",
+        "vocabulary": [
+          "horizontal",
+          "stacked",
+          "icon",
+          "symbol",
+          "wordmark"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "The surface behind the Mark — the LOCAL background, not the Theme. A dark hero on a light marketing page is `on=\"dark\"`. Defaults from the active Color Scheme.",
+        "name": "on",
+        "required": false,
+        "type": "LogoSurface",
+        "vocabulary": [
+          "light",
+          "dark"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "DEFAULT_SYMBOL_PX",
+        "description": "The symbol's height in CSS pixels — the red glyph, which is the same drawing in every layout, so one number means the same thing across layouts. The rendered box is larger by the clearspace on every side.",
+        "name": "size",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "\"eager\"",
+        "description": "When the browser should fetch the Mark. `eager` by default, because the Logo's commonest home is a masthead above the fold, where lazy would defer the one image the page is identified by. A footer Logo is the case for `lazy` — and it is the caller's to make, because the component cannot see where it was placed.",
+        "name": "loading",
+        "required": false,
+        "type": "\"eager\" | \"lazy\"",
+        "vocabulary": [
+          "eager",
+          "lazy"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "How the Mark's fetch is prioritised against the rest of the page. Left to the browser by default; `high` is for the masthead Logo that should not queue behind content below it.",
+        "name": "fetchpriority",
+        "required": false,
+        "type": "\"high\" | \"low\" | \"auto\"",
+        "vocabulary": [
+          "high",
+          "low",
+          "auto"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the component's own.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Where it goes. Its presence is what makes this an <a>.",
+        "name": "href",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"reddb.io home\"",
+        "description": "What the link says it does, for anyone who cannot see the Mark. A drawing has no text to fall back on, so the label is not optional — it only has a default.",
+        "name": "label",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "The DS's placement of a Brand-owned Mark: layout, surface, clearspace, and a refusal where the pinned release ships nothing.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "logo"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/logo.box.ts",
+        "kits/base/src/logo.marks.ts",
+        "kits/base/src/logo.surface.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-media.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/Logo.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

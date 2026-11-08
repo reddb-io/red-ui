@@ -1,0 +1,1 @@
+const a=["start","center"],r=["responsive","expanded","collapsed"];function t(e){return{rail:e!=="collapsed",compact:e!=="expanded"}}export{a as NAVBAR_ALIGNMENTS,r as NAVBAR_COLLAPSE,t as arrangements};

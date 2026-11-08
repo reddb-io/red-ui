@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 1,
+  "id": "app/SplitView",
+  "topics": [],
+  "related": [
+    "app/ApplicationShell",
+    "app/ApplicationWorkspace",
+    "app/MultiColumnLayout",
+    "app/SidebarLayout"
+  ],
+  "contract": {
+    "category": "Layout",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/app/src/primitives/split-view.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/app/src/primitives/split-view.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/app/src/primitives/split-view.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/app/src/primitives/split-view.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type SplitOrientation = (typeof SPLIT_ORIENTATIONS)[number];",
+          "name": "SplitOrientation",
+          "source": "kits/app/src/primitives/split-view.behavior.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Called with the new fraction after each pointer or keyboard move.",
+        "dialect": "state",
+        "name": "onfractionchange",
+        "type": "(fraction: number) => void"
+      }
+    ],
+    "forwardsAttributesTo": [
+      "<div>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "app",
+          "name": "SplitView",
+          "nativeAttributes": [
+            "div"
+          ],
+          "props": [
+            {
+              "default": "\"horizontal\"",
+              "description": "Axis the panes are laid out along. Defaults to `horizontal`.",
+              "name": "orientation",
+              "required": false,
+              "type": "SplitOrientation",
+              "vocabulary": [
+                "horizontal",
+                "vertical"
+              ]
+            },
+            {
+              "default": "0.5",
+              "description": "How much of the container the start pane takes, 0–1. Bindable.",
+              "name": "fraction",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "SPLIT_BOUNDS.min",
+              "description": "Smallest fraction the start pane may shrink to.",
+              "name": "min",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "SPLIT_BOUNDS.max",
+              "description": "Largest fraction it may grow to.",
+              "name": "max",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "\"Resize panes\"",
+              "description": "Accessible name for the divider.",
+              "name": "label",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Reports a fraction after a pointer or keyboard move.",
+              "name": "onFractionChange",
+              "required": false,
+              "type": "(fraction: number) => void"
+            },
+            {
+              "description": "Leading pane content.",
+              "name": "start",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Trailing pane content.",
+              "name": "end",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Additional root classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/app/react/src/SplitView.tsx",
+          "specifier": "@reddb-io/design-system/app/SplitView"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/react/src/SplitView.tsx",
+        "specifier": "@reddb-io/design-system/app/SplitView",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/src/primitives/SplitView.svelte",
+        "specifier": "@reddb-io/design-system/app",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "app",
+    "name": "SplitView",
+    "props": [
+      {
+        "bindable": false,
+        "default": "\"horizontal\"",
+        "description": "Axis the panes are laid out along. Defaults to `horizontal`.",
+        "name": "orientation",
+        "required": false,
+        "type": "SplitOrientation",
+        "vocabulary": [
+          "horizontal",
+          "vertical"
+        ]
+      },
+      {
+        "bindable": true,
+        "default": "0.5",
+        "description": "How much of the container the start pane takes, 0–1. Bindable.",
+        "name": "fraction",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "SPLIT_BOUNDS.min",
+        "description": "Smallest fraction the start pane may shrink to.",
+        "name": "min",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "SPLIT_BOUNDS.max",
+        "description": "Largest fraction it may grow to.",
+        "name": "max",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "\"Resize panes\"",
+        "description": "Accessible name for the divider.",
+        "name": "label",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Called with the new fraction after each pointer or keyboard move.",
+        "name": "onfractionchange",
+        "required": false,
+        "type": "(fraction: number) => void"
+      },
+      {
+        "bindable": false,
+        "description": "The leading pane: left, or top.",
+        "name": "start",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "The trailing pane: right, or bottom.",
+        "name": "end",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the root slot's own.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Two panes and a divider you can move with a pointer or with the arrow keys, over arithmetic that needs no DOM.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/app/src/core/contracts/splitview.ts"
+      ],
+      "tests": [
+        "kits/app/test/framework-app.test.ts",
+        "apps/showcase/test/component-flavors-workspace.browser.test.ts"
+      ],
+      "typeMappings": {
+        "end": {
+          "react": "ReactNode",
+          "reason": "Native caller content for SplitView.end; shared adapter scenarios exercise named seams, accessible content and the same close or item context where supplied.",
+          "svelte": "Snippet"
+        },
+        "start": {
+          "react": "ReactNode",
+          "reason": "Native caller content for SplitView.start; shared adapter scenarios exercise named seams, accessible content and the same close or item context where supplied.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "The leading pane: left, or top.",
+        "name": "start",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "The trailing pane: right, or bottom.",
+        "name": "end",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/app/src/primitives/SplitView.svelte",
+    "specifier": "@reddb-io/design-system/app"
+  }
+}

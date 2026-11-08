@@ -1,0 +1,1 @@
+import{tv as e}from"tailwind-variants";const t={true:"rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus",false:""},s=e({base:["m-[var(--reddb-spatial-gap-sm)]","inline-flex shrink-0 items-center justify-center"].join(" "),variants:{interactive:t},defaultVariants:{interactive:!1}}),i=e({base:"block"});export{s as logo,i as logoMark};

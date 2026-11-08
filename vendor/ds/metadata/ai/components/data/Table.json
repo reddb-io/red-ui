@@ -1,0 +1,1184 @@
+{
+  "schemaVersion": 1,
+  "id": "data/Table",
+  "topics": [
+    "tabela dados filtros ordenar paginar",
+    "data table filtering sorting pagination"
+  ],
+  "related": [
+    "data/ActivityTimeline",
+    "data/BarChart",
+    "data/BreakdownBar",
+    "data/Candlestick",
+    "data/CompositeChart",
+    "data/DeveloperPanel"
+  ],
+  "contract": {
+    "category": "Data display",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-base-border",
+          "sources": [
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-border",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-foreground",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-surface",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-sunken-surface",
+          "sources": [
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-lg",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-md",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-editable-text-sm",
+          "sources": [
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/base/src/checkbox.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-shadow-elevation-overlay",
+          "sources": [
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/checkbox.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/data/react/src/Table.tsx",
+            "kits/data/src/Table.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-sm",
+          "sources": [
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type SortDirection = \"ascending\" | \"descending\";",
+          "name": "SortDirection",
+          "source": "kits/data/src/table.ts"
+        },
+        {
+          "declaration": "/** Read-only state supplied to caller-owned Table toolbar actions. */\nexport interface TableActionsContext {\n  /** All filtered and sorted source rows, across pages; staged edits are supplied in changes. */\n  rows: readonly TableRow[];\n  /** Source rows on the current page, including virtualized rows outside the viewport. */\n  pageRows: readonly TableRow[];\n  /** Caller-controlled selection, or null when nothing is selected. */\n  selectedRow: TableRowKey | null;\n  /** Current immutable staged edits, for save or export actions. */\n  changes: readonly TableChange[];\n  /** Active column filters. */\n  filters: TableFilters;\n  /** Active sort, or null for source order. */\n  sort: TableSort | null;\n}",
+          "name": "TableActionsContext",
+          "source": "kits/data/src/table.ts"
+        },
+        {
+          "declaration": "/** What a caller-owned `cell` snippet receives for one read-only body cell. */\nexport interface TableCellContext<Row extends TableRow = TableRow> {\n  column: TableColumn<Row>;\n  row: Row;\n  /** The displayed value, staged changes included. */\n  value: unknown;\n  /** The column's formatted text for `value`. */\n  text: string;\n}",
+          "name": "TableCellContext",
+          "source": "kits/data/src/table.ts"
+        },
+        {
+          "declaration": "export interface TableChange<Value = unknown> {\n  rowKey: TableRowKey;\n  columnKey: string;\n  previous: Value;\n  value: Value;\n}",
+          "name": "TableChange",
+          "source": "kits/data/src/table.ts"
+        },
+        {
+          "declaration": "export interface TableColumn<Row extends TableRow = TableRow> {\n  /** Stable property key used to read this column from a row. */\n  key: keyof Row & string;\n  /** Visible column heading. */\n  header: string;\n  /** Include this column in the sort cycle. */\n  sortable?: boolean;\n  /** Include a text field for this column in the filter row. */\n  filterable?: boolean;\n  /** Example query shown in this column's empty filter field. */\n  filterPlaceholder?: string;\n  /** Inline alignment. `end` also sets tabular numerals, for quantities that compare by column. */\n  align?: TableColumnAlign;\n  /** Allow this column to enter edit mode when the Table has editing capability. */\n  editable?: boolean;\n  /** Caller-owned comparison for values in this column. */\n  compare?: (left: unknown, right: unknown, leftRow: Row, rightRow: Row) => number;\n  /** Caller-owned filter predicate. The query has already been trimmed. */\n  filter?: (value: unknown, query: string, row: Row) => boolean;\n  /** Convert an editor's text back to the row's value type. */\n  parse?: (input: string, previous: unknown, row: Row) => unknown;\n  /** Format a value for read-only display and the initial editor text. */\n  format?: (value: unknown, row: Row) => string;\n}",
+          "name": "TableColumn",
+          "source": "kits/data/src/table.ts"
+        },
+        {
+          "declaration": "export type TableColumnAlign = \"start\" | \"end\";",
+          "name": "TableColumnAlign",
+          "source": "kits/data/src/table.ts"
+        },
+        {
+          "declaration": "export type TableFilters = Readonly<Record<string, string | undefined>>;",
+          "name": "TableFilters",
+          "source": "kits/data/src/table.ts"
+        },
+        {
+          "declaration": "/** Pure data operations for the Data Kit Table. This module has no Svelte or DOM dependency. */\n\nexport type TableRow = Record<string, unknown>;",
+          "name": "TableRow",
+          "source": "kits/data/src/table.ts"
+        },
+        {
+          "declaration": "export type TableRowKey = string | number;",
+          "name": "TableRowKey",
+          "source": "kits/data/src/table.ts"
+        },
+        {
+          "declaration": "export interface TableSort {\n  key: string;\n  direction: SortDirection;\n}",
+          "name": "TableSort",
+          "source": "kits/data/src/table.ts"
+        },
+        {
+          "declaration": "interface TableVirtualization extends Omit<VirtualWindowOptions, \"scrollTop\"> {\n}",
+          "name": "TableVirtualization",
+          "source": "kits/data/src/core/contracts/table.ts"
+        },
+        {
+          "declaration": "export interface VirtualWindowOptions {\n  scrollTop: number;\n  viewportHeight: number;\n  rowHeight: number;\n  overscan?: number;\n}",
+          "name": "VirtualWindowOptions",
+          "source": "kits/data/src/table.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Receives a complete immutable staged change-set after each edit.",
+        "dialect": "state",
+        "name": "onchangeschange",
+        "type": "(changes: readonly TableChange[]) => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `onchangeschange` (ADR 0026); removed next release.",
+          "replacement": "onchangeschange"
+        },
+        "description": "Deprecated alias. Renamed `onchangeschange` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onChanges",
+        "type": "(changes: readonly TableChange[]) => void"
+      },
+      {
+        "description": "Reports the sort after a sortable header cycles it.",
+        "dialect": "state",
+        "name": "onsortchange",
+        "type": "(sort: TableSort | null) => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `onsortchange` (ADR 0026); removed next release.",
+          "replacement": "onsortchange"
+        },
+        "description": "Deprecated alias. Renamed `onsortchange` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onSort",
+        "type": "(sort: TableSort | null) => void"
+      },
+      {
+        "description": "Reports every column filter after one changes.",
+        "dialect": "state",
+        "name": "onfilterschange",
+        "type": "(filters: TableFilters) => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `onfilterschange` (ADR 0026); removed next release.",
+          "replacement": "onfilterschange"
+        },
+        "description": "Deprecated alias. Renamed `onfilterschange` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onFilters",
+        "type": "(filters: TableFilters) => void"
+      },
+      {
+        "description": "Reports the page the reader moved to.",
+        "dialect": "state",
+        "name": "onpagechange",
+        "type": "(page: number) => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `onpagechange` (ADR 0026); removed next release.",
+          "replacement": "onpagechange"
+        },
+        "description": "Deprecated alias. Renamed `onpagechange` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onPage",
+        "type": "(page: number) => void"
+      },
+      {
+        "description": "Item activation (ADR 0026's sanctioned `onselect`): receives the row a pointer or Enter/Space on a read-only cell activates.",
+        "dialect": "item-activation",
+        "name": "onselect",
+        "type": "(key: TableRowKey, row: TableRow) => void"
+      },
+      {
+        "deprecated": {
+          "note": "Renamed `onselect` (ADR 0026); removed next release.",
+          "replacement": "onselect"
+        },
+        "description": "Deprecated alias. Renamed `onselect` (ADR 0026); removed next release.",
+        "dialect": "alias",
+        "name": "onRowSelect",
+        "type": "(key: TableRowKey, row: TableRow) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "data",
+          "name": "Table",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Required visible name for the grid.",
+              "name": "caption",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Column definitions in display order: each names the row property it reads (`key`) and its `header`, and can opt into sorting, filtering, editing, alignment or custom formatting.",
+              "name": "columns",
+              "required": true,
+              "type": "readonly TableColumn[]"
+            },
+            {
+              "description": "The row objects to show, read by column `key`. The Table never mutates them: filtering, sorting, paging and staged edits all work on copies.",
+              "name": "rows",
+              "required": true,
+              "type": "readonly TableRow[]"
+            },
+            {
+              "description": "Stable row property or resolver. Falls back to the row's current data index.",
+              "name": "rowKey",
+              "required": false,
+              "type": "string | ((row: TableRow, index: number) => TableRowKey)"
+            },
+            {
+              "default": "false",
+              "description": "Editing capability. Columns must also opt in with `editable: true`.",
+              "name": "editable",
+              "required": false,
+              "type": "boolean | ((row: TableRow, column: TableColumn) => boolean)"
+            },
+            {
+              "description": "Optional controlled change-set. Without it, the component keeps a local staged set.",
+              "name": "changes",
+              "required": false,
+              "type": "readonly TableChange[]"
+            },
+            {
+              "description": "Active sort as `{ key, direction }`, or `null` for the rows' own order. Passing it (even `null`) makes sorting caller-controlled; omitted, the Table keeps its own sort.",
+              "name": "sort",
+              "required": false,
+              "type": "TableSort | null"
+            },
+            {
+              "description": "Filter queries keyed by column `key`; only `filterable` columns show a field. Passing it makes filtering caller-controlled; omitted, the Table keeps its own.",
+              "name": "filters",
+              "required": false,
+              "type": "TableFilters"
+            },
+            {
+              "description": "One-based current page, clamped to the available pages. Passing it makes paging caller-controlled; omitted, the Table starts on page `1` and tracks it itself.",
+              "name": "page",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "25",
+              "description": "Rows per page; the pager appears only when the rows span more than one page. Defaults to `25`.",
+              "name": "pageSize",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "false",
+              "description": "Fixed-height row virtualization. Windowing is applied inside the current page.",
+              "name": "virtualize",
+              "required": false,
+              "type": "TableVirtualization | false"
+            },
+            {
+              "default": "false",
+              "description": "Keep the caption for assistive technology while a surrounding heading names the grid visibly.",
+              "name": "captionHidden",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "default": "true",
+              "description": "Offer the column visibility picker. Defaults to true.",
+              "name": "columnVisibility",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "default": "\"No rows\"",
+              "description": "Plain text shown when no row survives filtering and no \\`empty\\` snippet is given.",
+              "name": "emptyMessage",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "null",
+              "description": "Controlled selected row key. Rows become selectable when `onselect` is given.",
+              "name": "selectedRow",
+              "required": false,
+              "type": "TableRowKey | null"
+            },
+            {
+              "default": "\"\"",
+              "description": "Extra classes, merged onto the outermost wrapper that holds the filter and column tools, the scroll region and the pager.",
+              "name": "containerClass",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Receives staged immutable edits.",
+              "name": "onChangesChange",
+              "required": false,
+              "type": "(changes: readonly TableChange[]) => void"
+            },
+            {
+              "description": "Reports the sort order.",
+              "name": "onSortChange",
+              "required": false,
+              "type": "(sort: TableSort | null) => void"
+            },
+            {
+              "description": "Reports the column queries.",
+              "name": "onFiltersChange",
+              "required": false,
+              "type": "(filters: TableFilters) => void"
+            },
+            {
+              "description": "Reports a requested page.",
+              "name": "onPageChange",
+              "required": false,
+              "type": "(page: number) => void"
+            },
+            {
+              "description": "Reports row activation.",
+              "name": "onSelect",
+              "required": false,
+              "type": "(key: TableRowKey, row: TableRow) => void"
+            },
+            {
+              "description": "Caller-owned toolbar buttons, menus and controls.",
+              "name": "actions",
+              "required": false,
+              "type": "(context: TableActionsContext) => ReactNode"
+            },
+            {
+              "description": "Caller-owned read-only cell.",
+              "name": "cell",
+              "required": false,
+              "type": "(context: TableCellContext) => ReactNode"
+            },
+            {
+              "description": "Caller-owned empty state.",
+              "name": "empty",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "default": "\"\"",
+              "description": "Additional table classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/data/react/src/Table.tsx",
+          "specifier": "@reddb-io/design-system/data/Table"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/react/src/Table.tsx",
+        "specifier": "@reddb-io/design-system/data/Table",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/data/src/Table.svelte",
+        "specifier": "@reddb-io/design-system/data/Table",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "data",
+    "name": "Table",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Required visible name for the grid.",
+        "name": "caption",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Column definitions in display order: each names the row property it reads (`key`) and its `header`, and can opt into sorting, filtering, editing, alignment or custom formatting.",
+        "name": "columns",
+        "required": true,
+        "type": "readonly TableColumn[]"
+      },
+      {
+        "bindable": false,
+        "description": "The row objects to show, read by column `key`. The Table never mutates them: filtering, sorting, paging and staged edits all work on copies.",
+        "name": "rows",
+        "required": true,
+        "type": "readonly TableRow[]"
+      },
+      {
+        "bindable": false,
+        "description": "Stable row property or resolver. Falls back to the row's current data index.",
+        "name": "rowKey",
+        "required": false,
+        "type": "string | ((row: TableRow, index: number) => TableRowKey)"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Editing capability. Columns must also opt in with `editable: true`.",
+        "name": "editable",
+        "required": false,
+        "type": "boolean | ((row: TableRow, column: TableColumn) => boolean)"
+      },
+      {
+        "bindable": false,
+        "description": "Optional controlled change-set. Without it, the component keeps a local staged set.",
+        "name": "changes",
+        "required": false,
+        "type": "readonly TableChange[]"
+      },
+      {
+        "bindable": false,
+        "description": "Active sort as `{ key, direction }`, or `null` for the rows' own order. Passing it (even `null`) makes sorting caller-controlled; omitted, the Table keeps its own sort.",
+        "name": "sort",
+        "required": false,
+        "type": "TableSort | null"
+      },
+      {
+        "bindable": false,
+        "description": "Filter queries keyed by column `key`; only `filterable` columns show a field. Passing it makes filtering caller-controlled; omitted, the Table keeps its own.",
+        "name": "filters",
+        "required": false,
+        "type": "TableFilters"
+      },
+      {
+        "bindable": false,
+        "description": "One-based current page, clamped to the available pages. Passing it makes paging caller-controlled; omitted, the Table starts on page `1` and tracks it itself.",
+        "name": "page",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "25",
+        "description": "Rows per page; the pager appears only when the rows span more than one page. Defaults to `25`.",
+        "name": "pageSize",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Fixed-height row virtualization. Windowing is applied inside the current page.",
+        "name": "virtualize",
+        "required": false,
+        "type": "TableVirtualization | false"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Keep the caption for assistive technology while a surrounding heading names the grid visibly.",
+        "name": "captionHidden",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "true",
+        "description": "Offer the column visibility picker. Defaults to true.",
+        "name": "columnVisibility",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"No rows\"",
+        "description": "Plain text shown when no row survives filtering and no \\`empty\\` snippet is given.",
+        "name": "emptyMessage",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "null",
+        "description": "Controlled selected row key. Rows become selectable when `onselect` is given.",
+        "name": "selectedRow",
+        "required": false,
+        "type": "TableRowKey | null"
+      },
+      {
+        "bindable": false,
+        "default": "\"\"",
+        "description": "Extra classes, merged onto the outermost wrapper that holds the filter and column tools, the scroll region and the pager.",
+        "name": "containerClass",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Receives a complete immutable staged change-set after each edit.",
+        "name": "onchangeschange",
+        "required": false,
+        "type": "(changes: readonly TableChange[]) => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `onchangeschange` (ADR 0026); removed next release.",
+          "replacement": "onchangeschange"
+        },
+        "description": "Deprecated alias. Renamed `onchangeschange` (ADR 0026); removed next release.",
+        "name": "onChanges",
+        "required": false,
+        "type": "(changes: readonly TableChange[]) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Reports the sort after a sortable header cycles it.",
+        "name": "onsortchange",
+        "required": false,
+        "type": "(sort: TableSort | null) => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `onsortchange` (ADR 0026); removed next release.",
+          "replacement": "onsortchange"
+        },
+        "description": "Deprecated alias. Renamed `onsortchange` (ADR 0026); removed next release.",
+        "name": "onSort",
+        "required": false,
+        "type": "(sort: TableSort | null) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Reports every column filter after one changes.",
+        "name": "onfilterschange",
+        "required": false,
+        "type": "(filters: TableFilters) => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `onfilterschange` (ADR 0026); removed next release.",
+          "replacement": "onfilterschange"
+        },
+        "description": "Deprecated alias. Renamed `onfilterschange` (ADR 0026); removed next release.",
+        "name": "onFilters",
+        "required": false,
+        "type": "(filters: TableFilters) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Reports the page the reader moved to.",
+        "name": "onpagechange",
+        "required": false,
+        "type": "(page: number) => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `onpagechange` (ADR 0026); removed next release.",
+          "replacement": "onpagechange"
+        },
+        "description": "Deprecated alias. Renamed `onpagechange` (ADR 0026); removed next release.",
+        "name": "onPage",
+        "required": false,
+        "type": "(page: number) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned buttons, links, menus or controls at the end of the toolbar; receives filtered rows, current page, selection and staged edits. Also renders when built-in filters and column visibility are absent.",
+        "name": "actions",
+        "required": false,
+        "type": "Snippet<[TableActionsContext]>"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned rendering for read-only cells; editing keeps the Table's own editor.",
+        "name": "cell",
+        "required": false,
+        "type": "Snippet<[TableCellContext]>"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned content for a grid with no rows after filtering.",
+        "name": "empty",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Item activation (ADR 0026's sanctioned `onselect`): receives the row a pointer or Enter/Space on a read-only cell activates.",
+        "name": "onselect",
+        "required": false,
+        "type": "(key: TableRowKey, row: TableRow) => void"
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `onselect` (ADR 0026); removed next release.",
+          "replacement": "onselect"
+        },
+        "description": "Deprecated alias. Renamed `onselect` (ADR 0026); removed next release.",
+        "name": "onRowSelect",
+        "required": false,
+        "type": "(key: TableRowKey, row: TableRow) => void"
+      },
+      {
+        "bindable": false,
+        "default": "\"\"",
+        "description": "Extra classes, merged onto the `table` element itself, inside its scroll region.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A state-local rich grid with sorting, filtering, paging, column visibility, virtualization, and explicitly staged edits.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/data/src/core/contracts/table.ts"
+      ],
+      "tests": [
+        "kits/data/test/framework-data.test.ts",
+        "apps/showcase/test/component-flavors-graphical.browser.test.ts"
+      ],
+      "typeMappings": {
+        "actions": {
+          "react": "(context: TableActionsContext) => ReactNode",
+          "reason": "Native caller content with the same data and control context; shared scenarios exercise composition, focus and caller-owned behavior.",
+          "svelte": "Snippet<[TableActionsContext]>"
+        },
+        "cell": {
+          "react": "(context: TableCellContext) => ReactNode",
+          "reason": "Native caller content with the same data and control context; shared scenarios exercise composition, focus and caller-owned behavior.",
+          "svelte": "Snippet<[TableCellContext]>"
+        },
+        "empty": {
+          "react": "ReactNode",
+          "reason": "Native caller content with the same data and control context; shared scenarios exercise composition, focus and caller-owned behavior.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Caller-owned buttons, links, menus or controls at the end of the toolbar; receives filtered rows, current page, selection and staged edits. Also renders when built-in filters and column visibility are absent.",
+        "name": "actions",
+        "required": false,
+        "type": "Snippet<[TableActionsContext]>"
+      },
+      {
+        "description": "Caller-owned rendering for read-only cells; editing keeps the Table's own editor.",
+        "name": "cell",
+        "required": false,
+        "type": "Snippet<[TableCellContext]>"
+      },
+      {
+        "description": "Caller-owned content for a grid with no rows after filtering.",
+        "name": "empty",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/data/src/Table.svelte",
+    "specifier": "@reddb-io/design-system/data/Table"
+  }
+}

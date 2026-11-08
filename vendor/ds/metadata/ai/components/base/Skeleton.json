@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Skeleton",
+  "topics": [
+    "esqueleto carregamento placeholder tabela kpi graficos barras colunas linhas area rosca radial",
+    "loading skeleton table metric card chart donut candlestick heatmap"
+  ],
+  "related": [
+    "base/Alert",
+    "base/ContentState",
+    "base/EmptyState",
+    "base/LoadingIndicator",
+    "base/Notification",
+    "base/Progress"
+  ],
+  "contract": {
+    "category": "Feedback",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type SkeletonShape = NonNullable<SkeletonVariants[\"shape\"]>;",
+          "name": "SkeletonShape",
+          "source": "kits/base/src/skeleton.variants.ts"
+        },
+        {
+          "declaration": "export type SkeletonVariants = VariantProps<typeof skeleton>;",
+          "name": "SkeletonVariants",
+          "source": "kits/base/src/skeleton.variants.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<div>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Skeleton",
+          "nativeAttributes": [
+            "div"
+          ],
+          "props": [
+            {
+              "default": "\"text\"",
+              "description": "Basic geometry or a content silhouette. Defaults to text.",
+              "name": "shape",
+              "required": false,
+              "type": "SkeletonShape",
+              "vocabulary": [
+                "text",
+                "rectangle",
+                "circle",
+                "table",
+                "kpi",
+                "bar",
+                "column",
+                "combo",
+                "line",
+                "area",
+                "pie",
+                "donut",
+                "radial",
+                "candlestick",
+                "scatter",
+                "heatmap",
+                "graph",
+                "list",
+                "document",
+                "card"
+              ]
+            },
+            {
+              "description": "Optional name when this skeleton owns the loading announcement. Leave children decorative when a parent owns aria-busy.",
+              "name": "label",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "5",
+              "description": "Placeholder rows in table, list and heatmap shapes. Integer from 1 to 20; defaults to 5.",
+              "name": "rows",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "4",
+              "description": "Placeholder columns in table and heatmap shapes. Integer from 1 to 12; defaults to 4.",
+              "name": "columns",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "true",
+              "description": "Enable the opacity pulse. Defaults to true; reduced-motion preferences always stop animation.",
+              "name": "animated",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            }
+          ],
+          "source": "kits/base/react/src/Skeleton.tsx",
+          "specifier": "@reddb-io/design-system/base/Skeleton"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Skeleton.tsx",
+        "specifier": "@reddb-io/design-system/base/Skeleton",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "skeleton"
+        },
+        "source": "kits/base/src/Skeleton.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Skeleton",
+    "props": [
+      {
+        "bindable": false,
+        "default": "\"text\"",
+        "description": "Basic geometry or a content silhouette. Defaults to text.",
+        "name": "shape",
+        "required": false,
+        "type": "SkeletonShape",
+        "vocabulary": [
+          "text",
+          "rectangle",
+          "circle",
+          "table",
+          "kpi",
+          "bar",
+          "column",
+          "combo",
+          "line",
+          "area",
+          "pie",
+          "donut",
+          "radial",
+          "candlestick",
+          "scatter",
+          "heatmap",
+          "graph",
+          "list",
+          "document",
+          "card"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Optional name when this skeleton owns the loading announcement. Leave children decorative when a parent owns aria-busy.",
+        "name": "label",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "5",
+        "description": "Placeholder rows in table, list and heatmap shapes. Integer from 1 to 20; defaults to 5.",
+        "name": "rows",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "4",
+        "description": "Placeholder columns in table and heatmap shapes. Integer from 1 to 12; defaults to 4.",
+        "name": "columns",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "true",
+        "description": "Enable the opacity pulse. Defaults to true; reduced-motion preferences always stop animation.",
+        "name": "animated",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the placeholder's own, for example to set its size.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Density-aware loading silhouettes for tables, KPIs, charts and content, with optional loading ownership and motion control.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "skeleton"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/skeleton.variants.ts",
+        "kits/base/src/core/skeleton.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-base.test.ts",
+        "kits/base/test/skeleton-patterns.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/Skeleton.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

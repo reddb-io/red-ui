@@ -1,0 +1,414 @@
+{
+  "schemaVersion": 1,
+  "id": "app/NavItem",
+  "topics": [],
+  "related": [
+    "app/BottomNavigation",
+    "app/CategoryPreview",
+    "app/CommandPalette",
+    "app/ShortcutHelp",
+    "app/SidebarNavigation",
+    "app/SidebarPanel"
+  ],
+  "contract": {
+    "category": "Navigation",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-sm",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-none",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "type CurrentToken = \"page\" | \"step\" | \"location\" | \"date\" | \"time\" | \"true\";",
+          "name": "CurrentToken",
+          "source": "kits/app/src/core/contracts/navitem.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "native element"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "app",
+          "name": "NavItem",
+          "nativeAttributes": [
+            "a",
+            "button"
+          ],
+          "props": [
+            {
+              "description": "The item's text. Ignored when a `children` snippet is given.",
+              "name": "label",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Where the item goes. Absent, the item is a <button>.",
+              "name": "href",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "false",
+              "description": "Is this the current destination (ADR 0026)? `true` announces it as the current `page`; a token names what it is current within — `step` inside a wizard, `location` inside a breadcrumb trail. Defaults to false.",
+              "name": "current",
+              "required": false,
+              "type": "boolean | CurrentToken",
+              "vocabulary": [
+                "true",
+                "false",
+                "page",
+                "step",
+                "location",
+                "date",
+                "time"
+              ]
+            },
+            {
+              "default": "false",
+              "description": "Unavailable for now: dimmed, and out of the tab order.",
+              "name": "disabled",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Decorative leading caller-owned content.",
+              "name": "icon",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Trailing caller-owned content.",
+              "name": "trailing",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Replaces the label.",
+              "name": "children",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Additional root classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/app/react/src/NavItem.tsx",
+          "specifier": "@reddb-io/design-system/app/NavItem"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/react/src/NavItem.tsx",
+        "specifier": "@reddb-io/design-system/app/NavItem",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/app/src/primitives/NavItem.svelte",
+        "specifier": "@reddb-io/design-system/app",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "app",
+    "name": "NavItem",
+    "props": [
+      {
+        "bindable": false,
+        "description": "The item's text. Ignored when a `children` snippet is given.",
+        "name": "label",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Where the item goes. Absent, the item is a <button>.",
+        "name": "href",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Is this the current destination (ADR 0026)? `true` announces it as the current `page`; a token names what it is current within — `step` inside a wizard, `location` inside a breadcrumb trail. Defaults to false.",
+        "name": "current",
+        "required": false,
+        "type": "boolean | CurrentToken",
+        "vocabulary": [
+          "true",
+          "false",
+          "page",
+          "step",
+          "location",
+          "date",
+          "time"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Unavailable for now: dimmed, and out of the tab order.",
+        "name": "disabled",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "deprecated": {
+          "note": "Renamed `current` (ADR 0026): `active` is `current`, `active current=\"step\"` is `current=\"step\"`. Removed next release.",
+          "replacement": "current"
+        },
+        "description": "Deprecated alias. Renamed `current` (ADR 0026): `active` is `current`, `active current=\"step\"` is `current=\"step\"`. Removed next release.",
+        "name": "active",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Before the label.",
+        "name": "icon",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "After the label, pushed to the end of the item.",
+        "name": "trailing",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Full control over the label.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the root slot's own.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "One entry in a navigation, which says where you are rather than only tinting itself.",
+    "readiness": {
+      "adoptionReadiness": "not-declared"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/app/src/core/contracts/navitem.ts"
+      ],
+      "tests": [
+        "kits/app/test/framework-app.test.ts",
+        "apps/showcase/test/component-flavors-workspace.browser.test.ts"
+      ],
+      "typeMappings": {
+        "icon": {
+          "react": "ReactNode",
+          "reason": "Native caller content for NavItem.icon; shared adapter scenarios exercise named seams, accessible content and the same close or item context where supplied.",
+          "svelte": "Snippet"
+        },
+        "trailing": {
+          "react": "ReactNode",
+          "reason": "Native caller content for NavItem.trailing; shared adapter scenarios exercise named seams, accessible content and the same close or item context where supplied.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Before the label.",
+        "name": "icon",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "After the label, pushed to the end of the item.",
+        "name": "trailing",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "Full control over the label.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/app/src/primitives/NavItem.svelte",
+    "specifier": "@reddb-io/design-system/app"
+  }
+}

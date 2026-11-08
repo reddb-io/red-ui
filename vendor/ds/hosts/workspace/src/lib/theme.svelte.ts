@@ -37,17 +37,20 @@ function read(
   storage?: KeyValueStorage
 ): Theme {
   const scoped = target?.dataset.colorScheme;
-  if (scoped === "dark" || scoped === "light") return scoped;
-  if (!persist) return initial ?? DEFAULT;
+  if (!persist)
+    return scoped === "dark" || scoped === "light"
+      ? scoped
+      : (initial ?? DEFAULT);
   try {
     const backend =
       storage ??
       (typeof localStorage !== "undefined" ? localStorage : undefined);
     const v = backend?.getItem(storageKey);
-    return v === "dark" || v === "light" ? v : (initial ?? DEFAULT);
-  } catch {
-    return initial ?? DEFAULT;
-  }
+    if (v === "dark" || v === "light") return v;
+  } catch { /* Fall through to the host's pre-paint value. */ }
+  return scoped === "dark" || scoped === "light"
+    ? scoped
+    : (initial ?? DEFAULT);
 }
 
 function apply(t: Theme, target: HTMLElement | null, globalTarget = true) {

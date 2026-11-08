@@ -71,6 +71,7 @@
   onopenchange={(open) => { if (!open) { secureStore.dialogOpen = false; password = ''; confirm = '' } }} size="sm"
   onkeydown={(event: KeyboardEvent) => { if (event.key === 'Escape' && secureStore.backend !== 'reddb') { event.preventDefault(); event.stopPropagation() } }}>
   <form onsubmit={submit} class="grid gap-3">
+    <input name="username" value="RedUI local Vault" autocomplete="username" hidden tabindex="-1" aria-hidden="true" />
     <Field label="Master password">
       {#snippet children(control)}
         <Input {...control} bind:ref={inputEl} bind:value={password} type="password"

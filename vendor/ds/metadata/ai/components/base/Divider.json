@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Divider",
+  "topics": [],
+  "related": [
+    "base/AspectRatio",
+    "base/BulletsSlide",
+    "base/Container",
+    "base/ContentMask",
+    "base/ControlGroup",
+    "base/Deck"
+  ],
+  "contract": {
+    "category": "Layout",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/divider.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/divider.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type DividerOrientation = (typeof DIVIDER_ORIENTATIONS)[number];",
+          "name": "DividerOrientation",
+          "source": "kits/base/src/divider.variants.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<div>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Divider",
+          "nativeAttributes": [
+            "div"
+          ],
+          "props": [
+            {
+              "default": "\"horizontal\"",
+              "description": "Visual and semantic orientation.",
+              "name": "orientation",
+              "required": false,
+              "type": "DividerOrientation",
+              "vocabulary": [
+                "horizontal",
+                "vertical"
+              ]
+            }
+          ],
+          "source": "kits/base/react/src/Divider.tsx",
+          "specifier": "@reddb-io/design-system/base/Divider"
+        },
+        "readiness": {
+          "adoptionReadiness": "not-declared"
+        },
+        "source": "kits/base/react/src/Divider.tsx",
+        "specifier": "@reddb-io/design-system/base/Divider",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "divider"
+        },
+        "source": "kits/base/src/Divider.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Divider",
+    "props": [
+      {
+        "bindable": false,
+        "default": "\"horizontal\"",
+        "description": "Direction of both the separator semantics and its painted rule.",
+        "name": "orientation",
+        "required": false,
+        "type": "DividerOrientation",
+        "vocabulary": [
+          "horizontal",
+          "vertical"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the canonical rule.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A horizontal or vertical rule whose separator semantics travel with its visual direction.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "divider"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/divider.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-appearance.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/Divider.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}
