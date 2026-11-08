@@ -66,7 +66,7 @@ describe("RedClient.capabilities — negotiation", () => {
   });
 
   it.each(["1.23.4", "1.25.5", "2.0.0-preview.1"])(
-    "adapts to structured discovery without rejecting server version %s",
+    "treats structured discovery as authoritative for server version %s",
     async (version) => {
       const fetcher = stubFetch({
         "/capabilities": () =>
@@ -77,21 +77,36 @@ describe("RedClient.capabilities — negotiation", () => {
             api_contracts: { http: { state: "supported" } },
             future_section: { additive: true },
           }),
-        "/repo/commits": () => Response.json({ ok: true, result: [] }),
-        "/cluster/status": () =>
-          Response.json({ ok: true, role: "standalone" }),
       });
       vi.stubGlobal("fetch", fetcher);
-      expect(await new RedClient("http://reddb.test").capabilities()).toEqual({
-        ...EMPTY_SERVER_CAPABILITIES,
-        vcs: true,
-        clusterStatus: true,
-      });
+      expect(await new RedClient("http://reddb.test").capabilities()).toEqual(
+        EMPTY_SERVER_CAPABILITIES
+      );
       expect(
         fetcher.mock.calls.map(([url]) => new URL(String(url)).pathname)
-      ).toEqual(["/capabilities", "/repo/commits", "/cluster/status"]);
+      ).toEqual(["/capabilities"]);
     }
   );
+
+  it("derives cluster status from the modern replication discovery section without probing optional routes", async () => {
+    const fetcher = stubFetch({
+      "/capabilities": () =>
+        Response.json({
+          version: "1.28.26",
+          discovery_version: 1,
+          build: { table: { state: "supported" } },
+          replication: { role: "standalone", read_only: false },
+          preview_features: {},
+        }),
+    });
+    vi.stubGlobal("fetch", fetcher);
+
+    expect(await new RedClient("http://reddb.test").capabilities()).toEqual({
+      ...EMPTY_SERVER_CAPABILITIES,
+      clusterStatus: true,
+    });
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
 
   it("does not override explicitly disabled features with route probes", async () => {
     const fetcher = stubFetch({

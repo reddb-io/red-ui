@@ -3,6 +3,7 @@
 
 import {
   capabilitiesFromSignal,
+  capabilitiesFromStructuredDiscovery,
   EMPTY_SERVER_CAPABILITIES,
   type RawCapabilities,
   type ServerCapabilities,
@@ -653,6 +654,8 @@ export class RedClient {
       // prove optional UI routes with read-only probes before enabling them.
       if ("features" in raw || "capabilities" in raw)
         return capabilitiesFromSignal(raw);
+      if ("discovery_version" in raw)
+        return capabilitiesFromStructuredDiscovery(raw);
     } catch (e) {
       // Only an absent/unimplemented route falls through; anything else (a
       // flaky network, an auth wall, a 5xx) hides everything.

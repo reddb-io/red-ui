@@ -30,6 +30,10 @@ export const EMPTY_SERVER_CAPABILITIES: ServerCapabilities = Object.freeze({
 /** Shape of the optional stable `/capabilities` signal. */
 export interface RawCapabilities {
   ok?: boolean
+  /** Versioned structured discovery contract used by modern RedDB servers. */
+  discovery_version?: number
+  /** Presence means the server exposes replication/cluster status. */
+  replication?: Record<string, unknown>
   /** Flat feature names, e.g. ["vcs","cluster_status"]. */
   features?: string[]
   /** Or an explicit flag map, e.g. { vcs: true }. */
@@ -68,4 +72,22 @@ export function capabilitiesFromSignal(raw: RawCapabilities): ServerCapabilities
     if (key) out[key] = on === true
   }
   return out
+}
+
+/**
+ * Map modern structured discovery without probing optional routes. Missing
+ * sections are authoritative absences: probing them creates expected 404s in
+ * browser consoles and can consume scarce request-admission slots on Free
+ * engines during connection startup.
+ */
+export function capabilitiesFromStructuredDiscovery(
+  raw: RawCapabilities,
+): ServerCapabilities {
+  return {
+    ...EMPTY_SERVER_CAPABILITIES,
+    clusterStatus:
+      !!raw.replication &&
+      typeof raw.replication === 'object' &&
+      !Array.isArray(raw.replication),
+  }
 }

@@ -41,7 +41,7 @@ export type RouteTarget =
   | { view: "analytics" }
   | { view: "settings" }
   | { view: "appearance" }
-  | { view: "collection"; collection: string; subpage: string };
+  | { view: "collection"; collection: string; subpage?: string };
 
 /** Resolved current location, the reactive surface views read from. */
 export interface RouteLocation {
@@ -102,7 +102,7 @@ export function targetToLocation(target: RouteTarget): RouteLocation {
     return {
       view: "collections",
       collection: target.collection,
-      subpage: target.subpage,
+      subpage: target.subpage ?? null,
     };
   }
   return { view: target.view, collection: null, subpage: null };

@@ -6,11 +6,10 @@
 
   import {
     CAPABILITY_GLYPHS,
-    detectCapability,
+    detectCapabilitiesFromCatalog,
     isInternalCollection,
     type Capability,
   } from './capability'
-  import { defaultSubpage } from './collection-pages'
   import { useRouter } from './router.svelte'
   import Plug from '@lucide/svelte/icons/plug'
   import Database from '@lucide/svelte/icons/database'
@@ -77,14 +76,15 @@
       if (generation !== refreshGeneration || token !== activeUrl) return
       const user = names.filter((n) => includeSystem || !isInternalCollection(n)).sort()
       items = user.map((name) => ({ name, capability: 'table' as Capability }))
-      const probes = user.map((name) =>
-        activity.track(`schema · probe ${name}`, async () => {
-          const cap = await detectCapability(client, name)
-          if (generation !== refreshGeneration || token !== activeUrl) return
-          items = items.map((it) => (it.name === name ? { ...it, capability: cap } : it))
-        }),
+      const capabilities = await activity.track(
+        'schema · classify collections',
+        () => detectCapabilitiesFromCatalog(client, user),
       )
-      await Promise.all(probes)
+      if (generation !== refreshGeneration || token !== activeUrl) return
+      items = items.map((item) => ({
+        ...item,
+        capability: capabilities.get(item.name) ?? 'table',
+      }))
     } catch (e) {
       if (generation !== refreshGeneration || token !== activeUrl) return
       error = (e as Error).message
@@ -220,7 +220,10 @@
     {#each filteredItems as item (item.name)}
       {@const g = CAPABILITY_GLYPHS[item.capability]}
       {@const active = item.name === activeCollection}
-      {@const target = { view: 'collection' as const, collection: item.name, subpage: defaultSubpage(item.capability) }}
+      <!-- Keep the route model-neutral. Workspace resolves the selected
+           collection lazily, so catalog-baseline `table` never suppresses a
+           document/stats renderer and only the clicked collection is probed. -->
+      {@const target = { view: 'collection' as const, collection: item.name }}
       <li>
         <NavItem href={router.href(target)} label={item.name} current={active}
           onclick={(event) => router.go(target, event)} title={`${g.label} · ${item.name}`}>

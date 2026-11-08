@@ -1,5 +1,11 @@
 import { describe, expect, it, vi } from 'vitest'
-import { capabilityFromCatalogModel, detectCapability, pickCapability, tagsFromCollectionMetadata } from './capability'
+import {
+  capabilityFromCatalogModel,
+  detectCapabilitiesFromCatalog,
+  detectCapability,
+  pickCapability,
+  tagsFromCollectionMetadata,
+} from './capability'
 import type { CollectionMetadata, QueryResult, RedClient } from './reddb/index'
 
 function result(capability: string | undefined, records: QueryResult['result']['records'] = []): QueryResult {
@@ -13,6 +19,51 @@ function result(capability: string | undefined, records: QueryResult['result']['
 }
 
 describe('collection capability detection', () => {
+  it('classifies the initial collection list with one catalog request', async () => {
+    const names = Array.from({ length: 32 }, (_, index) => `collection_${index}`)
+    let active = 0
+    let peakActive = 0
+    const query = vi.fn(async () => {
+      active += 1
+      peakActive = Math.max(peakActive, active)
+      await Promise.resolve()
+      active -= 1
+      return {
+        ...result(undefined),
+        result: {
+          columns: ['name', 'model'],
+          records: names.map((name, index) => ({
+            values: { name, model: index === 0 ? 'graph' : index === 1 ? 'vault' : 'table' },
+          })),
+        },
+      }
+    })
+
+    const capabilities = await detectCapabilitiesFromCatalog(
+      { query } as unknown as RedClient,
+      names,
+    )
+
+    expect(query).toHaveBeenCalledTimes(1)
+    expect(peakActive).toBe(1)
+    expect(capabilities.get('collection_0')).toBe('graph')
+    expect(capabilities.get('collection_1')).toBe('kv')
+    expect(capabilities.get('collection_2')).toBe('table')
+  })
+
+  it('keeps the table baseline when bulk catalog discovery is unavailable', async () => {
+    const query = vi.fn(async () => { throw new Error('catalog unavailable') })
+
+    await expect(detectCapabilitiesFromCatalog(
+      { query } as unknown as RedClient,
+      ['documents', 'events'],
+    )).resolves.toEqual(new Map([
+      ['documents', 'table'],
+      ['events', 'table'],
+    ]))
+    expect(query).toHaveBeenCalledTimes(1)
+  })
+
   it('prioritizes specific capability tags over table', () => {
     expect(pickCapability(['table', 'vector'])).toBe('vector')
     expect(pickCapability(['structured', 'timeseries'])).toBe('hypertable')
