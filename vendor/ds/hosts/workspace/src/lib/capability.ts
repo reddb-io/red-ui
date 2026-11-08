@@ -109,6 +109,39 @@ export function capabilityFromCatalogModel(model: unknown): Capability | null {
   return ALIASES[model.toLowerCase()] ?? null
 }
 
+/**
+ * Classify the collection browser with one catalog read.
+ *
+ * Connection startup must not fan one or more probes out per collection: Free
+ * engines deliberately keep a narrow request-admission window, and an eager
+ * browser can otherwise fill that window before the user's first query. Models
+ * that need row inspection keep the honest table baseline here; the selected
+ * collection's normal read path can refine its presentation later.
+ */
+export async function detectCapabilitiesFromCatalog(
+  client: RedClient,
+  collections: ReadonlyArray<string>,
+): Promise<Map<string, Capability>> {
+  const capabilities = new Map<string, Capability>(
+    collections.map(name => [name, 'table']),
+  )
+  if (collections.length === 0) return capabilities
+
+  try {
+    const catalog = await client.query('SELECT name, model FROM red.collections')
+    for (const row of catalog.result?.records ?? []) {
+      const name = row.values?.name
+      if (typeof name !== 'string' || !capabilities.has(name)) continue
+      capabilities.set(name, capabilityFromCatalogModel(row.values?.model) ?? 'table')
+    }
+  } catch {
+    // Older or restricted servers may not expose the catalog. Every collection
+    // remains usable through the table baseline without more startup probes.
+  }
+
+  return capabilities
+}
+
 async function detectProbabilisticCapability(client: RedClient, collection: string): Promise<Capability | null> {
   const safe = collection.replace(/[^A-Za-z0-9_./-]/g, '')
   for (const query of [`HLL INFO ${safe}`, `SKETCH INFO ${safe}`, `FILTER INFO ${safe}`]) {

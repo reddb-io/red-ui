@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { rendererSelection } from "./collection-pages";
+import { collectionPageHref, rendererSelection } from "./collection-pages";
+
+describe("collection page href", () => {
+  it("supports both model-neutral and explicit renderer routes", () => {
+    expect(collectionPageHref("event.log")).toBe("/c/event.log");
+    expect(collectionPageHref("event.log", "json")).toBe(
+      "/c/event.log/p/json"
+    );
+  });
+});
 
 describe("collection renderer selection", () => {
   it("honors a JSON route even for nonempty results, while an explicit override wins", () => {

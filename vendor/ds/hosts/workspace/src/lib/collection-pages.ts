@@ -33,9 +33,10 @@ export function subpageCapability(
 
 export function collectionPageHref(
   collection: string,
-  subpage: string
+  subpage?: string
 ): string {
-  return `/c/${encodeURIComponent(collection)}/p/${encodeURIComponent(subpage)}`;
+  const base = `/c/${encodeURIComponent(collection)}`;
+  return subpage ? `${base}/p/${encodeURIComponent(subpage)}` : base;
 }
 
 /** An explicit override wins; JSON routes also select the universal renderer. */

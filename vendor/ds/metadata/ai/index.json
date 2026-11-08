@@ -2541,7 +2541,7 @@
     }
   ],
   "release": {
-    "version": "v2026.11.19",
-    "revision": "4c5d84a187842b9642506c1c4c12947587598fad"
+    "version": "v2026.11.20",
+    "revision": "bce49e55c968f4c1ff62130399758b8c637ba551"
   }
 }

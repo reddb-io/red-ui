@@ -25,6 +25,12 @@ describe("targetToHref", () => {
       })
     ).toBe("/c/users/p/table");
   });
+
+  it("keeps a model-neutral collection target on its bare route", () => {
+    expect(
+      targetToHref({ view: "collection", collection: "event.log" })
+    ).toBe("/c/event.log");
+  });
 });
 
 describe("targetToLocation", () => {
@@ -36,6 +42,12 @@ describe("targetToLocation", () => {
         subpage: "graph",
       })
     ).toEqual({ view: "collections", collection: "users", subpage: "graph" });
+  });
+
+  it("preserves an unresolved collection subpage for lazy detection", () => {
+    expect(
+      targetToLocation({ view: "collection", collection: "events" })
+    ).toEqual({ view: "collections", collection: "events", subpage: null });
   });
 
   it("clears collection/subpage for bare views", () => {
