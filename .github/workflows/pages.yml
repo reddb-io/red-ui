@@ -17,7 +17,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ${{ fromJSON((github.repository == 'reddb-io/red-ui' && github.ref == 'refs/heads/main') && '{"group":"reddb-ci-public","labels":"reddb-public-linux-x64"}' || '"ubuntu-latest"') }}
+    runs-on: ${{ fromJSON((github.repository == 'reddb-io/red-ui' && github.ref == 'refs/heads/main') && '"reddb-public-linux-x64"' || '"ubuntu-latest"') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

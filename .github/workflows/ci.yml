@@ -15,7 +15,7 @@ concurrency:
 jobs:
   check:
     # Reviewed main workflow only; other refs retain hosted execution.
-    runs-on: ${{ fromJSON((github.repository == 'reddb-io/red-ui' && (github.ref == 'refs/heads/main' || inputs.runner_qualification == true)) && '{"group":"reddb-ci-public","labels":"reddb-public-linux-x64"}' || '"ubuntu-latest"') }}
+    runs-on: ${{ fromJSON((github.repository == 'reddb-io/red-ui' && (github.ref == 'refs/heads/main' || inputs.runner_qualification == true)) && '"reddb-public-linux-x64"' || '"ubuntu-latest"') }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-runner
