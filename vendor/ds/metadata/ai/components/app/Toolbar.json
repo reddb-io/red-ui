@@ -12,7 +12,20 @@
   "contract": {
     "category": "Actions",
     "documentation": {
-      "cssVariablePatterns": [],
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-color-${role}",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-${size}",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        }
+      ],
       "cssVariables": [
         {
           "name": "--reddb-color-background",
@@ -24,6 +37,24 @@
           "name": "--reddb-color-control-edge",
           "sources": [
             "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-border",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-foreground",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-surface",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
           ]
         },
         {
@@ -182,6 +213,8 @@
           "name": "--reddb-color-foreground",
           "sources": [
             "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/kbd.variants.ts",
             "kits/base/src/link.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
             "kits/base/src/type-roles.ts"
@@ -191,13 +224,17 @@
           "name": "--reddb-color-ink-muted",
           "sources": [
             "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/kbd.variants.ts",
             "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-muted",
           "sources": [
-            "kits/app/src/composites/toolbar.variants.ts"
+            "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/kbd.variants.ts"
           ]
         },
         {
@@ -219,37 +256,105 @@
           ]
         },
         {
-          "name": "--reddb-font-size-base",
+          "name": "--reddb-color-state-hover",
           "sources": [
-            "kits/app/src/composites/toolbar.variants.ts",
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
           "sources": [
             "kits/app/src/composites/toolbar.variants.ts",
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
           ]
         },
         {
           "name": "--reddb-font-weight-medium",
           "sources": [
             "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts",
             "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-regular",
+          "sources": [
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/core/icon.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-layer-dropdown",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
           ]
         },
         {
           "name": "--reddb-line-height-normal",
           "sources": [
             "kits/app/src/composites/toolbar.variants.ts",
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/kbd.variants.ts"
           ]
         },
         {
           "name": "--reddb-line-height-tight",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
           ]
         },
         {
@@ -258,109 +363,148 @@
             "kits/app/react/src/Toolbar.tsx",
             "kits/app/src/composites/Toolbar.svelte",
             "kits/app/src/composites/toolbar.variants.ts",
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
           ]
         },
         {
           "name": "--reddb-radius-sm",
           "sources": [
+            "kits/base/src/kbd.variants.ts",
             "kits/base/src/link.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-shadow-elevation-overlay",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-control-height-lg",
           "sources": [
             "kits/app/src/composites/toolbar.variants.ts",
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-control-height-md",
           "sources": [
             "kits/app/src/composites/toolbar.variants.ts",
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-control-height-sm",
           "sources": [
             "kits/app/src/composites/toolbar.variants.ts",
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-gap-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-gap-sm",
           "sources": [
             "kits/app/src/composites/toolbar.variants.ts",
+            "kits/base/src/kbd.variants.ts",
             "kits/base/src/link.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-lg",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-inset-lg",
           "sources": [
             "kits/app/src/composites/toolbar.variants.ts",
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-inset-md",
           "sources": [
             "kits/app/src/composites/toolbar.variants.ts",
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/popover.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-inset-sm",
           "sources": [
             "kits/app/src/composites/toolbar.variants.ts",
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/link.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-gap",
+          "sources": [
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-size",
+          "sources": [
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/app/src/composites/toolbar.variants.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-font-size",
           "sources": [
+            "kits/base/src/dropdown-menu.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-font-weight",
           "sources": [
+            "kits/base/src/dropdown-menu.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-letter-spacing",
           "sources": [
+            "kits/base/src/dropdown-menu.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-line-height",
           "sources": [
+            "kits/base/src/dropdown-menu.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
@@ -411,6 +555,48 @@
           "sources": [
             "kits/base/src/type-roles.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
         }
       ],
       "types": [
@@ -423,6 +609,11 @@
           "declaration": "/** One action or destination in a Toolbar. */\nexport interface ToolbarItem {\n  id: string;\n  label: string;\n  href?: string;\n  disabled?: boolean;\n  onselect?: () => void;\n}",
           "name": "ToolbarItem",
           "source": "kits/app/src/composites/command-surfaces.behavior.ts"
+        },
+        {
+          "declaration": "export type ToolbarOverflow = NonNullable<ToolbarVariants[\"overflow\"]>;",
+          "name": "ToolbarOverflow",
+          "source": "kits/app/src/composites/toolbar.variants.ts"
         },
         {
           "declaration": "export type ToolbarSize = NonNullable<ToolbarVariants[\"size\"]>;",
@@ -489,6 +680,20 @@
               ]
             },
             {
+              "default": "\"wrap\"",
+              "description": "What a horizontal toolbar does when its items do not fit (ADR 0053): `wrap` adds lines, or `collapse` keeps one line, measures it and moves the items past the fit into a labelled \"More\" menu. A collapsing toolbar takes the full width its container gives it; a vertical toolbar always stacks. Defaults to `wrap`.",
+              "name": "overflow",
+              "required": false,
+              "type": "ToolbarOverflow"
+            },
+            {
+              "default": "\"More\"",
+              "description": "Accessible name and visible text of the \"More\" menu trigger when items collapse. Defaults to `More`.",
+              "name": "moreLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
               "description": "Additional toolbar classes.",
               "name": "className",
               "required": false,
@@ -499,7 +704,9 @@
           "specifier": "@reddb-io/design-system/app/Toolbar"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "toolbar"
         },
         "source": "kits/app/react/src/Toolbar.tsx",
         "specifier": "@reddb-io/design-system/app/Toolbar",
@@ -566,6 +773,22 @@
           "true",
           "false"
         ]
+      },
+      {
+        "bindable": false,
+        "default": "\"wrap\"",
+        "description": "What a horizontal toolbar does when its items do not fit (ADR 0053): `wrap` adds lines, or `collapse` keeps one line, measures it and moves the items past the fit into a labelled \"More\" menu. A collapsing toolbar takes the full width its container gives it; a vertical toolbar always stacks. Defaults to `wrap`.",
+        "name": "overflow",
+        "required": false,
+        "type": "ToolbarOverflow"
+      },
+      {
+        "bindable": false,
+        "default": "\"More\"",
+        "description": "Accessible name and visible text of the \"More\" menu trigger when items collapse. Defaults to `More`.",
+        "name": "moreLabel",
+        "required": false,
+        "type": "string"
       },
       {
         "bindable": false,

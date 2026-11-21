@@ -7,7 +7,7 @@ export declare const radialProgress: import("tailwind-variants").TVReturnType<{
         };
         readonly md: {
             readonly root: "size-[calc(var(--reddb-spatial-control-height-md)*2)]";
-            readonly value: "text-sm";
+            readonly value: "text-label";
         };
         readonly lg: {
             readonly root: "size-[calc(var(--reddb-spatial-control-height-lg)*2.4)]";
@@ -55,7 +55,7 @@ export declare const radialProgress: import("tailwind-variants").TVReturnType<{
         };
         readonly md: {
             readonly root: "size-[calc(var(--reddb-spatial-control-height-md)*2)]";
-            readonly value: "text-sm";
+            readonly value: "text-label";
         };
         readonly lg: {
             readonly root: "size-[calc(var(--reddb-spatial-control-height-lg)*2.4)]";
@@ -103,7 +103,7 @@ export declare const radialProgress: import("tailwind-variants").TVReturnType<{
         };
         readonly md: {
             readonly root: "size-[calc(var(--reddb-spatial-control-height-md)*2)]";
-            readonly value: "text-sm";
+            readonly value: "text-label";
         };
         readonly lg: {
             readonly root: "size-[calc(var(--reddb-spatial-control-height-lg)*2.4)]";

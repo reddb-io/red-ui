@@ -34,11 +34,11 @@ that routes `data` also receives `app` and `base` through Kit inheritance.
 Components are imported through individual subpaths:
 
 ```ts
-import Table, {
+import DataTable, {
   applyChanges,
   type TableChange,
   type TableColumn,
-} from "@reddb-io/design-system/data/Table";
+} from "@reddb-io/design-system/data/DataTable";
 ```
 
 There is intentionally no Data barrel. Optional engines belong only to the
@@ -143,9 +143,9 @@ puts signed delta, direction arrow and visible comparison context below them.
 Neutral cards use the raised surface without a default shadow, and polarity
 continues to determine whether a delta means improvement or regression.
 
-## Table
+## DataTable
 
-`Table` accepts caller-owned `rows` and a column model. Sorting, per-column
+`DataTable` (formerly `Table`, ADR 0007) accepts caller-owned `rows` and a column model. Sorting, per-column
 filters, pagination, fixed-row virtualization, column visibility, and roving
 keyboard cell focus are local view state. Set `editable` to opt into the
 columns marked `editable: true`; each edit stages an immutable `TableChange[]`
@@ -161,8 +161,8 @@ DOM dependency: `sortRows`, `filterRows`, `paginateRows`, `virtualWindow`,
 
 `TreeView` renders a labelled WAI-ARIA tree with roving focus, arrow-key
 navigation, Home/End, and accumulating typeahead across visible nodes. Expansion
-and selection can be local or caller-controlled through `expanded` / `onExpanded`
-and `selected` / `onSelected`.
+and selection can be local or caller-controlled through `expanded` / `onexpandedchange`
+and `selected` / `onselectedchange`.
 
 Pass `onRename` to expose the rename action (also available with `F2`). Pass
 `onReorder` to expose drag-and-drop reordering. Both callbacks report proposed
@@ -192,13 +192,13 @@ generic value on the node for its complete input path.
 
 `JsonTree` and `XmlTree` are read-only inspectors over the `TreeView`
 interaction contract — same roving focus, keyboard navigation, and controlled
-`expanded` / `onExpanded` and `selected` — with rename and reorder turned off.
+`expanded` / `onexpandedchange` and `selected` — with rename and reorder turned off.
 `JsonTree` takes any JSON-compatible `value`; `XmlTree` takes XML source as a
 string and parses it without a parser dependency, throwing a `SyntaxError` for
 input that is not well formed or does not have exactly one root element.
 
 Every node id is its dotted path (`items.0.name`; a scalar root is `$`), and
-`onPath` receives that path when a node is selected. `buildJsonTree`,
+`onselectedchange` receives that path when a node is selected. `buildJsonTree`,
 `buildXmlTree`, and `dottedPath` are exported beside each component.
 
 ## DocumentViewer
@@ -213,8 +213,8 @@ from `id`/`_id`/`key` (else the index), the subtitle from
 from `body`/`content`/`text`/`markdown` (else pretty JSON).
 
 Selection and mode are local by default and controllable through `selected` /
-`onSelected` (an index or an extracted id; `null` selects nothing) and `mode` /
-`onMode`. The pure extraction helpers are exported beside it:
+`onselect` (an index or an extracted id; `null` selects nothing) and `mode` /
+`onmodechange`. The pure extraction helpers are exported beside it:
 `extractDocumentSummary`, `filterDocuments`, `documentBody`, `documentFields`,
 `documentRaw`, and `formatDocumentValue`.
 
@@ -227,9 +227,9 @@ digits, and bytes outside printable ASCII show as `.`. The pure `hexBytes` and
 `formatHex` helpers are exported beside it and throw a `RangeError` on
 out-of-range bytes or a non-positive `bytesPerRow`.
 
-## Diff
+## RecordDiff
 
-`Diff` computes the comparison itself, unlike the Application Kit's `Diff`,
+`RecordDiff` (formerly `Diff`, ADR 0007) computes the comparison itself, unlike the Application Kit's `Diff`,
 which renders rows the caller already computed. Pass `before` and `after`:
 
 - `mode="fields"` (default) flattens both values to dotted leaf paths and
@@ -244,14 +244,14 @@ danger, and warning feedback roles are never the only cue. `showUnchanged`
 `diffLines`, and `formatDiffValue` are exported beside it.
 
 ```ts
-import Diff, { diffFields } from "@reddb-io/design-system/data/Diff";
+import RecordDiff, { diffFields } from "@reddb-io/design-system/data/RecordDiff";
 ```
 
 ## CodeField
 
 `CodeField` is a labelled text control — a single-line input, or with `gutter`
 a line-numbered textarea of `rows` rows — whose value is mirrored by a token
-highlight layer. `value` is bindable and `onValue` reports every edit.
+highlight layer. `value` is bindable and `onvaluechange` reports every edit.
 
 Syntax is caller-owned through `grammar`, a `CodeFieldGrammar` with
 `tokenize` and optional `completionAt` / `complete`. Without one, the field uses
@@ -279,9 +279,15 @@ Communities are detected with Leiden unless any node declares `community`, and
 `collapsedCommunities` starts named communities as single supernodes. Layout is
 a deterministic sparse-stress arrangement seeded by `layoutSeed` (`force` and
 `radial` remain as legacy aliases of `layout`). `searchable` adds a node
-search; focus is local or controlled through `focusedNode` / `onFocusedNode`,
-and `onInteraction` receives node and edge clicks and keyboard focus with the
+search; focus is local or controlled through `focusedNode` / `onfocusednodechange`,
+and `oninteraction` receives node and edge clicks and keyboard focus with the
 caller's metadata intact. Node colours are semantic DS tokens only.
+
+React names these callbacks `onFocusedNodeChange` and `onInteraction`.
+
+The canvas engine's types import Node's `events` module. A consumer that
+type-checks its dependencies (`skipLibCheck: false`) and renders Graph needs
+`@types/node` or `@types/events`.
 
 Focusing a node plays a short pulse in both renderers; under
 `prefers-reduced-motion: reduce` the pulse is skipped and the focused state is
@@ -695,3 +701,32 @@ With no contexts, pass `children` directly; no tab or request data is required. 
 **BREAKING:** The panel's `requests`, `onrequestschange`/`onRequestsChange` and `requestActions` are deprecated for one release. Move them to `DeveloperRequestInspector` inside a caller-defined Requests context. The compatibility path still renders the existing inspector and Tools content during the deprecation window.
 
 Request timing phases must be supplied measurements; missing DNS, TLS or other timings are never inferred. Drag the upper separator or use Up/Down, Home and End to resize; Maximize fills the viewport or containing host and Restore returns to the previous height.
+
+## Explorers
+
+Each explorer is its own subpath, for example
+`import GraphExplorer from "@reddb-io/design-system/data/GraphExplorer"`, and has a
+native React adapter with the same props. All of them take a required `label`. The
+caller owns the data and every query; an explorer never fetches.
+
+| Component | Required data | What it adds |
+|---|---|---|
+| `TableExplorer` | `columns`, `rows`, `rowKey` | Filter and edit result rows with stable source identity. `onquery` projects the caller's query, and `changes`/`onchangeschange` hold edits. Follows the collection state contract (`state`, `errorMessage`, `onretry`). |
+| `GraphExplorer` | `data` | Networks as canvas, SVG or tables, with community grouping, relationship details and host-owned queries through `onquery`. |
+| `DiffExplorer` | `entries` | Search and select caller-supplied changes, then compare fields or read the raw records. |
+| `KeyValueExplorer` | `entries` | Browse slash-delimited keys, filter by prefix and inspect original or nested JSON values. |
+| `QueueExplorer` | `messages`, `events` | Queue messages, delivery metadata and event envelopes. `onenqueue` leaves insertion to the caller. |
+| `EventSeriesExplorer` | `series` | Event rates, metric values and records in bounded time buckets. |
+| `StatsExplorer` | `metrics` | Numeric statistics as KPIs, gauges or a table, without changing their readings. |
+| `VectorExplorer` | `rows` | Vector metadata, coordinates and scores. `onsearch` runs a cancellable search the caller owns. |
+
+## ActivityTimeline and ProjectionChart
+
+`ActivityTimeline` draws compact parent activities, each with several child
+intervals, on one shared time scale (`label`, `rows`, optional `domain`). It
+follows the collection state contract, so loading, empty and error states keep
+the timeline's frame.
+
+`ProjectionChart` shows a current metric (`value`) beside `recorded`
+observations and `projected` values, with `now` marking where one becomes the
+other on a fixed `valueDomain`. `annotations` add time references.

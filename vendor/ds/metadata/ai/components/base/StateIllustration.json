@@ -60,6 +60,24 @@
       ]
     },
     "events": [],
+    "guidance": {
+      "family": "Empty and outcome states",
+      "question": "Is there nothing to show, is the content still uncertain, or did an operation just finish?",
+      "related": [
+        "base/EmptyState",
+        "base/ContentState",
+        "app/OutcomeScreen"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "base/EmptyState",
+          "text": "On its own as the whole message; the words carry the meaning."
+        }
+      ],
+      "whenToUse": [
+        "An empty, error or confirmation state benefits from artwork, composed inside EmptyState or OutcomeScreen."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -118,7 +136,9 @@
           "specifier": "@reddb-io/design-system/base/StateIllustration"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "state-illustration"
         },
         "source": "kits/base/react/src/StateIllustration.tsx",
         "specifier": "@reddb-io/design-system/base/StateIllustration",
@@ -126,7 +146,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "state-illustration"
         },
         "source": "kits/base/src/StateIllustration.svelte",
         "specifier": "@reddb-io/design-system/base",
@@ -188,7 +210,9 @@
     ],
     "purpose": "Token-coloured SVG state artwork, individually imported for errors, zero states and confirmations, without fonts or external resources.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "state-illustration"
     },
     "sharedContract": {
       "core": [

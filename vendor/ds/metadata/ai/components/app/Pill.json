@@ -126,39 +126,33 @@
           ]
         },
         {
-          "name": "--reddb-color-on-primary",
+          "name": "--reddb-color-state-hover",
           "sources": [
-            "kits/app/src/primitives/pill.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
-          "name": "--reddb-color-primary",
+          "name": "--reddb-color-state-open",
           "sources": [
-            "kits/app/src/primitives/pill.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-color-state-pressed",
           "sources": [
-            "kits/app/src/primitives/pill.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-size-xs",
+          "name": "--reddb-color-state-selected",
           "sources": [
-            "kits/app/src/primitives/pill.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
           "name": "--reddb-font-weight-medium",
           "sources": [
             "kits/base/src/quiet-control.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-line-height-normal",
-          "sources": [
-            "kits/app/src/primitives/pill.variants.ts"
           ]
         },
         {
@@ -174,13 +168,31 @@
           ]
         },
         {
-          "name": "--reddb-spatial-control-height-sm",
+          "name": "--reddb-spatial-inset-sm",
           "sources": [
             "kits/app/src/primitives/pill.variants.ts"
           ]
         },
         {
-          "name": "--reddb-spatial-inset-sm",
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/app/src/primitives/pill.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
           "sources": [
             "kits/app/src/primitives/pill.variants.ts"
           ]
@@ -188,24 +200,28 @@
         {
           "name": "--reddb-type-caption-font-size",
           "sources": [
+            "kits/app/src/primitives/pill.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-font-weight",
           "sources": [
+            "kits/app/src/primitives/pill.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-letter-spacing",
           "sources": [
+            "kits/app/src/primitives/pill.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-line-height",
           "sources": [
+            "kits/app/src/primitives/pill.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
@@ -260,11 +276,6 @@
       ],
       "types": [
         {
-          "declaration": "/** @deprecated `neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release. */\nexport type DeprecatedPillVariant = keyof typeof DEPRECATED_PILL_VARIANTS;",
-          "name": "DeprecatedPillVariant",
-          "source": "kits/app/src/primitives/pill.variants.ts"
-        },
-        {
           "declaration": "export type PillSize = keyof typeof SIZE;",
           "name": "PillSize",
           "source": "kits/app/src/primitives/pill.variants.ts"
@@ -287,21 +298,30 @@
         "dialect": "discrete",
         "name": "ondismiss",
         "type": "() => void"
-      },
-      {
-        "deprecated": {
-          "note": "Renamed `ondismiss` (ADR 0026); removed next release.",
-          "replacement": "ondismiss"
-        },
-        "description": "Deprecated alias. Renamed `ondismiss` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onDismiss",
-        "type": "() => void"
       }
     ],
     "forwardsAttributesTo": [
       "<span>"
     ],
+    "guidance": {
+      "family": "Status marks",
+      "question": "Is it a status beside text, a removable tag or filter, a counted category, or a node's reachability?",
+      "related": [
+        "base/StatusIndicator",
+        "base/Badge",
+        "marketing/CategoryChip",
+        "app/NodeBadge"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "base/Badge",
+          "text": "A static label in text."
+        }
+      ],
+      "whenToUse": [
+        "A round-ended tag or active filter, optionally dismissible."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -329,22 +349,10 @@
             },
             {
               "default": "\"tinted\"",
-              "deprecatedValues": [
-                {
-                  "note": "`neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release.",
-                  "replacement": "tinted",
-                  "value": "neutral"
-                },
-                {
-                  "note": "`neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release.",
-                  "replacement": "filled",
-                  "value": "primary"
-                }
-              ],
-              "description": "How strongly the tone is drawn: `tinted` (default), `filled` or `outline`. `neutral` and `primary` are deprecated for one release.",
+              "description": "How strongly the tone is drawn: `tinted` (default), `filled` or `outline`.",
               "name": "variant",
               "required": false,
-              "type": "PillVariant | DeprecatedPillVariant",
+              "type": "PillVariant",
               "vocabulary": [
                 "tinted",
                 "filled",
@@ -392,7 +400,9 @@
           "specifier": "@reddb-io/design-system/app/Pill"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "pill"
         },
         "source": "kits/app/react/src/Pill.tsx",
         "specifier": "@reddb-io/design-system/app/Pill",
@@ -400,7 +410,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "pill"
         },
         "source": "kits/app/src/primitives/Pill.svelte",
         "specifier": "@reddb-io/design-system/app",
@@ -429,22 +441,10 @@
       {
         "bindable": false,
         "default": "\"tinted\"",
-        "deprecatedValues": [
-          {
-            "note": "`neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release.",
-            "replacement": "tinted",
-            "value": "neutral"
-          },
-          {
-            "note": "`neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release.",
-            "replacement": "filled",
-            "value": "primary"
-          }
-        ],
-        "description": "How strongly the tone is drawn: `tinted` (default), `filled` or `outline`. `neutral` and `primary` are deprecated for one release.",
+        "description": "How strongly the tone is drawn: `tinted` (default), `filled` or `outline`.",
         "name": "variant",
         "required": false,
-        "type": "PillVariant | DeprecatedPillVariant",
+        "type": "PillVariant",
         "vocabulary": [
           "tinted",
           "filled",
@@ -480,17 +480,6 @@
       },
       {
         "bindable": false,
-        "deprecated": {
-          "note": "Renamed `ondismiss` (ADR 0026); removed next release.",
-          "replacement": "ondismiss"
-        },
-        "description": "Deprecated alias. Renamed `ondismiss` (ADR 0026); removed next release.",
-        "name": "onDismiss",
-        "required": false,
-        "type": "() => void"
-      },
-      {
-        "bindable": false,
         "description": "Extra classes, merged over the variant's own.",
         "name": "class",
         "required": false,
@@ -506,7 +495,9 @@
     ],
     "purpose": "A round-ended token for a filter or a tag, optionally dismissible.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "pill"
     },
     "sharedContract": {
       "core": [

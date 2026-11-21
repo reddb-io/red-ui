@@ -2,7 +2,7 @@
  import type {QueryResult} from '../reddb/index';
  import {useWorkspace} from '../workspace-context';
  import TableExplorer from '@reddb-io/design-system/data/TableExplorer';
- import type {TableRow,TableColumn,TableChange} from '@reddb-io/design-system/data/Table';
+ import type {TableRow,TableColumn,TableChange} from '@reddb-io/design-system/data/DataTable';
  import type {TableQueryRequest} from '@reddb-io/design-system/data/table-explorer';
  import {isSafeCellUpdateTarget} from '@reddb-io/design-system/adapters/reddb/change-sql';
  import {visibleRows,visibleColumns,inferPkColumn,identityKind,isSystemField,formatCell,rowId,buildTableSelectQuery} from '@reddb-io/design-system/adapters/reddb/table-results';

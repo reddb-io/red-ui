@@ -164,7 +164,9 @@
           "specifier": "@reddb-io/design-system/base/Image"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "image"
         },
         "source": "kits/base/react/src/Image.tsx",
         "specifier": "@reddb-io/design-system/base/Image",
@@ -172,7 +174,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "image"
         },
         "source": "kits/base/src/Image.svelte",
         "specifier": "@reddb-io/design-system/base",
@@ -312,7 +316,9 @@
     ],
     "purpose": "A picture that requires its alternative, reserves its box from intrinsic dimensions or a ratio, and loads lazily unless marked as the priority (LCP) image; srcset and picture sources come from the app's own asset pipeline.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "image"
     },
     "sharedContract": {
       "core": [

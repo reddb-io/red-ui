@@ -27,13 +27,15 @@
           ]
         }
       ],
-      "cssVariables": [],
-      "types": [
+      "cssVariables": [
         {
-          "declaration": "/** @deprecated Use ink-muted; muted is a surface role. */\nexport type DeprecatedIconColor = \"muted\";",
-          "name": "DeprecatedIconColor",
-          "source": "kits/base/src/core/icon.ts"
-        },
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        }
+      ],
+      "types": [
         {
           "declaration": "export type IconColor = (typeof ICON_COLORS)[number];",
           "name": "IconColor",
@@ -86,28 +88,23 @@
             },
             {
               "default": "\"md\"",
-              "description": "Density-responsive DS size.",
+              "description": "Density-responsive DS size for a glyph alone in a control, or `text` to follow the label it sits beside (ADR 0054).",
               "name": "size",
               "required": false,
               "type": "IconSize",
               "vocabulary": [
                 "sm",
                 "md",
-                "lg"
+                "lg",
+                "text"
               ]
             },
             {
-              "default": "\"foreground\"",
-              "deprecatedValues": [
-                {
-                  "note": "Use ink-muted; muted is a surface role.",
-                  "value": "muted"
-                }
-              ],
-              "description": "Semantic Theme ink role. The deprecated muted alias draws in ink-muted.",
+              "default": "\"current\"",
+              "description": "Semantic Theme ink role; `current` (the default, ADR 0054) follows the surrounding ink.",
               "name": "color",
               "required": false,
-              "type": "IconColor | DeprecatedIconColor",
+              "type": "IconColor",
               "vocabulary": [
                 "current",
                 "foreground",
@@ -125,7 +122,9 @@
           "specifier": "@reddb-io/design-system/base/Icon"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "icon"
         },
         "source": "kits/base/react/src/Icon.tsx",
         "specifier": "@reddb-io/design-system/base/Icon",
@@ -133,7 +132,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "icon"
         },
         "source": "kits/base/src/Icon.svelte",
         "specifier": "@reddb-io/design-system/base",
@@ -154,29 +155,24 @@
       {
         "bindable": false,
         "default": "\"md\"",
-        "description": "Density-responsive DS size.",
+        "description": "Density-responsive DS size for a glyph alone in a control, or `text` to follow the label it sits beside (ADR 0054).",
         "name": "size",
         "required": false,
         "type": "IconSize",
         "vocabulary": [
           "sm",
           "md",
-          "lg"
+          "lg",
+          "text"
         ]
       },
       {
         "bindable": false,
-        "default": "\"foreground\"",
-        "deprecatedValues": [
-          {
-            "note": "Use ink-muted; muted is a surface role.",
-            "value": "muted"
-          }
-        ],
-        "description": "Semantic Theme color; raw color values are deliberately not accepted. `current` inherits the surrounding ink, so a glyph follows its control's hover and selected states or a caller's token-backed text class. `muted` is a deprecated alias that draws in `ink-muted` for one release.",
+        "default": "\"current\"",
+        "description": "Semantic Theme color; raw color values are deliberately not accepted. `current` inherits the surrounding ink, so a glyph follows its control's hover and selected states or a caller's token-backed text class. It is the default (ADR 0054); `foreground` keeps full ink inside muted text.",
         "name": "color",
         "required": false,
-        "type": "IconColor | DeprecatedIconColor",
+        "type": "IconColor",
         "vocabulary": [
           "current",
           "foreground",
@@ -192,7 +188,9 @@
     ],
     "purpose": "A lucide glyph whose size follows local Density and whose stroke color names a semantic Theme role.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "icon"
     },
     "sharedContract": {
       "core": [

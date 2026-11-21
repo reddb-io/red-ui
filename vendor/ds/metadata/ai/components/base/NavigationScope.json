@@ -56,7 +56,9 @@
           "specifier": "@reddb-io/design-system/base/NavigationScope"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "navigation-scope"
         },
         "source": "kits/base/react/src/NavigationScope.tsx",
         "specifier": "@reddb-io/design-system/base/NavigationScope",
@@ -64,7 +66,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "navigation-scope"
         },
         "source": "kits/base/src/NavigationScope.svelte",
         "specifier": "@reddb-io/design-system/base",
@@ -106,7 +110,9 @@
     ],
     "purpose": "An injectable navigation seam: every in-app link inside it activates through the consumer's router instead of the browser, and nothing changes without one.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "navigation-scope"
     },
     "sharedContract": {
       "core": [

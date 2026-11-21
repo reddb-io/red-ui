@@ -232,6 +232,30 @@
           ]
         },
         {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-font-family-mono",
           "sources": [
             "kits/app/src/change-review.variants.ts"
@@ -244,13 +268,6 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts",
-            "kits/base/src/status-indicator.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-font-weight-medium",
           "sources": [
             "kits/app/src/change-review.variants.ts",
@@ -259,10 +276,28 @@
           ]
         },
         {
-          "name": "--reddb-line-height-normal",
+          "name": "--reddb-font-weight-regular",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
           "sources": [
             "kits/base/src/button.variants.ts",
             "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -310,33 +345,13 @@
         {
           "name": "--reddb-spatial-gap-md",
           "sources": [
-            "kits/app/src/change-review.variants.ts",
-            "kits/base/src/button.variants.ts"
+            "kits/app/src/change-review.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-gap-sm",
           "sources": [
-            "kits/app/src/change-review.variants.ts",
-            "kits/base/src/status-indicator.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-lg",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/app/src/change-review.variants.ts"
           ]
         },
         {
@@ -363,6 +378,12 @@
           "name": "--reddb-spatial-layout-gap-sm",
           "sources": [
             "kits/app/src/change-review.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -487,6 +508,48 @@
           "name": "--reddb-type-heading-line-height",
           "sources": [
             "kits/app/src/change-review.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
           ]
         }
       ],
@@ -663,7 +726,9 @@
           "specifier": "@reddb-io/design-system/app/ChangeReview"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "change-review"
         },
         "source": "kits/app/react/src/ChangeReview.tsx",
         "specifier": "@reddb-io/design-system/app/ChangeReview",
@@ -671,7 +736,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "change-review"
         },
         "source": "kits/app/src/composites/ChangeReview.svelte",
         "specifier": "@reddb-io/design-system/app",
@@ -835,7 +902,9 @@
     ],
     "purpose": "Explicit proposed values and observed per-item outcomes with request-only apply and discard actions.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "change-review"
     },
     "sharedContract": {
       "core": [

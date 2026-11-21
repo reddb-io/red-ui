@@ -38,6 +38,19 @@ test('bottom bar remains discoverable while collapsed and supports the existing 
   expect(button(target, 'Developer panel').getAttribute('aria-expanded')).toBe('false')
 })
 
+test('narrow screens hide the collapsed bar until the reader opens the panel', () => {
+  const target = render(new DevConsoleStore())
+  const panel = () => target.querySelector<HTMLElement>('[data-developer-panel]')!
+  expect(panel().className).toMatch(/(^|\s)hidden(\s|$)/)
+  expect(panel().className).toContain('md:flex')
+  window.dispatchEvent(new CustomEvent('red:toggle-dev-console'))
+  flushSync()
+  expect(panel().className).not.toMatch(/(^|\s)hidden(\s|$)/)
+  target.querySelector<HTMLButtonElement>('[aria-label="Close"]')!.click()
+  flushSync()
+  expect(panel().className).toMatch(/(^|\s)hidden(\s|$)/)
+})
+
 test('inspects real bodies, redacted headers, row count and measured duration through canonical tabs', () => {
   const store = new DevConsoleStore()
   record(store)

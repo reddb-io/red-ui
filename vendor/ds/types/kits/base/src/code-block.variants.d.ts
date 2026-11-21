@@ -4,9 +4,9 @@ export declare const codeBlock: import("tailwind-variants").TVReturnType<{
         [key: string]: import("tailwind-variants").ClassValue | {
             root?: import("tailwind-variants").ClassValue;
             toolbar?: import("tailwind-variants").ClassValue;
+            code?: import("tailwind-variants").ClassValue;
             language?: import("tailwind-variants").ClassValue;
             gutter?: import("tailwind-variants").ClassValue;
-            code?: import("tailwind-variants").ClassValue;
             pre?: import("tailwind-variants").ClassValue;
         };
     };
@@ -15,9 +15,9 @@ export declare const codeBlock: import("tailwind-variants").TVReturnType<{
         [x: string]: import("tailwind-variants").ClassValue | {
             root?: import("tailwind-variants").ClassValue;
             toolbar?: import("tailwind-variants").ClassValue;
+            code?: import("tailwind-variants").ClassValue;
             language?: import("tailwind-variants").ClassValue;
             gutter?: import("tailwind-variants").ClassValue;
-            code?: import("tailwind-variants").ClassValue;
             pre?: import("tailwind-variants").ClassValue;
         };
     };
@@ -33,9 +33,9 @@ export declare const codeBlock: import("tailwind-variants").TVReturnType<{
         [key: string]: import("tailwind-variants").ClassValue | {
             root?: import("tailwind-variants").ClassValue;
             toolbar?: import("tailwind-variants").ClassValue;
+            code?: import("tailwind-variants").ClassValue;
             language?: import("tailwind-variants").ClassValue;
             gutter?: import("tailwind-variants").ClassValue;
-            code?: import("tailwind-variants").ClassValue;
             pre?: import("tailwind-variants").ClassValue;
         };
     };

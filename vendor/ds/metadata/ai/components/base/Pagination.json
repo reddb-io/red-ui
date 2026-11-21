@@ -1,0 +1,370 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Pagination",
+  "topics": [
+    "paginacao paginas resultados",
+    "pagination results"
+  ],
+  "related": [
+    "base/Breadcrumbs",
+    "base/Link",
+    "base/Navbar",
+    "base/NavigationMenu",
+    "base/NavigationScope",
+    "base/SkipLink"
+  ],
+  "contract": {
+    "category": "Navigation",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/pagination.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/link.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/link.variants.ts",
+            "kits/base/src/pagination.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/pagination.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/pagination.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/pagination.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/base/src/link.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/pagination.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/link.variants.ts",
+            "kits/base/src/pagination.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/pagination.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/link.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export interface PaginationPage {\n  /** Visible page number and stable link identity. */\n  page: number;\n  /** Native link destination. Required unless the Pagination reports pages through its page-change callback instead. */\n  href?: string;\n  /** Whether this page is currently viewed. */\n  current?: boolean;\n}",
+          "name": "PaginationPage",
+          "source": "kits/base/src/core/pagination.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Reports the page a person chose. Given, every page is a button that calls it instead of a link, for state-local pagers such as the Data `DataTable`.",
+        "dialect": "state",
+        "name": "onpagechange",
+        "type": "(page: number) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "base",
+          "name": "Pagination",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "The pages in display order; each carries its page number, an `href` when it is a link, and `current` marks the page being viewed.",
+              "name": "pages",
+              "required": true,
+              "type": "readonly PaginationPage[]"
+            },
+            {
+              "default": "\"Pagination\"",
+              "description": "Accessible name of the navigation landmark; defaults to `Pagination`.",
+              "name": "label",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Reports the page a person chose. Given, every page is a button that calls it instead of a link, for state-local pagers such as the Data `DataTable`.",
+              "name": "onPageChange",
+              "required": false,
+              "type": "(page: number) => void"
+            },
+            {
+              "description": "Visible name of a Previous button before the pages; with `onPageChange` only. Disabled on the first page.",
+              "name": "previousLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Visible name of a Next button after the pages; with `onPageChange` only. Disabled on the last page.",
+              "name": "nextLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Total number of pages, so Next disables on the last page when `pages` lists only a window. Defaults to the highest listed page.",
+              "name": "pageCount",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Polite live text after the controls announcing the position, such as `Page 2 of 9`.",
+              "name": "status",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Extra classes, merged over the root slot's own.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/base/react/src/Pagination.tsx",
+          "specifier": "@reddb-io/design-system/base/Pagination"
+        },
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "pagination"
+        },
+        "source": "kits/base/react/src/Pagination.tsx",
+        "specifier": "@reddb-io/design-system/base/Pagination",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "pagination"
+        },
+        "source": "kits/base/src/Pagination.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "base",
+    "name": "Pagination",
+    "props": [
+      {
+        "bindable": false,
+        "description": "The pages in display order; each carries its page number, an `href` when it is a link, and `current` marks the page being viewed.",
+        "name": "pages",
+        "required": true,
+        "type": "readonly PaginationPage[]"
+      },
+      {
+        "bindable": false,
+        "default": "\"Pagination\"",
+        "description": "Accessible name of the navigation landmark; defaults to `Pagination`.",
+        "name": "label",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Reports the page a person chose. Given, every page is a button that calls it instead of a link, for state-local pagers such as the Data `DataTable`.",
+        "name": "onpagechange",
+        "required": false,
+        "type": "(page: number) => void"
+      },
+      {
+        "bindable": false,
+        "description": "Visible name of a Previous button before the pages; with `onpagechange` only. Disabled on the first page.",
+        "name": "previousLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Visible name of a Next button after the pages; with `onpagechange` only. Disabled on the last page.",
+        "name": "nextLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Total number of pages, so Next disables on the last page when `pages` lists only a window. Defaults to the highest listed page.",
+        "name": "pageCount",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Polite live text after the controls announcing the position, such as `Page 2 of 9`.",
+        "name": "status",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the root slot's own.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A page trail whose native destinations carry explicit page names and announce the current page.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "pagination"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/pagination.variants.ts",
+        "kits/base/src/core/pagination.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-readings.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/Pagination.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

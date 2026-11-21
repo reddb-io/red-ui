@@ -227,6 +227,30 @@
           ]
         },
         {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-container-wide",
           "sources": [
             "kits/base/src/dialog.variants.ts"
@@ -239,16 +263,22 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
           "sources": [
             "kits/base/src/button.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-weight-medium",
+          "name": "--reddb-glyph-size",
           "sources": [
-            "kits/base/src/button.variants.ts",
-            "kits/base/src/quiet-control.variants.ts"
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -312,8 +342,7 @@
         {
           "name": "--reddb-spatial-gap-md",
           "sources": [
-            "kits/base/src/alert-dialog.variants.ts",
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/alert-dialog.variants.ts"
           ]
         },
         {
@@ -321,24 +350,6 @@
           "sources": [
             "kits/base/react/src/Dialog.tsx",
             "kits/base/src/Dialog.svelte"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-lg",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -359,6 +370,12 @@
           "sources": [
             "kits/base/src/button.variants.ts",
             "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -459,6 +476,42 @@
           "sources": [
             "kits/base/react/src/Dialog.tsx",
             "kits/base/src/Dialog.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts"
           ]
         }
       ],
@@ -606,7 +659,9 @@
           "specifier": "@reddb-io/design-system/base/AlertDialog"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "alert-dialog"
         },
         "source": "kits/base/react/src/AlertDialog.tsx",
         "specifier": "@reddb-io/design-system/base/AlertDialog",

@@ -23,24 +23,6 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/base/src/label.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-weight-medium",
-          "sources": [
-            "kits/base/src/label.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-line-height-normal",
-          "sources": [
-            "kits/base/src/label.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-type-caption-font-size",
           "sources": [
             "kits/base/src/type-roles.ts"
@@ -111,6 +93,30 @@
           "sources": [
             "kits/base/src/type-roles.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/label.variants.ts"
+          ]
         }
       ],
       "types": []
@@ -134,7 +140,9 @@
           "specifier": "@reddb-io/design-system/base/Label"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "label"
         },
         "source": "kits/base/react/src/Label.tsx",
         "specifier": "@reddb-io/design-system/base/Label",

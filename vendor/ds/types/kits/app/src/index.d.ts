@@ -3,6 +3,7 @@ export { default as NavItem } from "./primitives/NavItem.svelte";
 export { default as Pill } from "./primitives/Pill.svelte";
 export { default as SplitView } from "./primitives/SplitView.svelte";
 export { default as CommandPalette } from "./composites/CommandPalette.svelte";
+export { default as BottomNavigation } from "./composites/BottomNavigation.svelte";
 export { default as ActivityFeed } from "./composites/ActivityFeed.svelte";
 export { default as SidebarRail } from "./composites/SidebarRail.svelte";
 export { default as PageHeading } from "./composites/PageHeading.svelte";
@@ -21,10 +22,10 @@ export type PrimitiveName = (typeof PRIMITIVES)[number];
  * Every Composite this Kit ships, by component name — the same catalogue in
  * the Taxonomy's other half, kept for the same reason.
  */
-export declare const COMPOSITES: readonly ["ApplicationWorkspace", "OutcomeScreen", "WorkspaceTabs", "ChangeReview", "ErrorBoundary", "ShortcutHelp", "EntityInspector", "EntityJourney", "SettingsRow", "TaskCard", "TelemetryRow", "PropertyPanel", "PhaseSummary", "PlaybackControls", "ActionPanel", "ActivityFeed", "ApplicationShell", "BottomNavigation", "CardHeading", "CategoryFilter", "CategoryPreview", "ChatMessage", "CheckoutForm", "CommandPalette", "ContextMenu", "Diff", "Filter", "Incentive", "Menubar", "MultiColumnLayout", "OrderHistory", "OrderSummary", "PageHeading", "Review", "ProductFeature", "ProductList", "ProductOverview", "ProductQuickview", "SidebarLayout", "SidebarNavigation", "SidebarPanel", "SidebarRail", "ShoppingCart", "SpeedDial", "StoreNavigation", "TaskList", "Toolbar"];
+export declare const COMPOSITES: readonly ["ApplicationWorkspace", "ApprovalPrompt", "OutcomeScreen", "PromptComposer", "ToolActivity", "UsageMeter", "WorkspaceTabs", "ChangeReview", "ErrorBoundary", "ShortcutHelp", "EntityInspector", "EntityJourney", "SettingsRow", "TaskCard", "TelemetryRow", "PropertyPanel", "PhaseSummary", "PlaybackControls", "ActionPanel", "ActivityFeed", "ApplicationShell", "BottomNavigation", "CardHeading", "CategoryFilter", "CategoryPreview", "ChatMessage", "CheckoutForm", "CommandPalette", "ContextMenu", "Diff", "Filter", "Incentive", "Menubar", "MultiColumnLayout", "OrderHistory", "OrderSummary", "PageHeading", "Review", "ProductFeature", "ProductList", "ProductOverview", "ProductQuickview", "SidebarLayout", "SidebarNavigation", "SidebarPanel", "SidebarRail", "ShoppingCart", "SpeedDial", "StoreNavigation", "TaskList", "Toolbar"];
 export type CompositeName = (typeof COMPOSITES)[number];
 /** Every component the Kit ships, of either kind. */
-export declare const COMPONENTS: readonly ["ListRow", "NavItem", "NodeBadge", "Pill", "SplitView", "ApplicationWorkspace", "OutcomeScreen", "WorkspaceTabs", "ChangeReview", "ErrorBoundary", "ShortcutHelp", "EntityInspector", "EntityJourney", "SettingsRow", "TaskCard", "TelemetryRow", "PropertyPanel", "PhaseSummary", "PlaybackControls", "ActionPanel", "ActivityFeed", "ApplicationShell", "BottomNavigation", "CardHeading", "CategoryFilter", "CategoryPreview", "ChatMessage", "CheckoutForm", "CommandPalette", "ContextMenu", "Diff", "Filter", "Incentive", "Menubar", "MultiColumnLayout", "OrderHistory", "OrderSummary", "PageHeading", "Review", "ProductFeature", "ProductList", "ProductOverview", "ProductQuickview", "SidebarLayout", "SidebarNavigation", "SidebarPanel", "SidebarRail", "ShoppingCart", "SpeedDial", "StoreNavigation", "TaskList", "Toolbar"];
+export declare const COMPONENTS: readonly ["ListRow", "NavItem", "NodeBadge", "Pill", "SplitView", "ApplicationWorkspace", "ApprovalPrompt", "OutcomeScreen", "PromptComposer", "ToolActivity", "UsageMeter", "WorkspaceTabs", "ChangeReview", "ErrorBoundary", "ShortcutHelp", "EntityInspector", "EntityJourney", "SettingsRow", "TaskCard", "TelemetryRow", "PropertyPanel", "PhaseSummary", "PlaybackControls", "ActionPanel", "ActivityFeed", "ApplicationShell", "BottomNavigation", "CardHeading", "CategoryFilter", "CategoryPreview", "ChatMessage", "CheckoutForm", "CommandPalette", "ContextMenu", "Diff", "Filter", "Incentive", "Menubar", "MultiColumnLayout", "OrderHistory", "OrderSummary", "PageHeading", "Review", "ProductFeature", "ProductList", "ProductOverview", "ProductQuickview", "SidebarLayout", "SidebarNavigation", "SidebarPanel", "SidebarRail", "ShoppingCart", "SpeedDial", "StoreNavigation", "TaskList", "Toolbar"];
 export type ComponentName = PrimitiveName | CompositeName;
 /**
  * The purpose of every application component, carried by this Kit's own
@@ -59,6 +60,10 @@ export declare const COMPONENT_PURPOSES: {
     readonly CategoryFilter: "Data input";
     readonly CategoryPreview: "Navigation";
     readonly ChatMessage: "Data display";
+    readonly PromptComposer: "Data input";
+    readonly ToolActivity: "Data display";
+    readonly ApprovalPrompt: "Feedback";
+    readonly UsageMeter: "Data display";
     readonly CheckoutForm: "Data input";
     readonly CommandPalette: "Navigation";
     readonly ContextMenu: "Actions";

@@ -1,1 +1,1 @@
-import{tv as t}from"tailwind-variants";const e=t({slots:{root:"inline-flex items-baseline gap-[var(--reddb-spatial-gap-sm)] text-foreground",label:"text-sm text-ink-muted",value:"font-mono text-2xl font-medium tabular-nums"}});export{e as countdown};
+import{tv as t}from"tailwind-variants";import{typeRoleMerge as o}from"./type-roles.js";const r=t({slots:{root:"inline-flex items-baseline gap-[var(--reddb-spatial-gap-sm)] text-foreground",label:"text-body text-ink-muted",value:"font-mono text-title font-medium tabular-nums"}},o);export{r as countdown};

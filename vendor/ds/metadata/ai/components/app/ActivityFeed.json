@@ -13,24 +13,208 @@
   "contract": {
     "category": "Data display",
     "documentation": {
-      "cssVariablePatterns": [],
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-type-${name}-glyph-gap",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-${name}-glyph-size",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        }
+      ],
       "cssVariables": [
         {
           "name": "--reddb-color-background",
           "sources": [
+            "kits/base/src/scroll-area.variants.ts",
             "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-focus",
           "sources": [
-            "kits/base/src/link.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/link.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/scroll-area.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/base/src/link.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
             "kits/base/src/timeline.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
@@ -38,43 +222,145 @@
         {
           "name": "--reddb-color-ink-muted",
           "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
             "kits/base/src/timeline.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-muted",
           "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/base/src/skeleton.variants.ts",
             "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-text",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
           "name": "--reddb-font-family-mono",
           "sources": [
-            "kits/base/src/timeline.variants.ts"
+            "kits/base/src/empty-state.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-font-size-base",
           "sources": [
-            "kits/base/src/timeline.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
           "name": "--reddb-font-weight-medium",
           "sources": [
+            "kits/base/src/Alert.svelte",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
             "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
           "name": "--reddb-line-height-normal",
           "sources": [
-            "kits/base/src/timeline.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
           "name": "--reddb-radius-full",
           "sources": [
+            "kits/base/src/skeleton.variants.ts",
             "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/base/src/skeleton.variants.ts"
           ]
         },
         {
@@ -84,41 +370,200 @@
           ]
         },
         {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-spatial-gap-md",
           "sources": [
             "kits/app/src/composites/activity-feed.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/base/src/timeline.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-gap-sm",
           "sources": [
+            "kits/base/src/Alert.svelte",
+            "kits/base/src/ContentState.svelte",
             "kits/base/src/link.variants.ts",
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/scroll-area.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/link.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-gap",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-size",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/timeline.variants.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-font-size",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-font-weight",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-letter-spacing",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-line-height",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-code-font-size",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-code-font-weight",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-code-letter-spacing",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-code-line-height",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
           ]
         },
         {
@@ -168,6 +613,70 @@
           "sources": [
             "kits/base/src/type-roles.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
         }
       ],
       "types": [
@@ -177,16 +686,47 @@
           "source": "kits/app/src/core/contracts/activityfeed.ts"
         },
         {
+          "declaration": "export type CollectionState = (typeof COLLECTION_STATES)[number];",
+          "name": "CollectionState",
+          "source": "kits/base/src/core/collection-state.ts"
+        },
+        {
           "declaration": "export interface TimelineItem {\n  /** Stable entry identity. */\n  id: string;\n  /** Visible entry heading. */\n  title: string;\n  /** Machine-readable date or time accepted by native `<time>`. */\n  datetime: string;\n  /** Caller-owned visible rendering of the date or time. */\n  time: string;\n  /** Supporting event detail. */\n  description?: string;\n  /** Optional destination for the entry heading. */\n  href?: string;\n}",
           "name": "TimelineItem",
           "source": "kits/base/src/core/timeline.ts"
         }
       ]
     },
-    "events": [],
+    "events": [
+      {
+        "description": "Called when the person retries after a failed load.",
+        "dialect": "discrete",
+        "name": "onretry",
+        "type": "() => void"
+      }
+    ],
     "forwardsAttributesTo": [
       "<ol>"
     ],
+    "guidance": {
+      "family": "Sequences over time",
+      "question": "Is it a path someone follows, a history to read, parallel activity on a time scale, or a live log?",
+      "related": [
+        "base/Steps",
+        "base/Timeline",
+        "data/ActivityTimeline",
+        "data/EventLog"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "data/ActivityTimeline",
+          "text": "Overlapping activities on a time scale."
+        }
+      ],
+      "whenToUse": [
+        "Who did what in an application, newest first, built on the canonical Timeline."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -198,6 +738,40 @@
             "ol"
           ],
           "props": [
+            {
+              "description": "Where the data stands. Unset means ready, and empty when there are no items. `refreshing` keeps the items and marks the collection busy; `error` with items keeps them as stale under an alert.",
+              "name": "state",
+              "required": false,
+              "type": "CollectionState",
+              "vocabulary": [
+                "loading",
+                "ready",
+                "empty",
+                "error",
+                "refreshing"
+              ]
+            },
+            {
+              "default": "\"Could not load activity.\"",
+              "description": "Message shown when the data failed to load.",
+              "name": "errorMessage",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Retry\"",
+              "description": "Visible and accessible label of the retry action. Defaults to Retry.",
+              "name": "retryLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "5",
+              "description": "Skeleton rows shown while loading, at the control-height rhythm. Defaults to 5.",
+              "name": "loadingRows",
+              "required": false,
+              "type": "number"
+            },
             {
               "description": "Caller-owned activity in chronological display order.",
               "name": "items",
@@ -212,7 +786,13 @@
               "type": "string"
             },
             {
-              "description": "Additional list classes.",
+              "description": "Called when the person retries after a failed load.",
+              "name": "onRetry",
+              "required": false,
+              "type": "() => void"
+            },
+            {
+              "description": "Additional list classes (or classes on the loading, empty or error state that replaces the list).",
               "name": "className",
               "required": false,
               "type": "string"
@@ -222,7 +802,9 @@
           "specifier": "@reddb-io/design-system/app/ActivityFeed"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "activity-feed"
         },
         "source": "kits/app/react/src/ActivityFeed.tsx",
         "specifier": "@reddb-io/design-system/app/ActivityFeed",
@@ -245,6 +827,44 @@
     "props": [
       {
         "bindable": false,
+        "description": "Where the data stands. Unset means ready, and empty when there are no items. `refreshing` keeps the items and marks the collection busy; `error` with items keeps them as stale under an alert.",
+        "name": "state",
+        "required": false,
+        "type": "CollectionState",
+        "vocabulary": [
+          "loading",
+          "ready",
+          "empty",
+          "error",
+          "refreshing"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"Could not load activity.\"",
+        "description": "Message shown when the data failed to load.",
+        "name": "errorMessage",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Retry\"",
+        "description": "Visible and accessible label of the retry action. Defaults to Retry.",
+        "name": "retryLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "5",
+        "description": "Skeleton rows shown while loading, at the control-height rhythm. Defaults to 5.",
+        "name": "loadingRows",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
         "description": "Caller-owned activity in chronological display order.",
         "name": "items",
         "required": true,
@@ -260,7 +880,14 @@
       },
       {
         "bindable": false,
-        "description": "Extra classes, merged over the root slot's own, onto the Timeline list.",
+        "description": "Called when the person retries after a failed load.",
+        "name": "onretry",
+        "required": false,
+        "type": "() => void"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the root slot's own, onto the Timeline list (or onto the loading, empty or error state that replaces it).",
         "name": "class",
         "required": false,
         "type": "string"
@@ -278,7 +905,8 @@
       ],
       "tests": [
         "kits/app/test/framework-app.test.ts",
-        "apps/showcase/test/component-flavors-workspace.browser.test.ts"
+        "apps/showcase/test/component-flavors-workspace.browser.test.ts",
+        "kits/app/test/collection-state.test.ts"
       ]
     },
     "snippets": [],

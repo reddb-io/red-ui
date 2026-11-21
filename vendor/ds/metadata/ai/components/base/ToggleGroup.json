@@ -1,0 +1,794 @@
+{
+  "schemaVersion": 1,
+  "id": "base/ToggleGroup",
+  "topics": [],
+  "related": [
+    "base/AlertDialog",
+    "base/AppearanceSwitch",
+    "base/Button",
+    "base/Dialog",
+    "base/DropdownMenu",
+    "base/Popover"
+  ],
+  "contract": {
+    "category": "Actions",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/toggle-button.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/toggle-button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/toggle-button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-regular",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-none",
+          "sources": [
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-sm",
+          "sources": [
+            "kits/base/src/fieldset.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export interface ToggleGroupOption {\n  value: string;\n  label: string;\n  disabled?: boolean;\n}",
+          "name": "ToggleGroupOption",
+          "source": "kits/base/src/toggle-group.variants.ts"
+        },
+        {
+          "declaration": "/** A ToggleGroup's height step: Button's and the fields' `sm | md | lg`. */\nexport type ToggleGroupSize = NonNullable<ToggleGroupVariants[\"size\"]>;",
+          "name": "ToggleGroupSize",
+          "source": "kits/base/src/toggle-group.variants.ts"
+        },
+        {
+          "declaration": "export type ToggleGroupVariants = VariantProps<typeof toggleGroup>;",
+          "name": "ToggleGroupVariants",
+          "source": "kits/base/src/toggle-group.variants.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Called with a newly selected option; reset does not emit a user change.",
+        "dialect": "value",
+        "name": "onvaluechange",
+        "type": "(value: string) => void"
+      }
+    ],
+    "forwardsAttributesTo": [
+      "<fieldset>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Composite",
+          "kit": "base",
+          "name": "ToggleGroup",
+          "nativeAttributes": [
+            "fieldset"
+          ],
+          "props": [
+            {
+              "description": "Visible group name, rendered as the native legend.",
+              "name": "legend",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Caller-owned choices; exactly one enabled option is pressed when available.",
+              "name": "options",
+              "required": true,
+              "type": "readonly ToggleGroupOption[]"
+            },
+            {
+              "description": "Selected option; an absent or unavailable value resolves to the first enabled option.",
+              "name": "value",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Initial uncontrolled value, restored by native form reset.",
+              "name": "defaultValue",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Optional native form name for the selected value.",
+              "name": "name",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "false",
+              "description": "Disables the whole group, so no option can be chosen.",
+              "name": "disabled",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Supporting text announced with every option.",
+              "name": "help",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Current validation error, announced with every option.",
+              "name": "error",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"md\"",
+              "description": "The height step, matching Button's and the fields' `size` (default `md`), so the group sits level with peers of the same size (ADR 0054).",
+              "name": "size",
+              "required": false,
+              "type": "ToggleGroupSize",
+              "vocabulary": [
+                "sm",
+                "md",
+                "lg"
+              ]
+            },
+            {
+              "default": "\"scroll\"",
+              "description": "What the group does when it is wider than its container: `scroll` (one line, the default) or `wrap` (ADR 0053).",
+              "name": "overflow",
+              "required": false,
+              "type": "\"scroll\" | \"wrap\"",
+              "vocabulary": [
+                "scroll",
+                "wrap"
+              ]
+            },
+            {
+              "description": "Extra classes merged onto the segmented row.",
+              "name": "listClass",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Extra classes merged onto each option's ToggleButton.",
+              "name": "optionClass",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Extra classes merged onto the native fieldset.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Called with a newly selected option; reset does not emit a user change.",
+              "name": "onValueChange",
+              "required": false,
+              "type": "(value: string) => void"
+            }
+          ],
+          "source": "kits/base/react/src/ToggleGroup.tsx",
+          "specifier": "@reddb-io/design-system/base/ToggleGroup"
+        },
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "toggle-group"
+        },
+        "source": "kits/base/react/src/ToggleGroup.tsx",
+        "specifier": "@reddb-io/design-system/base/ToggleGroup",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "toggle-group"
+        },
+        "source": "kits/base/src/ToggleGroup.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "base",
+    "name": "ToggleGroup",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Visible group name, rendered as the native legend.",
+        "name": "legend",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Caller-owned choices; exactly one enabled option is pressed when available.",
+        "name": "options",
+        "required": true,
+        "type": "readonly ToggleGroupOption[]"
+      },
+      {
+        "bindable": true,
+        "description": "Selected option; an absent or unavailable value resolves to the first enabled option.",
+        "name": "value",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Initial uncontrolled value, restored by native form reset.",
+        "name": "defaultValue",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Optional native form name for the selected value.",
+        "name": "name",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "false",
+        "description": "Disables the whole group, so no option can be chosen.",
+        "name": "disabled",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Supporting text announced with every option.",
+        "name": "help",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Current validation error, announced with every option.",
+        "name": "error",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "The height step, matching Button's and the fields' `size` (default `md`), so the group sits level with peers of the same size (ADR 0054).",
+        "name": "size",
+        "required": false,
+        "type": "ToggleGroupSize",
+        "vocabulary": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"scroll\"",
+        "description": "What the group does when it is wider than its container: `scroll` (one line, the default) or `wrap` (ADR 0053).",
+        "name": "overflow",
+        "required": false,
+        "type": "\"scroll\" | \"wrap\"",
+        "vocabulary": [
+          "scroll",
+          "wrap"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the segmented row.",
+        "name": "listClass",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto each option's ToggleButton.",
+        "name": "optionClass",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the native fieldset.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Called with a newly selected option; reset does not emit a user change.",
+        "name": "onvaluechange",
+        "required": false,
+        "type": "(value: string) => void"
+      }
+    ],
+    "purpose": "A named set of canonical ToggleButtons with exactly one selection and roving keyboard focus.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "toggle-group"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/toggle-group.variants.ts",
+        "kits/base/src/core/toggle-group.ts",
+        "kits/base/src/core/native-controls.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-identity-controls.test.ts",
+        "apps/showcase/test/component-flavors-identity.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/base/src/ToggleGroup.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

@@ -5,7 +5,7 @@ export declare const avatar: import("tailwind-variants").TVReturnType<{
             readonly root: "size-[var(--reddb-spatial-control-height-sm)] text-xs";
         };
         readonly md: {
-            readonly root: "size-[var(--reddb-spatial-control-height-md)] text-sm";
+            readonly root: "size-[var(--reddb-spatial-control-height-md)] text-label";
         };
         readonly lg: {
             readonly root: "size-[var(--reddb-spatial-control-height-lg)] text-base";
@@ -21,7 +21,7 @@ export declare const avatar: import("tailwind-variants").TVReturnType<{
             readonly root: "size-[var(--reddb-spatial-control-height-sm)] text-xs";
         };
         readonly md: {
-            readonly root: "size-[var(--reddb-spatial-control-height-md)] text-sm";
+            readonly root: "size-[var(--reddb-spatial-control-height-md)] text-label";
         };
         readonly lg: {
             readonly root: "size-[var(--reddb-spatial-control-height-lg)] text-base";
@@ -37,7 +37,7 @@ export declare const avatar: import("tailwind-variants").TVReturnType<{
             readonly root: "size-[var(--reddb-spatial-control-height-sm)] text-xs";
         };
         readonly md: {
-            readonly root: "size-[var(--reddb-spatial-control-height-md)] text-sm";
+            readonly root: "size-[var(--reddb-spatial-control-height-md)] text-label";
         };
         readonly lg: {
             readonly root: "size-[var(--reddb-spatial-control-height-lg)] text-base";

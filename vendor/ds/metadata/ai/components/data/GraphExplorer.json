@@ -8,18 +8,32 @@
     "data/BreakdownBar",
     "data/Candlestick",
     "data/CompositeChart",
-    "data/DeveloperPanel"
+    "data/DataTable"
   ],
   "contract": {
     "category": "Data display",
     "documentation": {
-      "cssVariablePatterns": [],
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-type-${name}-glyph-gap",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-${name}-glyph-size",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        }
+      ],
       "cssVariables": [
         {
           "name": "--reddb-color-background",
           "sources": [
             "kits/base/src/checkbox.variants.ts",
             "kits/base/src/input.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
             "kits/base/src/textarea.variants.ts",
             "kits/data/react/src/Graph.tsx",
             "kits/data/src/Graph.svelte",
@@ -33,9 +47,11 @@
             "kits/base/src/button.variants.ts",
             "kits/base/src/checkbox.variants.ts",
             "kits/base/src/input.variants.ts",
+            "kits/base/src/pagination.variants.ts",
             "kits/base/src/textarea.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte",
+            "kits/base/src/toggle-group.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/diff-explorer.variants.ts",
             "kits/data/src/graph.ts"
           ]
@@ -49,22 +65,22 @@
         {
           "name": "--reddb-color-elevation-overlay-border",
           "sources": [
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
           ]
         },
         {
           "name": "--reddb-color-elevation-overlay-foreground",
           "sources": [
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
           ]
         },
         {
           "name": "--reddb-color-elevation-overlay-surface",
           "sources": [
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
           ]
         },
         {
@@ -76,10 +92,12 @@
         {
           "name": "--reddb-color-feedback-danger-border",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
             "kits/base/src/checkbox.variants.ts",
             "kits/base/src/input.variants.ts",
-            "kits/base/src/textarea.variants.ts"
+            "kits/base/src/textarea.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
           ]
         },
         {
@@ -97,6 +115,7 @@
         {
           "name": "--reddb-color-feedback-danger-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
             "kits/base/src/field.variants.ts"
           ]
@@ -110,12 +129,14 @@
         {
           "name": "--reddb-color-feedback-danger-surface",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-feedback-info-border",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -134,6 +155,7 @@
         {
           "name": "--reddb-color-feedback-info-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -146,12 +168,14 @@
         {
           "name": "--reddb-color-feedback-info-surface",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-feedback-success-border",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -170,6 +194,7 @@
         {
           "name": "--reddb-color-feedback-success-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -182,12 +207,14 @@
         {
           "name": "--reddb-color-feedback-success-surface",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-feedback-warning-border",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -206,6 +233,7 @@
         {
           "name": "--reddb-color-feedback-warning-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -218,6 +246,7 @@
         {
           "name": "--reddb-color-feedback-warning-surface",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -229,11 +258,12 @@
             "kits/base/src/input.variants.ts",
             "kits/base/src/link.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
             "kits/base/src/textarea.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
             "kits/data/react/src/Graph.tsx",
-            "kits/data/react/src/Table.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/Graph.svelte",
-            "kits/data/src/Table.svelte",
             "kits/data/src/diff-explorer.variants.ts",
             "kits/data/src/table-appearance.ts"
           ]
@@ -241,20 +271,24 @@
         {
           "name": "--reddb-color-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
             "kits/base/src/empty-state.variants.ts",
             "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts",
             "kits/base/src/input.variants.ts",
             "kits/base/src/label.variants.ts",
             "kits/base/src/link.variants.ts",
+            "kits/base/src/pagination.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
             "kits/base/src/textarea.variants.ts",
             "kits/base/src/toggle-button.variants.ts",
             "kits/base/src/type-roles.ts",
+            "kits/data/react/src/DataTable.tsx",
             "kits/data/react/src/Graph.tsx",
-            "kits/data/react/src/Table.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/Graph.svelte",
-            "kits/data/src/Table.svelte",
             "kits/data/src/diff-explorer.variants.ts",
             "kits/data/src/table-appearance.ts"
           ]
@@ -265,13 +299,15 @@
             "kits/base/src/button.variants.ts",
             "kits/base/src/empty-state.variants.ts",
             "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts",
             "kits/base/src/input.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
             "kits/base/src/textarea.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
             "kits/data/react/src/Graph.tsx",
-            "kits/data/react/src/Table.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/Graph.svelte",
-            "kits/data/src/Table.svelte",
             "kits/data/src/diff-explorer.variants.ts",
             "kits/data/src/graph.ts",
             "kits/data/src/table-appearance.ts"
@@ -280,7 +316,11 @@
         {
           "name": "--reddb-color-muted",
           "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/core/skeleton.ts",
             "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/base/src/skeleton.variants.ts",
             "kits/data/react/src/Graph.tsx",
             "kits/data/src/Graph.svelte",
             "kits/data/src/diff-explorer.variants.ts"
@@ -306,6 +346,12 @@
           "name": "--reddb-color-primary-active",
           "sources": [
             "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-text",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
@@ -345,6 +391,36 @@
           ]
         },
         {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/pagination.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/toggle-button.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
+          ]
+        },
+        {
           "name": "--reddb-editable-text-lg",
           "sources": [
             "kits/base/src/input.variants.ts"
@@ -374,68 +450,74 @@
           "name": "--reddb-font-size-base",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/empty-state.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts",
-            "kits/base/src/empty-state.variants.ts",
-            "kits/base/src/field.variants.ts",
-            "kits/base/src/label.variants.ts",
-            "kits/data/react/src/Graph.tsx",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Graph.svelte",
-            "kits/data/src/Table.svelte"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-xs",
-          "sources": [
-            "kits/base/src/empty-state.variants.ts",
-            "kits/data/react/src/Graph.tsx",
-            "kits/data/src/Graph.svelte"
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
           ]
         },
         {
           "name": "--reddb-font-weight-medium",
           "sources": [
+            "kits/base/src/Alert.svelte",
             "kits/base/src/button.variants.ts",
             "kits/base/src/empty-state.variants.ts",
-            "kits/base/src/field.variants.ts",
-            "kits/base/src/label.variants.ts",
+            "kits/base/src/pagination.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
             "kits/base/src/toggle-button.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-regular",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-layer-raised",
+          "sources": [
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
+            "kits/data/src/table-appearance.ts"
           ]
         },
         {
           "name": "--reddb-line-height-normal",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/empty-state.variants.ts",
-            "kits/base/src/field.variants.ts",
             "kits/base/src/input.variants.ts",
-            "kits/base/src/label.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/textarea.variants.ts",
-            "kits/data/react/src/Graph.tsx",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Graph.svelte",
-            "kits/data/src/Table.svelte"
+            "kits/base/src/toggle-group.variants.ts"
           ]
         },
         {
           "name": "--reddb-line-height-tight",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/empty-state.variants.ts"
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
           ]
         },
         {
           "name": "--reddb-radius-full",
           "sources": [
+            "kits/base/src/skeleton.variants.ts",
             "kits/data/react/src/Graph.tsx",
             "kits/data/src/Graph.svelte"
           ]
@@ -451,13 +533,24 @@
         {
           "name": "--reddb-radius-md",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
             "kits/base/src/empty-state.variants.ts",
             "kits/base/src/input.variants.ts",
+            "kits/base/src/pagination.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/base/src/skeleton.variants.ts",
             "kits/base/src/textarea.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte",
+            "kits/base/src/toggle-group.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-none",
+          "sources": [
+            "kits/base/src/toggle-group.variants.ts"
           ]
         },
         {
@@ -465,34 +558,40 @@
           "sources": [
             "kits/base/src/checkbox.variants.ts",
             "kits/base/src/link.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/diff-explorer.variants.ts"
           ]
         },
         {
           "name": "--reddb-shadow-elevation-overlay",
           "sources": [
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
           ]
         },
         {
           "name": "--reddb-spatial-control-height-lg",
           "sources": [
             "kits/base/src/button.variants.ts",
+            "kits/base/src/core/skeleton.ts",
             "kits/base/src/input.variants.ts",
-            "kits/base/src/textarea.variants.ts"
+            "kits/base/src/skeleton.variants.ts",
+            "kits/base/src/textarea.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-control-height-md",
           "sources": [
             "kits/base/src/button.variants.ts",
+            "kits/base/src/core/skeleton.ts",
             "kits/base/src/input.variants.ts",
+            "kits/base/src/skeleton.variants.ts",
             "kits/base/src/state-illustration.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/base/src/toggle-group.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
           ]
         },
         {
@@ -501,8 +600,10 @@
             "kits/base/src/button.variants.ts",
             "kits/base/src/checkbox.variants.ts",
             "kits/base/src/input.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte",
+            "kits/base/src/pagination.variants.ts",
+            "kits/base/src/toggle-group.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/diff-explorer.variants.ts"
           ]
         },
@@ -515,13 +616,10 @@
         {
           "name": "--reddb-spatial-gap-md",
           "sources": [
-            "kits/base/src/button.variants.ts",
             "kits/base/src/empty-state.variants.ts",
             "kits/base/src/field.variants.ts",
             "kits/data/react/src/Graph.tsx",
-            "kits/data/react/src/Table.tsx",
             "kits/data/src/Graph.svelte",
-            "kits/data/src/Table.svelte",
             "kits/data/src/diff-explorer.variants.ts",
             "kits/data/src/table-appearance.ts"
           ]
@@ -529,12 +627,16 @@
         {
           "name": "--reddb-spatial-gap-sm",
           "sources": [
+            "kits/base/src/Alert.svelte",
+            "kits/base/src/ContentState.svelte",
             "kits/base/src/field.variants.ts",
             "kits/base/src/link.variants.ts",
+            "kits/base/src/pagination.variants.ts",
+            "kits/base/src/toggle-group.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
             "kits/data/react/src/Graph.tsx",
-            "kits/data/react/src/Table.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/Graph.svelte",
-            "kits/data/src/Table.svelte",
             "kits/data/src/diff-explorer.variants.ts",
             "kits/data/src/table-appearance.ts"
           ]
@@ -542,20 +644,20 @@
         {
           "name": "--reddb-spatial-icon-size-lg",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-icon-size-md",
           "sources": [
-            "kits/base/src/button.variants.ts",
-            "kits/base/src/checkbox.variants.ts"
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-icon-size-sm",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
@@ -563,18 +665,21 @@
           "sources": [
             "kits/base/src/button.variants.ts",
             "kits/base/src/empty-state.variants.ts",
-            "kits/base/src/input.variants.ts"
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/toggle-group.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-inset-md",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
             "kits/base/src/empty-state.variants.ts",
             "kits/base/src/input.variants.ts",
             "kits/base/src/textarea.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte",
+            "kits/base/src/toggle-group.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/diff-explorer.variants.ts",
             "kits/data/src/table-appearance.ts"
           ]
@@ -582,15 +687,17 @@
         {
           "name": "--reddb-spatial-inset-sm",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
             "kits/base/src/input.variants.ts",
+            "kits/base/src/pagination.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
             "kits/base/src/textarea.variants.ts",
+            "kits/base/src/toggle-group.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
             "kits/data/react/src/Graph.tsx",
-            "kits/data/react/src/GraphExplorer.tsx",
-            "kits/data/react/src/Table.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/Graph.svelte",
-            "kits/data/src/GraphExplorer.svelte",
-            "kits/data/src/Table.svelte",
             "kits/data/src/diff-explorer.variants.ts",
             "kits/data/src/table-appearance.ts"
           ]
@@ -598,34 +705,127 @@
         {
           "name": "--reddb-spatial-layout-gap-sm",
           "sources": [
+            "kits/base/src/fieldset.variants.ts",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/link.variants.ts",
+            "kits/base/src/toggle-group.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/react/src/HitStroke.tsx",
+            "kits/data/src/DataTable.svelte",
+            "kits/data/src/internal/HitStroke.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/DataTable.svelte",
+            "kits/data/src/Graph.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/DataTable.svelte",
+            "kits/data/src/Graph.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-gap",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-size",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/DataTable.svelte",
+            "kits/data/src/Graph.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/DataTable.svelte",
+            "kits/data/src/Graph.svelte",
             "kits/data/src/table-appearance.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-font-size",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte",
             "kits/data/src/table-appearance.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-font-weight",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte",
             "kits/data/src/table-appearance.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-letter-spacing",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte",
             "kits/data/src/table-appearance.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-line-height",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte",
             "kits/data/src/table-appearance.ts"
           ]
         },
@@ -675,6 +875,94 @@
           "name": "--reddb-type-eyebrow-line-height",
           "sources": [
             "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/toggle-group.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/toggle-group.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/toggle-group.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/base/src/toggle-group.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
           ]
         }
       ],
@@ -802,7 +1090,9 @@
           "specifier": "@reddb-io/design-system/data/GraphExplorer"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "graph-explorer"
         },
         "source": "kits/data/react/src/GraphExplorer.tsx",
         "specifier": "@reddb-io/design-system/data/GraphExplorer",
@@ -810,7 +1100,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "graph-explorer"
         },
         "source": "kits/data/src/GraphExplorer.svelte",
         "specifier": "@reddb-io/design-system/data/GraphExplorer",
@@ -914,7 +1206,9 @@
     ],
     "purpose": "Explore networks as canvas, SVG or tables with community grouping, relationship details and host-owned queries.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "graph-explorer"
     },
     "sharedContract": {
       "core": [

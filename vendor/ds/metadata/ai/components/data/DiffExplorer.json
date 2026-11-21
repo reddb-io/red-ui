@@ -8,7 +8,7 @@
     "data/BreakdownBar",
     "data/Candlestick",
     "data/CompositeChart",
-    "data/DeveloperPanel"
+    "data/DataTable"
   ],
   "contract": {
     "category": "Data display",
@@ -93,6 +93,30 @@
           ]
         },
         {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-editable-text-lg",
           "sources": [
             "kits/base/src/input.variants.ts"
@@ -117,26 +141,21 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-font-weight-medium",
           "sources": [
-            "kits/base/src/field.variants.ts",
-            "kits/base/src/label.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-weight-medium",
+          "name": "--reddb-font-weight-regular",
           "sources": [
-            "kits/base/src/field.variants.ts",
-            "kits/base/src/label.variants.ts",
-            "kits/base/src/quiet-control.variants.ts"
+            "kits/base/src/field.variants.ts"
           ]
         },
         {
           "name": "--reddb-line-height-normal",
           "sources": [
-            "kits/base/src/field.variants.ts",
-            "kits/base/src/input.variants.ts",
-            "kits/base/src/label.variants.ts"
+            "kits/base/src/input.variants.ts"
           ]
         },
         {
@@ -169,6 +188,8 @@
           "sources": [
             "kits/base/src/checkbox.variants.ts",
             "kits/base/src/input.variants.ts",
+            "kits/data/react/src/DiffExplorer.tsx",
+            "kits/data/src/DiffExplorer.svelte",
             "kits/data/src/diff-explorer.variants.ts"
           ]
         },
@@ -285,6 +306,34 @@
           "sources": [
             "kits/base/src/type-roles.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
         }
       ],
       "types": [
@@ -342,7 +391,9 @@
           "specifier": "@reddb-io/design-system/data/DiffExplorer"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "diff-explorer"
         },
         "source": "kits/data/react/src/DiffExplorer.tsx",
         "specifier": "@reddb-io/design-system/data/DiffExplorer",
@@ -350,7 +401,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "diff-explorer"
         },
         "source": "kits/data/src/DiffExplorer.svelte",
         "specifier": "@reddb-io/design-system/data/DiffExplorer",
@@ -401,7 +454,9 @@
     ],
     "purpose": "Explore caller-supplied changes with search, selection, field comparison and raw records.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "diff-explorer"
     },
     "sharedContract": {
       "core": [

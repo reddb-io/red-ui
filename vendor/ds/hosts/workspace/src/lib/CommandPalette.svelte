@@ -42,6 +42,7 @@
     { id: 'discard-pending', group: 'actions', label: 'Review changes to discard', run: () => { fire('red:discard-pending'); close() } },
 
     { id: 'toggle-theme', group: 'view', label: 'Toggle theme (light / dark)', hint: 'theme', run: () => { theme.toggle(); close() } },
+    { id: 'toggle-dev-console', group: 'view', label: 'Toggle developer panel', hint: 'requests', run: () => { close(); fire('red:toggle-dev-console') } },
     { id: 'show-shortcuts', group: 'view', label: 'Show keyboard shortcuts', shortcut: '?', run: () => { close(); fire('red:open-shortcuts') } },
   ]
 

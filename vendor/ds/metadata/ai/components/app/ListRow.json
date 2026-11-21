@@ -43,15 +43,28 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-color-state-hover",
           "sources": [
-            "kits/app/src/primitives/list-row.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-size-xs",
+          "name": "--reddb-color-state-open",
           "sources": [
-            "kits/app/src/primitives/list-row.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/app/src/primitives/list-row.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
@@ -59,12 +72,6 @@
           "sources": [
             "kits/app/src/primitives/list-row.variants.ts",
             "kits/base/src/quiet-control.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-line-height-normal",
-          "sources": [
-            "kits/app/src/primitives/list-row.variants.ts"
           ]
         },
         {
@@ -100,24 +107,28 @@
         {
           "name": "--reddb-type-caption-font-size",
           "sources": [
+            "kits/app/src/primitives/list-row.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-font-weight",
           "sources": [
+            "kits/app/src/primitives/list-row.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-letter-spacing",
           "sources": [
+            "kits/app/src/primitives/list-row.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-line-height",
           "sources": [
+            "kits/app/src/primitives/list-row.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
@@ -168,14 +179,33 @@
           "sources": [
             "kits/base/src/type-roles.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/app/src/primitives/list-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/app/src/primitives/list-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/app/src/primitives/list-row.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/app/src/primitives/list-row.variants.ts"
+          ]
         }
       ],
       "types": [
-        {
-          "declaration": "/** @deprecated ListRow's scale is `size` (ADR 0026); use `ListRowSize`. Removed next release. */\nexport type ListRowDensity = keyof typeof DEPRECATED_LIST_ROW_DENSITIES;",
-          "name": "ListRowDensity",
-          "source": "kits/app/src/primitives/list-row.variants.ts"
-        },
         {
           "declaration": "export type ListRowSize = NonNullable<ListRowVariants[\"size\"]>;",
           "name": "ListRowSize",
@@ -192,6 +222,26 @@
     "forwardsAttributesTo": [
       "native element"
     ],
+    "guidance": {
+      "family": "Lists and rows",
+      "question": "Is it plain items, interactive rows, a carded list, a grid, media beside text, or a setting?",
+      "related": [
+        "base/List",
+        "base/ListContainer",
+        "base/GridList",
+        "base/MediaObject",
+        "app/SettingsRow"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "app/SettingsRow",
+          "text": "A labelled setting with its field."
+        }
+      ],
+      "whenToUse": [
+        "One row that is a link, a button or neither, with leading, trailing and selected states."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -273,7 +323,9 @@
           "specifier": "@reddb-io/design-system/app/ListRow"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "list-row"
         },
         "source": "kits/app/react/src/ListRow.tsx",
         "specifier": "@reddb-io/design-system/app/ListRow",
@@ -281,7 +333,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "list-row"
         },
         "source": "kits/app/src/primitives/ListRow.svelte",
         "specifier": "@reddb-io/design-system/app",
@@ -338,30 +392,6 @@
       },
       {
         "bindable": false,
-        "deprecated": {
-          "note": "Renamed `size` (ADR 0026): `comfortable` is `md`, `compact` is `sm`. Removed next release.",
-          "replacement": "size"
-        },
-        "deprecatedValues": [
-          {
-            "note": "ListRow's scale is `size` (ADR 0026); use `ListRowSize`. Removed next release.",
-            "replacement": "md",
-            "value": "comfortable"
-          },
-          {
-            "note": "ListRow's scale is `size` (ADR 0026); use `ListRowSize`. Removed next release.",
-            "replacement": "sm",
-            "value": "compact"
-          }
-        ],
-        "description": "Deprecated alias. Renamed `size` (ADR 0026): `comfortable` is `md`, `compact` is `sm`. Removed next release.",
-        "name": "density",
-        "required": false,
-        "type": "ListRowDensity",
-        "vocabulary": []
-      },
-      {
-        "bindable": false,
         "description": "Before the text: an icon, an avatar, a status dot.",
         "name": "leading",
         "required": false,
@@ -391,7 +421,9 @@
     ],
     "purpose": "One row of a list, rendering the element its behavior calls for — a link, a button, or neither.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "list-row"
     },
     "sharedContract": {
       "core": [

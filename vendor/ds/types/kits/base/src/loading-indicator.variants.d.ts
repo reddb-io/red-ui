@@ -2,15 +2,15 @@ import { type VariantProps } from "tailwind-variants";
 export declare const loadingIndicator: import("tailwind-variants").TVReturnType<{
     size: {
         readonly sm: {
-            readonly spinner: "size-[var(--reddb-spatial-icon-size-sm)]";
-            readonly label: "text-xs";
+            readonly root: string;
+            readonly label: "text-caption";
         };
         readonly md: {
-            readonly spinner: "size-[var(--reddb-spatial-icon-size-md)]";
-            readonly label: "text-sm";
+            readonly root: string;
+            readonly label: "text-body";
         };
         readonly lg: {
-            readonly spinner: "size-[var(--reddb-spatial-icon-size-lg)]";
+            readonly root: string;
             readonly label: "text-base";
         };
     };
@@ -20,6 +20,7 @@ export declare const loadingIndicator: import("tailwind-variants").TVReturnType<
         };
         false: {
             label: string;
+            spinner: string;
         };
     };
 }, {
@@ -31,15 +32,15 @@ export declare const loadingIndicator: import("tailwind-variants").TVReturnType<
 }, undefined, {
     size: {
         readonly sm: {
-            readonly spinner: "size-[var(--reddb-spatial-icon-size-sm)]";
-            readonly label: "text-xs";
+            readonly root: string;
+            readonly label: "text-caption";
         };
         readonly md: {
-            readonly spinner: "size-[var(--reddb-spatial-icon-size-md)]";
-            readonly label: "text-sm";
+            readonly root: string;
+            readonly label: "text-body";
         };
         readonly lg: {
-            readonly spinner: "size-[var(--reddb-spatial-icon-size-lg)]";
+            readonly root: string;
             readonly label: "text-base";
         };
     };
@@ -49,6 +50,7 @@ export declare const loadingIndicator: import("tailwind-variants").TVReturnType<
         };
         false: {
             label: string;
+            spinner: string;
         };
     };
 }, {
@@ -60,15 +62,15 @@ export declare const loadingIndicator: import("tailwind-variants").TVReturnType<
 }, import("tailwind-variants").TVReturnTypeLike<{
     size: {
         readonly sm: {
-            readonly spinner: "size-[var(--reddb-spatial-icon-size-sm)]";
-            readonly label: "text-xs";
+            readonly root: string;
+            readonly label: "text-caption";
         };
         readonly md: {
-            readonly spinner: "size-[var(--reddb-spatial-icon-size-md)]";
-            readonly label: "text-sm";
+            readonly root: string;
+            readonly label: "text-body";
         };
         readonly lg: {
-            readonly spinner: "size-[var(--reddb-spatial-icon-size-lg)]";
+            readonly root: string;
             readonly label: "text-base";
         };
     };
@@ -78,6 +80,7 @@ export declare const loadingIndicator: import("tailwind-variants").TVReturnType<
         };
         false: {
             label: string;
+            spinner: string;
         };
     };
 }, {

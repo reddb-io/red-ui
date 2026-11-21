@@ -1,0 +1,1 @@
+import*as t from"svelte/internal/server";function o(e,r){let{d:a}=r;e.push(`<path${t.attr("d",a)} data-hit-stroke="" fill="none" stroke="transparent" pointer-events="stroke" stroke-linecap="round" vector-effect="non-scaling-stroke"${t.attr_style("",{"stroke-width":"var(--reddb-spatial-target-min)"})}></path>`)}export{o as default};

@@ -8,7 +8,7 @@
     "data/BreakdownBar",
     "data/Candlestick",
     "data/CompositeChart",
-    "data/DeveloperPanel"
+    "data/DataTable"
   ],
   "contract": {
     "category": "Data display",
@@ -271,6 +271,31 @@
           ]
         },
         {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/toggle-button.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-editable-text-lg",
           "sources": [
             "kits/base/src/input.variants.ts"
@@ -295,21 +320,6 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts",
-            "kits/data/react/src/Graph.tsx",
-            "kits/data/src/Graph.svelte"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-xs",
-          "sources": [
-            "kits/data/react/src/Graph.tsx",
-            "kits/data/src/Graph.svelte"
-          ]
-        },
-        {
           "name": "--reddb-font-weight-medium",
           "sources": [
             "kits/base/src/button.variants.ts",
@@ -318,12 +328,22 @@
           ]
         },
         {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-line-height-normal",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts",
-            "kits/data/react/src/Graph.tsx",
-            "kits/data/src/Graph.svelte"
+            "kits/base/src/input.variants.ts"
           ]
         },
         {
@@ -377,7 +397,6 @@
         {
           "name": "--reddb-spatial-gap-md",
           "sources": [
-            "kits/base/src/button.variants.ts",
             "kits/data/react/src/Graph.tsx",
             "kits/data/src/Graph.svelte"
           ]
@@ -387,24 +406,6 @@
           "sources": [
             "kits/data/react/src/Graph.tsx",
             "kits/data/src/Graph.svelte"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-lg",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -431,27 +432,71 @@
           ]
         },
         {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/data/react/src/HitStroke.tsx",
+            "kits/data/src/internal/HitStroke.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
+          ]
+        },
+        {
           "name": "--reddb-type-caption-font-size",
           "sources": [
-            "kits/base/src/type-roles.ts"
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
           ]
         },
         {
           "name": "--reddb-type-caption-font-weight",
           "sources": [
-            "kits/base/src/type-roles.ts"
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
           ]
         },
         {
           "name": "--reddb-type-caption-letter-spacing",
           "sources": [
-            "kits/base/src/type-roles.ts"
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
           ]
         },
         {
           "name": "--reddb-type-caption-line-height",
           "sources": [
-            "kits/base/src/type-roles.ts"
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Graph.tsx",
+            "kits/data/src/Graph.svelte"
           ]
         },
         {
@@ -501,6 +546,42 @@
           "sources": [
             "kits/base/src/type-roles.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
         }
       ],
       "types": [
@@ -549,45 +630,15 @@
         "type": "(id: string | null) => void"
       },
       {
-        "deprecated": {
-          "note": "Renamed `onfocusednodechange` (ADR 0026); removed next release.",
-          "replacement": "onfocusednodechange"
-        },
-        "description": "Deprecated alias. Renamed `onfocusednodechange` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onFocusedNode",
-        "type": "(id: string | null) => void"
-      },
-      {
         "description": "Reports the still-collapsed communities after one expands.",
         "dialect": "state",
         "name": "oncollapsedcommunitieschange",
         "type": "(communities: readonly string[]) => void"
       },
       {
-        "deprecated": {
-          "note": "Renamed `oncollapsedcommunitieschange` (ADR 0026); removed next release.",
-          "replacement": "oncollapsedcommunitieschange"
-        },
-        "description": "Deprecated alias. Renamed `oncollapsedcommunitieschange` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onCollapsedCommunitiesChange",
-        "type": "(communities: readonly string[]) => void"
-      },
-      {
         "description": "A discrete event: every click and keyboard focus on a node or edge, caller metadata intact.",
         "dialect": "discrete",
         "name": "oninteraction",
-        "type": "(interaction: GraphInteraction) => void"
-      },
-      {
-        "deprecated": {
-          "note": "Renamed `oninteraction` (ADR 0026); removed next release.",
-          "replacement": "oninteraction"
-        },
-        "description": "Deprecated alias. Renamed `oninteraction` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onInteraction",
         "type": "(interaction: GraphInteraction) => void"
       }
     ],
@@ -761,7 +812,9 @@
           "specifier": "@reddb-io/design-system/data/Graph"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "graph"
         },
         "source": "kits/data/react/src/Graph.tsx",
         "specifier": "@reddb-io/design-system/data/Graph",
@@ -769,7 +822,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "graph"
         },
         "source": "kits/data/src/Graph.svelte",
         "specifier": "@reddb-io/design-system/data/Graph",
@@ -935,17 +990,6 @@
       },
       {
         "bindable": false,
-        "deprecated": {
-          "note": "Renamed `onfocusednodechange` (ADR 0026); removed next release.",
-          "replacement": "onfocusednodechange"
-        },
-        "description": "Deprecated alias. Renamed `onfocusednodechange` (ADR 0026); removed next release.",
-        "name": "onFocusedNode",
-        "required": false,
-        "type": "(id: string | null) => void"
-      },
-      {
-        "bindable": false,
         "description": "Reports the still-collapsed communities after one expands.",
         "name": "oncollapsedcommunitieschange",
         "required": false,
@@ -953,30 +997,8 @@
       },
       {
         "bindable": false,
-        "deprecated": {
-          "note": "Renamed `oncollapsedcommunitieschange` (ADR 0026); removed next release.",
-          "replacement": "oncollapsedcommunitieschange"
-        },
-        "description": "Deprecated alias. Renamed `oncollapsedcommunitieschange` (ADR 0026); removed next release.",
-        "name": "onCollapsedCommunitiesChange",
-        "required": false,
-        "type": "(communities: readonly string[]) => void"
-      },
-      {
-        "bindable": false,
         "description": "A discrete event: every click and keyboard focus on a node or edge, caller metadata intact.",
         "name": "oninteraction",
-        "required": false,
-        "type": "(interaction: GraphInteraction) => void"
-      },
-      {
-        "bindable": false,
-        "deprecated": {
-          "note": "Renamed `oninteraction` (ADR 0026); removed next release.",
-          "replacement": "oninteraction"
-        },
-        "description": "Deprecated alias. Renamed `oninteraction` (ADR 0026); removed next release.",
-        "name": "onInteraction",
         "required": false,
         "type": "(interaction: GraphInteraction) => void"
       },
@@ -991,7 +1013,9 @@
     ],
     "purpose": "An accessible network with a deterministic SVG first paint and a lazily loaded interactive engine.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "graph"
     },
     "sharedContract": {
       "core": [

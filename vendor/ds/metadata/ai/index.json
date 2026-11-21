@@ -1,7 +1,7 @@
 {
   "$schema": "./index.schema.json",
   "schemaVersion": 1,
-  "catalogueSha256": "cef928b6bb87a07467659911d4def7c0c6c3d0815359a980376a9eb8423f7cec",
+  "catalogueSha256": "805d63ef261e95eb9f09ddd39b3298be540fd7285154fd1dc96bb0a63d84c6c7",
   "components": [
     {
       "id": "base/Alert",
@@ -29,7 +29,7 @@
       },
       "required": [],
       "document": "components/base/Alert.json",
-      "sha256": "feb660d9dc2399d022368fd9fb180446846e4243c69073d62ce1ccd5d04a7e81",
+      "sha256": "74dba60bfcdfd93d813fa8a624effdfc6101ed5ff0f7fac4c031d7a210311892",
       "related": [
         "base/ContentState",
         "base/EmptyState",
@@ -65,7 +65,7 @@
         "confirmLabel"
       ],
       "document": "components/base/AlertDialog.json",
-      "sha256": "926fb5623ec39b8f6da5f4a2d519da827801f9fdad834add07d146b667223612",
+      "sha256": "95568fcb114fe453494f273d14d1a1bb98e39c5590e8bcbc250cbda38fc7dd09",
       "related": [
         "base/AppearanceSwitch",
         "base/Button",
@@ -100,7 +100,7 @@
         "children"
       ],
       "document": "components/base/Badge.json",
-      "sha256": "21423d7dc7390bb9112f6fb8bdb654a25b5c1c6ec102c320588830779e60576f",
+      "sha256": "82ce1449f417fe12b211691743017804bd0ef62a3bead68300ad8f3db9469c80",
       "related": [
         "base/Accordion",
         "base/AudioMeter",
@@ -136,7 +136,7 @@
       },
       "required": [],
       "document": "components/base/Button.json",
-      "sha256": "f79c7a4ec70a9612f01af01a27039b7d82e7a1f959178a7cea49317381d9d761",
+      "sha256": "d76107ecdf013374bfbc28952f7e1aceb1f26e5a1e71e852006cad135323af94",
       "related": [
         "base/AlertDialog",
         "base/AppearanceSwitch",
@@ -169,7 +169,7 @@
       },
       "required": [],
       "document": "components/base/Card.json",
-      "sha256": "d137a33741538d0aa2f3e5ea1fe65102f5f4ef441a02e1ba8364dc88efd2902a",
+      "sha256": "9607df16b17855fc71e5929920abda3284e71a8e865eccd543659c75a2deeef4",
       "related": [
         "base/Accordion",
         "base/AudioMeter",
@@ -204,7 +204,7 @@
         "label"
       ],
       "document": "components/base/Checkbox.json",
-      "sha256": "d56397dc6486a6153cd47830214219ec91b085c175a88e7eda4f1bb183afb7e6",
+      "sha256": "e7a735f19978b672ca947aab13d722b77e947322a8f0c0cb057c8f4cd64fb5da",
       "related": [
         "base/Calendar",
         "base/Combobox",
@@ -242,11 +242,51 @@
         "code"
       ],
       "document": "components/base/CodeBlock.json",
-      "sha256": "03ea512b49f45e0857ff9e96ab9eb6825b4fc7b04ecf09a86a11950f650595c1",
+      "sha256": "d46a831f8bbdd1938b15929b4c283b643a18bcc40862c8762ec0a50776264adf",
       "related": [
         "base/BrowserMockup",
         "base/PhoneMockup",
         "base/WindowMockup"
+      ]
+    },
+    {
+      "id": "base/ContentState",
+      "name": "ContentState",
+      "kit": "base",
+      "purpose": "Caller-owned loading, ready, empty and error regions with predeclared height to prevent layout shifts (CLS), composing Skeleton, EmptyState and Alert around real components.",
+      "category": "Feedback",
+      "topics": [
+        "carregamento dados estado vazio erro skeleton integração",
+        "async content loading boundary fetch empty error ready"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "ContentState"
+          ]
+        },
+        "react": {
+          "module": "base/ContentState",
+          "exports": [
+            "ContentState"
+          ]
+        }
+      },
+      "required": [
+        "state",
+        "label",
+        "children"
+      ],
+      "document": "components/base/ContentState.json",
+      "sha256": "2e7f211517102c53379f0c0ff71fc625fafa4b8a2f08a5157832b9eda2e98390",
+      "related": [
+        "base/Alert",
+        "base/EmptyState",
+        "base/LoadingIndicator",
+        "base/Notification",
+        "base/Progress",
+        "base/RadialProgress"
       ]
     },
     {
@@ -272,7 +312,7 @@
       },
       "required": [],
       "document": "components/base/DescriptionList.json",
-      "sha256": "d9e8c975a33de8294e477f2fc776b833f7b69ff22b9892622518b67dedeb3335",
+      "sha256": "a9e8b317ad96b9ad3cc5772e870a5a10f504b71f8096796a57b7de0b69a5515d",
       "related": [
         "base/Accordion",
         "base/AudioMeter",
@@ -310,7 +350,7 @@
         "title"
       ],
       "document": "components/base/Dialog.json",
-      "sha256": "c51d04fc15b59b7cbb8d4808680ceebbd156048f90f2cf6c7e9802a52ab0c4a2",
+      "sha256": "724c2d259d35945c2234864cedbea4d7bea4cde5a58b1bdeac94e34f60696790",
       "related": [
         "base/Button",
         "base/Field",
@@ -345,7 +385,7 @@
         "label"
       ],
       "document": "components/base/Disclosure.json",
-      "sha256": "d789ab0e0932c829e52f68593e011e29ff213bb49173c7b63a89cc05d74402c8",
+      "sha256": "083a3b4538a5d568d9ef1acc3a5c6307c1ef8d77d8e7d2d028a192b34cae53dd",
       "related": [
         "base/Accordion",
         "base/AudioMeter",
@@ -378,7 +418,7 @@
       },
       "required": [],
       "document": "components/base/Divider.json",
-      "sha256": "11f0f965315af96ef23be32e92c69328287000b2730fae90768c0a79a7b8c340",
+      "sha256": "839a7aa4c2c261feaa770c163f03dd3f35e69168279886e48d6879db1e5c8e12",
       "related": [
         "base/AspectRatio",
         "base/BulletsSlide",
@@ -386,6 +426,42 @@
         "base/ContentMask",
         "base/ControlGroup",
         "base/Deck"
+      ]
+    },
+    {
+      "id": "base/DropdownMenu",
+      "name": "DropdownMenu",
+      "kit": "base",
+      "purpose": "A menu on a Button, complete from the keyboard — arrows, typeahead, Escape and Tab-out — over Bits UI's behavior and the DS's own appearance.",
+      "category": "Actions",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "DropdownMenu"
+          ]
+        },
+        "react": {
+          "module": "base/DropdownMenu",
+          "exports": [
+            "DropdownMenu"
+          ]
+        }
+      },
+      "required": [
+        "triggerLabel",
+        "contentLabel"
+      ],
+      "document": "components/base/DropdownMenu.json",
+      "sha256": "134f2d9a4b49c3469240a591ef46f3aa407b1abc62e3d49ed9b2b6c79cebfffb",
+      "related": [
+        "base/AlertDialog",
+        "base/AppearanceSwitch",
+        "base/Button",
+        "base/Dialog",
+        "base/Popover",
+        "base/Swap"
       ]
     },
     {
@@ -416,7 +492,7 @@
         "title"
       ],
       "document": "components/base/EmptyState.json",
-      "sha256": "68a74af8be91849672c0e8129ddaaba59f7b316050ef3c185f387c0361052ab2",
+      "sha256": "44aaedc059724b1ffa7f2e78cec1bce7501810e4ebe839a44c0a9e2664696ddb",
       "related": [
         "base/StateIllustration",
         "base/Button",
@@ -455,7 +531,7 @@
         "children"
       ],
       "document": "components/base/Field.json",
-      "sha256": "9d758188ee3328d9a443b201dc16dfb54c5159bfd85b967511cbf422b16e6c22",
+      "sha256": "5fec8f07529fbdf8e929d2b95f00fc313a977197f52d4fc59b48746709977002",
       "related": [
         "base/Input",
         "base/Form",
@@ -463,6 +539,41 @@
         "base/Calendar",
         "base/Checkbox",
         "base/Combobox"
+      ]
+    },
+    {
+      "id": "base/Fieldset",
+      "name": "Fieldset",
+      "kit": "base",
+      "purpose": "A native named group whose related controls, disabled state, keyboard access, and legend semantics stay together.",
+      "category": "Data input",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Fieldset"
+          ]
+        },
+        "react": {
+          "module": "base/Fieldset",
+          "exports": [
+            "Fieldset"
+          ]
+        }
+      },
+      "required": [
+        "legend"
+      ],
+      "document": "components/base/Fieldset.json",
+      "sha256": "e7e50bf4edf9c58109aa565be64ad3f8908e40d0b6d50c605e93e9fb97480986",
+      "related": [
+        "base/Calendar",
+        "base/Checkbox",
+        "base/Combobox",
+        "base/DateField",
+        "base/DatePicker",
+        "base/DateRangeField"
       ]
     },
     {
@@ -490,7 +601,7 @@
         "children"
       ],
       "document": "components/base/Heading.json",
-      "sha256": "365e06513a80aecd412a54c5f3d9b5cf45d49cb6764f5a1c655cc78c026dc0d8",
+      "sha256": "b42b669edd70a370fe4dd847aab0b009f59a43cb399d2dffaca7a2b66d00c8ca",
       "related": [
         "base/Accordion",
         "base/AudioMeter",
@@ -525,7 +636,7 @@
         "icon"
       ],
       "document": "components/base/Icon.json",
-      "sha256": "0f9c665b7e4390dce42e99981b2fb501db60a6cec382bf87192fcf2e97d325ef",
+      "sha256": "2438f4d84d65feee9e0af66feee3667171a995ab9afe7c6cc39ca93285021cf1",
       "related": [
         "base/Accordion",
         "base/AudioMeter",
@@ -564,7 +675,7 @@
         "alt"
       ],
       "document": "components/base/Image.json",
-      "sha256": "3541fc90b8f9d30dc2877454473402b65c84e2670909b35d46b37ecdc04fe4fa",
+      "sha256": "713a7b727d4c591d2bb4a49ba5c64c53ae5ad7d31bb447be65609d6bcb21d404",
       "related": [
         "base/Accordion",
         "base/AudioMeter",
@@ -600,7 +711,7 @@
         "children"
       ],
       "document": "components/base/Indicator.json",
-      "sha256": "7e9ebe6361124716599b69aec1e5192e457cad777f7f1d3a7fb2d00f88bf1368",
+      "sha256": "b41130d3a9e4ec67b1a91ff53fa14d7436fc4a82544b7934a03cac2689a875e0",
       "related": [
         "base/AspectRatio",
         "base/BulletsSlide",
@@ -636,7 +747,7 @@
       },
       "required": [],
       "document": "components/base/Input.json",
-      "sha256": "574591fdcce40fad02854a028206013698d267611818129bbd24146c33528662",
+      "sha256": "89e13734af54e6cb398b3e2cb296860ae6f60608df7579eda619d74bf5144a96",
       "related": [
         "base/Field",
         "base/Form",
@@ -669,7 +780,7 @@
       },
       "required": [],
       "document": "components/base/Kbd.json",
-      "sha256": "2892f3a8b1245f59a6e39dc8f6a4a07faa11a64d0c3e46f0315f7043ac20326b",
+      "sha256": "bdba974edb30c4574a6c31e54d27257555f02eabbb2a4c93f01461f13a2bfd4d",
       "related": [
         "base/Accordion",
         "base/AudioMeter",
@@ -702,7 +813,7 @@
       },
       "required": [],
       "document": "components/base/Label.json",
-      "sha256": "566ff14bdee04fe623565b5f524c9d6750a4a1b7539f2164acdb59924540737a",
+      "sha256": "3d0dc8a76f361017c706d978775ef1fcb2e2cd0ac2b87b7c6238c1130602251a",
       "related": [
         "base/Calendar",
         "base/Checkbox",
@@ -737,7 +848,7 @@
         "href"
       ],
       "document": "components/base/Link.json",
-      "sha256": "47d93774ef579dc15aa58c8fad3ba28a2e3408ac880e061320401fcb7ded286e",
+      "sha256": "b81e3e4c09374cc75ff674bd102d3e74a52b0c6455292ab69afdac7232396d3d",
       "related": [
         "base/Breadcrumbs",
         "base/Navbar",
@@ -770,7 +881,7 @@
       },
       "required": [],
       "document": "components/base/LoadingIndicator.json",
-      "sha256": "d6e0e0c2046dcc791eca64d9b86e26d2b57757f099b7ec58070c7323606c3791",
+      "sha256": "db5a91e78ea7409e998513826a2fa0b3663895a676c7ab5aa05854613134f372",
       "related": [
         "base/Alert",
         "base/ContentState",
@@ -803,7 +914,7 @@
       },
       "required": [],
       "document": "components/base/Logo.json",
-      "sha256": "d0168b10e1b1d7d5bbd8cdc787a8c7f695068a99a3c3f5ae5c6a6eaf4e936f25",
+      "sha256": "2875222a5999f19481396a2da50e361c2426a5fabf9f903b3f6ae1433d09087d",
       "related": [
         "base/Accordion",
         "base/AudioMeter",
@@ -838,13 +949,51 @@
         "navigate"
       ],
       "document": "components/base/NavigationScope.json",
-      "sha256": "6f0620a0c04cddbd3f65a99324675021ea4f024987c0d99b845918a41691b75e",
+      "sha256": "22fba4f230757d57137a1f0eb460d4d237fa2686616c25568aa4ba8ec2bfc3db",
       "related": [
         "base/Breadcrumbs",
         "base/Link",
         "base/Navbar",
         "base/NavigationMenu",
         "base/Pagination",
+        "base/SkipLink"
+      ]
+    },
+    {
+      "id": "base/Pagination",
+      "name": "Pagination",
+      "kit": "base",
+      "purpose": "A page trail whose native destinations carry explicit page names and announce the current page.",
+      "category": "Navigation",
+      "topics": [
+        "paginacao paginas resultados",
+        "pagination results"
+      ],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "Pagination"
+          ]
+        },
+        "react": {
+          "module": "base/Pagination",
+          "exports": [
+            "Pagination"
+          ]
+        }
+      },
+      "required": [
+        "pages"
+      ],
+      "document": "components/base/Pagination.json",
+      "sha256": "0c7e54656904d6b4f438e8366e70c222202361febc0d02f4b8820a1b170c3bf5",
+      "related": [
+        "base/Breadcrumbs",
+        "base/Link",
+        "base/Navbar",
+        "base/NavigationMenu",
+        "base/NavigationScope",
         "base/SkipLink"
       ]
     },
@@ -874,7 +1023,7 @@
         "contentLabel"
       ],
       "document": "components/base/Popover.json",
-      "sha256": "42dd55b3a7f223b4ca99178494b136cdfa16479cd41f74a11ae020247ec000d6",
+      "sha256": "51abfa5cd25c2c58dc2911ce8cf3d96dbbf27c357b3f89d2d71220a99c24678d",
       "related": [
         "base/AlertDialog",
         "base/AppearanceSwitch",
@@ -910,7 +1059,7 @@
       },
       "required": [],
       "document": "components/base/Progress.json",
-      "sha256": "24e9af97bf5975eb408d3da828201421a8313578c0a54a6fd509ee1df57ec02f",
+      "sha256": "9c35a6814137bff46ff21003b4fa40ff6e5874041dd95a4b328fac6b3bb752ae",
       "related": [
         "base/Alert",
         "base/ContentState",
@@ -918,6 +1067,41 @@
         "base/LoadingIndicator",
         "base/Notification",
         "base/RadialProgress"
+      ]
+    },
+    {
+      "id": "base/ScrollArea",
+      "name": "ScrollArea",
+      "kit": "base",
+      "purpose": "A named native overflow boundary that keyboard users can focus and scroll in either direction.",
+      "category": "Layout",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "ScrollArea"
+          ]
+        },
+        "react": {
+          "module": "base/ScrollArea",
+          "exports": [
+            "ScrollArea"
+          ]
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "document": "components/base/ScrollArea.json",
+      "sha256": "d79d8a680673767250d5c3827f1a70434da14736fa4779c34706c6265e5c6237",
+      "related": [
+        "base/AspectRatio",
+        "base/BulletsSlide",
+        "base/Container",
+        "base/ContentMask",
+        "base/ControlGroup",
+        "base/Deck"
       ]
     },
     {
@@ -945,7 +1129,7 @@
         "title"
       ],
       "document": "components/base/SectionHeading.json",
-      "sha256": "b1c448f376b52c1e19a3ac4cdc6d9554ea033b1aaa0ebea49d0fae8af10be8f5",
+      "sha256": "4da4d4a2ac49e244b34dd1dcd66a49178f4db6ede62b4de7ab51001214c37932",
       "related": [
         "base/Accordion",
         "base/AudioMeter",
@@ -978,7 +1162,7 @@
       },
       "required": [],
       "document": "components/base/Select.json",
-      "sha256": "6ce7714878a74b995b80592a66212c3494fa1d03c8a307e6bd814c0cccf114e9",
+      "sha256": "a7ace498dd3ea634503d21ff266c89e913cc4889bcfebee14e2144ff63f66099",
       "related": [
         "base/Calendar",
         "base/Checkbox",
@@ -1014,7 +1198,7 @@
       },
       "required": [],
       "document": "components/base/Skeleton.json",
-      "sha256": "1b13725337f1182d86a9c154090249b2afc7c57939793d7f69531c51da09d28d",
+      "sha256": "d7299744f7a719412e2cbed45e5467fc1a8a471c173825ccf92194b453cb3369",
       "related": [
         "base/Alert",
         "base/ContentState",
@@ -1047,7 +1231,7 @@
       },
       "required": [],
       "document": "components/base/Stack.json",
-      "sha256": "fe0ed3ae946f32513f246a7502f1892be4d8e59ac827baf6e100d9dac31dff14",
+      "sha256": "87b9b7ac0f8716e56eccf147117d76ea3073e8e5673b79a31e84b7626e23f937",
       "related": [
         "base/AspectRatio",
         "base/BulletsSlide",
@@ -1085,7 +1269,7 @@
         "art"
       ],
       "document": "components/base/StateIllustration.json",
-      "sha256": "2027ef9963290303fb595ef5f3679ffdfaa847d7d245cb7b154d55e2a286274e",
+      "sha256": "d144f63a6dd9f7e647a7dc8e498b72ebb0eaa096dff7c408db6fc0fd361807df",
       "related": [
         "base/EmptyState",
         "base/Button",
@@ -1120,7 +1304,7 @@
         "label"
       ],
       "document": "components/base/StatusIndicator.json",
-      "sha256": "74cdda55a206da6c890edb933684bfd2e64e91f7596eaa13f8eec676b41b4f74",
+      "sha256": "51ed8ed15a6ffa1342e1160389ea500a50570a171c0fc1f988601fc1b43f6700",
       "related": [
         "base/Accordion",
         "base/AudioMeter",
@@ -1159,7 +1343,7 @@
         "items"
       ],
       "document": "components/base/Tabs.json",
-      "sha256": "81cf2ce17cb9d9fee3676e4486893e203c59dee92717021de347710d38523931",
+      "sha256": "fb68bbab28a5b89c4ce58e70156ecc7f210f0a24617a47a67a962a5bfd0697f0",
       "related": [
         "base/Breadcrumbs",
         "base/Link",
@@ -1192,7 +1376,7 @@
       },
       "required": [],
       "document": "components/base/Textarea.json",
-      "sha256": "9b8091c2a3f4dbeb29dea4c348f8e86899907c1c2f74975ccaedfac10343a786",
+      "sha256": "4c81c05f1818ca4baa8ea0b9bf0ad7f5df3a0c9cb631c49df2c1f1347920cfc8",
       "related": [
         "base/Calendar",
         "base/Checkbox",
@@ -1227,7 +1411,7 @@
         "items"
       ],
       "document": "components/base/Timeline.json",
-      "sha256": "4b0c4cbf44f0633614494f39286e5099c27faa07d9608f42290fea147227bee0",
+      "sha256": "1731c84d0d6b9016b369c87acf101a160a8ab4eecbf88a8f24e45071815e5e1e",
       "related": [
         "base/Accordion",
         "base/AudioMeter",
@@ -1262,7 +1446,43 @@
         "label"
       ],
       "document": "components/base/ToggleButton.json",
-      "sha256": "f7a8f41828ffe8cac491a09576629b2f8deea95fd933eb8821b223f72d1ef3bf",
+      "sha256": "da1cea7e2ee7314515aaa97e5affcd0de5b0b387250376dc0f2cb6779cc15273",
+      "related": [
+        "base/AlertDialog",
+        "base/AppearanceSwitch",
+        "base/Button",
+        "base/Dialog",
+        "base/DropdownMenu",
+        "base/Popover"
+      ]
+    },
+    {
+      "id": "base/ToggleGroup",
+      "name": "ToggleGroup",
+      "kit": "base",
+      "purpose": "A named set of canonical ToggleButtons with exactly one selection and roving keyboard focus.",
+      "category": "Actions",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "base",
+          "exports": [
+            "ToggleGroup"
+          ]
+        },
+        "react": {
+          "module": "base/ToggleGroup",
+          "exports": [
+            "ToggleGroup"
+          ]
+        }
+      },
+      "required": [
+        "legend",
+        "options"
+      ],
+      "document": "components/base/ToggleGroup.json",
+      "sha256": "2e389dc926da1fda59f02d5ee2eb29c2ae4ef88bafd6d6d9353bfee419dbca37",
       "related": [
         "base/AlertDialog",
         "base/AppearanceSwitch",
@@ -1300,7 +1520,7 @@
         "content"
       ],
       "document": "components/base/Tooltip.json",
-      "sha256": "cb8be296b03c3eda7611b7315d742caafbb51aed6e48aea2369d0581f71fd963",
+      "sha256": "68488ca78addda61988d3b93a292b9dc6ef4cea96190dbc908ff3b9582343cb6",
       "related": [
         "base/Alert",
         "base/ContentState",
@@ -1335,7 +1555,7 @@
         "items"
       ],
       "document": "components/app/ActivityFeed.json",
-      "sha256": "e0f64788da5d2f80b5facc96a314fddd4a08da4b76a0fac49e288d65915d599e",
+      "sha256": "bdb4325fdad9a1730e1877156ce6ec299ab2aa99dca07508a837653950d74cfb",
       "related": [
         "app/CardHeading",
         "app/ChangeReview",
@@ -1370,12 +1590,49 @@
         "label"
       ],
       "document": "components/app/ApplicationWorkspace.json",
-      "sha256": "76e9845d614d8a4218b18b78203235b42e98353ea59131e6a58729d04f67373c",
+      "sha256": "a8070def410914026b833421f3e3522b4433b1afd07697e3271edb09bb5efc76",
       "related": [
         "app/ApplicationShell",
         "app/MultiColumnLayout",
         "app/SidebarLayout",
         "app/SplitView"
+      ]
+    },
+    {
+      "id": "app/BottomNavigation",
+      "name": "BottomNavigation",
+      "kit": "app",
+      "purpose": "A compact native destination bar whose current page and keyboard order survive consumer-owned placement.",
+      "category": "Navigation",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "app",
+          "exports": [
+            "BottomNavigation"
+          ]
+        },
+        "react": {
+          "module": "app/BottomNavigation",
+          "exports": [
+            "BottomNavigation"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "items",
+        "currentId"
+      ],
+      "document": "components/app/BottomNavigation.json",
+      "sha256": "099a30d839c8b6ca87a9de28db94efd3287f1e5751e51d81f3bfdd4b26b74a8d",
+      "related": [
+        "app/CategoryPreview",
+        "app/CommandPalette",
+        "app/NavItem",
+        "app/ShortcutHelp",
+        "app/SidebarNavigation",
+        "app/SidebarPanel"
       ]
     },
     {
@@ -1404,7 +1661,7 @@
         "items"
       ],
       "document": "components/app/ChangeReview.json",
-      "sha256": "9a6af8926dbb4e919ca84d51856491b21d71d4ad112c78abe8e2545fc1f80bb6",
+      "sha256": "53056ea722d051fe937687a757a76accc1d93f061b9ac73395b3726f59bc71bd",
       "related": [
         "app/ActivityFeed",
         "app/CardHeading",
@@ -1440,7 +1697,7 @@
         "label"
       ],
       "document": "components/app/CommandPalette.json",
-      "sha256": "9cc141e8624adfe3a4582578cc140fbc08786895c92fcd778e6af38d7e9ad4d9",
+      "sha256": "84a39aa5fc155028b8e7c4968b843deb2418101f0f1b457aaba88039b2a7db01",
       "related": [
         "app/BottomNavigation",
         "app/CategoryPreview",
@@ -1473,8 +1730,9 @@
       },
       "required": [],
       "document": "components/app/ErrorBoundary.json",
-      "sha256": "ebfac5a599ca96080147bc7188cd94132522e65672bcc3a580eb57713745c5b3",
+      "sha256": "9b1774decd31fd3cb1d3e29a0b80153a8ef9fd0da5691e3379861fed7c2876a9",
       "related": [
+        "app/ApprovalPrompt",
         "app/OutcomeScreen"
       ]
     },
@@ -1501,7 +1759,7 @@
       },
       "required": [],
       "document": "components/app/ListRow.json",
-      "sha256": "f09ae9de1316c4fee7d812218ef44bb9fdf593c4ce1198db56e0876b794bd2b5",
+      "sha256": "ae24c78ff0b1bafb21186b5e666d01dac0b3798d94ea88ee3cfd903d71cbc48f",
       "related": [
         "app/ActivityFeed",
         "app/CardHeading",
@@ -1534,7 +1792,7 @@
       },
       "required": [],
       "document": "components/app/NavItem.json",
-      "sha256": "c9fe4489272ecc01ca84d5ca6443109afed12eb6241f83ad7566431cb8aa8895",
+      "sha256": "c0f481e4c203dcb6d4eddbc92edd4c2a1a90f53579eac6591d6c1caf362f6077",
       "related": [
         "app/BottomNavigation",
         "app/CategoryPreview",
@@ -1570,8 +1828,9 @@
         "title"
       ],
       "document": "components/app/OutcomeScreen.json",
-      "sha256": "88a62d322c7bf8bd445da349af0f67d5e57c6bb3b18d68bf14af70269d42e8b5",
+      "sha256": "28f5b724b014041bddbb8fe9196c7908baafc395f2e781fbe687c92cb2434c03",
       "related": [
+        "app/ApprovalPrompt",
         "app/ErrorBoundary"
       ]
     },
@@ -1600,7 +1859,7 @@
         "title"
       ],
       "document": "components/app/PageHeading.json",
-      "sha256": "5d0bd7509cc9bccf4bb13b4074bee13287948c6c7b0be595d3afd1397ae2f494",
+      "sha256": "09d4c3123c5c2ef92a09e4d46e1f8c170e31b2c515f33dbbef725baab6206921",
       "related": [
         "app/ActivityFeed",
         "app/CardHeading",
@@ -1633,7 +1892,7 @@
       },
       "required": [],
       "document": "components/app/Pill.json",
-      "sha256": "af4ce34cd9821c480df400e2fc7b97c3adf421d3b7e0ca2f048ed6f8cb97f1a4",
+      "sha256": "8f62b8302fa72402d18137bc320c5e57779f237ac708a565ff8961379f76b8f4",
       "related": [
         "app/ActivityFeed",
         "app/CardHeading",
@@ -1668,11 +1927,12 @@
         "label"
       ],
       "document": "components/app/SettingsRow.json",
-      "sha256": "d4764ecae0ef13ada7c256ea72b4a3395779a0305eba14170c3a74fbdb53b4c8",
+      "sha256": "23b752016df95cd139c15afba8f56ad8ce474c96d8632974c1709accc27bc4b0",
       "related": [
         "app/CategoryFilter",
         "app/CheckoutForm",
         "app/Filter",
+        "app/PromptComposer",
         "app/ShoppingCart"
       ]
     },
@@ -1702,7 +1962,7 @@
         "groups"
       ],
       "document": "components/app/ShortcutHelp.json",
-      "sha256": "882fafcf8da532f8dfa1b7573c5d14d415b5b8e69cf2973c65276b9cf609293c",
+      "sha256": "6f82c951bbd060e666a6ac897f9bea47fc1f5babd7487edc86dc0ba615a26434",
       "related": [
         "app/BottomNavigation",
         "app/CategoryPreview",
@@ -1741,7 +2001,7 @@
         "items"
       ],
       "document": "components/app/SidebarRail.json",
-      "sha256": "1cc617dfdd42d450cc9d9f1136b5cf800c2a2f1c78de033ed0d1e753b88f5415",
+      "sha256": "fbbac2a959de2c60876fbf902f4f64e7e0da31266dfd8a7e0a0b6ffa7088beec",
       "related": [
         "app/BottomNavigation",
         "app/CategoryPreview",
@@ -1774,7 +2034,7 @@
       },
       "required": [],
       "document": "components/app/SplitView.json",
-      "sha256": "e339701a01810878dce36eefecea9ce472bc9d437105f5879dd47d723026f46a",
+      "sha256": "9a0d02d320d586fcffae541320b41f7f97b9cc8579e66305793ce13447a17fb8",
       "related": [
         "app/ApplicationShell",
         "app/ApplicationWorkspace",
@@ -1807,7 +2067,7 @@
         "label"
       ],
       "document": "components/app/Toolbar.json",
-      "sha256": "5bd962230d10571a51e6561ed0c7eda1361b337d77f40ec22801d47e286034f2",
+      "sha256": "2acdd1a121fc7216642f33c7b9cbd7d02334ed4ddb57413222b0f8b5078bfd78",
       "related": [
         "app/ActionPanel",
         "app/ContextMenu",
@@ -1842,7 +2102,7 @@
         "items"
       ],
       "document": "components/app/WorkspaceTabs.json",
-      "sha256": "66ee93bcfb2d4ae7d69b62c2365d49a829f25a3c2644b8cd8580a71c97a5c30d",
+      "sha256": "1ce9302aaafcb9800041b5a66371c03d17cf20b369b4df7f7226e2fe2f7a7c74",
       "related": [
         "app/BottomNavigation",
         "app/CategoryPreview",
@@ -1850,6 +2110,43 @@
         "app/NavItem",
         "app/ShortcutHelp",
         "app/SidebarNavigation"
+      ]
+    },
+    {
+      "id": "data/DataTable",
+      "name": "DataTable",
+      "kit": "data",
+      "purpose": "A state-local rich grid with sorting, filtering, paging, column visibility, virtualization, and explicitly staged edits.",
+      "category": "Data display",
+      "topics": [],
+      "imports": {
+        "svelte": {
+          "module": "data/DataTable",
+          "exports": [
+            "default"
+          ]
+        },
+        "react": {
+          "module": "data/DataTable",
+          "exports": [
+            "default"
+          ]
+        }
+      },
+      "required": [
+        "caption",
+        "columns",
+        "rows"
+      ],
+      "document": "components/data/DataTable.json",
+      "sha256": "ba6c4e64871e8f018bbc099876092c6a30553df81252d725c3bb78b342ef2b3a",
+      "related": [
+        "data/ActivityTimeline",
+        "data/BarChart",
+        "data/BreakdownBar",
+        "data/Candlestick",
+        "data/CompositeChart",
+        "data/DeveloperPanel"
       ]
     },
     {
@@ -1875,14 +2172,14 @@
       },
       "required": [],
       "document": "components/data/DeveloperPanel.json",
-      "sha256": "cf345a3f2071341df50e8948334371ab2fce71beb78a594cf75aa557ccb24b81",
+      "sha256": "00d63ea04db4a2a9afe5576d8c86e42337339ffdc14ca3bc6e526666be5cd06e",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperRequestInspector"
+        "data/DataTable"
       ]
     },
     {
@@ -1910,14 +2207,14 @@
         "requests"
       ],
       "document": "components/data/DeveloperRequestInspector.json",
-      "sha256": "e5d919f1dcb7dc5d98283ce56fa8c1c56ae4d2bd4f4775c4fb8a187793097a60",
+      "sha256": "132000b9cf2ef568e3f8645c4c16eefe3f6c1db1bbfce63468f31723328ef1ab",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -1945,14 +2242,14 @@
         "data"
       ],
       "document": "components/data/Diagram.json",
-      "sha256": "edb060f5a5f1878541360f9761746a1825ecae204dd777287c454a1f81541ae5",
+      "sha256": "2fd9639459461faa185413e1819e6d14e82266001b7358c6fdd328ea63def196",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -1981,14 +2278,14 @@
         "entries"
       ],
       "document": "components/data/DiffExplorer.json",
-      "sha256": "b8512af73ea1c863c0e1e15fe2548357793963575180d2aebbc27044715fba68",
+      "sha256": "dbd8b3ba1a1eedca115a02929904292936b02c5ad8a72290eadbeeb5295b3166",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -2016,14 +2313,14 @@
         "documents"
       ],
       "document": "components/data/DocumentViewer.json",
-      "sha256": "ee0624f47d0e12528d7652c8ef57f1166c2c1914b0e6389b9e0913333fe954f3",
+      "sha256": "2bfef2bb8db036e8891e9cc2a24f109392e7fa20290de6e3c5f1e6c111ba06b0",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -2052,14 +2349,14 @@
         "series"
       ],
       "document": "components/data/EventSeriesExplorer.json",
-      "sha256": "3f9c077e40b4744cbccc954cc10ff8e324c638a6d2d6bd7a61a8ea1810e0b9f1",
+      "sha256": "644bbfd39efc832f45c5e83c38905de688516a1376ba7107aa3429abf10241e0",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -2087,14 +2384,14 @@
         "data"
       ],
       "document": "components/data/Graph.json",
-      "sha256": "4bfce3fcbb6f938f9627a014860be49914cd1aeaa6bf9b4a1f86899aa68baef5",
+      "sha256": "f613520dd5978d7aa09adc1577ab920dd06c8d3122603f6f49830083e10cd531",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -2123,14 +2420,14 @@
         "data"
       ],
       "document": "components/data/GraphExplorer.json",
-      "sha256": "4e4dde523d2936dd1def2b3ca81d8415dcf91766a45c65dc2db228a2a4e70dcc",
+      "sha256": "963e3779ffde87f1749e7e9dbddc1b9e9ceb3caff60127c56ca12f49e3fb3250",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -2159,14 +2456,14 @@
         "entries"
       ],
       "document": "components/data/KeyValueExplorer.json",
-      "sha256": "200c0968a551cdf01cb1b9cd5f1c5bcd20e40fef62ef2c262645f6d1289e864e",
+      "sha256": "3f48e95b91f0616c63837aaf89dddcb92b3c1b2fe61c9e2e00f4afd8e9a085d6",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -2195,14 +2492,14 @@
         "value"
       ],
       "document": "components/data/KpiCard.json",
-      "sha256": "c783b6547865a48d73c6054959d397ea1dceccf837f1c09cf3010ec258535100",
+      "sha256": "8d3b6d432f914f43263bc054ed586807f6c9d972cce57978a34537a3589a0ad2",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -2233,14 +2530,14 @@
         "children"
       ],
       "document": "components/data/PanZoomViewport.json",
-      "sha256": "d63581c66c5e4d2d94ed540c39ed94101902d59960a06f582924cbb897b8c927",
+      "sha256": "5ea9befe75a8417bd88e5b06fbd06ef7d5bc033e715580554ba6487681a8caef",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -2270,14 +2567,14 @@
         "events"
       ],
       "document": "components/data/QueueExplorer.json",
-      "sha256": "46fd84b093598a74dc1ff198929c6576cae9309de1c67bcbee78ed9c22613353",
+      "sha256": "ebebc286ecb545db0e3809cd274e27d342353c90887e4402cc948665f37a503d",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -2305,14 +2602,14 @@
         "values"
       ],
       "document": "components/data/Sparkline.json",
-      "sha256": "1d8998be4d8ad33ed35b579ff147d4512dd7b18ec7c94a03e090f5bb3d3a48ed",
+      "sha256": "14c4484f62aacde5372015f4d2883926cb77f11bc8036b297f1dc23f46c29033",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -2341,54 +2638,14 @@
         "metrics"
       ],
       "document": "components/data/StatsExplorer.json",
-      "sha256": "fe9937dd4d12bfe8cfdf717b2ece81b0fcb8a5ebac31336e2cc1a663802d9808",
+      "sha256": "19f4ffbad54c90b94d227797b61f432645f48ef94afaa438e0b603e9c7ae867c",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
-      ]
-    },
-    {
-      "id": "data/Table",
-      "name": "Table",
-      "kit": "data",
-      "purpose": "A state-local rich grid with sorting, filtering, paging, column visibility, virtualization, and explicitly staged edits.",
-      "category": "Data display",
-      "topics": [
-        "tabela dados filtros ordenar paginar",
-        "data table filtering sorting pagination"
-      ],
-      "imports": {
-        "svelte": {
-          "module": "data/Table",
-          "exports": [
-            "default"
-          ]
-        },
-        "react": {
-          "module": "data/Table",
-          "exports": [
-            "default"
-          ]
-        }
-      },
-      "required": [
-        "caption",
-        "columns",
-        "rows"
-      ],
-      "document": "components/data/Table.json",
-      "sha256": "bbd6cb7c02c18ec5f85df0016aae78ce039fb7a9d9174b5df4cbf134f1b49979",
-      "related": [
-        "data/ActivityTimeline",
-        "data/BarChart",
-        "data/BreakdownBar",
-        "data/Candlestick",
-        "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -2419,14 +2676,14 @@
         "rowKey"
       ],
       "document": "components/data/TableExplorer.json",
-      "sha256": "0afd1b0b62b940a6ae506d7c5231019ae8db7ebcf1dc9b1eeaf96b44ccdde450",
+      "sha256": "3d6c1f3aef0118aaaecd655aeae2f77cdde467cb4aefa99351f0a4568b5059f6",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -2457,14 +2714,14 @@
         "data"
       ],
       "document": "components/data/TimeSeries.json",
-      "sha256": "b09acb3638ff1fa864aae995aab67e92747b407e67ef896407f5ff9adf1ed66f",
+      "sha256": "3c49c859ff4cbeb0aa37aa4f9bb329f6c725e8734ab01fba5da701d130e441e0",
       "related": [
         "data/CompositeChart",
         "data/Candlestick",
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -2493,14 +2750,14 @@
         "nodes"
       ],
       "document": "components/data/TreeView.json",
-      "sha256": "182cc1f6c4e183006df7b1e4516fed9503ce731989e0ac6a29318e6b1d045d9f",
+      "sha256": "cc886b020987007685bd398d418fc0f6eea6bc9ebdd8eceda25190e859b0c2a9",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     },
     {
@@ -2529,19 +2786,19 @@
         "rows"
       ],
       "document": "components/data/VectorExplorer.json",
-      "sha256": "619f2d274b19e5e3c2a8d2b6d42dea139227ec6d2150e42ceef6f2f2a50d997b",
+      "sha256": "6c5f678249f9910ad4fed789502bb0ddd6690158edfcafd4e1aaaea59b0906e0",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
         "data/BreakdownBar",
         "data/Candlestick",
         "data/CompositeChart",
-        "data/DeveloperPanel"
+        "data/DataTable"
       ]
     }
   ],
   "release": {
-    "version": "v2026.11.21",
-    "revision": "26a78470769aa08ec30485f62912e6315cc8d081"
+    "version": "v2026.11.24",
+    "revision": "8af3df44d3ba1c7902fc1f704e9df45aebdf05fd"
   }
 }

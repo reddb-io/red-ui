@@ -1,1 +1,1 @@
-import{tv as t}from"tailwind-variants";import{typeRoleMerge as e}from"./type-roles.js";const a=t({base:"text-sm font-medium text-foreground"},e);export{a as label};
+import{tv as e}from"tailwind-variants";import{typeRoleMerge as t}from"./type-roles.js";const a=e({base:"text-label text-foreground"},t);export{a as label};

@@ -67,7 +67,9 @@
           "specifier": "@reddb-io/design-system/base/Divider"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "divider"
         },
         "source": "kits/base/react/src/Divider.tsx",
         "specifier": "@reddb-io/design-system/base/Divider",

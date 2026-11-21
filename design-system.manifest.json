@@ -1,6 +1,6 @@
 {
   "source": "reddb-io/design-system",
-  "version": "v2026.11.21",
+  "version": "v2026.11.24",
   "framework": "svelte",
   "consumer": "red-ui",
   "kits": ["data"],
@@ -15,6 +15,7 @@
     "include": {
       "app": [
         "ActivityFeed",
+        "BottomNavigation",
         "ChangeReview",
         "CommandPalette",
         "ErrorBoundary",
@@ -115,7 +116,7 @@
       "data/PanZoomViewport": ["default"],
       "data/QueueExplorer": ["default"],
       "data/StatsExplorer": ["default"],
-      "data/Table": ["TableChange", "TableColumn", "TableRow", "default"],
+      "data/DataTable": ["TableChange", "TableColumn", "TableRow", "default"],
       "data/TableExplorer": ["default"],
       "data/TimeSeries": ["TimeSeriesDataset", "default"],
       "data/VectorExplorer": ["default"],

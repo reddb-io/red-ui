@@ -1,10 +1,10 @@
 import { type VariantProps } from "tailwind-variants";
 /** The quiet fill under the pointer. */
-export declare const QUIET_HOVER = "hover:bg-foreground/8";
+export declare const QUIET_HOVER = "hover:bg-state-hover";
 /** The stronger quiet fill while pressed: also the only feedback on touch. */
-export declare const QUIET_PRESSED = "active:bg-foreground/12";
+export declare const QUIET_PRESSED = "active:bg-state-pressed";
 /** A trigger holding its popup open. */
-export declare const QUIET_OPEN = "[&[aria-haspopup][aria-expanded=true]]:bg-foreground/10";
+export declare const QUIET_OPEN = "[&[aria-haspopup][aria-expanded=true]]:bg-state-open";
 /** The ink focus outline (ADR 0023), drawn outside the control. */
 export declare const QUIET_FOCUS = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus";
 /** Button's disabled treatment, for a native `disabled` or `aria-disabled`. */
@@ -26,7 +26,7 @@ export declare const quietControl: import("tailwind-variants").TVReturnType<{
     };
     selected: {
         /** Current, selected or pressed: the selected surface, which the pointer does not lighten. */
-        readonly true: "bg-foreground/10 hover:bg-foreground/10 font-medium text-foreground hover:text-foreground";
+        readonly true: "bg-state-selected hover:bg-state-selected font-medium text-foreground hover:text-foreground";
         readonly false: "";
     };
 }, undefined, string, {
@@ -46,7 +46,7 @@ export declare const quietControl: import("tailwind-variants").TVReturnType<{
     };
     selected: {
         /** Current, selected or pressed: the selected surface, which the pointer does not lighten. */
-        readonly true: "bg-foreground/10 hover:bg-foreground/10 font-medium text-foreground hover:text-foreground";
+        readonly true: "bg-state-selected hover:bg-state-selected font-medium text-foreground hover:text-foreground";
         readonly false: "";
     };
 }, undefined, import("tailwind-variants").TVReturnTypeLike<{
@@ -66,7 +66,7 @@ export declare const quietControl: import("tailwind-variants").TVReturnType<{
     };
     selected: {
         /** Current, selected or pressed: the selected surface, which the pointer does not lighten. */
-        readonly true: "bg-foreground/10 hover:bg-foreground/10 font-medium text-foreground hover:text-foreground";
+        readonly true: "bg-state-selected hover:bg-state-selected font-medium text-foreground hover:text-foreground";
         readonly false: "";
     };
 }, undefined>>;

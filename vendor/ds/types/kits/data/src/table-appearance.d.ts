@@ -7,6 +7,7 @@ export declare const dataTableClasses: {
     head: string;
     row: string;
     cell: string;
+    pager: string;
 };
 /** Explorer chrome has its own bands; it never recolors the grid's content. */
 export declare const tableExplorerClasses: {

@@ -7,8 +7,6 @@ interface Props extends PillContract, Omit<HTMLAttributes<HTMLSpanElement>, keyo
      * it renders none — a Pill nobody can remove should not pretend otherwise.
      */
     ondismiss?: () => void;
-    /** @deprecated Renamed `ondismiss` (ADR 0026); removed next release. */
-    onDismiss?: () => void;
     /** Extra classes, merged over the variant's own. */
     class?: string;
     /** The Pill's label content, rendered before the dismiss affordance. */

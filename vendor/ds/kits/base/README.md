@@ -109,7 +109,7 @@ row/column controls under every Theme, Color Scheme and Density.
 `value` (`number | null`), and optionally choose finite `min`, `max` and positive
 `step` constraints. Native numeric entry owns keyboard stepping, decimal alignment,
 validation and form submission. Invalid typed values stay visible. Both stepping
-buttons share Input's `controlSize`; readonly and disabled fields cannot step.
+buttons share Input's `size`; readonly and disabled fields cannot step.
 `help`, `error` and `required` use Field's canonical accessible relationships.
 Native form resets update the binding and call `onvaluechange` once. An external
 null clears the field. Applications own persistence, quotas and validation copy.
@@ -255,7 +255,7 @@ temporary material without changing Alert's public API or behavioral tests.
   import { Alert } from "@reddb-io/design-system/base";
 </script>
 
-<Alert feedback="danger" title="Deployment failed">
+<Alert tone="danger" title="Deployment failed">
   The previous release is still serving traffic.
 </Alert>
 ```
@@ -278,7 +278,7 @@ own way out without turning page-specific business content into DS content.
   import { Button, EmptyState, Notification } from "@reddb-io/design-system/base";
 </script>
 
-<Notification feedback="success" title="Deployment complete">
+<Notification tone="success" title="Deployment complete">
   The new release is serving traffic.
 </Notification>
 
@@ -365,7 +365,7 @@ the Theme mapping is composed rather than redefined.
   import { Badge, Button, Indicator, StatusIndicator } from "@reddb-io/design-system/base";
 </script>
 
-<p>The release is <Badge variant="primary">stable</Badge>.</p>
+<p>The release is <Badge tone="success" variant="filled">stable</Badge>.</p>
 
 <StatusIndicator label="Available" status="success" />
 
@@ -902,7 +902,7 @@ exclusion and reset even while the search popup is closed. Multiple values use
 repeated form entries under the same `name`. Selection and Escape restore the
 trigger's focus; Tab continues out of the picker. Clear and chip removal retain
 focus on the trigger and announce the remaining selection. Field carries help
-and validation relationships. `controlSize` follows Input and Button, while
+and validation relationships. `size` follows Input and Button, while
 Theme, Color Scheme and Density remain inherited.
 
 ## Combobox
@@ -1172,7 +1172,7 @@ snippet content, while page arrangement and business language remain local.
   {/snippet}
 </Tabs>
 
-<Accordion label="Release questions" items={questions} bind:expanded>
+<Accordion label="Release questions" items={questions} bind:value={openQuestions}>
   {#snippet children({ value })}
     <Answer question={value} />
   {/snippet}
@@ -1602,7 +1602,7 @@ for example `+5511999991234`. The plus sign is retained; spaces, parentheses,
 hyphens and national trunk prefixes are removed. Draft values can be incomplete;
 native form validation blocks incomplete/unsupported numbers, and `required`
 blocks empty values. Length/structure checks do not verify number ownership.
-`help`, `error`, `disabled`, `form`, reset and `controlSize` retain native field
+`help`, `error`, `disabled`, `form`, reset and `size` retain native field
 semantics. Disabled values are omitted.
 
 Use `presentation="text"` and optional `sourceLabel` for selectable saved HTML
@@ -1747,3 +1747,54 @@ live announcement for every frame.
 <AudioMeter value={level} label="Microphone" />
 <AudioMeter value={level} mode="waveform" samples={lastSecond} label="Microphone waveform" />
 ```
+
+## Slides
+
+`Deck` holds a named run of slides (`label`) in reading order. The space
+between slides follows Density. Each slide sits in a `SlideFrame`: a named 16:9
+canvas that scales with the frame's own width and keeps a safe title area under
+either Theme. The slide layouts all take `number`/`total` for the slide counter
+and a `surface`:
+
+| Component | Required | Sets |
+|---|---|---|
+| `TitleSlide` | `title` | The opening slide: eyebrow, display title, subtitle and presenter line. |
+| `SectionSlide` | `title` | A divider naming the next part, in the display role, with an optional `summary`. |
+| `BulletsSlide` | `title`, `items` | Points as a native list, one idea per line in the heading role. |
+| `FigureSlide` | `title`, `figure` | One caller-owned figure (a Data chart, a diagram, an image) in the height left under the title. |
+| `TwoColumnSlide` | `title`, `start`, `end` | Two caller-owned columns side by side, in reading order. |
+| `QuoteSlide` | `quote`, `attribution` | A pull quote as a native blockquote filling the slide. |
+
+## Reading primitives
+
+- `Eyebrow` is the uppercase micro-label above a heading. The Theme's eyebrow
+  role sets its size and tracking, in muted ink. `as` chooses the element.
+- `Prose` styles rendered CommonMark and GFM on the Theme's type roles:
+  underlined ink links, visible list markers, and a reading `measure` named by
+  the DS. It renders no markdown itself.
+- `MathExpression` frames inline or `display` mathematics for an engine the
+  consumer chooses. It is responsive, and `label` names it for assistive
+  technology.
+- `Reveal` brings content in on scroll, with a configurable `direction` and
+  `delay`. Reduced motion removes the positional travel.
+- `Icon` draws a lucide glyph (`icon`). Its size follows local Density, or the
+  adjacent label with `size="text"`. `color` names a semantic Theme role.
+
+## Navigation and notifications
+
+- `NavigationScope` is an injectable navigation seam. Every in-app link inside
+  it activates through the consumer's `navigate(href, event)` instead of the
+  browser. Without it, nothing changes.
+  - `owns(href, anchor)` decides which links the scope routes. By default it
+    takes same-origin paths and leaves fragments, other origins and non-HTTP
+    schemes to the browser.
+  - `resolve(to)` turns a destination into the href a link renders.
+- `Toaster` is the one region where queued transient notifications appear. It
+  renders a `queue` from `createToastQueue()`:
+  - at most 3 toasts show at once, and the rest wait in arrival order;
+  - danger and warning toasts are announced as alerts, the others as status;
+  - a toast with an action persists until it is dismissed;
+  - timers pause while the person is reading or acting: hover, focus, or the
+    window losing focus;
+  - inside an open modal dialog, the region moves into the dialog so it stays
+    reachable (ADR 0056).

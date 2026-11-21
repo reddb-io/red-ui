@@ -38,7 +38,10 @@
 </script>
 
 {#if contained}<div bind:this={spacer} data-developer-panel-space aria-hidden="true" style:height={`${height}px`}></div>{/if}
-<DeveloperPanel {label} {contained} bind:open contexts={[{ value: 'requests', label: 'Requests' }]}>
+<!-- Below the chrome's `md` step the collapsed bar is developer chrome taking
+     room the content needs: it stays hidden until the reader opens the panel
+     from the command palette, and hides again when they close it. -->
+<DeveloperPanel {label} {contained} desktopOnly={!open} bind:open contexts={[{ value: 'requests', label: 'Requests' }]}>
   {#snippet contextContent()}
     <DeveloperRequestInspector {requests} onrequestschange={() => store.clear()}>
       <div class="flex flex-col gap-[var(--reddb-spatial-gap-md)] p-[var(--reddb-spatial-inset-sm)]">

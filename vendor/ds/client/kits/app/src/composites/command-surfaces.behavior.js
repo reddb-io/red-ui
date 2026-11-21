@@ -1,0 +1,1 @@
+function r(o,e){return o==="horizontal"?e:"wrap"}function n(o){return o.map(e=>({id:e.id,label:e.label,...e.href!==void 0&&!e.disabled?{href:e.href}:{},...e.disabled?{disabled:!0}:{},...e.onselect!==void 0?{onselect:e.onselect}:{}}))}export{n as toolbarMenuItems,r as toolbarOverflow};

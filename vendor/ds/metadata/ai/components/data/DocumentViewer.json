@@ -8,7 +8,7 @@
     "data/BreakdownBar",
     "data/Candlestick",
     "data/CompositeChart",
-    "data/DeveloperPanel"
+    "data/DataTable"
   ],
   "contract": {
     "category": "Data display",
@@ -233,6 +233,31 @@
           ]
         },
         {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/tabs.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-editable-text-lg",
           "sources": [
             "kits/base/src/input.variants.ts"
@@ -251,24 +276,9 @@
           ]
         },
         {
-          "name": "--reddb-font-family-mono",
-          "sources": [
-            "kits/data/react/src/DocumentViewer.tsx",
-            "kits/data/src/DocumentViewer.svelte"
-          ]
-        },
-        {
           "name": "--reddb-font-size-base",
           "sources": [
             "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts",
-            "kits/data/react/src/DocumentViewer.tsx",
-            "kits/data/src/DocumentViewer.svelte"
           ]
         },
         {
@@ -282,12 +292,22 @@
           ]
         },
         {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-line-height-normal",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts",
-            "kits/data/react/src/DocumentViewer.tsx",
-            "kits/data/src/DocumentViewer.svelte"
+            "kits/base/src/input.variants.ts"
           ]
         },
         {
@@ -322,14 +342,16 @@
           "name": "--reddb-spatial-control-height-lg",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts"
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/tabs.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-control-height-md",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts"
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/tabs.variants.ts"
           ]
         },
         {
@@ -343,7 +365,6 @@
         {
           "name": "--reddb-spatial-gap-md",
           "sources": [
-            "kits/base/src/button.variants.ts",
             "kits/data/react/src/DocumentViewer.tsx",
             "kits/data/src/DocumentViewer.svelte"
           ]
@@ -354,24 +375,6 @@
             "kits/base/src/tabs.variants.ts",
             "kits/data/react/src/DocumentViewer.tsx",
             "kits/data/src/DocumentViewer.svelte"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-lg",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -401,6 +404,40 @@
           ]
         },
         {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
           "name": "--reddb-type-caption-font-size",
           "sources": [
             "kits/base/src/type-roles.ts"
@@ -422,6 +459,34 @@
           "name": "--reddb-type-caption-line-height",
           "sources": [
             "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-code-font-size",
+          "sources": [
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-code-font-weight",
+          "sources": [
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-code-letter-spacing",
+          "sources": [
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-code-line-height",
+          "sources": [
+            "kits/data/react/src/DocumentViewer.tsx",
+            "kits/data/src/DocumentViewer.svelte"
           ]
         },
         {
@@ -501,6 +566,42 @@
           ]
         },
         {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-type-title-font-size",
           "sources": [
             "kits/base/src/heading.variants.ts"
@@ -566,29 +667,9 @@
         "type": "(document: DocumentValue, index: number) => void"
       },
       {
-        "deprecated": {
-          "note": "Renamed `onselect` (ADR 0026); removed next release.",
-          "replacement": "onselect"
-        },
-        "description": "Deprecated alias. Renamed `onselect` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onSelected",
-        "type": "(document: DocumentValue, index: number) => void"
-      },
-      {
         "description": "Reports the detail mode the reader switched to.",
         "dialect": "state",
         "name": "onmodechange",
-        "type": "(mode: DocumentMode) => void"
-      },
-      {
-        "deprecated": {
-          "note": "Renamed `onmodechange` (ADR 0026); removed next release.",
-          "replacement": "onmodechange"
-        },
-        "description": "Deprecated alias. Renamed `onmodechange` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onMode",
         "type": "(mode: DocumentMode) => void"
       }
     ],
@@ -668,7 +749,9 @@
           "specifier": "@reddb-io/design-system/data/DocumentViewer"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "document-viewer"
         },
         "source": "kits/data/react/src/DocumentViewer.tsx",
         "specifier": "@reddb-io/design-system/data/DocumentViewer",
@@ -676,7 +759,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "document-viewer"
         },
         "source": "kits/data/src/DocumentViewer.svelte",
         "specifier": "@reddb-io/design-system/data/DocumentViewer",
@@ -745,30 +830,8 @@
       },
       {
         "bindable": false,
-        "deprecated": {
-          "note": "Renamed `onselect` (ADR 0026); removed next release.",
-          "replacement": "onselect"
-        },
-        "description": "Deprecated alias. Renamed `onselect` (ADR 0026); removed next release.",
-        "name": "onSelected",
-        "required": false,
-        "type": "(document: DocumentValue, index: number) => void"
-      },
-      {
-        "bindable": false,
         "description": "Reports the detail mode the reader switched to.",
         "name": "onmodechange",
-        "required": false,
-        "type": "(mode: DocumentMode) => void"
-      },
-      {
-        "bindable": false,
-        "deprecated": {
-          "note": "Renamed `onmodechange` (ADR 0026); removed next release.",
-          "replacement": "onmodechange"
-        },
-        "description": "Deprecated alias. Renamed `onmodechange` (ADR 0026); removed next release.",
-        "name": "onMode",
         "required": false,
         "type": "(mode: DocumentMode) => void"
       },
@@ -783,7 +846,9 @@
     ],
     "purpose": "A searchable master-detail document surface with caller-controlled selection and body, field, or raw modes.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "document-viewer"
     },
     "sharedContract": {
       "core": [

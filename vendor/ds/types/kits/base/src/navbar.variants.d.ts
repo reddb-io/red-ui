@@ -7,9 +7,9 @@ export declare const navbar: import("tailwind-variants").TVReturnType<{
             readonly actions: "ms-auto shrink-0 justify-end";
         };
         readonly center: {
-            readonly brand: "grow basis-0 justify-start";
+            readonly brand: "min-w-max grow basis-0 justify-start";
             readonly links: "shrink-0 justify-center";
-            readonly actions: "grow basis-0 justify-end";
+            readonly actions: "min-w-max grow basis-0 justify-end";
         };
     };
     collapse: {
@@ -58,9 +58,9 @@ export declare const navbar: import("tailwind-variants").TVReturnType<{
             readonly actions: "ms-auto shrink-0 justify-end";
         };
         readonly center: {
-            readonly brand: "grow basis-0 justify-start";
+            readonly brand: "min-w-max grow basis-0 justify-start";
             readonly links: "shrink-0 justify-center";
-            readonly actions: "grow basis-0 justify-end";
+            readonly actions: "min-w-max grow basis-0 justify-end";
         };
     };
     collapse: {
@@ -109,9 +109,9 @@ export declare const navbar: import("tailwind-variants").TVReturnType<{
             readonly actions: "ms-auto shrink-0 justify-end";
         };
         readonly center: {
-            readonly brand: "grow basis-0 justify-start";
+            readonly brand: "min-w-max grow basis-0 justify-start";
             readonly links: "shrink-0 justify-center";
-            readonly actions: "grow basis-0 justify-end";
+            readonly actions: "min-w-max grow basis-0 justify-end";
         };
     };
     collapse: {

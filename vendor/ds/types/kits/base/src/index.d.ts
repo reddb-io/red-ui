@@ -9,6 +9,7 @@ export { default as DescriptionList } from "./DescriptionList.svelte";
 export { default as Dialog } from "./Dialog.svelte";
 export { default as Disclosure } from "./Disclosure.svelte";
 export { default as Divider } from "./Divider.svelte";
+export { default as DropdownMenu } from "./DropdownMenu.svelte";
 export { default as EmptyState } from "./EmptyState.svelte";
 export { default as Field } from "./Field.svelte";
 export { default as Heading } from "./Heading.svelte";
@@ -21,6 +22,8 @@ export { default as Link } from "./Link.svelte";
 export { default as LoadingIndicator } from "./LoadingIndicator.svelte";
 export { default as Logo } from "./Logo.svelte";
 export { default as NavigationScope } from "./NavigationScope.svelte";
+export { collectionView, type CollectionStateContract } from "./core/collection-state";
+export { default as Pagination } from "./Pagination.svelte";
 export { default as Popover } from "./Popover.svelte";
 export { default as Progress } from "./Progress.svelte";
 export { default as SectionHeading } from "./SectionHeading.svelte";
@@ -32,6 +35,7 @@ export { default as Tabs } from "./Tabs.svelte";
 export { default as Textarea } from "./Textarea.svelte";
 export { default as Timeline } from "./Timeline.svelte";
 export { default as ToggleButton } from "./ToggleButton.svelte";
+export { default as ToggleGroup } from "./ToggleGroup.svelte";
 export { default as Tooltip } from "./Tooltip.svelte";
 export { type Tone } from "./tone";
 export { warnDeprecated } from "./deprecation";
@@ -42,7 +46,7 @@ export { warnDeprecated } from "./deprecation";
  * vendored source with no bundler glob to run — the same contract the
  * application Kit's `PRIMITIVES` carries.
  */
-export declare const BASE_COMPONENTS: readonly ["Accordion", "Alert", "AlertDialog", "AppearanceSwitch", "AspectRatio", "AudioMeter", "Avatar", "Badge", "Breadcrumbs", "BrowserMockup", "BulletsSlide", "Button", "Calendar", "Card", "Carousel", "Checkbox", "CodeBlock", "Combobox", "Container", "ContentMask", "ContentState", "ControlGroup", "Countdown", "DateField", "DatePicker", "DateRangeField", "DateRangePicker", "Deck", "DescriptionList", "Dialog", "Disclosure", "Divider", "Drawer", "DropdownMenu", "EmptyState", "Eyebrow", "Field", "Fieldset", "FigureSlide", "FileInput", "Form", "GridList", "Heading", "Icon", "Image", "Indicator", "InlineEdit", "Input", "Kbd", "Label", "Link", "LinkPreview", "List", "ListContainer", "LoadingIndicator", "Logo", "MathExpression", "MediaObject", "Meter", "Navbar", "NavigationMenu", "NavigationScope", "Notification", "NumberField", "OneTimeCodeInput", "Pagination", "PhoneInput", "PhoneMockup", "Popover", "Progress", "Prose", "QuoteSlide", "RadialContent", "RadialProgress", "RadioGroup", "RangeCalendar", "Rating", "Reveal", "ScrollArea", "SearchSelect", "SecretValue", "SectionHeading", "SectionSlide", "Select", "Skeleton", "SkipLink", "SlideFrame", "Slider", "Stack", "StateIllustration", "Statistic", "StatusIndicator", "Steps", "Swap", "Switch", "Table", "Tabs", "Text", "Textarea", "TimeField", "TimeRangeField", "Timeline", "TitleSlide", "ToggleButton", "ToggleGroup", "Tooltip", "Transfer", "TwoColumnSlide", "VoiceInput", "WindowMockup"];
+export declare const BASE_COMPONENTS: readonly ["Accordion", "Alert", "AlertDialog", "AppearanceSwitch", "AspectRatio", "AudioMeter", "Avatar", "Badge", "Breadcrumbs", "BrowserMockup", "BulletsSlide", "Button", "Calendar", "Card", "Carousel", "Checkbox", "CodeBlock", "Combobox", "Container", "ContentMask", "ContentState", "ControlGroup", "Countdown", "DateField", "DatePicker", "DateRangeField", "DateRangePicker", "Deck", "DescriptionList", "Dialog", "Disclosure", "Divider", "Drawer", "DropdownMenu", "EmptyState", "Eyebrow", "Field", "Fieldset", "FigureSlide", "FileInput", "Form", "GridList", "Heading", "Icon", "Image", "Indicator", "InlineEdit", "Input", "Kbd", "Label", "Link", "LinkPreview", "List", "ListContainer", "LoadingIndicator", "Logo", "MathExpression", "MediaObject", "Meter", "Navbar", "NavigationMenu", "NavigationScope", "Notification", "NumberField", "OneTimeCodeInput", "Pagination", "PhoneInput", "PhoneMockup", "Popover", "Progress", "Prose", "QuoteSlide", "RadialContent", "RadialProgress", "RadioGroup", "RangeCalendar", "Rating", "Reveal", "ScrollArea", "SearchSelect", "SecretValue", "SectionHeading", "SectionSlide", "Select", "Skeleton", "SkipLink", "SlideFrame", "Slider", "Stack", "StateIllustration", "Statistic", "StatusIndicator", "Steps", "Swap", "Switch", "Table", "Tabs", "Text", "Textarea", "TimeField", "TimeRangeField", "Timeline", "TitleSlide", "Toaster", "ToggleButton", "ToggleGroup", "Tooltip", "Transfer", "TwoColumnSlide", "VoiceInput", "WindowMockup"];
 export type BaseComponentName = (typeof BASE_COMPONENTS)[number];
 /** The purpose vocabulary shared by every Kit catalogue. */
 export declare const PURPOSE_CATEGORIES: readonly ["Actions", "Data input", "Data display", "Navigation", "Feedback", "Layout", "Mockup"];
@@ -131,6 +135,7 @@ export declare const BASE_COMPONENT_PURPOSES: {
     readonly NavigationMenu: "Navigation";
     readonly NavigationScope: "Navigation";
     readonly Notification: "Feedback";
+    readonly Toaster: "Feedback";
     readonly NumberField: "Data input";
     readonly PhoneInput: "Data input";
     readonly OneTimeCodeInput: "Data input";
@@ -176,8 +181,9 @@ export declare const BASE_COMPONENT_PURPOSES: {
     readonly TwoColumnSlide: "Layout";
     readonly WindowMockup: "Mockup";
 };
+export { paginationWindow } from "./core/pagination";
 /** Components that compose another canonical Base component. */
-export declare const BASE_COMPOSITES: readonly ["Accordion", "AlertDialog", "AppearanceSwitch", "Avatar", "Breadcrumbs", "BrowserMockup", "BulletsSlide", "Calendar", "Card", "Carousel", "Checkbox", "CodeBlock", "Combobox", "ContentState", "DateField", "DatePicker", "DateRangeField", "DateRangePicker", "Drawer", "DropdownMenu", "Disclosure", "Field", "FigureSlide", "FileInput", "GridList", "InlineEdit", "ListContainer", "Navbar", "NavigationMenu", "Notification", "NumberField", "OneTimeCodeInput", "Pagination", "PhoneInput", "PhoneMockup", "Popover", "QuoteSlide", "RadialContent", "RadioGroup", "RangeCalendar", "Rating", "SearchSelect", "SecretValue", "SectionSlide", "Slider", "Statistic", "Steps", "Swap", "Switch", "Tabs", "TimeField", "TimeRangeField", "Timeline", "TitleSlide", "ToggleButton", "ToggleGroup", "TwoColumnSlide", "VoiceInput", "WindowMockup"];
+export declare const BASE_COMPOSITES: readonly ["Accordion", "AlertDialog", "AppearanceSwitch", "Avatar", "Breadcrumbs", "BrowserMockup", "BulletsSlide", "Calendar", "Card", "Carousel", "Checkbox", "CodeBlock", "Combobox", "ContentState", "DateField", "DatePicker", "DateRangeField", "DateRangePicker", "Drawer", "DropdownMenu", "Disclosure", "Field", "FigureSlide", "FileInput", "GridList", "InlineEdit", "ListContainer", "Navbar", "NavigationMenu", "Notification", "NumberField", "OneTimeCodeInput", "Pagination", "PhoneInput", "PhoneMockup", "Popover", "QuoteSlide", "RadialContent", "RadioGroup", "RangeCalendar", "Rating", "SearchSelect", "SecretValue", "SectionSlide", "Slider", "Statistic", "Steps", "Swap", "Switch", "Tabs", "TimeField", "TimeRangeField", "Timeline", "TitleSlide", "Toaster", "ToggleButton", "ToggleGroup", "TwoColumnSlide", "VoiceInput", "WindowMockup"];
 export type BaseCompositeName = (typeof BASE_COMPOSITES)[number];
 /** Components with no imports from another Kit component. */
 export type BasePrimitiveName = Exclude<BaseComponentName, BaseCompositeName>;
@@ -187,4 +193,6 @@ export type { TimelineItem } from "./Timeline.svelte";
 export { quietControl } from "./quiet-control.variants";
 export { jsonCodeGrammar } from "./core/json-code";
 export { type DropdownMenuEntry } from "./dropdown-menu.behavior";
+export { type ToggleGroupOption } from "./toggle-group.variants";
 export { default as StateIllustration } from "./StateIllustration.svelte";
+export { default as ContentState } from "./ContentState.svelte";

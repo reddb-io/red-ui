@@ -41,19 +41,13 @@
           ]
         },
         {
-          "name": "--reddb-font-size-lg",
-          "sources": [
-            "kits/base/src/section-heading.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/base/src/section-heading.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-regular",
           "sources": [
             "kits/base/src/section-heading.variants.ts"
           ]
@@ -90,6 +84,30 @@
         },
         {
           "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
           "sources": [
             "kits/base/src/section-heading.variants.ts"
           ]
@@ -169,6 +187,54 @@
           "sources": [
             "kits/base/src/type-roles.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-font-size",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-font-weight",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-letter-spacing",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-title-line-height",
+          "sources": [
+            "kits/base/src/section-heading.variants.ts"
+          ]
         }
       ],
       "types": [
@@ -193,6 +259,24 @@
     "forwardsAttributesTo": [
       "native element"
     ],
+    "guidance": {
+      "family": "Headings",
+      "question": "Is it the page's one heading, a section, a card's heading, or a heading anywhere else?",
+      "related": [
+        "app/PageHeading",
+        "app/CardHeading",
+        "base/Heading"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "app/CardHeading",
+          "text": "A card's header."
+        }
+      ],
+      "whenToUse": [
+        "A section's heading with description and actions, its visual weight set apart from its outline level."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -278,7 +362,9 @@
           "specifier": "@reddb-io/design-system/base/SectionHeading"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "section-heading"
         },
         "source": "kits/base/react/src/SectionHeading.tsx",
         "specifier": "@reddb-io/design-system/base/SectionHeading",

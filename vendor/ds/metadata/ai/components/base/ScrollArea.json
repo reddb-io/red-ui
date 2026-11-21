@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "id": "base/ScrollArea",
+  "topics": [],
+  "related": [
+    "base/AspectRatio",
+    "base/BulletsSlide",
+    "base/Container",
+    "base/ContentMask",
+    "base/ControlGroup",
+    "base/Deck"
+  ],
+  "contract": {
+    "category": "Layout",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/scroll-area.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/scroll-area.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/scroll-area.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/scroll-area.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/scroll-area.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/scroll-area.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type ScrollAreaOrientation = NonNullable<ScrollAreaVariants[\"orientation\"]>;",
+          "name": "ScrollAreaOrientation",
+          "source": "kits/base/src/scroll-area.variants.ts"
+        },
+        {
+          "declaration": "export type ScrollAreaVariants = VariantProps<typeof scrollArea>;",
+          "name": "ScrollAreaVariants",
+          "source": "kits/base/src/scroll-area.variants.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<div>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "ScrollArea",
+          "nativeAttributes": [
+            "div"
+          ],
+          "props": [
+            {
+              "description": "Accessible region name, required because this is a keyboard stop.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "default": "\"vertical\"",
+              "description": "Which native overflow directions this boundary contains.",
+              "name": "orientation",
+              "required": false,
+              "type": "ScrollAreaOrientation",
+              "vocabulary": [
+                "vertical",
+                "horizontal",
+                "both"
+              ]
+            },
+            {
+              "default": "\"outline\"",
+              "description": "Surface treatment: `outline` keeps the standalone frame and Density inset; `plain` embeds native scrolling in an existing panel. Defaults to `outline`.",
+              "name": "variant",
+              "required": false,
+              "type": "\"outline\" | \"plain\"",
+              "vocabulary": [
+                "outline",
+                "plain"
+              ]
+            },
+            {
+              "description": "Extra classes, including the consumer-owned size constraint.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Content that scrolls inside the region.",
+              "name": "children",
+              "required": false,
+              "type": "ReactNode"
+            }
+          ],
+          "source": "kits/base/react/src/ScrollArea.tsx",
+          "specifier": "@reddb-io/design-system/base/ScrollArea"
+        },
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "scroll-area"
+        },
+        "source": "kits/base/react/src/ScrollArea.tsx",
+        "specifier": "@reddb-io/design-system/base/ScrollArea",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "scroll-area"
+        },
+        "source": "kits/base/src/ScrollArea.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "ScrollArea",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible region name, required because this is a keyboard stop.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"vertical\"",
+        "description": "Which native overflow directions this boundary contains.",
+        "name": "orientation",
+        "required": false,
+        "type": "ScrollAreaOrientation",
+        "vocabulary": [
+          "vertical",
+          "horizontal",
+          "both"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"outline\"",
+        "description": "Surface treatment: `outline` keeps the standalone frame and Density inset; `plain` embeds native scrolling in an existing panel. Defaults to `outline`.",
+        "name": "variant",
+        "required": false,
+        "type": "\"outline\" | \"plain\"",
+        "vocabulary": [
+          "outline",
+          "plain"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, including the consumer-owned size constraint.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Content that scrolls inside the region.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "purpose": "A named native overflow boundary that keyboard users can focus and scroll in either direction.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "scroll-area"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/scroll-area.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-readings.test.ts"
+      ]
+    },
+    "snippets": [
+      {
+        "description": "Content that scrolls inside the region.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/ScrollArea.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

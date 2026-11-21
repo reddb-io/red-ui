@@ -214,6 +214,27 @@
     "forwardsAttributesTo": [
       "<select>"
     ],
+    "guidance": {
+      "family": "Choosing from options",
+      "question": "How many options are there, and does the person need to search or type their own?",
+      "related": [
+        "base/SearchSelect",
+        "base/Combobox"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "base/SearchSelect",
+          "text": "The list is long enough to need search, or several choices are allowed."
+        },
+        {
+          "instead": "base/Combobox",
+          "text": "The person types and the options suggest as they type."
+        }
+      ],
+      "whenToUse": [
+        "One choice from a short, known list, with native keyboard behaviour and form value."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -251,18 +272,31 @@
               "type": "(value: string) => void"
             },
             {
-              "default": "\"md\"",
-              "description": "Density-responsive height step, separate from native size.",
+              "description": "The control height step, matching Button's `size` (default `md`). A number is the deprecated native attribute; use `htmlSize` for it.",
+              "name": "size",
+              "required": false,
+              "type": "SelectSize | number | null"
+            },
+            {
+              "description": "Deprecated alias of `size` (ADR 0026), removed in the next month release.",
               "name": "controlSize",
               "required": false,
               "type": "SelectSize"
+            },
+            {
+              "description": "The native `size` attribute: the number of visible rows.",
+              "name": "htmlSize",
+              "required": false,
+              "type": "number"
             }
           ],
           "source": "kits/base/react/src/Select.tsx",
           "specifier": "@reddb-io/design-system/base/Select"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "select"
         },
         "source": "kits/base/react/src/Select.tsx",
         "specifier": "@reddb-io/design-system/base/Select",
@@ -328,11 +362,24 @@
       },
       {
         "bindable": false,
-        "default": "\"md\"",
-        "description": "The control height step, matching Button's `size` (default `md`). Named apart from the native `size` attribute, which is still spread through.",
+        "description": "The control height step, matching Button's `size` (default `md`). A number is the deprecated native attribute; use `htmlSize` for it.",
+        "name": "size",
+        "required": false,
+        "type": "SelectSize | number | null"
+      },
+      {
+        "bindable": false,
+        "description": "Deprecated alias of `size` (ADR 0026), removed in the next month release.",
         "name": "controlSize",
         "required": false,
         "type": "SelectSize"
+      },
+      {
+        "bindable": false,
+        "description": "The native `size` attribute: the number of visible rows.",
+        "name": "htmlSize",
+        "required": false,
+        "type": "number"
       },
       {
         "bindable": false,

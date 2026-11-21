@@ -222,13 +222,32 @@
           ]
         },
         {
-          "name": "--reddb-font-size-base",
+          "name": "--reddb-color-state-hover",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
           "sources": [
             "kits/base/src/button.variants.ts"
           ]
@@ -239,6 +258,18 @@
             "kits/app/src/workspace-tabs.variants.ts",
             "kits/base/src/button.variants.ts",
             "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -257,6 +288,12 @@
           "name": "--reddb-radius-md",
           "sources": [
             "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-none",
+          "sources": [
+            "kits/app/src/workspace-tabs.variants.ts"
           ]
         },
         {
@@ -286,33 +323,9 @@
           ]
         },
         {
-          "name": "--reddb-spatial-gap-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-spatial-gap-sm",
           "sources": [
             "kits/app/src/workspace-tabs.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-lg",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -338,7 +351,8 @@
         {
           "name": "--reddb-spatial-target-min",
           "sources": [
-            "kits/app/src/workspace-tabs.variants.ts"
+            "kits/app/src/workspace-tabs.variants.ts",
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -439,6 +453,42 @@
           "name": "--reddb-type-eyebrow-line-height",
           "sources": [
             "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts"
           ]
         }
       ],
@@ -587,7 +637,9 @@
           "specifier": "@reddb-io/design-system/app/ApplicationWorkspace"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "application-workspace"
         },
         "source": "kits/app/react/src/ApplicationWorkspace.tsx",
         "specifier": "@reddb-io/design-system/app/ApplicationWorkspace",
@@ -595,7 +647,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "application-workspace"
         },
         "source": "kits/app/src/composites/ApplicationWorkspace.svelte",
         "specifier": "@reddb-io/design-system/app",
@@ -735,7 +789,9 @@
     ],
     "purpose": "A named workspace composing caller-owned resource navigation, document tabs, commands and content with independent host state.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "application-workspace"
     },
     "sharedContract": {
       "core": [

@@ -8,7 +8,7 @@
     "data/BreakdownBar",
     "data/Candlestick",
     "data/CompositeChart",
-    "data/DeveloperPanel"
+    "data/DataTable"
   ],
   "contract": {
     "category": "Data display",
@@ -221,6 +221,30 @@
           ]
         },
         {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-font-family-mono",
           "sources": [
             "kits/data/src/pan-zoom.variants.ts"
@@ -233,16 +257,22 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
           "sources": [
             "kits/base/src/button.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-weight-medium",
+          "name": "--reddb-glyph-size",
           "sources": [
-            "kits/base/src/button.variants.ts",
-            "kits/base/src/quiet-control.variants.ts"
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -285,33 +315,9 @@
           ]
         },
         {
-          "name": "--reddb-spatial-gap-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-spatial-gap-sm",
           "sources": [
             "kits/data/src/pan-zoom.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-lg",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -328,6 +334,12 @@
         },
         {
           "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
           "sources": [
             "kits/base/src/button.variants.ts"
           ]
@@ -406,6 +418,42 @@
           "name": "--reddb-type-eyebrow-line-height",
           "sources": [
             "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts"
           ]
         }
       ],
@@ -586,7 +634,9 @@
           "specifier": "@reddb-io/design-system/data/PanZoomViewport"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "pan-zoom-viewport"
         },
         "source": "kits/data/react/src/PanZoomViewport.tsx",
         "specifier": "@reddb-io/design-system/data/PanZoomViewport",
@@ -594,7 +644,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "pan-zoom-viewport"
         },
         "source": "kits/data/src/PanZoomViewport.svelte",
         "specifier": "@reddb-io/design-system/data/PanZoomViewport",
@@ -758,7 +810,9 @@
     ],
     "purpose": "A caller-owned drawing with fit, anchored zoom, keyboard navigation and pointer pan or pinch, without a rendering engine.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "pan-zoom-viewport"
     },
     "sharedContract": {
       "core": [

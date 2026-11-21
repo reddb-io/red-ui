@@ -128,7 +128,9 @@
           "specifier": "@reddb-io/design-system/base/Kbd"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "kbd"
         },
         "source": "kits/base/react/src/Kbd.tsx",
         "specifier": "@reddb-io/design-system/base/Kbd",
