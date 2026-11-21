@@ -8,7 +8,7 @@ export declare const navbar: import("tailwind-variants").TVReturnType<{
         };
         readonly center: {
             readonly brand: "min-w-max grow basis-0 justify-start";
-            readonly links: "shrink-0 justify-center";
+            readonly links: "min-w-0 justify-center";
             readonly actions: "min-w-max grow basis-0 justify-end";
         };
     };
@@ -59,7 +59,7 @@ export declare const navbar: import("tailwind-variants").TVReturnType<{
         };
         readonly center: {
             readonly brand: "min-w-max grow basis-0 justify-start";
-            readonly links: "shrink-0 justify-center";
+            readonly links: "min-w-0 justify-center";
             readonly actions: "min-w-max grow basis-0 justify-end";
         };
     };
@@ -110,7 +110,7 @@ export declare const navbar: import("tailwind-variants").TVReturnType<{
         };
         readonly center: {
             readonly brand: "min-w-max grow basis-0 justify-start";
-            readonly links: "shrink-0 justify-center";
+            readonly links: "min-w-0 justify-center";
             readonly actions: "min-w-max grow basis-0 justify-end";
         };
     };

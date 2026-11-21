@@ -279,6 +279,12 @@
           ]
         },
         {
+          "name": "--reddb-layer-tooltip",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-line-height-normal",
           "sources": [
             "kits/base/src/button.variants.ts"

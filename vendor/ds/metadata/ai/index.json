@@ -1,7 +1,7 @@
 {
   "$schema": "./index.schema.json",
   "schemaVersion": 1,
-  "catalogueSha256": "805d63ef261e95eb9f09ddd39b3298be540fd7285154fd1dc96bb0a63d84c6c7",
+  "catalogueSha256": "8946408f6cce974257504db75aa4dea0def455a49222ec26afedb974d07faccf",
   "components": [
     {
       "id": "base/Alert",
@@ -454,7 +454,7 @@
         "contentLabel"
       ],
       "document": "components/base/DropdownMenu.json",
-      "sha256": "134f2d9a4b49c3469240a591ef46f3aa407b1abc62e3d49ed9b2b6c79cebfffb",
+      "sha256": "1ae2165a1240cd9a7381413d5d48356f3bad3dcb0b3f9a0f4d5dae8ba63428ce",
       "related": [
         "base/AlertDialog",
         "base/AppearanceSwitch",
@@ -1023,7 +1023,7 @@
         "contentLabel"
       ],
       "document": "components/base/Popover.json",
-      "sha256": "51abfa5cd25c2c58dc2911ce8cf3d96dbbf27c357b3f89d2d71220a99c24678d",
+      "sha256": "8609c85bf6c4248b192447de73d56c2b4d54092be57745706e40c5923c83f550",
       "related": [
         "base/AlertDialog",
         "base/AppearanceSwitch",
@@ -1520,7 +1520,7 @@
         "content"
       ],
       "document": "components/base/Tooltip.json",
-      "sha256": "68488ca78addda61988d3b93a292b9dc6ef4cea96190dbc908ff3b9582343cb6",
+      "sha256": "efcf4fb7fd25a9b4e8529f4b3c21ba6a73a955ee25ddd35ffd012b0f27f80231",
       "related": [
         "base/Alert",
         "base/ContentState",
@@ -1697,7 +1697,7 @@
         "label"
       ],
       "document": "components/app/CommandPalette.json",
-      "sha256": "84a39aa5fc155028b8e7c4968b843deb2418101f0f1b457aaba88039b2a7db01",
+      "sha256": "8b9cd96570c722ac7b60b1f0ac0f4f0437fa876ef169983cd1a406a885f70f04",
       "related": [
         "app/BottomNavigation",
         "app/CategoryPreview",
@@ -2067,7 +2067,7 @@
         "label"
       ],
       "document": "components/app/Toolbar.json",
-      "sha256": "2acdd1a121fc7216642f33c7b9cbd7d02334ed4ddb57413222b0f8b5078bfd78",
+      "sha256": "d49a193bcf6f62eac6a0c0c12e0a3a2a19d0e2e756e8eea95c8deaca7f7f9809",
       "related": [
         "app/ActionPanel",
         "app/ContextMenu",
@@ -2207,7 +2207,7 @@
         "requests"
       ],
       "document": "components/data/DeveloperRequestInspector.json",
-      "sha256": "132000b9cf2ef568e3f8645c4c16eefe3f6c1db1bbfce63468f31723328ef1ab",
+      "sha256": "12bff5c8ca83bb94b92fde19af58b8b74199e8c7b021f29724a803a592632951",
       "related": [
         "data/ActivityTimeline",
         "data/BarChart",
@@ -2798,7 +2798,7 @@
     }
   ],
   "release": {
-    "version": "v2026.11.24",
-    "revision": "8af3df44d3ba1c7902fc1f704e9df45aebdf05fd"
+    "version": "v2026.11.25",
+    "revision": "616deb20b16bbb759208cc9267b525a79010ef75"
   }
 }

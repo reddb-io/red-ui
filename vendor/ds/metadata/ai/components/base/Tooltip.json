@@ -27,12 +27,20 @@
         {
           "name": "--reddb-color-elevation-overlay-border",
           "sources": [
+            "kits/base/src/popover.variants.ts",
             "kits/base/src/tooltip.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-foreground",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-elevation-overlay-surface",
           "sources": [
+            "kits/base/src/popover.variants.ts",
             "kits/base/src/tooltip.variants.ts"
           ]
         },
@@ -271,8 +279,15 @@
           ]
         },
         {
+          "name": "--reddb-layer-dropdown",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-layer-tooltip",
           "sources": [
+            "kits/base/src/popover.variants.ts",
             "kits/base/src/tooltip.variants.ts"
           ]
         },
@@ -289,6 +304,12 @@
           ]
         },
         {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-radius-md",
           "sources": [
             "kits/base/src/button.variants.ts",
@@ -298,6 +319,7 @@
         {
           "name": "--reddb-shadow-elevation-overlay",
           "sources": [
+            "kits/base/src/popover.variants.ts",
             "kits/base/src/tooltip.variants.ts"
           ]
         },
@@ -329,7 +351,8 @@
         {
           "name": "--reddb-spatial-inset-md",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/popover.variants.ts"
           ]
         },
         {
