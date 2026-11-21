@@ -218,13 +218,32 @@
           ]
         },
         {
-          "name": "--reddb-font-size-base",
+          "name": "--reddb-color-state-hover",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
           "sources": [
             "kits/base/src/button.variants.ts"
           ]
@@ -235,6 +254,18 @@
             "kits/base/src/button.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
             "kits/base/src/tabs.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -264,13 +295,15 @@
         {
           "name": "--reddb-spatial-control-height-lg",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/tabs.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-control-height-md",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/tabs.variants.ts"
           ]
         },
         {
@@ -281,33 +314,9 @@
           ]
         },
         {
-          "name": "--reddb-spatial-gap-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-spatial-gap-sm",
           "sources": [
             "kits/base/src/tabs.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-lg",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -325,6 +334,12 @@
         },
         {
           "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
           "sources": [
             "kits/base/src/button.variants.ts"
           ]
@@ -400,12 +415,58 @@
           "sources": [
             "kits/base/src/type-roles.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
         }
       ],
       "types": [
         {
           "declaration": "export interface TabItem {\n  value: string;\n  label: string;\n  disabled?: boolean;\n}",
           "name": "TabItem",
+          "source": "kits/base/src/tabs.variants.ts"
+        },
+        {
+          "declaration": "/** A Tabs' height step: Button's and the fields' `sm | md | lg`. */\nexport type TabsSize = NonNullable<TabsVariants[\"size\"]>;",
+          "name": "TabsSize",
+          "source": "kits/base/src/tabs.variants.ts"
+        },
+        {
+          "declaration": "export type TabsVariants = VariantProps<typeof tabs>;",
+          "name": "TabsVariants",
           "source": "kits/base/src/tabs.variants.ts"
         }
       ]
@@ -415,16 +476,6 @@
         "description": "Called with the newly selected value (ADR 0026's value dialect).",
         "dialect": "value",
         "name": "onvaluechange",
-        "type": "(value: string) => void"
-      },
-      {
-        "deprecated": {
-          "note": "Renamed `onvaluechange` (ADR 0026); removed next release.",
-          "replacement": "onvaluechange"
-        },
-        "description": "Deprecated alias. Renamed `onvaluechange` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onchange",
         "type": "(value: string) => void"
       }
     ],
@@ -490,6 +541,29 @@
               ]
             },
             {
+              "default": "\"sm\"",
+              "description": "The trigger height step, matching Button's and the fields' `size` (default `sm`, the compact tablist Tabs always drew; pass `md` beside default-size controls), so the tablist sits level with peers of the same size (ADR 0054).",
+              "name": "size",
+              "required": false,
+              "type": "TabsSize",
+              "vocabulary": [
+                "sm",
+                "md",
+                "lg"
+              ]
+            },
+            {
+              "default": "\"wrap\"",
+              "description": "What a tab list wider than its container does: `wrap` (more lines, the default) or `scroll` (one line, ADR 0053).",
+              "name": "overflow",
+              "required": false,
+              "type": "\"wrap\" | \"scroll\"",
+              "vocabulary": [
+                "wrap",
+                "scroll"
+              ]
+            },
+            {
               "description": "Extra classes merged onto the tablist.",
               "name": "listClass",
               "required": false,
@@ -542,7 +616,9 @@
           "specifier": "@reddb-io/design-system/base/Tabs"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "tabs"
         },
         "source": "kits/base/react/src/Tabs.tsx",
         "specifier": "@reddb-io/design-system/base/Tabs",
@@ -623,6 +699,31 @@
       },
       {
         "bindable": false,
+        "default": "\"sm\"",
+        "description": "The trigger height step, matching Button's and the fields' `size` (default `sm`, the compact tablist Tabs always drew; pass `md` beside default-size controls), so the tablist sits level with peers of the same size (ADR 0054).",
+        "name": "size",
+        "required": false,
+        "type": "TabsSize",
+        "vocabulary": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"wrap\"",
+        "description": "What a tab list wider than its container does: `wrap` (more lines, the default) or `scroll` (one line, ADR 0053).",
+        "name": "overflow",
+        "required": false,
+        "type": "\"wrap\" | \"scroll\"",
+        "vocabulary": [
+          "wrap",
+          "scroll"
+        ]
+      },
+      {
+        "bindable": false,
         "description": "Extra classes merged onto the tablist.",
         "name": "listClass",
         "required": false,
@@ -646,17 +747,6 @@
         "bindable": false,
         "description": "Called with the newly selected value (ADR 0026's value dialect).",
         "name": "onvaluechange",
-        "required": false,
-        "type": "(value: string) => void"
-      },
-      {
-        "bindable": false,
-        "deprecated": {
-          "note": "Renamed `onvaluechange` (ADR 0026); removed next release.",
-          "replacement": "onvaluechange"
-        },
-        "description": "Deprecated alias. Renamed `onvaluechange` (ADR 0026); removed next release.",
-        "name": "onchange",
         "required": false,
         "type": "(value: string) => void"
       },

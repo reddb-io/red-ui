@@ -222,21 +222,33 @@
           ]
         },
         {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-font-size-base",
           "sources": [
             "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-xs",
-          "sources": [
-            "kits/base/src/tooltip.variants.ts"
           ]
         },
         {
@@ -247,10 +259,27 @@
           ]
         },
         {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-layer-tooltip",
+          "sources": [
+            "kits/base/src/tooltip.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-line-height-normal",
           "sources": [
-            "kits/base/src/button.variants.ts",
-            "kits/base/src/tooltip.variants.ts"
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -292,30 +321,6 @@
           ]
         },
         {
-          "name": "--reddb-spatial-gap-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-lg",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-spatial-inset-lg",
           "sources": [
             "kits/base/src/button.variants.ts"
@@ -335,26 +340,36 @@
           ]
         },
         {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-type-caption-font-size",
           "sources": [
+            "kits/base/src/tooltip.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-font-weight",
           "sources": [
+            "kits/base/src/tooltip.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-letter-spacing",
           "sources": [
+            "kits/base/src/tooltip.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-line-height",
           "sources": [
+            "kits/base/src/tooltip.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
@@ -404,6 +419,42 @@
           "name": "--reddb-type-eyebrow-line-height",
           "sources": [
             "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts"
           ]
         }
       ],
@@ -459,7 +510,9 @@
           "specifier": "@reddb-io/design-system/base/Tooltip"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "tooltip"
         },
         "source": "kits/base/react/src/Tooltip.tsx",
         "specifier": "@reddb-io/design-system/base/Tooltip",

@@ -1,10 +1,7 @@
 {
   "schemaVersion": 1,
-  "id": "data/Table",
-  "topics": [
-    "tabela dados filtros ordenar paginar",
-    "data table filtering sorting pagination"
-  ],
+  "id": "data/DataTable",
+  "topics": [],
   "related": [
     "data/ActivityTimeline",
     "data/BarChart",
@@ -16,13 +13,27 @@
   "contract": {
     "category": "Data display",
     "documentation": {
-      "cssVariablePatterns": [],
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-type-${name}-glyph-gap",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-${name}-glyph-size",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        }
+      ],
       "cssVariables": [
         {
           "name": "--reddb-color-background",
           "sources": [
             "kits/base/src/checkbox.variants.ts",
             "kits/base/src/input.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
             "kits/data/src/table-appearance.ts"
           ]
         },
@@ -32,8 +43,9 @@
             "kits/base/src/button.variants.ts",
             "kits/base/src/checkbox.variants.ts",
             "kits/base/src/input.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/base/src/pagination.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
           ]
         },
         {
@@ -45,22 +57,22 @@
         {
           "name": "--reddb-color-elevation-overlay-border",
           "sources": [
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
           ]
         },
         {
           "name": "--reddb-color-elevation-overlay-foreground",
           "sources": [
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
           ]
         },
         {
           "name": "--reddb-color-elevation-overlay-surface",
           "sources": [
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
           ]
         },
         {
@@ -72,6 +84,7 @@
         {
           "name": "--reddb-color-feedback-danger-border",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
             "kits/base/src/checkbox.variants.ts",
             "kits/base/src/input.variants.ts"
@@ -92,6 +105,7 @@
         {
           "name": "--reddb-color-feedback-danger-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
             "kits/base/src/field.variants.ts"
           ]
@@ -105,12 +119,14 @@
         {
           "name": "--reddb-color-feedback-danger-surface",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-feedback-info-border",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -129,6 +145,7 @@
         {
           "name": "--reddb-color-feedback-info-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -141,12 +158,14 @@
         {
           "name": "--reddb-color-feedback-info-surface",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-feedback-success-border",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -165,6 +184,7 @@
         {
           "name": "--reddb-color-feedback-success-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -177,12 +197,14 @@
         {
           "name": "--reddb-color-feedback-success-surface",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-feedback-warning-border",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -201,6 +223,7 @@
         {
           "name": "--reddb-color-feedback-warning-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -213,6 +236,7 @@
         {
           "name": "--reddb-color-feedback-warning-surface",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -222,23 +246,30 @@
             "kits/base/src/button.variants.ts",
             "kits/base/src/checkbox.variants.ts",
             "kits/base/src/input.variants.ts",
+            "kits/base/src/link.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/table-appearance.ts"
           ]
         },
         {
           "name": "--reddb-color-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/base/src/field.variants.ts",
             "kits/base/src/input.variants.ts",
             "kits/base/src/label.variants.ts",
+            "kits/base/src/link.variants.ts",
+            "kits/base/src/pagination.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
             "kits/base/src/type-roles.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/table-appearance.ts"
           ]
         },
@@ -246,12 +277,24 @@
           "name": "--reddb-color-ink-muted",
           "sources": [
             "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/base/src/field.variants.ts",
             "kits/base/src/input.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/base/src/skeleton.variants.ts"
           ]
         },
         {
@@ -275,6 +318,41 @@
           ]
         },
         {
+          "name": "--reddb-color-primary-text",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/pagination.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
+          ]
+        },
+        {
           "name": "--reddb-editable-text-lg",
           "sources": [
             "kits/base/src/input.variants.ts"
@@ -293,56 +371,98 @@
           ]
         },
         {
-          "name": "--reddb-font-size-base",
+          "name": "--reddb-font-family-mono",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/empty-state.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-font-size-base",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/field.variants.ts",
-            "kits/base/src/label.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
           "name": "--reddb-font-weight-medium",
           "sources": [
+            "kits/base/src/Alert.svelte",
             "kits/base/src/button.variants.ts",
-            "kits/base/src/field.variants.ts",
-            "kits/base/src/label.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/pagination.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-regular",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-layer-raised",
+          "sources": [
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
+            "kits/data/src/table-appearance.ts"
           ]
         },
         {
           "name": "--reddb-line-height-normal",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/field.variants.ts",
             "kits/base/src/input.variants.ts",
-            "kits/base/src/label.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
           "name": "--reddb-line-height-tight",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
           ]
         },
         {
           "name": "--reddb-radius-md",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/base/src/input.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte",
+            "kits/base/src/pagination.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/base/src/skeleton.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/table-appearance.ts"
           ]
         },
@@ -350,31 +470,36 @@
           "name": "--reddb-radius-sm",
           "sources": [
             "kits/base/src/checkbox.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/base/src/link.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
           ]
         },
         {
           "name": "--reddb-shadow-elevation-overlay",
           "sources": [
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
           ]
         },
         {
           "name": "--reddb-spatial-control-height-lg",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts"
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/skeleton.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-control-height-md",
           "sources": [
             "kits/base/src/button.variants.ts",
+            "kits/base/src/core/skeleton.ts",
             "kits/base/src/input.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/base/src/skeleton.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
           ]
         },
         {
@@ -383,72 +508,87 @@
             "kits/base/src/button.variants.ts",
             "kits/base/src/checkbox.variants.ts",
             "kits/base/src/input.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte"
+            "kits/base/src/pagination.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-gap-md",
           "sources": [
-            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/base/src/field.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte",
             "kits/data/src/table-appearance.ts"
           ]
         },
         {
           "name": "--reddb-spatial-gap-sm",
           "sources": [
+            "kits/base/src/Alert.svelte",
+            "kits/base/src/ContentState.svelte",
             "kits/base/src/field.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte",
+            "kits/base/src/link.variants.ts",
+            "kits/base/src/pagination.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/table-appearance.ts"
           ]
         },
         {
           "name": "--reddb-spatial-icon-size-lg",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-icon-size-md",
           "sources": [
-            "kits/base/src/button.variants.ts",
-            "kits/base/src/checkbox.variants.ts"
+            "kits/base/src/checkbox.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-icon-size-sm",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-inset-lg",
           "sources": [
             "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/base/src/input.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-inset-md",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/base/src/input.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/table-appearance.ts"
           ]
         },
         {
           "name": "--reddb-spatial-inset-sm",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
             "kits/base/src/input.variants.ts",
-            "kits/data/react/src/Table.tsx",
-            "kits/data/src/Table.svelte",
+            "kits/base/src/pagination.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
             "kits/data/src/table-appearance.ts"
           ]
         },
@@ -459,8 +599,75 @@
           ]
         },
         {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/link.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-gap",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-size",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte",
+            "kits/data/src/table-appearance.ts"
+          ]
+        },
+        {
           "name": "--reddb-type-caption-font-size",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts",
             "kits/data/src/table-appearance.ts"
           ]
@@ -468,6 +675,8 @@
         {
           "name": "--reddb-type-caption-font-weight",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts",
             "kits/data/src/table-appearance.ts"
           ]
@@ -475,6 +684,8 @@
         {
           "name": "--reddb-type-caption-letter-spacing",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts",
             "kits/data/src/table-appearance.ts"
           ]
@@ -482,6 +693,8 @@
         {
           "name": "--reddb-type-caption-line-height",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts",
             "kits/data/src/table-appearance.ts"
           ]
@@ -533,9 +746,94 @@
           "sources": [
             "kits/base/src/type-roles.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts",
+            "kits/data/react/src/DataTable.tsx",
+            "kits/data/src/DataTable.svelte"
+          ]
         }
       ],
       "types": [
+        {
+          "declaration": "export type CollectionState = (typeof COLLECTION_STATES)[number];",
+          "name": "CollectionState",
+          "source": "kits/base/src/core/collection-state.ts"
+        },
         {
           "declaration": "export type SortDirection = \"ascending\" | \"descending\";",
           "name": "SortDirection",
@@ -606,29 +904,9 @@
         "type": "(changes: readonly TableChange[]) => void"
       },
       {
-        "deprecated": {
-          "note": "Renamed `onchangeschange` (ADR 0026); removed next release.",
-          "replacement": "onchangeschange"
-        },
-        "description": "Deprecated alias. Renamed `onchangeschange` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onChanges",
-        "type": "(changes: readonly TableChange[]) => void"
-      },
-      {
         "description": "Reports the sort after a sortable header cycles it.",
         "dialect": "state",
         "name": "onsortchange",
-        "type": "(sort: TableSort | null) => void"
-      },
-      {
-        "deprecated": {
-          "note": "Renamed `onsortchange` (ADR 0026); removed next release.",
-          "replacement": "onsortchange"
-        },
-        "description": "Deprecated alias. Renamed `onsortchange` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onSort",
         "type": "(sort: TableSort | null) => void"
       },
       {
@@ -638,29 +916,9 @@
         "type": "(filters: TableFilters) => void"
       },
       {
-        "deprecated": {
-          "note": "Renamed `onfilterschange` (ADR 0026); removed next release.",
-          "replacement": "onfilterschange"
-        },
-        "description": "Deprecated alias. Renamed `onfilterschange` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onFilters",
-        "type": "(filters: TableFilters) => void"
-      },
-      {
         "description": "Reports the page the reader moved to.",
         "dialect": "state",
         "name": "onpagechange",
-        "type": "(page: number) => void"
-      },
-      {
-        "deprecated": {
-          "note": "Renamed `onpagechange` (ADR 0026); removed next release.",
-          "replacement": "onpagechange"
-        },
-        "description": "Deprecated alias. Renamed `onpagechange` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onPage",
         "type": "(page: number) => void"
       },
       {
@@ -670,14 +928,10 @@
         "type": "(key: TableRowKey, row: TableRow) => void"
       },
       {
-        "deprecated": {
-          "note": "Renamed `onselect` (ADR 0026); removed next release.",
-          "replacement": "onselect"
-        },
-        "description": "Deprecated alias. Renamed `onselect` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onRowSelect",
-        "type": "(key: TableRowKey, row: TableRow) => void"
+        "description": "Called when the person retries after a failed load.",
+        "dialect": "discrete",
+        "name": "onretry",
+        "type": "() => void"
       }
     ],
     "implementations": {
@@ -686,9 +940,43 @@
           "forwardsNativeProps": false,
           "kind": "Composite",
           "kit": "data",
-          "name": "Table",
+          "name": "DataTable",
           "nativeAttributes": [],
           "props": [
+            {
+              "description": "Where the data stands. Unset means ready, and empty when there are no items. `refreshing` keeps the items and marks the collection busy; `error` with items keeps them as stale under an alert.",
+              "name": "state",
+              "required": false,
+              "type": "CollectionState",
+              "vocabulary": [
+                "loading",
+                "ready",
+                "empty",
+                "error",
+                "refreshing"
+              ]
+            },
+            {
+              "default": "\"Could not load rows.\"",
+              "description": "Message shown when the data failed to load.",
+              "name": "errorMessage",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Retry\"",
+              "description": "Visible and accessible label of the retry action. Defaults to Retry.",
+              "name": "retryLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "5",
+              "description": "Skeleton rows shown while loading, at the control-height rhythm. Defaults to 5.",
+              "name": "loadingRows",
+              "required": false,
+              "type": "number"
+            },
             {
               "description": "Required visible name for the grid.",
               "name": "caption",
@@ -832,6 +1120,12 @@
               "type": "(key: TableRowKey, row: TableRow) => void"
             },
             {
+              "description": "Called when the person retries after a failed load.",
+              "name": "onretry",
+              "required": false,
+              "type": "() => void"
+            },
+            {
               "description": "Caller-owned toolbar buttons, menus and controls.",
               "name": "actions",
               "required": false,
@@ -857,29 +1151,71 @@
               "type": "string"
             }
           ],
-          "source": "kits/data/react/src/Table.tsx",
-          "specifier": "@reddb-io/design-system/data/Table"
+          "source": "kits/data/react/src/DataTable.tsx",
+          "specifier": "@reddb-io/design-system/data/DataTable"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "data-table"
         },
-        "source": "kits/data/react/src/Table.tsx",
-        "specifier": "@reddb-io/design-system/data/Table",
+        "source": "kits/data/react/src/DataTable.tsx",
+        "specifier": "@reddb-io/design-system/data/DataTable",
         "status": "available"
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "data-table"
         },
-        "source": "kits/data/src/Table.svelte",
-        "specifier": "@reddb-io/design-system/data/Table",
+        "source": "kits/data/src/DataTable.svelte",
+        "specifier": "@reddb-io/design-system/data/DataTable",
         "status": "available"
       }
     },
     "kind": "Primitive",
     "kit": "data",
-    "name": "Table",
+    "name": "DataTable",
     "props": [
+      {
+        "bindable": false,
+        "description": "Where the data stands. Unset means ready, and empty when there are no items. `refreshing` keeps the items and marks the collection busy; `error` with items keeps them as stale under an alert.",
+        "name": "state",
+        "required": false,
+        "type": "CollectionState",
+        "vocabulary": [
+          "loading",
+          "ready",
+          "empty",
+          "error",
+          "refreshing"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"Could not load rows.\"",
+        "description": "Message shown when the data failed to load.",
+        "name": "errorMessage",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Retry\"",
+        "description": "Visible and accessible label of the retry action. Defaults to Retry.",
+        "name": "retryLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "5",
+        "description": "Skeleton rows shown while loading, at the control-height rhythm. Defaults to 5.",
+        "name": "loadingRows",
+        "required": false,
+        "type": "number"
+      },
       {
         "bindable": false,
         "description": "Required visible name for the grid.",
@@ -1017,30 +1353,8 @@
       },
       {
         "bindable": false,
-        "deprecated": {
-          "note": "Renamed `onchangeschange` (ADR 0026); removed next release.",
-          "replacement": "onchangeschange"
-        },
-        "description": "Deprecated alias. Renamed `onchangeschange` (ADR 0026); removed next release.",
-        "name": "onChanges",
-        "required": false,
-        "type": "(changes: readonly TableChange[]) => void"
-      },
-      {
-        "bindable": false,
         "description": "Reports the sort after a sortable header cycles it.",
         "name": "onsortchange",
-        "required": false,
-        "type": "(sort: TableSort | null) => void"
-      },
-      {
-        "bindable": false,
-        "deprecated": {
-          "note": "Renamed `onsortchange` (ADR 0026); removed next release.",
-          "replacement": "onsortchange"
-        },
-        "description": "Deprecated alias. Renamed `onsortchange` (ADR 0026); removed next release.",
-        "name": "onSort",
         "required": false,
         "type": "(sort: TableSort | null) => void"
       },
@@ -1053,30 +1367,8 @@
       },
       {
         "bindable": false,
-        "deprecated": {
-          "note": "Renamed `onfilterschange` (ADR 0026); removed next release.",
-          "replacement": "onfilterschange"
-        },
-        "description": "Deprecated alias. Renamed `onfilterschange` (ADR 0026); removed next release.",
-        "name": "onFilters",
-        "required": false,
-        "type": "(filters: TableFilters) => void"
-      },
-      {
-        "bindable": false,
         "description": "Reports the page the reader moved to.",
         "name": "onpagechange",
-        "required": false,
-        "type": "(page: number) => void"
-      },
-      {
-        "bindable": false,
-        "deprecated": {
-          "note": "Renamed `onpagechange` (ADR 0026); removed next release.",
-          "replacement": "onpagechange"
-        },
-        "description": "Deprecated alias. Renamed `onpagechange` (ADR 0026); removed next release.",
-        "name": "onPage",
         "required": false,
         "type": "(page: number) => void"
       },
@@ -1110,14 +1402,10 @@
       },
       {
         "bindable": false,
-        "deprecated": {
-          "note": "Renamed `onselect` (ADR 0026); removed next release.",
-          "replacement": "onselect"
-        },
-        "description": "Deprecated alias. Renamed `onselect` (ADR 0026); removed next release.",
-        "name": "onRowSelect",
+        "description": "Called when the person retries after a failed load.",
+        "name": "onretry",
         "required": false,
-        "type": "(key: TableRowKey, row: TableRow) => void"
+        "type": "() => void"
       },
       {
         "bindable": false,
@@ -1130,7 +1418,9 @@
     ],
     "purpose": "A state-local rich grid with sorting, filtering, paging, column visibility, virtualization, and explicitly staged edits.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "data-table"
     },
     "sharedContract": {
       "core": [
@@ -1178,7 +1468,7 @@
         "type": "Snippet"
       }
     ],
-    "source": "kits/data/src/Table.svelte",
-    "specifier": "@reddb-io/design-system/data/Table"
+    "source": "kits/data/src/DataTable.svelte",
+    "specifier": "@reddb-io/design-system/data/DataTable"
   }
 }

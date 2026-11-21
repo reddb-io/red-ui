@@ -48,25 +48,7 @@
           ]
         },
         {
-          "name": "--reddb-font-family-mono",
-          "sources": [
-            "kits/base/src/timeline.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/base/src/timeline.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-font-weight-medium",
-          "sources": [
-            "kits/base/src/timeline.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-line-height-normal",
           "sources": [
             "kits/base/src/timeline.variants.ts"
           ]
@@ -97,6 +79,36 @@
           ]
         },
         {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/link.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-type-caption-font-size",
           "sources": [
             "kits/base/src/type-roles.ts"
@@ -118,6 +130,30 @@
           "name": "--reddb-type-caption-line-height",
           "sources": [
             "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-code-font-size",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-code-font-weight",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-code-letter-spacing",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-code-line-height",
+          "sources": [
+            "kits/base/src/timeline.variants.ts"
           ]
         },
         {
@@ -181,6 +217,29 @@
     "forwardsAttributesTo": [
       "<ol>"
     ],
+    "guidance": {
+      "family": "Sequences over time",
+      "question": "Is it a path someone follows, a history to read, parallel activity on a time scale, or a live log?",
+      "related": [
+        "base/Steps",
+        "app/ActivityFeed",
+        "data/ActivityTimeline",
+        "data/EventLog"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "app/ActivityFeed",
+          "text": "Application activity by people and systems in a feed."
+        },
+        {
+          "instead": "data/EventLog",
+          "text": "A long or live stream of events to filter and follow."
+        }
+      ],
+      "whenToUse": [
+        "A short chronological history of events with times and optional links."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -216,7 +275,9 @@
           "specifier": "@reddb-io/design-system/base/Timeline"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "timeline"
         },
         "source": "kits/base/react/src/Timeline.tsx",
         "specifier": "@reddb-io/design-system/base/Timeline",

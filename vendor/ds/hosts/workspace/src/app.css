@@ -81,7 +81,13 @@
     box-sizing: border-box;
   }
 
-  html,
+  /* The root keeps the reader's font size: every Design System length is in
+     rem, so sizing `html` to the body role (14px) rendered all of them,
+     including the touch floor, at 87.5%. The body role applies to `body`. */
+  html {
+    background: var(--color-bg-0);
+  }
+
   body {
     background: var(--color-bg-0);
     color: var(--color-fg-0);

@@ -5,48 +5,75 @@ export interface TabItem {
     disabled?: boolean;
 }
 export declare const tabs: import("tailwind-variants").TVReturnType<{
-    [key: string]: {
-        [key: string]: import("tailwind-variants").ClassValue | {
-            root?: import("tailwind-variants").ClassValue;
-            content?: import("tailwind-variants").ClassValue;
-            trigger?: import("tailwind-variants").ClassValue;
-            list?: import("tailwind-variants").ClassValue;
-            bar?: import("tailwind-variants").ClassValue;
+    size: {
+        sm: {
+            trigger: string;
+        };
+        md: {
+            trigger: string;
+        };
+        lg: {
+            trigger: string;
         };
     };
-} | {
-    [x: string]: {
-        [x: string]: import("tailwind-variants").ClassValue | {
-            root?: import("tailwind-variants").ClassValue;
-            content?: import("tailwind-variants").ClassValue;
-            trigger?: import("tailwind-variants").ClassValue;
-            list?: import("tailwind-variants").ClassValue;
-            bar?: import("tailwind-variants").ClassValue;
+    overflow: {
+        wrap: {};
+        scroll: {
+            list: string;
+            trigger: string;
         };
     };
-} | {}, {
+}, {
     root: string;
     bar: string;
     list: string;
     trigger: string;
     content: string;
 }, undefined, {
-    [key: string]: {
-        [key: string]: import("tailwind-variants").ClassValue | {
-            root?: import("tailwind-variants").ClassValue;
-            content?: import("tailwind-variants").ClassValue;
-            trigger?: import("tailwind-variants").ClassValue;
-            list?: import("tailwind-variants").ClassValue;
-            bar?: import("tailwind-variants").ClassValue;
+    size: {
+        sm: {
+            trigger: string;
+        };
+        md: {
+            trigger: string;
+        };
+        lg: {
+            trigger: string;
         };
     };
-} | {}, {
+    overflow: {
+        wrap: {};
+        scroll: {
+            list: string;
+            trigger: string;
+        };
+    };
+}, {
     root: string;
     bar: string;
     list: string;
     trigger: string;
     content: string;
-}, import("tailwind-variants").TVReturnTypeLike<unknown, {
+}, import("tailwind-variants").TVReturnTypeLike<{
+    size: {
+        sm: {
+            trigger: string;
+        };
+        md: {
+            trigger: string;
+        };
+        lg: {
+            trigger: string;
+        };
+    };
+    overflow: {
+        wrap: {};
+        scroll: {
+            list: string;
+            trigger: string;
+        };
+    };
+}, {
     root: string;
     bar: string;
     list: string;
@@ -54,3 +81,6 @@ export declare const tabs: import("tailwind-variants").TVReturnType<{
     content: string;
 }>>;
 export type TabsVariants = VariantProps<typeof tabs>;
+/** A Tabs' height step: Button's and the fields' `sm | md | lg`. */
+export type TabsSize = NonNullable<TabsVariants["size"]>;
+export declare const TABS_SIZES: readonly ["sm", "md", "lg"];

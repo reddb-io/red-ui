@@ -1,4 +1,3 @@
-import type { DeveloperRequest } from "../../developer-panel";
 /** A host-defined developer panel context. */
 export interface DeveloperPanelContext {
     /** Stable identifier for this context. */
@@ -10,9 +9,6 @@ export interface DeveloperPanelContext {
 export interface DeveloperPanelContract {
     /** Accessible and visible name; defaults to Developer panel. */
     label?: string;
-    /** Legacy request snapshot, enabling the built-in Requests context.
-     * @deprecated Use `contextContent` to compose DeveloperRequestInspector; removed next release. */
-    requests?: readonly DeveloperRequest[];
     /** Host-defined contexts. */
     contexts?: readonly DeveloperPanelContext[];
     /** Context values that show the supplied toolbar; omitted means all contexts. */

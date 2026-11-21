@@ -1,8 +1,9 @@
+import type { CollectionStateContract } from "@reddb-io/design-system/base";
 import type { TableChange, TableColumn, TableFilters, TableRow, TableRowKey, TableSort, VirtualWindowOptions } from "../../table";
 interface TableVirtualization extends Omit<VirtualWindowOptions, "scrollTop"> {
 }
-/** Portable Table properties shared by native adapters. */
-export interface TableContract {
+/** Portable Table properties shared by native adapters; its state follows the shared collection contract (ADR 0056). */
+export interface TableContract extends CollectionStateContract {
     /** Required visible name for the grid. */
     caption: string;
     /**

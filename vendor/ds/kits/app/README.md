@@ -217,7 +217,7 @@ neither surface selects Theme, Color Scheme, or Density.
 
 ```svelte
 <Filter legend="Availability" {filters} bind:value={availability} />
-<CategoryFilter legend="Categories" {categories} bind:values={selectedCategories} />
+<CategoryFilter legend="Categories" {categories} bind:value={selectedCategories} />
 ```
 
 `Diff` presents caller-computed comparison rows without taking ownership of
@@ -746,3 +746,29 @@ commands, and controlled document tabs. The host supplies document contents,
 selection and close decisions; it owns state, persistence and service lifecycle.
 Both Svelte and React can instead provide a custom content region during gradual
 migration. The component does not connect to a service or import the Data Kit.
+
+## AI conversation composites
+
+These are specialised App composites for agent conversations (ADR 0059). The
+caller owns turns, requests and models. None of them runs a model or renders
+markdown.
+
+- `PromptComposer` is the field a person writes a prompt in.
+  - Settings `selectors` sit beside it, for model, agent, effort or permission.
+  - One send action becomes Stop while `status` is streaming.
+  - The caller handles `onsendrequest` and `onstoprequest`.
+- `ToolActivity` shows what an agent did on a turn. A caller-localised `summary`
+  discloses each of the `steps`, with its status and caller-owned `detail`.
+- `ApprovalPrompt` asks for a decision before an agent acts. It is a non-modal
+  region, announced on arrival, that never takes focus. `decisions` lists the
+  choices, and `ondecide` reports the one made.
+- `UsageMeter` shows how much of a `limit` is `used`, in a `unit`. It is a
+  canonical Meter, toned at caller `thresholds`, with a readable amount and
+  optional `segments`.
+
+## OutcomeScreen
+
+`OutcomeScreen` presents a successful or failed operation (`outcome`, `title`).
+It adds an illustration, guidance (`description`, `note`) and caller-owned
+`actions`. By default it fills the viewport for a standalone result. Set
+`fullPage={false}` to place it inside a layout.

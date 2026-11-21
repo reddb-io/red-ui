@@ -38,9 +38,28 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-color-state-hover",
           "sources": [
-            "kits/app/src/primitives/nav-item.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
@@ -51,7 +70,7 @@
           ]
         },
         {
-          "name": "--reddb-line-height-normal",
+          "name": "--reddb-glyph-gap",
           "sources": [
             "kits/app/src/primitives/nav-item.variants.ts"
           ]
@@ -81,13 +100,31 @@
           ]
         },
         {
-          "name": "--reddb-spatial-gap-md",
+          "name": "--reddb-spatial-inset-sm",
           "sources": [
             "kits/app/src/primitives/nav-item.variants.ts"
           ]
         },
         {
-          "name": "--reddb-spatial-inset-sm",
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
           "sources": [
             "kits/app/src/primitives/nav-item.variants.ts"
           ]
@@ -162,6 +199,18 @@
           "name": "--reddb-type-eyebrow-line-height",
           "sources": [
             "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
           ]
         }
       ],
@@ -257,7 +306,9 @@
           "specifier": "@reddb-io/design-system/app/NavItem"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "nav-item"
         },
         "source": "kits/app/react/src/NavItem.tsx",
         "specifier": "@reddb-io/design-system/app/NavItem",
@@ -265,7 +316,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "nav-item"
         },
         "source": "kits/app/src/primitives/NavItem.svelte",
         "specifier": "@reddb-io/design-system/app",
@@ -321,21 +374,6 @@
       },
       {
         "bindable": false,
-        "deprecated": {
-          "note": "Renamed `current` (ADR 0026): `active` is `current`, `active current=\"step\"` is `current=\"step\"`. Removed next release.",
-          "replacement": "current"
-        },
-        "description": "Deprecated alias. Renamed `current` (ADR 0026): `active` is `current`, `active current=\"step\"` is `current=\"step\"`. Removed next release.",
-        "name": "active",
-        "required": false,
-        "type": "boolean",
-        "vocabulary": [
-          "true",
-          "false"
-        ]
-      },
-      {
-        "bindable": false,
         "description": "Before the label.",
         "name": "icon",
         "required": false,
@@ -365,7 +403,9 @@
     ],
     "purpose": "One entry in a navigation, which says where you are rather than only tinting itself.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "nav-item"
     },
     "sharedContract": {
       "core": [

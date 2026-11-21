@@ -8,24 +8,202 @@
     "data/BreakdownBar",
     "data/Candlestick",
     "data/CompositeChart",
-    "data/DeveloperPanel"
+    "data/DataTable"
   ],
   "contract": {
     "category": "Data display",
     "documentation": {
-      "cssVariablePatterns": [],
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-type-${name}-glyph-gap",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-${name}-glyph-size",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        }
+      ],
       "cssVariables": [
         {
           "name": "--reddb-color-background",
           "sources": [
+            "kits/base/src/scroll-area.variants.ts",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte"
           ]
         },
         {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-color-focus",
           "sources": [
+            "kits/base/src/button.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte"
           ]
@@ -33,7 +211,11 @@
         {
           "name": "--reddb-color-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
             "kits/base/src/type-roles.ts",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte"
@@ -42,6 +224,9 @@
         {
           "name": "--reddb-color-ink-muted",
           "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte"
@@ -50,19 +235,41 @@
         {
           "name": "--reddb-color-muted",
           "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/base/src/skeleton.variants.ts",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte"
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-color-on-primary",
           "sources": [
-            "kits/data/react/src/TreeView.tsx",
-            "kits/data/src/TreeView.svelte"
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-weight-medium",
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-text",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-hover",
           "sources": [
             "kits/base/src/quiet-control.variants.ts",
             "kits/data/react/src/TreeView.tsx",
@@ -70,10 +277,98 @@
           ]
         },
         {
-          "name": "--reddb-line-height-normal",
+          "name": "--reddb-color-state-open",
           "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/Alert.svelte",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/base/src/skeleton.variants.ts"
           ]
         },
         {
@@ -84,15 +379,79 @@
           ]
         },
         {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-spatial-gap-sm",
           "sources": [
+            "kits/base/src/Alert.svelte",
+            "kits/base/src/ContentState.svelte",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte"
           ]
         },
         {
+          "name": "--reddb-spatial-icon-size-lg",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-sm",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-spatial-inset-md",
           "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte"
           ]
@@ -100,6 +459,67 @@
         {
           "name": "--reddb-spatial-inset-sm",
           "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-gap",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-size",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte"
           ]
@@ -107,24 +527,32 @@
         {
           "name": "--reddb-type-caption-font-size",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-font-weight",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-letter-spacing",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-line-height",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
@@ -175,9 +603,78 @@
           "sources": [
             "kits/base/src/type-roles.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
         }
       ],
       "types": [
+        {
+          "declaration": "export type CollectionState = (typeof COLLECTION_STATES)[number];",
+          "name": "CollectionState",
+          "source": "kits/base/src/core/collection-state.ts"
+        },
         {
           "declaration": "/** Pure path operations for the Data Kit TreeView. This module has no Svelte or DOM dependency. */\n\nexport interface TreeNode<Value = unknown> {\n  /** Stable node identity. Path-built nodes use their normalized full path. */\n  id: string;\n  /** Visible node name. */\n  label: string;\n  /** Caller-owned value when this node represents an input path. */\n  value?: Value;\n  children: readonly TreeNode<Value>[];\n}",
           "name": "TreeNode",
@@ -203,29 +700,9 @@
         "type": "(expanded: readonly string[]) => void"
       },
       {
-        "deprecated": {
-          "note": "Renamed `onexpandedchange` (ADR 0026); removed next release.",
-          "replacement": "onexpandedchange"
-        },
-        "description": "Deprecated alias. Renamed `onexpandedchange` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onExpanded",
-        "type": "(expanded: readonly string[]) => void"
-      },
-      {
         "description": "Reports the selected node id after the selection moves.",
         "dialect": "state",
         "name": "onselectedchange",
-        "type": "(selected: string | null) => void"
-      },
-      {
-        "deprecated": {
-          "note": "Renamed `onselectedchange` (ADR 0026); removed next release.",
-          "replacement": "onselectedchange"
-        },
-        "description": "Deprecated alias. Renamed `onselectedchange` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onSelected",
         "type": "(selected: string | null) => void"
       },
       {
@@ -235,41 +712,61 @@
         "type": "(node: TreeNode, label: string) => void"
       },
       {
-        "deprecated": {
-          "note": "Renamed `onrename` (ADR 0026); removed next release.",
-          "replacement": "onrename"
-        },
-        "description": "Deprecated alias. Renamed `onrename` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onRename",
-        "type": "(node: TreeNode, label: string) => void"
-      },
-      {
         "description": "Receives a dropped move.",
         "dialect": "discrete",
         "name": "onreorder",
         "type": "(move: TreeReorder) => void"
       },
       {
-        "deprecated": {
-          "note": "Renamed `onreorder` (ADR 0026); removed next release.",
-          "replacement": "onreorder"
-        },
-        "description": "Deprecated alias. Renamed `onreorder` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onReorder",
-        "type": "(move: TreeReorder) => void"
+        "description": "Called when the person retries after a failed load.",
+        "dialect": "discrete",
+        "name": "onretry",
+        "type": "() => void"
       }
     ],
     "implementations": {
       "react": {
         "api": {
           "forwardsNativeProps": false,
-          "kind": "Primitive",
+          "kind": "Composite",
           "kit": "data",
           "name": "TreeView",
           "nativeAttributes": [],
           "props": [
+            {
+              "description": "Where the data stands. Unset means ready, and empty when there are no items. `refreshing` keeps the items and marks the collection busy; `error` with items keeps them as stale under an alert.",
+              "name": "state",
+              "required": false,
+              "type": "CollectionState",
+              "vocabulary": [
+                "loading",
+                "ready",
+                "empty",
+                "error",
+                "refreshing"
+              ]
+            },
+            {
+              "default": "\"Could not load the tree.\"",
+              "description": "Message shown when the data failed to load.",
+              "name": "errorMessage",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Retry\"",
+              "description": "Visible and accessible label of the retry action. Defaults to Retry.",
+              "name": "retryLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "5",
+              "description": "Skeleton rows shown while loading, at the control-height rhythm. Defaults to 5.",
+              "name": "loadingRows",
+              "required": false,
+              "type": "number"
+            },
             {
               "description": "Required visible name for the tree.",
               "name": "label",
@@ -345,8 +842,14 @@
               "type": "(node: TreeNode) => ReactNode"
             },
             {
+              "description": "Called when the person retries after a failed load.",
+              "name": "onretry",
+              "required": false,
+              "type": "() => void"
+            },
+            {
               "default": "\"\"",
-              "description": "Additional root tree classes.",
+              "description": "Additional root tree classes (or classes on the loading, empty or error state that replaces the tree).",
               "name": "className",
               "required": false,
               "type": "string"
@@ -356,7 +859,9 @@
           "specifier": "@reddb-io/design-system/data/TreeView"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "tree-view"
         },
         "source": "kits/data/react/src/TreeView.tsx",
         "specifier": "@reddb-io/design-system/data/TreeView",
@@ -364,7 +869,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "tree-view"
         },
         "source": "kits/data/src/TreeView.svelte",
         "specifier": "@reddb-io/design-system/data/TreeView",
@@ -375,6 +882,44 @@
     "kit": "data",
     "name": "TreeView",
     "props": [
+      {
+        "bindable": false,
+        "description": "Where the data stands. Unset means ready, and empty when there are no items. `refreshing` keeps the items and marks the collection busy; `error` with items keeps them as stale under an alert.",
+        "name": "state",
+        "required": false,
+        "type": "CollectionState",
+        "vocabulary": [
+          "loading",
+          "ready",
+          "empty",
+          "error",
+          "refreshing"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"Could not load the tree.\"",
+        "description": "Message shown when the data failed to load.",
+        "name": "errorMessage",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Retry\"",
+        "description": "Visible and accessible label of the retry action. Defaults to Retry.",
+        "name": "retryLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "5",
+        "description": "Skeleton rows shown while loading, at the control-height rhythm. Defaults to 5.",
+        "name": "loadingRows",
+        "required": false,
+        "type": "number"
+      },
       {
         "bindable": false,
         "description": "Required visible name for the tree.",
@@ -428,30 +973,8 @@
       },
       {
         "bindable": false,
-        "deprecated": {
-          "note": "Renamed `onexpandedchange` (ADR 0026); removed next release.",
-          "replacement": "onexpandedchange"
-        },
-        "description": "Deprecated alias. Renamed `onexpandedchange` (ADR 0026); removed next release.",
-        "name": "onExpanded",
-        "required": false,
-        "type": "(expanded: readonly string[]) => void"
-      },
-      {
-        "bindable": false,
         "description": "Reports the selected node id after the selection moves.",
         "name": "onselectedchange",
-        "required": false,
-        "type": "(selected: string | null) => void"
-      },
-      {
-        "bindable": false,
-        "deprecated": {
-          "note": "Renamed `onselectedchange` (ADR 0026); removed next release.",
-          "replacement": "onselectedchange"
-        },
-        "description": "Deprecated alias. Renamed `onselectedchange` (ADR 0026); removed next release.",
-        "name": "onSelected",
         "required": false,
         "type": "(selected: string | null) => void"
       },
@@ -464,30 +987,8 @@
       },
       {
         "bindable": false,
-        "deprecated": {
-          "note": "Renamed `onrename` (ADR 0026); removed next release.",
-          "replacement": "onrename"
-        },
-        "description": "Deprecated alias. Renamed `onrename` (ADR 0026); removed next release.",
-        "name": "onRename",
-        "required": false,
-        "type": "(node: TreeNode, label: string) => void"
-      },
-      {
-        "bindable": false,
         "description": "Receives a dropped move.",
         "name": "onreorder",
-        "required": false,
-        "type": "(move: TreeReorder) => void"
-      },
-      {
-        "bindable": false,
-        "deprecated": {
-          "note": "Renamed `onreorder` (ADR 0026); removed next release.",
-          "replacement": "onreorder"
-        },
-        "description": "Deprecated alias. Renamed `onreorder` (ADR 0026); removed next release.",
-        "name": "onReorder",
         "required": false,
         "type": "(move: TreeReorder) => void"
       },
@@ -507,8 +1008,15 @@
       },
       {
         "bindable": false,
+        "description": "Called when the person retries after a failed load.",
+        "name": "onretry",
+        "required": false,
+        "type": "() => void"
+      },
+      {
+        "bindable": false,
         "default": "\"\"",
-        "description": "Extra classes, merged onto the root `ul` that is the tree.",
+        "description": "Extra classes, merged onto the root `ul` that is the tree (or onto the loading, empty or error state that replaces it).",
         "name": "class",
         "required": false,
         "type": "string"
@@ -516,7 +1024,9 @@
     ],
     "purpose": "A caller-owned hierarchy with roving focus, keyboard expansion, selection, rename, and reorder proposals.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "tree-view"
     },
     "sharedContract": {
       "core": [
@@ -524,7 +1034,8 @@
       ],
       "tests": [
         "kits/data/test/framework-data.test.ts",
-        "apps/showcase/test/component-flavors-graphical.browser.test.ts"
+        "apps/showcase/test/component-flavors-graphical.browser.test.ts",
+        "kits/data/test/collection-state.test.ts"
       ],
       "typeMappings": {
         "leading": {

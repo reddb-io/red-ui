@@ -93,7 +93,8 @@
         {
           "name": "--reddb-color-foreground",
           "sources": [
-            "kits/base/src/alert.variants.ts"
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/type-roles.ts"
           ]
         },
         {
@@ -103,22 +104,10 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/base/src/alert.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-font-weight-medium",
           "sources": [
             "kits/base/react/src/Alert.tsx",
             "kits/base/src/Alert.svelte"
-          ]
-        },
-        {
-          "name": "--reddb-line-height-normal",
-          "sources": [
-            "kits/base/src/alert.variants.ts"
           ]
         },
         {
@@ -145,24 +134,117 @@
           "sources": [
             "kits/base/src/alert.variants.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-gap",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-size",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
         }
       ],
       "types": [
-        {
-          "declaration": "/** @deprecated Alert's meaning is `tone` (ADR 0026); use `AlertTone`. Removed next release. */\nexport type AlertFeedbackRole = FeedbackTone;",
-          "name": "AlertFeedbackRole",
-          "source": "kits/base/src/alert.variants.ts"
-        },
-        {
-          "declaration": "export type AlertTone = Tone;",
-          "name": "AlertTone",
-          "source": "kits/base/src/alert.variants.ts"
-        },
-        {
-          "declaration": "export type FeedbackTone = (typeof FEEDBACK_TONES)[number];",
-          "name": "FeedbackTone",
-          "source": "kits/base/src/tone.ts"
-        },
         {
           "declaration": "export type Tone = (typeof TONES)[number];",
           "name": "Tone",
@@ -174,6 +256,27 @@
     "forwardsAttributesTo": [
       "<div>"
     ],
+    "guidance": {
+      "family": "Feedback messages",
+      "question": "Does the message belong to a place on the page, interrupt for a moment, or announce something site-wide?",
+      "related": [
+        "base/Notification",
+        "marketing/Banner"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "base/Notification",
+          "text": "A transient confirmation of an action the person just took."
+        },
+        {
+          "instead": "marketing/Banner",
+          "text": "A marketing announcement across a site."
+        }
+      ],
+      "whenToUse": [
+        "A message tied to the content beside it: a form's error summary, a warning above a table."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -221,7 +324,9 @@
           "specifier": "@reddb-io/design-system/base/Alert"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "alert"
         },
         "source": "kits/base/react/src/Alert.tsx",
         "specifier": "@reddb-io/design-system/base/Alert",
@@ -250,23 +355,6 @@
         "type": "Tone",
         "vocabulary": [
           "neutral",
-          "info",
-          "success",
-          "warning",
-          "danger"
-        ]
-      },
-      {
-        "bindable": false,
-        "deprecated": {
-          "note": "Renamed `tone` (ADR 0026); removed next release.",
-          "replacement": "tone"
-        },
-        "description": "Deprecated alias. Renamed `tone` (ADR 0026); removed next release.",
-        "name": "feedback",
-        "required": false,
-        "type": "AlertFeedbackRole",
-        "vocabulary": [
           "info",
           "success",
           "warning",

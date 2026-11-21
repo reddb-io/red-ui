@@ -1,0 +1,956 @@
+{
+  "schemaVersion": 1,
+  "id": "base/DropdownMenu",
+  "topics": [],
+  "related": [
+    "base/AlertDialog",
+    "base/AppearanceSwitch",
+    "base/Button",
+    "base/Dialog",
+    "base/Popover",
+    "base/Swap"
+  ],
+  "contract": {
+    "category": "Actions",
+    "documentation": {
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-color-${role}",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-${size}",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        }
+      ],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-border",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-foreground",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-overlay-surface",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/kbd.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/kbd.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-xs",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-regular",
+          "sources": [
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/core/icon.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-layer-dropdown",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-sm",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-shadow-elevation-overlay",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/kbd.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/popover.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-gap",
+          "sources": [
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-size",
+          "sources": [
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/dropdown-menu.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/dropdown-menu.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "type Align = \"start\" | \"center\" | \"end\";",
+          "name": "Align",
+          "source": "kits/base/react/src/DropdownMenu.tsx"
+        },
+        {
+          "declaration": "type Align = \"start\" | \"center\" | \"end\";",
+          "name": "Align",
+          "source": "kits/base/src/DropdownMenu.svelte"
+        },
+        {
+          "declaration": "export type ButtonVariant = NonNullable<ButtonVariants[\"variant\"]>;",
+          "name": "ButtonVariant",
+          "source": "kits/base/src/button.variants.ts"
+        },
+        {
+          "declaration": "export type ButtonVariants = VariantProps<typeof button>;",
+          "name": "ButtonVariants",
+          "source": "kits/base/src/button.variants.ts"
+        },
+        {
+          "declaration": "export type DropdownMenuEntry = PortableEntry<IconGlyph>;",
+          "name": "DropdownMenuEntry",
+          "source": "kits/base/react/src/DropdownMenu.tsx"
+        },
+        {
+          "declaration": "export type DropdownMenuEntry<Glyph = unknown> = DropdownMenuItem<Glyph> | DropdownMenuGroup<Glyph>;",
+          "name": "DropdownMenuEntry",
+          "source": "kits/base/src/core/dropdown-menu.ts"
+        },
+        {
+          "declaration": "export type DropdownMenuEntry = Portable.DropdownMenuEntry<IconGlyph>;",
+          "name": "DropdownMenuEntry",
+          "source": "kits/base/src/dropdown-menu.behavior.ts"
+        },
+        {
+          "declaration": "/** A named or unnamed run of related menu rows. */\nexport interface DropdownMenuGroup<Glyph = unknown> {\n  heading?: string;\n  items: readonly DropdownMenuItem<Glyph>[];\n}",
+          "name": "DropdownMenuGroup",
+          "source": "kits/base/src/core/dropdown-menu.ts"
+        },
+        {
+          "declaration": "/** One selectable row in a DropdownMenu. */\nexport interface DropdownMenuItem<Glyph = unknown> {\n  id: string;\n  label: string;\n  /** Optional decorative glyph rendered before the label through the DS Icon contract. */\n  icon?: Glyph;\n  /** A keyboard shortcut rendered as semantic key caps after the label. */\n  shortcut?: readonly string[];\n  href?: string;\n  disabled?: boolean;\n  onselect?: () => void;\n}",
+          "name": "DropdownMenuItem",
+          "source": "kits/base/src/core/dropdown-menu.ts"
+        },
+        {
+          "declaration": "export type DropdownMenuSize = NonNullable<DropdownMenuVariants[\"size\"]>;",
+          "name": "DropdownMenuSize",
+          "source": "kits/base/src/dropdown-menu.variants.ts"
+        },
+        {
+          "declaration": "export type DropdownMenuVariants = VariantProps<typeof dropdownMenu>;",
+          "name": "DropdownMenuVariants",
+          "source": "kits/base/src/dropdown-menu.variants.ts"
+        },
+        {
+          "declaration": "export type IconGlyph = ForwardRefExoticComponent<IconGlyphProps>;",
+          "name": "IconGlyph",
+          "source": "kits/base/react/src/Icon.tsx"
+        },
+        {
+          "declaration": "export type IconGlyph = Component<IconGlyphProps>;",
+          "name": "IconGlyph",
+          "source": "kits/base/src/Icon.svelte"
+        },
+        {
+          "declaration": "/** Structural Lucide seam, so unused optional peers are not needed by a consumer type-check. */\nexport interface IconGlyphProps extends SVGAttributes<SVGSVGElement>, RefAttributes<SVGSVGElement> {\n  /** Requested glyph size, owned by the DS wrapper at render time. */\n  size?: string | number;\n  /** Lucide's retained native stroke option. */\n  absoluteStrokeWidth?: boolean;\n  /** Keep stroke width independent of SVG scaling. */\n  nonScalingStroke?: boolean;\n}",
+          "name": "IconGlyphProps",
+          "source": "kits/base/react/src/Icon.tsx"
+        },
+        {
+          "declaration": "export type IconGlyphProps = LucideProps;",
+          "name": "IconGlyphProps",
+          "source": "kits/base/src/Icon.svelte"
+        },
+        {
+          "declaration": "type Side = \"top\" | \"right\" | \"bottom\" | \"left\";",
+          "name": "Side",
+          "source": "kits/base/react/src/DropdownMenu.tsx"
+        },
+        {
+          "declaration": "type Side = \"top\" | \"right\" | \"bottom\" | \"left\";",
+          "name": "Side",
+          "source": "kits/base/src/DropdownMenu.svelte"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Called with the next open state (ADR 0026's open dialect).",
+        "dialect": "open",
+        "name": "onopenchange",
+        "type": "(open: boolean) => void"
+      }
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": false,
+          "kind": "Composite",
+          "kit": "base",
+          "name": "DropdownMenu",
+          "nativeAttributes": [],
+          "props": [
+            {
+              "description": "Accessible and fallback visible name of the canonical trigger.",
+              "name": "triggerLabel",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Accessible name of the opened menu surface.",
+              "name": "contentLabel",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "default": "[]",
+              "description": "Ordered rows and named or unnamed groups.",
+              "name": "items",
+              "required": false,
+              "type": "readonly DropdownMenuEntry[]"
+            },
+            {
+              "default": "false",
+              "description": "Controlled open state.",
+              "name": "open",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Reports requested open-state changes.",
+              "name": "onOpenChange",
+              "required": false,
+              "type": "(open: boolean) => void"
+            },
+            {
+              "default": "\"secondary\"",
+              "description": "Emphasis of the trigger Button.",
+              "name": "variant",
+              "required": false,
+              "type": "ButtonVariant",
+              "vocabulary": [
+                "primary",
+                "secondary",
+                "ghost"
+              ]
+            },
+            {
+              "default": "\"md\"",
+              "description": "Trigger and menu-row size on the Density scale.",
+              "name": "size",
+              "required": false,
+              "type": "DropdownMenuSize",
+              "vocabulary": [
+                "sm",
+                "md",
+                "lg"
+              ]
+            },
+            {
+              "default": "\"bottom\"",
+              "description": "Preferred trigger side, flipped when necessary to remain in view.",
+              "name": "side",
+              "required": false,
+              "type": "Side",
+              "vocabulary": [
+                "top",
+                "right",
+                "bottom",
+                "left"
+              ]
+            },
+            {
+              "default": "\"start\"",
+              "description": "Preferred alignment along the selected side.",
+              "name": "align",
+              "required": false,
+              "type": "Align",
+              "vocabulary": [
+                "start",
+                "center",
+                "end"
+              ]
+            },
+            {
+              "default": "8",
+              "description": "Distance in pixels between trigger and menu.",
+              "name": "sideOffset",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "8",
+              "description": "Safe viewport collision inset in pixels.",
+              "name": "collisionPadding",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "description": "Custom trigger content named by triggerLabel.",
+              "name": "trigger",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Additional menu surface classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/base/react/src/DropdownMenu.tsx",
+          "specifier": "@reddb-io/design-system/base/DropdownMenu"
+        },
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "dropdown-menu"
+        },
+        "source": "kits/base/react/src/DropdownMenu.tsx",
+        "specifier": "@reddb-io/design-system/base/DropdownMenu",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "dropdown-menu"
+        },
+        "source": "kits/base/src/DropdownMenu.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "base",
+    "name": "DropdownMenu",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible name for the Button that opens the menu, and its visible text when no `trigger` is given.",
+        "name": "triggerLabel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Accessible name for the opened menu surface.",
+        "name": "contentLabel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "[]",
+        "description": "The menu entries, in order: single items, or groups with an optional heading. A separator divides groups.",
+        "name": "items",
+        "required": false,
+        "type": "readonly DropdownMenuEntry[]"
+      },
+      {
+        "bindable": true,
+        "default": "false",
+        "description": "Whether the menu is open, bindable. Defaults to closed.",
+        "name": "open",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Called with the next open state (ADR 0026's open dialect).",
+        "name": "onopenchange",
+        "required": false,
+        "type": "(open: boolean) => void"
+      },
+      {
+        "bindable": false,
+        "default": "\"secondary\"",
+        "description": "Button emphasis for the trigger. Defaults to `secondary`.",
+        "name": "variant",
+        "required": false,
+        "type": "ButtonVariant",
+        "vocabulary": [
+          "primary",
+          "secondary",
+          "ghost"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"md\"",
+        "description": "Size step for the trigger Button and the menu rows: `sm`, `md` (the default) or `lg`.",
+        "name": "size",
+        "required": false,
+        "type": "DropdownMenuSize",
+        "vocabulary": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"bottom\"",
+        "description": "Preferred side of the trigger for the menu; collision handling may flip it. Defaults to `bottom`.",
+        "name": "side",
+        "required": false,
+        "type": "Side",
+        "vocabulary": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "\"start\"",
+        "description": "Preferred alignment of the menu along the selected side. Defaults to `start`.",
+        "name": "align",
+        "required": false,
+        "type": "Align",
+        "vocabulary": [
+          "start",
+          "center",
+          "end"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "8",
+        "description": "Distance in pixels between the trigger and the menu. Defaults to `8`.",
+        "name": "sideOffset",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "8",
+        "description": "Safe distance in pixels kept between the menu and the viewport edges. Defaults to `8`.",
+        "name": "collisionPadding",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "description": "Custom content inside the trigger Button, replacing the `triggerLabel` text; `triggerLabel` stays its accessible name, so words it shows must appear, in order, in `triggerLabel`, ideally first (WCAG 2.5.3, Label in Name).",
+        "name": "trigger",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the menu surface, not the trigger Button.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A menu on a Button, complete from the keyboard — arrows, typeahead, Escape and Tab-out — over Bits UI's behavior and the DS's own appearance.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "dropdown-menu"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/core/dropdown-menu.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-managed.test.ts"
+      ],
+      "typeMappings": {
+        "trigger": {
+          "react": "ReactNode",
+          "reason": "Caller-owned content is a Svelte Snippet or a ReactNode in the native adapter; SSR and shared interaction scenarios retain its semantics and accessible naming.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Custom content inside the trigger Button, replacing the `triggerLabel` text; `triggerLabel` stays its accessible name, so words it shows must appear, in order, in `triggerLabel`, ideally first (WCAG 2.5.3, Label in Name).",
+        "name": "trigger",
+        "required": false,
+        "type": "Snippet"
+      }
+    ],
+    "source": "kits/base/src/DropdownMenu.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

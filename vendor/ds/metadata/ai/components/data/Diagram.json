@@ -8,7 +8,7 @@
     "data/BreakdownBar",
     "data/Candlestick",
     "data/CompositeChart",
-    "data/DeveloperPanel"
+    "data/DataTable"
   ],
   "contract": {
     "category": "Data display",
@@ -72,6 +72,30 @@
           ]
         },
         {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-font-family-mono",
           "sources": [
             "kits/data/react/src/VisualizationFrame.tsx",
@@ -79,31 +103,10 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/data/react/src/Diagram.tsx",
-            "kits/data/react/src/VisualizationFrame.tsx",
-            "kits/data/src/Diagram.svelte",
-            "kits/data/src/internal/VisualizationFrame.svelte"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-xs",
-          "sources": [
-            "kits/data/react/src/Diagram.tsx",
-            "kits/data/react/src/VisualizationFrame.tsx",
-            "kits/data/src/Diagram.svelte",
-            "kits/data/src/internal/VisualizationFrame.svelte",
-            "kits/data/src/visualization-controls.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-font-weight-medium",
           "sources": [
             "kits/base/src/quiet-control.variants.ts",
-            "kits/data/react/src/Diagram.tsx",
             "kits/data/react/src/VisualizationFrame.tsx",
-            "kits/data/src/Diagram.svelte",
             "kits/data/src/internal/VisualizationFrame.svelte"
           ]
         },
@@ -112,16 +115,6 @@
           "sources": [
             "kits/data/react/src/VisualizationFrame.tsx",
             "kits/data/src/internal/VisualizationFrame.svelte"
-          ]
-        },
-        {
-          "name": "--reddb-line-height-normal",
-          "sources": [
-            "kits/data/react/src/Diagram.tsx",
-            "kits/data/react/src/VisualizationFrame.tsx",
-            "kits/data/src/Diagram.svelte",
-            "kits/data/src/internal/VisualizationFrame.svelte",
-            "kits/data/src/visualization-controls.variants.ts"
           ]
         },
         {
@@ -177,31 +170,53 @@
         {
           "name": "--reddb-spatial-target-min",
           "sources": [
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/internal/VisualizationFrame.svelte",
             "kits/data/src/visualization-controls.variants.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-font-size",
           "sources": [
-            "kits/base/src/type-roles.ts"
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Diagram.tsx",
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/Diagram.svelte",
+            "kits/data/src/internal/VisualizationFrame.svelte",
+            "kits/data/src/visualization-controls.variants.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-font-weight",
           "sources": [
-            "kits/base/src/type-roles.ts"
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Diagram.tsx",
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/Diagram.svelte",
+            "kits/data/src/internal/VisualizationFrame.svelte",
+            "kits/data/src/visualization-controls.variants.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-letter-spacing",
           "sources": [
-            "kits/base/src/type-roles.ts"
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Diagram.tsx",
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/Diagram.svelte",
+            "kits/data/src/internal/VisualizationFrame.svelte",
+            "kits/data/src/visualization-controls.variants.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-line-height",
           "sources": [
-            "kits/base/src/type-roles.ts"
+            "kits/base/src/type-roles.ts",
+            "kits/data/react/src/Diagram.tsx",
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/Diagram.svelte",
+            "kits/data/src/internal/VisualizationFrame.svelte",
+            "kits/data/src/visualization-controls.variants.ts"
           ]
         },
         {
@@ -250,6 +265,42 @@
           "name": "--reddb-type-eyebrow-line-height",
           "sources": [
             "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/data/react/src/Diagram.tsx",
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/Diagram.svelte",
+            "kits/data/src/internal/VisualizationFrame.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/data/react/src/Diagram.tsx",
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/Diagram.svelte",
+            "kits/data/src/internal/VisualizationFrame.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/data/react/src/Diagram.tsx",
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/Diagram.svelte",
+            "kits/data/src/internal/VisualizationFrame.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/data/react/src/Diagram.tsx",
+            "kits/data/react/src/VisualizationFrame.tsx",
+            "kits/data/src/Diagram.svelte",
+            "kits/data/src/internal/VisualizationFrame.svelte"
           ]
         }
       ],
@@ -404,7 +455,9 @@
           "specifier": "@reddb-io/design-system/data/Diagram"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "diagram"
         },
         "source": "kits/data/react/src/Diagram.tsx",
         "specifier": "@reddb-io/design-system/data/Diagram",
@@ -412,7 +465,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "diagram"
         },
         "source": "kits/data/src/Diagram.svelte",
         "specifier": "@reddb-io/design-system/data/Diagram",
@@ -529,7 +584,9 @@
     ],
     "purpose": "Directed connections and stable automatic layout for architecture and flows.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "diagram"
     },
     "sharedContract": {
       "core": [

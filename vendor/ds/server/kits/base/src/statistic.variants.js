@@ -1,1 +1,1 @@
-import{tv as t}from"tailwind-variants";const i=t({slots:{root:"min-w-0",detail:"grid gap-[var(--reddb-spatial-gap-sm)]",value:"font-mono text-2xl font-medium tabular-nums text-foreground",description:"text-sm text-ink-muted"}});export{i as statistic};
+import{tv as t}from"tailwind-variants";import{typeRoleMerge as o}from"./type-roles.js";const r=t({slots:{root:"min-w-0",detail:"grid gap-[var(--reddb-spatial-gap-sm)]",value:"font-mono text-title font-medium tabular-nums text-foreground",description:"text-body text-ink-muted"}},o);export{r as statistic};

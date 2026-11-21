@@ -1,0 +1,1 @@
+const e=[{value:"canvas",label:"canvas"},{value:"svg",label:"svg"},{value:"table",label:"table"}],a=[{value:"events",label:"events"},{value:"messages",label:"messages"},{value:"commands",label:"commands"},{value:"json",label:"json"}];export{e as graphExplorerViews,a as queueExplorerModes};

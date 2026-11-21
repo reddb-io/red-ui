@@ -6,20 +6,9 @@ export type PillVariant = (typeof PILL_VARIANTS)[number];
 /** The tones a Pill accepts: the shared vocabulary (ADR 0026). */
 export declare const PILL_TONES: readonly ["neutral", "info", "success", "warning", "danger"];
 export type PillTone = Tone;
-/**
- * Variant values kept for one release (ADR 0026). `neutral` is the tinted
- * neutral pill it always drew; `primary` keeps its accent fill and warns — a
- * meaning is a tone (`tone="info" variant="filled"`), never the accent.
- */
-export declare const DEPRECATED_PILL_VARIANTS: {
-    readonly neutral: "tinted";
-    readonly primary: "filled";
-};
-/** @deprecated `neutral` is `variant="tinted"`; `primary` is a filled tone. Removed next release. */
-export type DeprecatedPillVariant = keyof typeof DEPRECATED_PILL_VARIANTS;
 declare const SIZE: {
-    readonly sm: "px-2.5 py-0.5 text-xs";
-    readonly md: "px-[var(--reddb-spatial-inset-sm)] py-1 text-sm";
+    readonly sm: "px-2.5 py-0.5 text-caption";
+    readonly md: "px-[var(--reddb-spatial-inset-sm)] py-1 text-body";
 };
 export declare const pill: import("tailwind-variants").TVReturnType<{
     tone: {
@@ -33,12 +22,10 @@ export declare const pill: import("tailwind-variants").TVReturnType<{
         readonly tinted: "";
         readonly filled: "";
         readonly outline: "";
-        readonly neutral: "";
-        readonly primary: "";
     };
     size: {
-        readonly sm: "px-2.5 py-0.5 text-xs";
-        readonly md: "px-[var(--reddb-spatial-inset-sm)] py-1 text-sm";
+        readonly sm: "px-2.5 py-0.5 text-caption";
+        readonly md: "px-[var(--reddb-spatial-inset-sm)] py-1 text-body";
     };
 }, undefined, "inline-flex items-center gap-1.5 rounded-full border leading-tight whitespace-nowrap", {
     tone: {
@@ -52,12 +39,10 @@ export declare const pill: import("tailwind-variants").TVReturnType<{
         readonly tinted: "";
         readonly filled: "";
         readonly outline: "";
-        readonly neutral: "";
-        readonly primary: "";
     };
     size: {
-        readonly sm: "px-2.5 py-0.5 text-xs";
-        readonly md: "px-[var(--reddb-spatial-inset-sm)] py-1 text-sm";
+        readonly sm: "px-2.5 py-0.5 text-caption";
+        readonly md: "px-[var(--reddb-spatial-inset-sm)] py-1 text-body";
     };
 }, undefined, import("tailwind-variants").TVReturnTypeLike<{
     tone: {
@@ -71,18 +56,17 @@ export declare const pill: import("tailwind-variants").TVReturnType<{
         readonly tinted: "";
         readonly filled: "";
         readonly outline: "";
-        readonly neutral: "";
-        readonly primary: "";
     };
     size: {
-        readonly sm: "px-2.5 py-0.5 text-xs";
-        readonly md: "px-[var(--reddb-spatial-inset-sm)] py-1 text-sm";
+        readonly sm: "px-2.5 py-0.5 text-caption";
+        readonly md: "px-[var(--reddb-spatial-inset-sm)] py-1 text-body";
     };
 }, undefined>>;
 /**
  * The dismiss affordance, styled to inherit the Pill's own colour. The glyph
- * stays small, but its hit area is a control-height-sm square centred on it,
- * so the target never drops below 24px (WCAG 2.2 SC 2.5.8). Its rest, hover,
+ * stays small, but its hit area is the target floor centred on it (`hitArea`,
+ * ADR 0054): 24px under a fine pointer (WCAG 2.2 SC 2.5.8), 44px under a
+ * coarse one (ADR 0022). Its rest, hover,
  * pressed and focus states are the quiet-control contract the component wraps
  * it in (wave 6A).
  */

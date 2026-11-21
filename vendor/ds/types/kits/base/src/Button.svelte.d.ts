@@ -6,8 +6,6 @@ interface Common {
     variant?: ButtonVariant;
     /** What the action means: the shared tone vocabulary (ADR 0026). Defaults to `neutral`. */
     tone?: ButtonTone;
-    /** @deprecated Renamed `tone` (ADR 0026); removed next release. */
-    intent?: ButtonTone;
     /** Control height and padding. Defaults to `md`. */
     size?: ButtonSize;
     /** Waiting state: keep the label, show a spinner, and become inert. */

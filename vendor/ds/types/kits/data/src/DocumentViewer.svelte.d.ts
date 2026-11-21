@@ -11,12 +11,8 @@ interface Props extends DocumentViewerContract {
     }]>;
     /** Item activation (ADR 0026's sanctioned `onselect`): the document chosen from the list. */
     onselect?: (document: DocumentValue, index: number) => void;
-    /** @deprecated Renamed `onselect` (ADR 0026); removed next release. */
-    onSelected?: (document: DocumentValue, index: number) => void;
     /** Reports the detail mode the reader switched to. */
     onmodechange?: (mode: DocumentMode) => void;
-    /** @deprecated Renamed `onmodechange` (ADR 0026); removed next release. */
-    onMode?: (mode: DocumentMode) => void;
     /**
      * Extra classes, merged onto the root `section` that holds both the list and the detail pane.
      */

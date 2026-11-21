@@ -248,6 +248,30 @@
           ]
         },
         {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-container-wide",
           "sources": [
             "kits/base/src/dialog.variants.ts"
@@ -266,14 +290,6 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts",
-            "kits/base/src/field.variants.ts",
-            "kits/base/src/label.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-font-size-xs",
           "sources": [
             "kits/base/src/kbd.variants.ts"
@@ -283,18 +299,38 @@
           "name": "--reddb-font-weight-medium",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/field.variants.ts",
-            "kits/base/src/label.variants.ts",
             "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-regular",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-layer-dropdown",
+          "sources": [
+            "kits/base/src/popover.variants.ts"
           ]
         },
         {
           "name": "--reddb-line-height-normal",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/field.variants.ts",
-            "kits/base/src/kbd.variants.ts",
-            "kits/base/src/label.variants.ts"
+            "kits/base/src/kbd.variants.ts"
           ]
         },
         {
@@ -358,7 +394,6 @@
         {
           "name": "--reddb-spatial-gap-md",
           "sources": [
-            "kits/base/src/button.variants.ts",
             "kits/base/src/field.variants.ts"
           ]
         },
@@ -369,24 +404,6 @@
             "kits/base/src/Dialog.svelte",
             "kits/base/src/field.variants.ts",
             "kits/base/src/kbd.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-lg",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -410,6 +427,12 @@
             "kits/app/src/composites/command-palette.variants.ts",
             "kits/base/src/button.variants.ts",
             "kits/base/src/dialog.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -510,6 +533,50 @@
           "name": "--reddb-type-heading-line-height",
           "sources": [
             "kits/base/src/Dialog.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
           ]
         }
       ],
@@ -650,7 +717,9 @@
           "specifier": "@reddb-io/design-system/app/CommandPalette"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "command-palette"
         },
         "source": "kits/app/react/src/CommandPalette.tsx",
         "specifier": "@reddb-io/design-system/app/CommandPalette",

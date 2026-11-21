@@ -41,6 +41,12 @@
           ]
         },
         {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/link.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-type-caption-font-size",
           "sources": [
             "kits/base/src/type-roles.ts"
@@ -153,7 +159,9 @@
           "specifier": "@reddb-io/design-system/base/Link"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "link"
         },
         "source": "kits/base/react/src/Link.tsx",
         "specifier": "@reddb-io/design-system/base/Link",

@@ -2,7 +2,7 @@ import type { Snippet } from "svelte";
 import type { HTMLAttributes } from "svelte/elements";
 import { type IconGlyph } from "./Icon.svelte";
 import { type ImageAsset } from "./Image.svelte";
-import { type CardActionsAlign, type CardMediaFit, type CardMediaPosition, type CardMediaRatio, type CardMediaSpan, type CardOrientation, type CardPadding, type CardTone, type CardVariant, type DeprecatedCardTone } from "./card.variants";
+import { type CardActionsAlign, type CardMediaFit, type CardMediaPosition, type CardMediaRatio, type CardMediaSpan, type CardOrientation, type CardPadding, type CardTone, type CardVariant } from "./card.variants";
 interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "class" | "title"> {
     /** Edge treatment. Defaults to `outline`. */
     variant?: CardVariant;
@@ -17,9 +17,9 @@ interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "class" | "title"> 
     /**
      * What the Card means: the shared tone vocabulary (ADR 0026), each on its
      * Feedback Role's surface and paired readable foreground. Defaults to
-     * `neutral`. `brand` is deprecated for one release.
+     * `neutral`.
      */
-    tone?: CardTone | DeprecatedCardTone;
+    tone?: CardTone;
     /** Density-owned inset applied to every section. Defaults to `md`. */
     padding?: CardPadding;
     /** Main-axis alignment for footer actions. Defaults to `start`. */

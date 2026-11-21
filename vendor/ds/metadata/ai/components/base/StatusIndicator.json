@@ -72,7 +72,8 @@
         {
           "name": "--reddb-color-foreground",
           "sources": [
-            "kits/base/src/status-indicator.variants.ts"
+            "kits/base/src/status-indicator.variants.ts",
+            "kits/base/src/type-roles.ts"
           ]
         },
         {
@@ -82,13 +83,13 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-font-weight-regular",
           "sources": [
             "kits/base/src/status-indicator.variants.ts"
           ]
         },
         {
-          "name": "--reddb-line-height-normal",
+          "name": "--reddb-glyph-gap",
           "sources": [
             "kits/base/src/status-indicator.variants.ts"
           ]
@@ -100,7 +101,109 @@
           ]
         },
         {
-          "name": "--reddb-spatial-gap-sm",
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
           "sources": [
             "kits/base/src/status-indicator.variants.ts"
           ]
@@ -118,6 +221,25 @@
     "forwardsAttributesTo": [
       "<span>"
     ],
+    "guidance": {
+      "family": "Status marks",
+      "question": "Is it a status beside text, a removable tag or filter, a counted category, or a node's reachability?",
+      "related": [
+        "base/Badge",
+        "app/Pill",
+        "marketing/CategoryChip",
+        "app/NodeBadge"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "base/Badge",
+          "text": "A label that classifies rather than reports state."
+        }
+      ],
+      "whenToUse": [
+        "A status that must be perceivable without colour: a dot with required text, visible or hidden."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -164,7 +286,9 @@
           "specifier": "@reddb-io/design-system/base/StatusIndicator"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "status-indicator"
         },
         "source": "kits/base/react/src/StatusIndicator.tsx",
         "specifier": "@reddb-io/design-system/base/StatusIndicator",
@@ -196,24 +320,6 @@
         "bindable": false,
         "description": "What the status means: the shared tone vocabulary (ADR 0026). Defaults to `neutral`.",
         "name": "tone",
-        "required": false,
-        "type": "Tone",
-        "vocabulary": [
-          "neutral",
-          "info",
-          "success",
-          "warning",
-          "danger"
-        ]
-      },
-      {
-        "bindable": false,
-        "deprecated": {
-          "note": "Renamed `tone` (ADR 0026); removed next release.",
-          "replacement": "tone"
-        },
-        "description": "Deprecated alias. Renamed `tone` (ADR 0026); removed next release.",
-        "name": "status",
         "required": false,
         "type": "Tone",
         "vocabulary": [

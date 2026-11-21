@@ -1,12 +1,4 @@
 import { type VariantProps } from "tailwind-variants";
-/**
- * The `density` values kept for one release (ADR 0026), and the `size` each
- * one now is.
- */
-export declare const DEPRECATED_LIST_ROW_DENSITIES: {
-    readonly comfortable: "md";
-    readonly compact: "sm";
-};
 export declare const listRow: import("tailwind-variants").TVReturnType<{
     size: {
         /** The default: a row you can hit with a thumb. */
@@ -29,7 +21,7 @@ export declare const listRow: import("tailwind-variants").TVReturnType<{
     selected: {
         /** The row this list is currently about. */
         readonly true: {
-            readonly root: "bg-foreground/10";
+            readonly root: "bg-state-selected";
             readonly title: "font-medium text-foreground";
         };
         readonly false: {
@@ -65,7 +57,7 @@ export declare const listRow: import("tailwind-variants").TVReturnType<{
     selected: {
         /** The row this list is currently about. */
         readonly true: {
-            readonly root: "bg-foreground/10";
+            readonly root: "bg-state-selected";
             readonly title: "font-medium text-foreground";
         };
         readonly false: {
@@ -101,7 +93,7 @@ export declare const listRow: import("tailwind-variants").TVReturnType<{
     selected: {
         /** The row this list is currently about. */
         readonly true: {
-            readonly root: "bg-foreground/10";
+            readonly root: "bg-state-selected";
             readonly title: "font-medium text-foreground";
         };
         readonly false: {
@@ -119,7 +111,3 @@ export declare const listRow: import("tailwind-variants").TVReturnType<{
 export type ListRowVariants = VariantProps<typeof listRow>;
 export type ListRowSize = NonNullable<ListRowVariants["size"]>;
 export declare const LIST_ROW_SIZES: readonly ListRowSize[];
-/** @deprecated ListRow's scale is `size` (ADR 0026); use `ListRowSize`. Removed next release. */
-export type ListRowDensity = keyof typeof DEPRECATED_LIST_ROW_DENSITIES;
-/** @deprecated ListRow's scale is `size` (ADR 0026); use `LIST_ROW_SIZES`. Removed next release. */
-export declare const LIST_ROW_DENSITIES: readonly ListRowDensity[];

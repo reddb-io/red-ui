@@ -43,10 +43,6 @@ export declare const meter: import("tailwind-variants").TVReturnType<{
         danger: {
             indicator: "bg-feedback-danger-foreground";
         };
-        /** @deprecated The accent is an emphasis, not a tone (ADR 0026); kept one release. */
-        primary: {
-            indicator: string;
-        };
     };
 }, {
     root: string;
@@ -85,10 +81,6 @@ export declare const meter: import("tailwind-variants").TVReturnType<{
         };
         danger: {
             indicator: "bg-feedback-danger-foreground";
-        };
-        /** @deprecated The accent is an emphasis, not a tone (ADR 0026); kept one release. */
-        primary: {
-            indicator: string;
         };
     };
 }, {
@@ -129,10 +121,6 @@ export declare const meter: import("tailwind-variants").TVReturnType<{
         danger: {
             indicator: "bg-feedback-danger-foreground";
         };
-        /** @deprecated The accent is an emphasis, not a tone (ADR 0026); kept one release. */
-        primary: {
-            indicator: string;
-        };
     };
 }, {
     root: string;
@@ -146,5 +134,3 @@ export type MeterVariants = VariantProps<typeof meter>;
 export type MeterTone = Tone;
 /** The tones a Meter accepts: the shared vocabulary (ADR 0026). */
 export declare const METER_TONES: readonly ["neutral", "info", "success", "warning", "danger"];
-/** @deprecated `primary` is an emphasis, not a tone (ADR 0026). Removed next release. */
-export type DeprecatedMeterTone = "primary";

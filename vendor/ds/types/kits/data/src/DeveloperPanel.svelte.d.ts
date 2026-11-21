@@ -1,13 +1,9 @@
 import type { Snippet } from "svelte";
-import type { DeveloperRequest } from "./developer-panel";
 import type { DeveloperPanelContract } from "./core/contracts/developerpanel";
 interface Props extends DeveloperPanelContract {
     /** Called when the expanded state changes. */
     onopenchange?: (open: boolean) => void;
-    /** Legacy callback for clearing the request log.
-     * @deprecated Use `contextContent` to compose DeveloperRequestInspector with this handler; removed next release. */
-    onrequestschange?: (requests: readonly DeveloperRequest[]) => void;
-    /** Caller-owned panel content; the legacy requests prop renders it in the Tools view. */
+    /** Caller-owned panel content, shown when no `contextContent` is supplied. */
     children?: Snippet;
     /** Body for a host-defined context, receiving its value. */
     contextContent?: Snippet<[{
@@ -17,9 +13,6 @@ interface Props extends DeveloperPanelContract {
     contextToolbar?: Snippet<[{
         value: string;
     }]>;
-    /** Legacy actions for the selected request.
-     * @deprecated Use `contextContent` to compose DeveloperRequestInspector with these actions; removed next release. */
-    requestActions?: Snippet<[DeveloperRequest]>;
     /** Optional header controls before the close button. */
     headerActions?: Snippet;
     /** Extra root classes. */

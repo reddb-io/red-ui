@@ -136,7 +136,9 @@
           "specifier": "@reddb-io/design-system/app/SplitView"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "split-view"
         },
         "source": "kits/app/react/src/SplitView.tsx",
         "specifier": "@reddb-io/design-system/app/SplitView",
@@ -144,7 +146,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "split-view"
         },
         "source": "kits/app/src/primitives/SplitView.svelte",
         "specifier": "@reddb-io/design-system/app",
@@ -230,7 +234,9 @@
     ],
     "purpose": "Two panes and a divider you can move with a pointer or with the arrow keys, over arithmetic that needs no DOM.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "split-view"
     },
     "sharedContract": {
       "core": [

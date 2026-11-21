@@ -14,8 +14,8 @@ export declare const searchSelect: import("tailwind-variants").TVReturnType<{
             content?: import("tailwind-variants").ClassValue;
             item?: import("tailwind-variants").ClassValue;
             trigger?: import("tailwind-variants").ClassValue;
-            list?: import("tailwind-variants").ClassValue;
             search?: import("tailwind-variants").ClassValue;
+            list?: import("tailwind-variants").ClassValue;
             description?: import("tailwind-variants").ClassValue;
             empty?: import("tailwind-variants").ClassValue;
             row?: import("tailwind-variants").ClassValue;
@@ -34,8 +34,8 @@ export declare const searchSelect: import("tailwind-variants").TVReturnType<{
             content?: import("tailwind-variants").ClassValue;
             item?: import("tailwind-variants").ClassValue;
             trigger?: import("tailwind-variants").ClassValue;
-            list?: import("tailwind-variants").ClassValue;
             search?: import("tailwind-variants").ClassValue;
+            list?: import("tailwind-variants").ClassValue;
             description?: import("tailwind-variants").ClassValue;
             empty?: import("tailwind-variants").ClassValue;
             row?: import("tailwind-variants").ClassValue;
@@ -70,8 +70,8 @@ export declare const searchSelect: import("tailwind-variants").TVReturnType<{
             content?: import("tailwind-variants").ClassValue;
             item?: import("tailwind-variants").ClassValue;
             trigger?: import("tailwind-variants").ClassValue;
-            list?: import("tailwind-variants").ClassValue;
             search?: import("tailwind-variants").ClassValue;
+            list?: import("tailwind-variants").ClassValue;
             description?: import("tailwind-variants").ClassValue;
             empty?: import("tailwind-variants").ClassValue;
             row?: import("tailwind-variants").ClassValue;

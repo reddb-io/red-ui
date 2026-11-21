@@ -6,6 +6,7 @@
     "app/CategoryFilter",
     "app/CheckoutForm",
     "app/Filter",
+    "app/PromptComposer",
     "app/ShoppingCart"
   ],
   "contract": {
@@ -46,22 +47,9 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/base/src/label.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-font-weight-medium",
           "sources": [
-            "kits/app/src/composites/settings-row.variants.ts",
-            "kits/base/src/label.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-line-height-normal",
-          "sources": [
-            "kits/base/src/label.variants.ts"
+            "kits/app/src/composites/settings-row.variants.ts"
           ]
         },
         {
@@ -187,6 +175,30 @@
           "sources": [
             "kits/base/src/type-roles.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/label.variants.ts"
+          ]
         }
       ],
       "types": [
@@ -198,6 +210,26 @@
       ]
     },
     "events": [],
+    "guidance": {
+      "family": "Lists and rows",
+      "question": "Is it plain items, interactive rows, a carded list, a grid, media beside text, or a setting?",
+      "related": [
+        "base/List",
+        "app/ListRow",
+        "base/ListContainer",
+        "base/GridList",
+        "base/MediaObject"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "app/ListRow",
+          "text": "A navigational row."
+        }
+      ],
+      "whenToUse": [
+        "A setting's label and description with its associated field and actions."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -282,7 +314,9 @@
           "specifier": "@reddb-io/design-system/app/SettingsRow"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "settings-row"
         },
         "source": "kits/app/react/src/SettingsRow.tsx",
         "specifier": "@reddb-io/design-system/app/SettingsRow",

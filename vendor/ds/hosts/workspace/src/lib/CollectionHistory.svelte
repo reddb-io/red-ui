@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Table from "@reddb-io/design-system/data/Table"
+  import Table from "@reddb-io/design-system/data/DataTable"
   import { Select } from "@reddb-io/design-system/base"
   import { Button as DSButton } from '@reddb-io/design-system/base'
   import { Icon as DSIcon } from '@reddb-io/design-system/base'

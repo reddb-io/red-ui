@@ -7,7 +7,7 @@ export declare const logo: import("tailwind-variants").TVReturnType<{
          * outside the clearspace by construction; its 2px offset only moves it
          * further out.
          */
-        readonly true: "rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus";
+        readonly true: string;
         /** The default: the pure Mark, in a footer or as an avatar. */
         readonly false: "";
     };
@@ -19,7 +19,7 @@ export declare const logo: import("tailwind-variants").TVReturnType<{
          * outside the clearspace by construction; its 2px offset only moves it
          * further out.
          */
-        readonly true: "rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus";
+        readonly true: string;
         /** The default: the pure Mark, in a footer or as an avatar. */
         readonly false: "";
     };
@@ -31,7 +31,7 @@ export declare const logo: import("tailwind-variants").TVReturnType<{
          * outside the clearspace by construction; its 2px offset only moves it
          * further out.
          */
-        readonly true: "rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus";
+        readonly true: string;
         /** The default: the pure Mark, in a footer or as an avatar. */
         readonly false: "";
     };

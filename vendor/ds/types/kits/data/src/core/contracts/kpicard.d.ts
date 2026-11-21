@@ -1,4 +1,4 @@
-import type { DeprecatedKpiCardTone, KpiCardTone } from "../../kpi-card.variants";
+import type { KpiCardTone } from "../../kpi-card.variants";
 import type { KpiPolarity } from "../kpi-card";
 /** Portable KpiCard properties shared by native adapters. */
 export interface KpiCardContract {
@@ -32,7 +32,7 @@ export interface KpiCardContract {
     /**
          * What the metric means: the shared tone vocabulary (ADR 0026), each on its
          * Feedback Role's surface with its paired readable foreground. Defaults to
-         * `neutral`. `brand` is deprecated for one release.
+         * `neutral`.
          */
-    tone?: KpiCardTone | DeprecatedKpiCardTone;
+    tone?: KpiCardTone;
 }

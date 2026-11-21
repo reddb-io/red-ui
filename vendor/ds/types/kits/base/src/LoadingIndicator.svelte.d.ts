@@ -3,7 +3,7 @@ import { type LoadingIndicatorSize } from "./loading-indicator.variants";
 interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "class"> {
     /** What is being waited for. */
     label?: string;
-    /** Spinner and label size: `sm`, `md` (the default) or `lg`. */
+    /** Spinner and label size: `sm`, `md` (the default) or `lg`. Beside its label the spinner follows the label's type role; with the label hidden it keeps the Density Icon size (ADR 0054). */
     size?: LoadingIndicatorSize;
     /** Keep the announcement while visually hiding its sentence. */
     labelHidden?: boolean;

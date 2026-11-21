@@ -43,7 +43,7 @@ it("renders event envelopes in the Data Kit grid and retains queue commands", as
   expect(row.textContent).toContain("203502");
   expect(row.textContent).toContain('"rating":5');
   target
-    .querySelector<HTMLButtonElement>('[data-queue-mode="commands"]')!
+    .querySelector<HTMLButtonElement>('[data-queue-modes] [data-toggle-value="commands"]')!
     .click();
   await flush();
   expect(target.textContent).toContain("QUEUE PEEK jobs 25");

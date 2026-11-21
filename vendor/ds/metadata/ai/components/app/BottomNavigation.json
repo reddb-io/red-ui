@@ -1,0 +1,600 @@
+{
+  "schemaVersion": 1,
+  "id": "app/BottomNavigation",
+  "topics": [],
+  "related": [
+    "app/CategoryPreview",
+    "app/CommandPalette",
+    "app/NavItem",
+    "app/ShortcutHelp",
+    "app/SidebarNavigation",
+    "app/SidebarPanel"
+  ],
+  "contract": {
+    "category": "Navigation",
+    "documentation": {
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-color-${role}",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-${size}",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        }
+      ],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-elevation-sunken-surface",
+          "sources": [
+            "kits/app/src/composites/bottom-navigation.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/app/src/composites/bottom-navigation.variants.ts",
+            "kits/app/src/primitives/nav-item.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/status-indicator.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/app/src/composites/bottom-navigation.variants.ts",
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-feedback",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-regular",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        },
+        {
+          "name": "--reddb-layer-raised",
+          "sources": [
+            "kits/base/src/indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts",
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/app/src/composites/bottom-navigation.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts",
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-none",
+          "sources": [
+            "kits/app/src/composites/bottom-navigation.variants.ts",
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/app/src/composites/bottom-navigation.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/app/src/composites/bottom-navigation.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-md",
+          "sources": [
+            "kits/app/src/composites/bottom-navigation.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/app/src/composites/bottom-navigation.variants.ts",
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/app/src/composites/bottom-navigation.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/app/src/composites/bottom-navigation.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-glyph-gap",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-glyph-size",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/app/src/composites/bottom-navigation.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/app/src/composites/bottom-navigation.variants.ts",
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/app/src/primitives/nav-item.variants.ts",
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/status-indicator.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "interface BottomNavigationItem extends PrimaryNavigationItem {\n    /** Whether this destination's contextual menu is open, independent from currentId. */\n    expanded?: boolean;\n    /** Id of the contextual menu controlled by this item. */\n    controls?: string;\n  }",
+          "name": "BottomNavigationItem",
+          "source": "kits/app/src/core/contracts/bottomnavigation.ts"
+        },
+        {
+          "declaration": "export type IconGlyph = Component<IconGlyphProps>;",
+          "name": "IconGlyph",
+          "source": "kits/base/src/Icon.svelte"
+        },
+        {
+          "declaration": "export type IconGlyphProps = LucideProps;",
+          "name": "IconGlyphProps",
+          "source": "kits/base/src/Icon.svelte"
+        },
+        {
+          "declaration": "/** Optional notifications and status shared by the sidebar surfaces. */\nexport interface NavigationMarkers {\n  /** Notification count or short text; undefined omits it. Numeric counts above 99 display 99+ while retaining the exact accessible count. */\n  badge?: number | string;\n  /** Complete accessible notification description, e.g. 91 unread conversations. */\n  badgeLabel?: string;\n  /** Semantic notification tone. Defaults to neutral. */\n  badgeTone?: Tone;\n  /** Presence or health indicator; its required label carries meaning beyond colour. */\n  status?: NavigationStatus;\n}",
+          "name": "NavigationMarkers",
+          "source": "kits/app/src/composites/navigation.behavior.ts"
+        },
+        {
+          "declaration": "/** Application-owned presence or health, independent of navigation selection. */\nexport interface NavigationStatus {\n  /** Meaning announced alongside the destination, such as Online or Service unavailable. */\n  label: string;\n  /** Semantic tone of the status mark. Defaults to neutral. */\n  tone?: Tone;\n}",
+          "name": "NavigationStatus",
+          "source": "kits/app/src/composites/navigation.behavior.ts"
+        },
+        {
+          "declaration": "/** A primary destination. Without href, activation opens its contextual menu. */\nexport interface PrimaryNavigationItem extends NavigationMarkers {\n  /** Stable section identity; distinct from whether its menu is open. */\n  id: string;\n  /** Visible label on the mobile bar and accessible desktop name. */\n  label: string;\n  /** Native link destination. Omit for a section with a contextual sidebar. */\n  href?: string;\n  /** Decorative glyph rendered through Base Icon. */\n  icon?: IconGlyph;\n  /** Optional initials when there is no glyph. */\n  fallback?: string;\n  /** Unavailable entries retain their place and cannot be activated. */\n  disabled?: boolean;\n  /** Optional action when activated; routing and currentId remain application-owned. */\n  onselect?: () => void;\n}",
+          "name": "PrimaryNavigationItem",
+          "source": "kits/app/src/composites/navigation.behavior.ts"
+        },
+        {
+          "declaration": "export type Tone = (typeof TONES)[number];",
+          "name": "Tone",
+          "source": "kits/base/src/tone.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "native element"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Composite",
+          "kit": "app",
+          "name": "BottomNavigation",
+          "nativeAttributes": [
+            "nav"
+          ],
+          "props": [
+            {
+              "description": "Accessible name for the `nav` landmark.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Destinations, native links or section buttons in the given order; each `id` must be unique.",
+              "name": "items",
+              "required": true,
+              "type": "readonly BottomNavigationItem[]"
+            },
+            {
+              "description": "The `id` of the item for the current page. It must match exactly one entry in `items`, or the component throws.",
+              "name": "currentId",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Additional navigation classes.",
+              "name": "className",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "source": "kits/app/react/src/BottomNavigation.tsx",
+          "specifier": "@reddb-io/design-system/app/BottomNavigation"
+        },
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "bottom-navigation"
+        },
+        "source": "kits/app/react/src/BottomNavigation.tsx",
+        "specifier": "@reddb-io/design-system/app/BottomNavigation",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "bottom-navigation"
+        },
+        "source": "kits/app/src/composites/BottomNavigation.svelte",
+        "specifier": "@reddb-io/design-system/app",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "app",
+    "name": "BottomNavigation",
+    "props": [
+      {
+        "bindable": false,
+        "description": "Accessible name for the `nav` landmark.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Destinations, native links or section buttons in the given order; each `id` must be unique.",
+        "name": "items",
+        "required": true,
+        "type": "readonly BottomNavigationItem[]"
+      },
+      {
+        "bindable": false,
+        "description": "The `id` of the item for the current page. It must match exactly one entry in `items`, or the component throws.",
+        "name": "currentId",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes, merged over the root slot's own, onto the `nav` element.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "A compact native destination bar whose current page and keyboard order survive consumer-owned placement.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "bottom-navigation"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/app/src/core/contracts/bottomnavigation.ts"
+      ],
+      "tests": [
+        "kits/app/test/framework-app.test.ts",
+        "apps/showcase/test/component-flavors-workspace.browser.test.ts"
+      ]
+    },
+    "snippets": [],
+    "source": "kits/app/src/composites/BottomNavigation.svelte",
+    "specifier": "@reddb-io/design-system/app"
+  }
+}

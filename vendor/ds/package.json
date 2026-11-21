@@ -103,6 +103,12 @@
       "development": "./server-dev/kits/base/src/recipes.js",
       "default": "./server/kits/base/src/recipes.js"
     },
+    "./data/DataTable": {
+      "types": "./types/kits/data/src/DataTable.svelte.d.ts",
+      "browser": "./client/kits/data/src/DataTable.svelte-component.js",
+      "development": "./server-dev/kits/data/src/DataTable.svelte-component.js",
+      "default": "./server/kits/data/src/DataTable.svelte-component.js"
+    },
     "./data/DeveloperPanel": {
       "types": "./types/kits/data/src/DeveloperPanel.svelte.d.ts",
       "browser": "./client/kits/data/src/DeveloperPanel.svelte-component.js",
@@ -174,12 +180,6 @@
       "browser": "./client/kits/data/src/StatsExplorer.svelte-component.js",
       "development": "./server-dev/kits/data/src/StatsExplorer.svelte-component.js",
       "default": "./server/kits/data/src/StatsExplorer.svelte-component.js"
-    },
-    "./data/Table": {
-      "types": "./types/kits/data/src/Table.svelte.d.ts",
-      "browser": "./client/kits/data/src/Table.svelte-component.js",
-      "development": "./server-dev/kits/data/src/Table.svelte-component.js",
-      "default": "./server/kits/data/src/Table.svelte-component.js"
     },
     "./data/TableExplorer": {
       "types": "./types/kits/data/src/TableExplorer.svelte.d.ts",

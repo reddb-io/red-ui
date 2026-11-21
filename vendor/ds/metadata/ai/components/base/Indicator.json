@@ -14,7 +14,14 @@
     "category": "Layout",
     "documentation": {
       "cssVariablePatterns": [],
-      "cssVariables": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-layer-raised",
+          "sources": [
+            "kits/base/src/indicator.variants.ts"
+          ]
+        }
+      ],
       "types": [
         {
           "declaration": "export type IndicatorPosition = (typeof INDICATOR_POSITIONS)[number];",
@@ -72,7 +79,9 @@
           "specifier": "@reddb-io/design-system/base/Indicator"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "indicator"
         },
         "source": "kits/base/react/src/Indicator.tsx",
         "specifier": "@reddb-io/design-system/base/Indicator",

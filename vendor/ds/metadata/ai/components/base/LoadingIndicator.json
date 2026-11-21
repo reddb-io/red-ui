@@ -13,8 +13,27 @@
   "contract": {
     "category": "Feedback",
     "documentation": {
-      "cssVariablePatterns": [],
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-type-${name}-glyph-gap",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-${name}-glyph-size",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        }
+      ],
       "cssVariables": [
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
         {
           "name": "--reddb-color-ink-muted",
           "sources": [
@@ -34,13 +53,13 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-glyph-gap",
           "sources": [
             "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-size-xs",
+          "name": "--reddb-glyph-size",
           "sources": [
             "kits/base/src/loading-indicator.variants.ts"
           ]
@@ -53,12 +72,6 @@
         },
         {
           "name": "--reddb-line-height-tight",
-          "sources": [
-            "kits/base/src/loading-indicator.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-gap-md",
           "sources": [
             "kits/base/src/loading-indicator.variants.ts"
           ]
@@ -79,6 +92,106 @@
           "name": "--reddb-spatial-icon-size-sm",
           "sources": [
             "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
           ]
         }
       ],
@@ -119,7 +232,7 @@
             },
             {
               "default": "\"md\"",
-              "description": "Density-responsive glyph size.",
+              "description": "Spinner and label size: `sm`, `md` (the default) or `lg`. Beside its label the spinner follows the label's type role; with the label hidden it keeps the Density Icon size (ADR 0054).",
               "name": "size",
               "required": false,
               "type": "LoadingIndicatorSize",
@@ -145,7 +258,9 @@
           "specifier": "@reddb-io/design-system/base/LoadingIndicator"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "loading-indicator"
         },
         "source": "kits/base/react/src/LoadingIndicator.tsx",
         "specifier": "@reddb-io/design-system/base/LoadingIndicator",
@@ -177,7 +292,7 @@
       {
         "bindable": false,
         "default": "\"md\"",
-        "description": "Spinner and label size: `sm`, `md` (the default) or `lg`.",
+        "description": "Spinner and label size: `sm`, `md` (the default) or `lg`. Beside its label the spinner follows the label's type role; with the label hidden it keeps the Density Icon size (ADR 0054).",
         "name": "size",
         "required": false,
         "type": "LoadingIndicatorSize",

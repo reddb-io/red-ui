@@ -1,6 +1,6 @@
 <script lang="ts">
   import { NavigationScope } from '@reddb-io/design-system/base'
-  import { SidebarRail } from '@reddb-io/design-system/app'
+  import { BottomNavigation, SidebarRail } from '@reddb-io/design-system/app'
   import Sparkles from '@lucide/svelte/icons/sparkles'
   import Database from '@lucide/svelte/icons/database'
   import Network from '@lucide/svelte/icons/network'
@@ -9,7 +9,10 @@
   import Settings2 from '@lucide/svelte/icons/settings-2'
   import { useRouter } from './router.svelte'
 
-  let { label = 'Workspace' }: { label?: string } = $props()
+  // The workspace draws its destinations twice: a labelled rail beside the
+  // content from the chrome's `md` step, and a bottom dock below it on narrower
+  // screens, where a side rail would take width the content needs (ADR 0021).
+  let { label = 'Workspace', placement }: { label?: string; placement: 'rail' | 'dock' } = $props()
   const router = useRouter()
   const destinations = [
     { id: 'ask', label: 'Ask', icon: Sparkles },
@@ -29,6 +32,9 @@
   const item = destinations.find(item => router.href({ view: item.id }) === href)
   if (item) router.go({ view: item.id })
 }}>
-  <SidebarRail label={`${label} navigation`} {items} {currentId} showLabels class="hidden sm:flex" />
-  <SidebarRail label={`${label} navigation`} {items} {currentId} class="sm:hidden" />
+  {#if placement === 'rail'}
+    <SidebarRail label={`${label} navigation`} {items} {currentId} showLabels class="hidden md:flex" />
+  {:else}
+    <BottomNavigation label={`${label} navigation`} {items} {currentId} class="md:hidden" />
+  {/if}
 </NavigationScope>

@@ -3,15 +3,15 @@ export declare const emptyState: import("tailwind-variants").TVReturnType<{
     size: {
         readonly sm: {
             readonly root: "gap-[var(--reddb-spatial-gap-md)] px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-lg)]";
-            readonly title: "text-sm";
-            readonly description: "text-xs";
-            readonly hint: "text-xs";
+            readonly title: "text-label";
+            readonly description: "text-caption";
+            readonly hint: "text-caption";
         };
         readonly md: {
             readonly root: "gap-[var(--reddb-spatial-gap-lg)] px-[var(--reddb-spatial-inset-lg)] py-10";
-            readonly title: "text-base";
-            readonly description: "text-sm";
-            readonly hint: "text-xs";
+            readonly title: "text-heading";
+            readonly description: "text-body";
+            readonly hint: "text-caption";
         };
     };
     bordered: {
@@ -33,15 +33,15 @@ export declare const emptyState: import("tailwind-variants").TVReturnType<{
     size: {
         readonly sm: {
             readonly root: "gap-[var(--reddb-spatial-gap-md)] px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-lg)]";
-            readonly title: "text-sm";
-            readonly description: "text-xs";
-            readonly hint: "text-xs";
+            readonly title: "text-label";
+            readonly description: "text-caption";
+            readonly hint: "text-caption";
         };
         readonly md: {
             readonly root: "gap-[var(--reddb-spatial-gap-lg)] px-[var(--reddb-spatial-inset-lg)] py-10";
-            readonly title: "text-base";
-            readonly description: "text-sm";
-            readonly hint: "text-xs";
+            readonly title: "text-heading";
+            readonly description: "text-body";
+            readonly hint: "text-caption";
         };
     };
     bordered: {
@@ -63,15 +63,15 @@ export declare const emptyState: import("tailwind-variants").TVReturnType<{
     size: {
         readonly sm: {
             readonly root: "gap-[var(--reddb-spatial-gap-md)] px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-lg)]";
-            readonly title: "text-sm";
-            readonly description: "text-xs";
-            readonly hint: "text-xs";
+            readonly title: "text-label";
+            readonly description: "text-caption";
+            readonly hint: "text-caption";
         };
         readonly md: {
             readonly root: "gap-[var(--reddb-spatial-gap-lg)] px-[var(--reddb-spatial-inset-lg)] py-10";
-            readonly title: "text-base";
-            readonly description: "text-sm";
-            readonly hint: "text-xs";
+            readonly title: "text-heading";
+            readonly description: "text-body";
+            readonly hint: "text-caption";
         };
     };
     bordered: {

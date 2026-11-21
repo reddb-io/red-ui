@@ -21,7 +21,8 @@
         {
           "name": "--reddb-color-foreground",
           "sources": [
-            "kits/base/src/empty-state.variants.ts"
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/type-roles.ts"
           ]
         },
         {
@@ -43,31 +44,7 @@
           ]
         },
         {
-          "name": "--reddb-font-size-base",
-          "sources": [
-            "kits/base/src/empty-state.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/base/src/empty-state.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-xs",
-          "sources": [
-            "kits/base/src/empty-state.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-font-weight-medium",
-          "sources": [
-            "kits/base/src/empty-state.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-line-height-normal",
           "sources": [
             "kits/base/src/empty-state.variants.ts"
           ]
@@ -113,6 +90,154 @@
           "sources": [
             "kits/base/src/empty-state.variants.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
         }
       ],
       "types": [
@@ -132,6 +257,28 @@
     "forwardsAttributesTo": [
       "<div>"
     ],
+    "guidance": {
+      "family": "Empty and outcome states",
+      "question": "Is there nothing to show, is the content still uncertain, or did an operation just finish?",
+      "related": [
+        "base/ContentState",
+        "base/StateIllustration",
+        "app/OutcomeScreen"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "base/ContentState",
+          "text": "The content may still be loading or may fail."
+        },
+        {
+          "instead": "app/OutcomeScreen",
+          "text": "An operation finished and the person needs its result."
+        }
+      ],
+      "whenToUse": [
+        "A list or search has loaded and has nothing in it, and you can say why and offer the way out."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -206,7 +353,9 @@
           "specifier": "@reddb-io/design-system/base/EmptyState"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "empty-state"
         },
         "source": "kits/base/react/src/EmptyState.tsx",
         "specifier": "@reddb-io/design-system/base/EmptyState",

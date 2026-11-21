@@ -39,24 +39,9 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-font-weight-regular",
           "sources": [
-            "kits/base/src/field.variants.ts",
-            "kits/base/src/label.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-weight-medium",
-          "sources": [
-            "kits/base/src/field.variants.ts",
-            "kits/base/src/label.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-line-height-normal",
-          "sources": [
-            "kits/base/src/field.variants.ts",
-            "kits/base/src/label.variants.ts"
+            "kits/base/src/field.variants.ts"
           ]
         },
         {
@@ -141,6 +126,34 @@
           "name": "--reddb-type-eyebrow-line-height",
           "sources": [
             "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/label.variants.ts"
           ]
         }
       ],
@@ -230,7 +243,9 @@
           "specifier": "@reddb-io/design-system/base/Field"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "field-validation"
         },
         "source": "kits/base/react/src/Field.tsx",
         "specifier": "@reddb-io/design-system/base/Field",

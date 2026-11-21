@@ -14,6 +14,7 @@
   import Topbar from './Topbar.svelte'
   import WorkspaceEntry from './WorkspaceEntry.svelte'
   import WorkspaceContent from './WorkspaceContent.svelte'
+  import WorkspaceNavigation from './WorkspaceNavigation.svelte'
   import StatusBar from './StatusBar.svelte'
   import CommandPalette from './CommandPalette.svelte'
   import ShortcutOverlay from './ShortcutOverlay.svelte'
@@ -431,11 +432,15 @@
   class={`relative isolate h-full bg-background text-foreground ${workspace.persistenceKey === 'default' ? 'min-h-screen' : 'min-h-[720px]'}`} tabindex="-1">
 <BitsConfig defaultPortalTo={injectedPortalTarget ?? portalTarget}>
 {#if enteredWorkspace}
-  <div bind:this={shell} class="app relative grid min-w-0 grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto_minmax(0,1fr)_auto] h-screen">
+  <div bind:this={shell} class="app relative grid min-w-0 grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto_minmax(0,1fr)_auto_auto] h-screen">
     <GlobalProgressBar />
     <Topbar showConnect={showConnect} />
     <StatusBar />
     <WorkspaceContent label={label ?? connection.active.label} />
+    <!-- The developer panel docks absolutely at the shell's bottom edge and its
+         spacer reserves the last row, so the narrow navigation dock sits above it
+         while a reader has the panel open (the bar is hidden there otherwise). -->
+    <WorkspaceNavigation label={label ?? connection.active.label} placement="dock" />
     <DevConsole contained store={devConsole} />
     <CommandPalette />
     <ShortcutOverlay />

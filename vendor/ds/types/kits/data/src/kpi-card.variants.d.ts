@@ -13,13 +13,6 @@ export declare const kpiCard: import("tailwind-variants").TVReturnType<{
             label: string;
             description: string;
         };
-        /**
-         * @deprecated The accent is an emphasis, not a tone (ADR 0026): kept one
-         * release with its accent fill, then removed. Use a tone, or `neutral`.
-         */
-        brand: {
-            root: string;
-        };
         success: {
             root: string;
         };
@@ -61,13 +54,6 @@ export declare const kpiCard: import("tailwind-variants").TVReturnType<{
             root: string;
             label: string;
             description: string;
-        };
-        /**
-         * @deprecated The accent is an emphasis, not a tone (ADR 0026): kept one
-         * release with its accent fill, then removed. Use a tone, or `neutral`.
-         */
-        brand: {
-            root: string;
         };
         success: {
             root: string;
@@ -111,13 +97,6 @@ export declare const kpiCard: import("tailwind-variants").TVReturnType<{
             label: string;
             description: string;
         };
-        /**
-         * @deprecated The accent is an emphasis, not a tone (ADR 0026): kept one
-         * release with its accent fill, then removed. Use a tone, or `neutral`.
-         */
-        brand: {
-            root: string;
-        };
         success: {
             root: string;
         };
@@ -151,9 +130,5 @@ export declare const kpiCard: import("tailwind-variants").TVReturnType<{
 export type KpiCardVariants = VariantProps<typeof kpiCard>;
 /** The tones a KpiCard accepts: the shared vocabulary Base exports (ADR 0026). */
 export type KpiCardTone = Tone;
-/** Tone values kept for one release (ADR 0026): `brand` still draws its accent fill, and warns. */
-export declare const DEPRECATED_KPI_CARD_TONES: readonly ["brand"];
-/** @deprecated `brand` is an emphasis, not a tone (ADR 0026). Removed next release. */
-export type DeprecatedKpiCardTone = (typeof DEPRECATED_KPI_CARD_TONES)[number];
 /** The tones a KpiCard accepts, in the shared order. */
 export declare const KPI_CARD_TONES: readonly ["neutral", "info", "success", "warning", "danger"];

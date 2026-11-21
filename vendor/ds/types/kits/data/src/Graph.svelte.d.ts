@@ -6,16 +6,10 @@ import { type GraphInteraction } from "./graph";
 interface Props extends GraphContract {
     /** Reports the focused node id after focus moves to a node, or clears. */
     onfocusednodechange?: (id: string | null) => void;
-    /** @deprecated Renamed `onfocusednodechange` (ADR 0026); removed next release. */
-    onFocusedNode?: (id: string | null) => void;
     /** Reports the still-collapsed communities after one expands. */
     oncollapsedcommunitieschange?: (communities: readonly string[]) => void;
-    /** @deprecated Renamed `oncollapsedcommunitieschange` (ADR 0026); removed next release. */
-    onCollapsedCommunitiesChange?: (communities: readonly string[]) => void;
     /** A discrete event: every click and keyboard focus on a node or edge, caller metadata intact. */
     oninteraction?: (interaction: GraphInteraction) => void;
-    /** @deprecated Renamed `oninteraction` (ADR 0026); removed next release. */
-    onInteraction?: (interaction: GraphInteraction) => void;
     /** Extra classes, merged onto the root element that holds the search field and the drawing. */
     class?: string;
 }

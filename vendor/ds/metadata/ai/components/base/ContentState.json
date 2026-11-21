@@ -1,0 +1,1050 @@
+{
+  "schemaVersion": 1,
+  "id": "base/ContentState",
+  "topics": [
+    "carregamento dados estado vazio erro skeleton integração",
+    "async content loading boundary fetch empty error ready"
+  ],
+  "related": [
+    "base/Alert",
+    "base/EmptyState",
+    "base/LoadingIndicator",
+    "base/Notification",
+    "base/Progress",
+    "base/RadialProgress"
+  ],
+  "contract": {
+    "category": "Feedback",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-background",
+          "sources": [
+            "kits/base/src/scroll-area.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-control-edge",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-danger-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-info-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-success-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-border",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-fill-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-on-fill",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-feedback-warning-surface",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-focus",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/scroll-area.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-muted",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-on-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-primary-active",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-family-mono",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-medium",
+          "sources": [
+            "kits/base/react/src/Alert.tsx",
+            "kits/base/src/Alert.svelte",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-normal",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-line-height-tight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-md",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-md",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-control-height-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/react/src/Alert.tsx",
+            "kits/base/react/src/ContentState.tsx",
+            "kits/base/src/Alert.svelte",
+            "kits/base/src/ContentState.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-lg",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-md",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/scroll-area.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-gap",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-size",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "export type ContentLoadState = (typeof CONTENT_STATES)[number];",
+          "name": "ContentLoadState",
+          "source": "kits/base/src/core/contracts/contentstate.ts"
+        },
+        {
+          "declaration": "export type SkeletonShape = NonNullable<SkeletonVariants[\"shape\"]>;",
+          "name": "SkeletonShape",
+          "source": "kits/base/src/skeleton.variants.ts"
+        },
+        {
+          "declaration": "export type SkeletonVariants = VariantProps<typeof skeleton>;",
+          "name": "SkeletonVariants",
+          "source": "kits/base/src/skeleton.variants.ts"
+        }
+      ]
+    },
+    "events": [
+      {
+        "description": "Called when the person retries after an error; adds a retry action to the default error (ADR 0056).",
+        "dialect": "discrete",
+        "name": "onretry",
+        "type": "() => void"
+      }
+    ],
+    "forwardsAttributesTo": [
+      "<div>"
+    ],
+    "guidance": {
+      "family": "Empty and outcome states",
+      "question": "Is there nothing to show, is the content still uncertain, or did an operation just finish?",
+      "related": [
+        "base/EmptyState",
+        "base/StateIllustration",
+        "app/OutcomeScreen"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "base/EmptyState",
+          "text": "The data is already known to be empty."
+        }
+      ],
+      "whenToUse": [
+        "A region loads caller-owned data and must hold its height through loading, empty and error."
+      ]
+    },
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Composite",
+          "kit": "base",
+          "name": "ContentState",
+          "nativeAttributes": [
+            "div"
+          ],
+          "props": [
+            {
+              "default": "\"rectangle\"",
+              "description": "Basic geometry or a content silhouette. Defaults to text.",
+              "name": "shape",
+              "required": false,
+              "type": "SkeletonShape",
+              "vocabulary": [
+                "text",
+                "rectangle",
+                "circle",
+                "table",
+                "kpi",
+                "bar",
+                "column",
+                "combo",
+                "line",
+                "area",
+                "pie",
+                "donut",
+                "radial",
+                "candlestick",
+                "scatter",
+                "heatmap",
+                "graph",
+                "list",
+                "document",
+                "card"
+              ]
+            },
+            {
+              "default": "5",
+              "description": "Placeholder rows in table, list and heatmap shapes. Integer from 1 to 20; defaults to 5.",
+              "name": "rows",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "4",
+              "description": "Placeholder columns in table and heatmap shapes. Integer from 1 to 12; defaults to 4.",
+              "name": "columns",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "default": "true",
+              "description": "Enable the opacity pulse. Defaults to true; reduced-motion preferences always stop animation.",
+              "name": "animated",
+              "required": false,
+              "type": "boolean",
+              "vocabulary": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "description": "Current initial-load outcome. The application chooses empty explicitly; zero is valid content.",
+              "name": "state",
+              "required": true,
+              "type": "ContentLoadState",
+              "vocabulary": [
+                "loading",
+                "ready",
+                "empty",
+                "error"
+              ]
+            },
+            {
+              "description": "Required accessible name of the region in every state.",
+              "name": "label",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Definite height reserved before the request, shared by loading, ready, empty and error. Accepts positive pixels or a CSS length (including Density token calculations); fill means 100% of a bounded parent. Overflow remains keyboard-scrollable. Omitted, content determines height and matching a skeleton shape alone cannot guarantee layout stability.",
+              "name": "height",
+              "required": false,
+              "type": "number | string"
+            },
+            {
+              "default": "\"No results\"",
+              "description": "Default empty-state title when no empty content is supplied. Defaults to No results.",
+              "name": "emptyTitle",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Optional explanation beneath the default empty-state title.",
+              "name": "emptyDescription",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Could not load content.\"",
+              "description": "Safe text shown in the default error alert and passed to custom failure content.",
+              "name": "errorMessage",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Override the live message for the current state; an empty string silences it. Default errors use the alert instead.",
+              "name": "announcement",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "default": "\"Retry\"",
+              "description": "Visible and accessible label of the default error's retry action, shown when a retry handler is given. Defaults to Retry.",
+              "name": "retryLabel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Ready content. The application owns its components, data and interactions.",
+              "name": "children",
+              "required": true,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Optional loading composition instead of the default Skeleton. Keep its children decorative.",
+              "name": "loading",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Optional empty composition instead of the default EmptyState.",
+              "name": "empty",
+              "required": false,
+              "type": "ReactNode"
+            },
+            {
+              "description": "Optional error composition receiving the message; it owns error and retry announcements.",
+              "name": "failure",
+              "required": false,
+              "type": "(message: string) => ReactNode"
+            },
+            {
+              "description": "Called when the person retries after an error; adds a retry action to the default error (ADR 0056).",
+              "name": "onRetry",
+              "required": false,
+              "type": "() => void"
+            }
+          ],
+          "source": "kits/base/react/src/ContentState.tsx",
+          "specifier": "@reddb-io/design-system/base/ContentState"
+        },
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "content-state"
+        },
+        "source": "kits/base/react/src/ContentState.tsx",
+        "specifier": "@reddb-io/design-system/base/ContentState",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "content-state"
+        },
+        "source": "kits/base/src/ContentState.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Composite",
+    "kit": "base",
+    "name": "ContentState",
+    "props": [
+      {
+        "bindable": false,
+        "default": "\"rectangle\"",
+        "description": "Basic geometry or a content silhouette. Defaults to text.",
+        "name": "shape",
+        "required": false,
+        "type": "SkeletonShape",
+        "vocabulary": [
+          "text",
+          "rectangle",
+          "circle",
+          "table",
+          "kpi",
+          "bar",
+          "column",
+          "combo",
+          "line",
+          "area",
+          "pie",
+          "donut",
+          "radial",
+          "candlestick",
+          "scatter",
+          "heatmap",
+          "graph",
+          "list",
+          "document",
+          "card"
+        ]
+      },
+      {
+        "bindable": false,
+        "default": "5",
+        "description": "Placeholder rows in table, list and heatmap shapes. Integer from 1 to 20; defaults to 5.",
+        "name": "rows",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "4",
+        "description": "Placeholder columns in table and heatmap shapes. Integer from 1 to 12; defaults to 4.",
+        "name": "columns",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "bindable": false,
+        "default": "true",
+        "description": "Enable the opacity pulse. Defaults to true; reduced-motion preferences always stop animation.",
+        "name": "animated",
+        "required": false,
+        "type": "boolean",
+        "vocabulary": [
+          "true",
+          "false"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Current initial-load outcome. The application chooses empty explicitly; zero is valid content.",
+        "name": "state",
+        "required": true,
+        "type": "ContentLoadState",
+        "vocabulary": [
+          "loading",
+          "ready",
+          "empty",
+          "error"
+        ]
+      },
+      {
+        "bindable": false,
+        "description": "Required accessible name of the region in every state.",
+        "name": "label",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Definite height reserved before the request, shared by loading, ready, empty and error. Accepts positive pixels or a CSS length (including Density token calculations); fill means 100% of a bounded parent. Overflow remains keyboard-scrollable. Omitted, content determines height and matching a skeleton shape alone cannot guarantee layout stability.",
+        "name": "height",
+        "required": false,
+        "type": "number | string"
+      },
+      {
+        "bindable": false,
+        "default": "\"No results\"",
+        "description": "Default empty-state title when no empty content is supplied. Defaults to No results.",
+        "name": "emptyTitle",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Optional explanation beneath the default empty-state title.",
+        "name": "emptyDescription",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Could not load content.\"",
+        "description": "Safe text shown in the default error alert and passed to custom failure content.",
+        "name": "errorMessage",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Override the live message for the current state; an empty string silences it. Default errors use the alert instead.",
+        "name": "announcement",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "default": "\"Retry\"",
+        "description": "Visible and accessible label of the default error's retry action, shown when a retry handler is given. Defaults to Retry.",
+        "name": "retryLabel",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Ready content. The application owns its components, data and interactions.",
+        "name": "children",
+        "required": true,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Optional loading composition instead of the default Skeleton. Keep its children decorative.",
+        "name": "loading",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Optional empty composition instead of the default EmptyState.",
+        "name": "empty",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "bindable": false,
+        "description": "Optional error composition receiving the message; it owns error and retry announcements.",
+        "name": "failure",
+        "required": false,
+        "type": "Snippet<[string]>"
+      },
+      {
+        "bindable": false,
+        "description": "Called when the person retries after an error; adds a retry action to the default error (ADR 0056).",
+        "name": "onretry",
+        "required": false,
+        "type": "() => void"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes on the outer region, including caller-owned reserved dimensions.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "purpose": "Caller-owned loading, ready, empty and error regions with predeclared height to prevent layout shifts (CLS), composing Skeleton, EmptyState and Alert around real components.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "content-state"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/core/contracts/contentstate.ts",
+        "kits/base/src/core/content-state.ts",
+        "kits/base/src/content-state.variants.ts"
+      ],
+      "tests": [
+        "kits/base/test/content-state.test.ts"
+      ],
+      "typeMappings": {
+        "children": {
+          "react": "ReactNode",
+          "reason": "Shared state transitions exercise native slot composition and request-state accessibility.",
+          "svelte": "Snippet"
+        },
+        "empty": {
+          "react": "ReactNode",
+          "reason": "Shared state transitions exercise native slot composition and request-state accessibility.",
+          "svelte": "Snippet"
+        },
+        "failure": {
+          "react": "(message: string) => ReactNode",
+          "reason": "Shared state transitions exercise native slot composition and request-state accessibility.",
+          "svelte": "Snippet<[string]>"
+        },
+        "loading": {
+          "react": "ReactNode",
+          "reason": "Shared state transitions exercise native slot composition and request-state accessibility.",
+          "svelte": "Snippet"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "Ready content. The application owns its components, data and interactions.",
+        "name": "children",
+        "required": true,
+        "type": "Snippet"
+      },
+      {
+        "description": "Optional loading composition instead of the default Skeleton. Keep its children decorative.",
+        "name": "loading",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "Optional empty composition instead of the default EmptyState.",
+        "name": "empty",
+        "required": false,
+        "type": "Snippet"
+      },
+      {
+        "description": "Optional error composition receiving the message; it owns error and retry announcements.",
+        "name": "failure",
+        "required": false,
+        "type": "Snippet<[string]>"
+      }
+    ],
+    "source": "kits/base/src/ContentState.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

@@ -6,8 +6,8 @@ export declare const commandPalette: import("tailwind-variants").TVReturnType<{
             root?: import("tailwind-variants").ClassValue;
             content?: import("tailwind-variants").ClassValue;
             heading?: import("tailwind-variants").ClassValue;
-            list?: import("tailwind-variants").ClassValue;
             search?: import("tailwind-variants").ClassValue;
+            list?: import("tailwind-variants").ClassValue;
             description?: import("tailwind-variants").ClassValue;
             keys?: import("tailwind-variants").ClassValue;
             group?: import("tailwind-variants").ClassValue;
@@ -20,8 +20,8 @@ export declare const commandPalette: import("tailwind-variants").TVReturnType<{
             root?: import("tailwind-variants").ClassValue;
             content?: import("tailwind-variants").ClassValue;
             heading?: import("tailwind-variants").ClassValue;
-            list?: import("tailwind-variants").ClassValue;
             search?: import("tailwind-variants").ClassValue;
+            list?: import("tailwind-variants").ClassValue;
             description?: import("tailwind-variants").ClassValue;
             keys?: import("tailwind-variants").ClassValue;
             group?: import("tailwind-variants").ClassValue;
@@ -44,8 +44,8 @@ export declare const commandPalette: import("tailwind-variants").TVReturnType<{
             root?: import("tailwind-variants").ClassValue;
             content?: import("tailwind-variants").ClassValue;
             heading?: import("tailwind-variants").ClassValue;
-            list?: import("tailwind-variants").ClassValue;
             search?: import("tailwind-variants").ClassValue;
+            list?: import("tailwind-variants").ClassValue;
             description?: import("tailwind-variants").ClassValue;
             keys?: import("tailwind-variants").ClassValue;
             group?: import("tailwind-variants").ClassValue;

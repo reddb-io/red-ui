@@ -18,6 +18,10 @@ export declare const developerPanelClasses: {
     detail: string;
     detailBody: string;
     row: string;
+    rowBody: string;
+    rowMeta: string;
+    rowRequest: string;
+    rowStatus: string;
     tabs: string;
     summary: string;
     summaryTarget: string;

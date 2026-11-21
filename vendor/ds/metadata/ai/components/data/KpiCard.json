@@ -8,7 +8,7 @@
     "data/BreakdownBar",
     "data/Candlestick",
     "data/CompositeChart",
-    "data/DeveloperPanel"
+    "data/DataTable"
   ],
   "contract": {
     "category": "Data display",
@@ -96,6 +96,7 @@
         {
           "name": "--reddb-color-foreground",
           "sources": [
+            "kits/base/src/type-roles.ts",
             "kits/data/src/kpi-card.variants.ts"
           ]
         },
@@ -107,36 +108,6 @@
         },
         {
           "name": "--reddb-color-muted",
-          "sources": [
-            "kits/data/src/kpi-card.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-color-on-primary",
-          "sources": [
-            "kits/data/src/kpi-card.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-color-primary",
-          "sources": [
-            "kits/data/src/kpi-card.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/data/src/kpi-card.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-weight-medium",
-          "sources": [
-            "kits/data/src/kpi-card.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-line-height-normal",
           "sources": [
             "kits/data/src/kpi-card.variants.ts"
           ]
@@ -168,23 +139,99 @@
         {
           "name": "--reddb-type-caption-font-size",
           "sources": [
+            "kits/base/src/type-roles.ts",
             "kits/data/src/kpi-card.variants.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-font-weight",
           "sources": [
+            "kits/base/src/type-roles.ts",
             "kits/data/src/kpi-card.variants.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-letter-spacing",
           "sources": [
+            "kits/base/src/type-roles.ts",
             "kits/data/src/kpi-card.variants.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts",
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/data/src/kpi-card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
           "sources": [
             "kits/data/src/kpi-card.variants.ts"
           ]
@@ -216,11 +263,6 @@
       ],
       "types": [
         {
-          "declaration": "/** @deprecated `brand` is an emphasis, not a tone (ADR 0026). Removed next release. */\nexport type DeprecatedKpiCardTone = (typeof DEPRECATED_KPI_CARD_TONES)[number];",
-          "name": "DeprecatedKpiCardTone",
-          "source": "kits/data/src/kpi-card.variants.ts"
-        },
-        {
           "declaration": "/** The tones a KpiCard accepts: the shared vocabulary Base exports (ADR 0026). */\nexport type KpiCardTone = Tone;",
           "name": "KpiCardTone",
           "source": "kits/data/src/kpi-card.variants.ts"
@@ -238,6 +280,29 @@
       ]
     },
     "events": [],
+    "guidance": {
+      "family": "Metrics",
+      "question": "Is it one reading, a row of headline readings, a trend, or a set to explore?",
+      "related": [
+        "base/Statistic",
+        "data/MetricStrip",
+        "marketing/StatBand",
+        "data/StatsExplorer"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "data/MetricStrip",
+          "text": "Several headline metrics read together."
+        },
+        {
+          "instead": "base/Statistic",
+          "text": "A plain value inside text."
+        }
+      ],
+      "whenToUse": [
+        "A headline metric on a dashboard with its change and an optional sparkline."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -299,16 +364,10 @@
             },
             {
               "default": "\"neutral\"",
-              "deprecatedValues": [
-                {
-                  "note": "`brand` is an emphasis, not a tone (ADR 0026). Removed next release.",
-                  "value": "brand"
-                }
-              ],
-              "description": "What the metric means: the shared tone vocabulary (ADR 0026), each on its Feedback Role's surface with its paired readable foreground. Defaults to `neutral`. `brand` is deprecated for one release.",
+              "description": "What the metric means: the shared tone vocabulary (ADR 0026), each on its Feedback Role's surface with its paired readable foreground. Defaults to `neutral`.",
               "name": "tone",
               "required": false,
-              "type": "KpiCardTone | DeprecatedKpiCardTone",
+              "type": "KpiCardTone",
               "vocabulary": [
                 "neutral",
                 "info",
@@ -335,7 +394,9 @@
           "specifier": "@reddb-io/design-system/data/KpiCard"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "kpi-card"
         },
         "source": "kits/data/react/src/KpiCard.tsx",
         "specifier": "@reddb-io/design-system/data/KpiCard",
@@ -343,7 +404,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "kpi-card"
         },
         "source": "kits/data/src/KpiCard.svelte",
         "specifier": "@reddb-io/design-system/data/KpiCard",
@@ -414,16 +477,10 @@
       {
         "bindable": false,
         "default": "\"neutral\"",
-        "deprecatedValues": [
-          {
-            "note": "`brand` is an emphasis, not a tone (ADR 0026). Removed next release.",
-            "value": "brand"
-          }
-        ],
-        "description": "What the metric means: the shared tone vocabulary (ADR 0026), each on its Feedback Role's surface with its paired readable foreground. Defaults to `neutral`. `brand` is deprecated for one release.",
+        "description": "What the metric means: the shared tone vocabulary (ADR 0026), each on its Feedback Role's surface with its paired readable foreground. Defaults to `neutral`.",
         "name": "tone",
         "required": false,
-        "type": "KpiCardTone | DeprecatedKpiCardTone",
+        "type": "KpiCardTone",
         "vocabulary": [
           "neutral",
           "info",
@@ -450,7 +507,9 @@
     ],
     "purpose": "A DS-owned metric summary with textual delta direction and an optional caller-supplied sparkline.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "kpi-card"
     },
     "sharedContract": {
       "core": [

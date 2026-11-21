@@ -1,7 +1,8 @@
+import type { CollectionStateContract } from "@reddb-io/design-system/base";
 import type { TableRow, TableColumn, TableChange, TableRowKey } from "../../table";
 import type { TableQueryRequest } from "../../table-explorer";
-/** Generic result grid, filtering and caller-owned query projection. */
-export interface TableExplorerContract {
+/** Generic result grid, filtering and caller-owned query projection; its state follows the shared collection contract (ADR 0056). */
+export interface TableExplorerContract extends CollectionStateContract {
     /** Accessible result name. */
     label: string;
     /** Column display and editing contracts. */
@@ -14,7 +15,8 @@ export interface TableExplorerContract {
     total?: number;
     /** Optional dataset name. */
     context?: string;
-    /** Query error, distinguished from an empty result. */
+    /** Query error, distinguished from an empty result; a non-empty value shows as `state="error"` with this message.
+     * @deprecated Use `errorMessage` with `state="error"` (ADR 0056); removed next release. */
     error?: string | null;
     /** Whether each source cell can be edited. */
     editable?: boolean | ((row: TableRow, column: TableColumn) => boolean);

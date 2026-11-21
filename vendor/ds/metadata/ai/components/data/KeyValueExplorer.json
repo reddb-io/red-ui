@@ -8,17 +8,31 @@
     "data/BreakdownBar",
     "data/Candlestick",
     "data/CompositeChart",
-    "data/DeveloperPanel"
+    "data/DataTable"
   ],
   "contract": {
     "category": "Data display",
     "documentation": {
-      "cssVariablePatterns": [],
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-type-${name}-glyph-gap",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-${name}-glyph-size",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        }
+      ],
       "cssVariables": [
         {
           "name": "--reddb-color-background",
           "sources": [
             "kits/base/src/input.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte",
             "kits/data/src/diff-explorer.variants.ts"
@@ -35,6 +49,7 @@
         {
           "name": "--reddb-color-feedback-danger-border",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
             "kits/base/src/input.variants.ts"
           ]
@@ -54,6 +69,7 @@
         {
           "name": "--reddb-color-feedback-danger-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -66,12 +82,14 @@
         {
           "name": "--reddb-color-feedback-danger-surface",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-feedback-info-border",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -90,6 +108,7 @@
         {
           "name": "--reddb-color-feedback-info-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -102,12 +121,14 @@
         {
           "name": "--reddb-color-feedback-info-surface",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-feedback-success-border",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -126,6 +147,7 @@
         {
           "name": "--reddb-color-feedback-success-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -138,12 +160,14 @@
         {
           "name": "--reddb-color-feedback-success-surface",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-feedback-warning-border",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -162,6 +186,7 @@
         {
           "name": "--reddb-color-feedback-warning-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -174,6 +199,7 @@
         {
           "name": "--reddb-color-feedback-warning-surface",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -183,6 +209,7 @@
             "kits/base/src/button.variants.ts",
             "kits/base/src/input.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte",
             "kits/data/src/diff-explorer.variants.ts"
@@ -191,9 +218,12 @@
         {
           "name": "--reddb-color-foreground",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/base/src/input.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
             "kits/base/src/type-roles.ts",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte",
@@ -204,7 +234,9 @@
           "name": "--reddb-color-ink-muted",
           "sources": [
             "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/base/src/input.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte",
@@ -214,6 +246,11 @@
         {
           "name": "--reddb-color-muted",
           "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/base/src/skeleton.variants.ts",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte",
             "kits/data/src/diff-explorer.variants.ts"
@@ -239,6 +276,40 @@
           ]
         },
         {
+          "name": "--reddb-color-primary-text",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
           "name": "--reddb-editable-text-lg",
           "sources": [
             "kits/base/src/input.variants.ts"
@@ -259,30 +330,40 @@
         {
           "name": "--reddb-font-family-mono",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
             "kits/data/src/diff-explorer.variants.ts"
           ]
         },
         {
           "name": "--reddb-font-size-base",
           "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-sm",
-          "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/data/react/src/TreeView.tsx",
-            "kits/data/src/TreeView.svelte"
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
           "name": "--reddb-font-weight-medium",
           "sources": [
+            "kits/base/src/Alert.svelte",
             "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
@@ -290,21 +371,38 @@
           "sources": [
             "kits/base/src/button.variants.ts",
             "kits/base/src/input.variants.ts",
-            "kits/data/react/src/TreeView.tsx",
-            "kits/data/src/TreeView.svelte"
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
           "name": "--reddb-line-height-tight",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-full",
+          "sources": [
+            "kits/base/src/skeleton.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-radius-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
           ]
         },
         {
           "name": "--reddb-radius-md",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts"
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
+            "kits/base/src/skeleton.variants.ts"
           ]
         },
         {
@@ -319,14 +417,18 @@
           "name": "--reddb-spatial-control-height-lg",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts"
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/skeleton.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-control-height-md",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts"
+            "kits/base/src/core/skeleton.ts",
+            "kits/base/src/input.variants.ts",
+            "kits/base/src/skeleton.variants.ts"
           ]
         },
         {
@@ -334,19 +436,29 @@
           "sources": [
             "kits/base/src/button.variants.ts",
             "kits/base/src/input.variants.ts",
+            "kits/data/react/src/KeyValueExplorer.tsx",
+            "kits/data/src/KeyValueExplorer.svelte",
             "kits/data/src/diff-explorer.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-lg",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-gap-md",
           "sources": [
-            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/data/src/diff-explorer.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-gap-sm",
           "sources": [
+            "kits/base/src/Alert.svelte",
+            "kits/base/src/ContentState.svelte",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte",
             "kits/data/src/diff-explorer.variants.ts"
@@ -355,32 +467,35 @@
         {
           "name": "--reddb-spatial-icon-size-lg",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-icon-size-md",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-icon-size-sm",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-inset-lg",
           "sources": [
             "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/base/src/input.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-inset-md",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
             "kits/base/src/input.variants.ts",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/TreeView.svelte",
@@ -390,8 +505,10 @@
         {
           "name": "--reddb-spatial-inset-sm",
           "sources": [
+            "kits/base/src/alert.variants.ts",
             "kits/base/src/button.variants.ts",
             "kits/base/src/input.variants.ts",
+            "kits/base/src/scroll-area.variants.ts",
             "kits/data/react/src/KeyValueExplorer.tsx",
             "kits/data/react/src/TreeView.tsx",
             "kits/data/src/KeyValueExplorer.svelte",
@@ -400,26 +517,92 @@
           ]
         },
         {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-gap",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-size",
+          "sources": [
+            "kits/base/src/alert.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/base/src/alert.variants.ts",
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/data/react/src/TreeView.tsx",
+            "kits/data/src/TreeView.svelte"
+          ]
+        },
+        {
           "name": "--reddb-type-caption-font-size",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-font-weight",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-letter-spacing",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
         {
           "name": "--reddb-type-caption-line-height",
           "sources": [
+            "kits/base/src/empty-state.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts",
             "kits/base/src/type-roles.ts"
           ]
         },
@@ -469,6 +652,70 @@
           "name": "--reddb-type-eyebrow-line-height",
           "sources": [
             "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
+          "sources": [
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/empty-state.variants.ts"
           ]
         }
       ],
@@ -527,7 +774,9 @@
           "specifier": "@reddb-io/design-system/data/KeyValueExplorer"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "key-value-explorer"
         },
         "source": "kits/data/react/src/KeyValueExplorer.tsx",
         "specifier": "@reddb-io/design-system/data/KeyValueExplorer",
@@ -535,7 +784,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "key-value-explorer"
         },
         "source": "kits/data/src/KeyValueExplorer.svelte",
         "specifier": "@reddb-io/design-system/data/KeyValueExplorer",
@@ -586,7 +837,9 @@
     ],
     "purpose": "Browse slash-delimited keys, filter prefixes and inspect original or nested JSON values.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "key-value-explorer"
     },
     "sharedContract": {
       "core": [

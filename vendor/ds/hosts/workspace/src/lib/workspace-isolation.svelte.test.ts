@@ -250,6 +250,27 @@ test("Collections owns queries, direct creation and per-document result options"
 });
 
 
+test("narrow screens dock the destinations below the content instead of a side rail", async () => {
+  vi.useFakeTimers();
+  const { target } = create("collections");
+  flushSync();
+  await vi.advanceTimersByTimeAsync(1050);
+  await tick();
+  flushSync();
+  const rail = target.querySelector<HTMLElement>('[data-sidebar-rail]')!;
+  const dock = target.querySelector<HTMLElement>('[data-bottom-navigation]')!;
+  expect(target.querySelectorAll('[data-sidebar-rail]')).toHaveLength(1);
+  expect(rail.className).toMatch(/(^|\s)hidden(\s|$)/);
+  expect(rail.className).toContain("md:flex");
+  expect(dock.className).toContain("md:hidden");
+  expect(dock.querySelector('[aria-current="page"]')?.textContent).toContain("Collections");
+  const labels = (nav: HTMLElement) => [...nav.querySelectorAll("a")].map(link => link.textContent?.trim());
+  expect(labels(dock)).toEqual(labels(rail));
+  // The dock follows the content, so focus reaches it after the work area.
+  const body = target.querySelector('[data-workspace-body]')!;
+  expect(body.compareDocumentPosition(dock) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+});
+
 test("query tab operations canonicalize the route once without repeating navigation", async () => {
   vi.useFakeTimers();
   const router = createStateRouter({ view: "query", collection: null, subpage: null });

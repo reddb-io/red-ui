@@ -3,15 +3,12 @@ export declare const dropdownMenu: import("tailwind-variants").TVReturnType<{
     size: {
         sm: {
             item: string;
-            icon: string;
         };
         md: {
             item: string;
-            icon: string;
         };
         lg: {
             item: string;
-            icon: string;
         };
     };
 }, {
@@ -27,15 +24,12 @@ export declare const dropdownMenu: import("tailwind-variants").TVReturnType<{
     size: {
         sm: {
             item: string;
-            icon: string;
         };
         md: {
             item: string;
-            icon: string;
         };
         lg: {
             item: string;
-            icon: string;
         };
     };
 }, {
@@ -51,15 +45,12 @@ export declare const dropdownMenu: import("tailwind-variants").TVReturnType<{
     size: {
         sm: {
             item: string;
-            icon: string;
         };
         md: {
             item: string;
-            icon: string;
         };
         lg: {
             item: string;
-            icon: string;
         };
     };
 }, {

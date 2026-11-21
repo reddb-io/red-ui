@@ -14,7 +14,7 @@
 </script>
 
     <div data-workspace-body class="flex min-h-0 min-w-0 overflow-hidden">
-    <WorkspaceNavigation {label} />
+    <WorkspaceNavigation {label} placement="rail" />
     <svelte:element this={workspace.persistenceKey === 'default' ? 'main' : 'div'} class="relative min-h-0 min-w-0 flex-1 overflow-hidden z-[1]">
       {#if router.view === 'ask'}
         <AskView />

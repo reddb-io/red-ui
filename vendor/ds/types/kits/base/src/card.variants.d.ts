@@ -56,18 +56,6 @@ export declare const card: import("tailwind-variants").TVReturnType<{
             readonly body: "text-[var(--reddb-color-feedback-info-foreground)]";
             readonly footer: "text-[var(--reddb-color-feedback-info-foreground)]";
         };
-        /**
-         * @deprecated The accent is an emphasis, not a tone (ADR 0026): kept one
-         * release with its accent fill, then removed. Use a tone, or `neutral`.
-         */
-        readonly brand: {
-            readonly root: "bg-[var(--reddb-color-primary)] text-[var(--reddb-color-on-primary)]";
-            readonly header: "text-[var(--reddb-color-on-primary)]";
-            readonly title: "text-[var(--reddb-color-on-primary)]";
-            readonly description: "text-[var(--reddb-color-on-primary)]";
-            readonly body: "text-[var(--reddb-color-on-primary)]";
-            readonly footer: "text-[var(--reddb-color-on-primary)]";
-        };
     };
     padding: {
         readonly none: {
@@ -159,7 +147,7 @@ export declare const card: import("tailwind-variants").TVReturnType<{
         readonly background: {
             readonly root: "relative isolate";
             readonly media: "absolute inset-0 size-full";
-            readonly content: "relative z-10";
+            readonly content: "relative z-[var(--reddb-layer-raised)]";
         };
     };
 }, {
@@ -230,18 +218,6 @@ export declare const card: import("tailwind-variants").TVReturnType<{
             readonly body: "text-[var(--reddb-color-feedback-info-foreground)]";
             readonly footer: "text-[var(--reddb-color-feedback-info-foreground)]";
         };
-        /**
-         * @deprecated The accent is an emphasis, not a tone (ADR 0026): kept one
-         * release with its accent fill, then removed. Use a tone, or `neutral`.
-         */
-        readonly brand: {
-            readonly root: "bg-[var(--reddb-color-primary)] text-[var(--reddb-color-on-primary)]";
-            readonly header: "text-[var(--reddb-color-on-primary)]";
-            readonly title: "text-[var(--reddb-color-on-primary)]";
-            readonly description: "text-[var(--reddb-color-on-primary)]";
-            readonly body: "text-[var(--reddb-color-on-primary)]";
-            readonly footer: "text-[var(--reddb-color-on-primary)]";
-        };
     };
     padding: {
         readonly none: {
@@ -333,7 +309,7 @@ export declare const card: import("tailwind-variants").TVReturnType<{
         readonly background: {
             readonly root: "relative isolate";
             readonly media: "absolute inset-0 size-full";
-            readonly content: "relative z-10";
+            readonly content: "relative z-[var(--reddb-layer-raised)]";
         };
     };
 }, {
@@ -404,18 +380,6 @@ export declare const card: import("tailwind-variants").TVReturnType<{
             readonly body: "text-[var(--reddb-color-feedback-info-foreground)]";
             readonly footer: "text-[var(--reddb-color-feedback-info-foreground)]";
         };
-        /**
-         * @deprecated The accent is an emphasis, not a tone (ADR 0026): kept one
-         * release with its accent fill, then removed. Use a tone, or `neutral`.
-         */
-        readonly brand: {
-            readonly root: "bg-[var(--reddb-color-primary)] text-[var(--reddb-color-on-primary)]";
-            readonly header: "text-[var(--reddb-color-on-primary)]";
-            readonly title: "text-[var(--reddb-color-on-primary)]";
-            readonly description: "text-[var(--reddb-color-on-primary)]";
-            readonly body: "text-[var(--reddb-color-on-primary)]";
-            readonly footer: "text-[var(--reddb-color-on-primary)]";
-        };
     };
     padding: {
         readonly none: {
@@ -507,7 +471,7 @@ export declare const card: import("tailwind-variants").TVReturnType<{
         readonly background: {
             readonly root: "relative isolate";
             readonly media: "absolute inset-0 size-full";
-            readonly content: "relative z-10";
+            readonly content: "relative z-[var(--reddb-layer-raised)]";
         };
     };
 }, {
@@ -526,8 +490,6 @@ export declare const card: import("tailwind-variants").TVReturnType<{
 export type CardVariants = VariantProps<typeof card>;
 export type CardVariant = NonNullable<CardVariants["variant"]>;
 export type CardTone = Tone;
-/** @deprecated `brand` is an emphasis, not a tone (ADR 0026). Removed next release. */
-export type DeprecatedCardTone = (typeof DEPRECATED_CARD_TONES)[number];
 export type CardPadding = NonNullable<CardVariants["padding"]>;
 export type CardActionsAlign = NonNullable<CardVariants["actionsAlign"]>;
 export type CardOrientation = NonNullable<CardVariants["orientation"]>;
@@ -538,8 +500,6 @@ export type CardMediaSpan = NonNullable<CardVariants["span"]>;
 export declare const CARD_VARIANTS: readonly CardVariant[];
 /** The tones a Card accepts: the shared vocabulary (ADR 0026). */
 export declare const CARD_TONES: readonly ["neutral", "info", "success", "warning", "danger"];
-/** Tone values kept for one release (ADR 0026): `brand` still draws its accent fill, and warns. */
-export declare const DEPRECATED_CARD_TONES: readonly ["brand"];
 export declare const CARD_PADDINGS: readonly CardPadding[];
 export declare const CARD_ACTIONS_ALIGNMENTS: readonly CardActionsAlign[];
 export declare const CARD_ORIENTATIONS: readonly CardOrientation[];

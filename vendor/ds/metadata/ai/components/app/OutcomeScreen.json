@@ -3,6 +3,7 @@
   "id": "app/OutcomeScreen",
   "topics": [],
   "related": [
+    "app/ApprovalPrompt",
     "app/ErrorBoundary"
   ],
   "contract": {
@@ -214,6 +215,28 @@
       ]
     },
     "events": [],
+    "guidance": {
+      "family": "Empty and outcome states",
+      "question": "Is there nothing to show, is the content still uncertain, or did an operation just finish?",
+      "related": [
+        "base/EmptyState",
+        "base/ContentState",
+        "base/StateIllustration"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "base/Notification",
+          "text": "A short confirmation that should not take over the page."
+        },
+        {
+          "instead": "base/EmptyState",
+          "text": "A list that is empty."
+        }
+      ],
+      "whenToUse": [
+        "A whole task succeeded or failed, and the screen explains what happened and what to do next."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -306,7 +329,9 @@
           "specifier": "@reddb-io/design-system/app/OutcomeScreen"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "outcome-screen"
         },
         "source": "kits/app/react/src/OutcomeScreen.tsx",
         "specifier": "@reddb-io/design-system/app/OutcomeScreen",
@@ -314,7 +339,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "outcome-screen"
         },
         "source": "kits/app/src/composites/OutcomeScreen.svelte",
         "specifier": "@reddb-io/design-system/app",
@@ -416,7 +443,9 @@
     ],
     "purpose": "Present a successful or failed operation with an illustration, guidance and caller-owned actions.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "outcome-screen"
     },
     "sharedContract": {
       "core": [

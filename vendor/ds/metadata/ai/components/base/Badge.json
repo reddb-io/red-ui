@@ -96,7 +96,8 @@
         {
           "name": "--reddb-color-foreground",
           "sources": [
-            "kits/base/src/badge.variants.ts"
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/type-roles.ts"
           ]
         },
         {
@@ -112,31 +113,13 @@
           ]
         },
         {
-          "name": "--reddb-color-on-primary",
-          "sources": [
-            "kits/base/src/badge.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-color-primary",
-          "sources": [
-            "kits/base/src/badge.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-xs",
-          "sources": [
-            "kits/base/src/badge.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-font-weight-medium",
           "sources": [
             "kits/base/src/badge.variants.ts"
           ]
         },
         {
-          "name": "--reddb-line-height-normal",
+          "name": "--reddb-glyph-gap",
           "sources": [
             "kits/base/src/badge.variants.ts"
           ]
@@ -154,9 +137,97 @@
           ]
         },
         {
-          "name": "--reddb-spatial-gap-sm",
+          "name": "--reddb-spatial-gap-md",
           "sources": [
             "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-glyph-gap",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-glyph-size",
+          "sources": [
+            "kits/base/src/badge.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/badge.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
           ]
         }
       ],
@@ -164,11 +235,6 @@
         {
           "declaration": "export type BadgeVariant = (typeof BADGE_VARIANTS)[number];",
           "name": "BadgeVariant",
-          "source": "kits/base/src/badge.variants.ts"
-        },
-        {
-          "declaration": "/** @deprecated `neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release. */\nexport type DeprecatedBadgeVariant = keyof typeof DEPRECATED_BADGE_VARIANTS;",
-          "name": "DeprecatedBadgeVariant",
           "source": "kits/base/src/badge.variants.ts"
         },
         {
@@ -182,6 +248,25 @@
     "forwardsAttributesTo": [
       "<span>"
     ],
+    "guidance": {
+      "family": "Status marks",
+      "question": "Is it a status beside text, a removable tag or filter, a counted category, or a node's reachability?",
+      "related": [
+        "base/StatusIndicator",
+        "app/Pill",
+        "marketing/CategoryChip",
+        "app/NodeBadge"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "app/Pill",
+          "text": "A tag the person can remove or toggle."
+        }
+      ],
+      "whenToUse": [
+        "A short label inside running text or a cell: a version, a role, a tone."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -230,7 +315,9 @@
           "specifier": "@reddb-io/design-system/base/Badge"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "badge"
         },
         "source": "kits/base/react/src/Badge.tsx",
         "specifier": "@reddb-io/design-system/base/Badge",
@@ -276,22 +363,10 @@
       {
         "bindable": false,
         "default": "\"tinted\"",
-        "deprecatedValues": [
-          {
-            "note": "`neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release.",
-            "replacement": "tinted",
-            "value": "neutral"
-          },
-          {
-            "note": "`neutral` is `variant=\"tinted\"`; `primary` is a filled tone. Removed next release.",
-            "replacement": "filled",
-            "value": "primary"
-          }
-        ],
-        "description": "How strongly the tone is drawn: `tinted` (default), `filled` or `outline`. `neutral` and `primary` are deprecated for one release.",
+        "description": "How strongly the tone is drawn: `tinted` (default), `filled` or `outline`.",
         "name": "variant",
         "required": false,
-        "type": "BadgeVariant | DeprecatedBadgeVariant",
+        "type": "BadgeVariant",
         "vocabulary": [
           "tinted",
           "filled",

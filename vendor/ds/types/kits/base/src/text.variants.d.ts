@@ -2,6 +2,8 @@ import { type VariantProps } from "tailwind-variants";
 export declare const text: import("tailwind-variants").TVReturnType<{
     role: {
         readonly body: "text-body";
+        readonly label: "text-label";
+        readonly code: "text-code";
         readonly caption: "text-caption";
     };
     ink: {
@@ -11,6 +13,8 @@ export declare const text: import("tailwind-variants").TVReturnType<{
 }, undefined, "", {
     role: {
         readonly body: "text-body";
+        readonly label: "text-label";
+        readonly code: "text-code";
         readonly caption: "text-caption";
     };
     ink: {
@@ -20,6 +24,8 @@ export declare const text: import("tailwind-variants").TVReturnType<{
 }, undefined, import("tailwind-variants").TVReturnTypeLike<{
     role: {
         readonly body: "text-body";
+        readonly label: "text-label";
+        readonly code: "text-code";
         readonly caption: "text-caption";
     };
     ink: {
@@ -37,9 +43,3 @@ export declare const TEXT_ELEMENTS: readonly ["p", "span", "div", "small"];
 export type TextElement = (typeof TEXT_ELEMENTS)[number];
 /** A caption supports what it sits under, so it reads muted unless told otherwise. */
 export declare function defaultTextInk(role: TextRole): TextInk;
-/** @deprecated Text's ink is `ink` (ADR 0026); use `TextInk`. Removed next release. */
-export type TextTone = TextInk;
-/** @deprecated Text's ink is `ink` (ADR 0026); use `TEXT_INKS`. Removed next release. */
-export declare const TEXT_TONES: readonly TextInk[];
-/** @deprecated Text's ink is `ink` (ADR 0026); use `defaultTextInk`. Removed next release. */
-export declare const defaultTextTone: typeof defaultTextInk;

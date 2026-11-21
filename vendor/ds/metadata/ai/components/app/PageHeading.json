@@ -35,18 +35,6 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/app/src/composites/page-heading.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-line-height-normal",
-          "sources": [
-            "kits/app/src/composites/page-heading.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-spatial-gap-lg",
           "sources": [
             "kits/app/src/composites/page-heading.variants.ts",
@@ -94,6 +82,30 @@
           "name": "--reddb-spatial-section-gap",
           "sources": [
             "kits/base/src/stack.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/app/src/composites/page-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/app/src/composites/page-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/app/src/composites/page-heading.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/app/src/composites/page-heading.variants.ts"
           ]
         },
         {
@@ -227,6 +239,24 @@
     "forwardsAttributesTo": [
       "<div>"
     ],
+    "guidance": {
+      "family": "Headings",
+      "question": "Is it the page's one heading, a section, a card's heading, or a heading anywhere else?",
+      "related": [
+        "base/SectionHeading",
+        "app/CardHeading",
+        "base/Heading"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "base/SectionHeading",
+          "text": "A section inside the page."
+        }
+      ],
+      "whenToUse": [
+        "The one h1 of an application page, with context and actions."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -273,7 +303,9 @@
           "specifier": "@reddb-io/design-system/app/PageHeading"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "page-heading"
         },
         "source": "kits/app/react/src/PageHeading.tsx",
         "specifier": "@reddb-io/design-system/app/PageHeading",

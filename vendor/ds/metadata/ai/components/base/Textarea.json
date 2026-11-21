@@ -196,7 +196,9 @@
           "specifier": "@reddb-io/design-system/base/Textarea"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "textarea"
         },
         "source": "kits/base/react/src/Textarea.tsx",
         "specifier": "@reddb-io/design-system/base/Textarea",

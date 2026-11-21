@@ -8,7 +8,7 @@
     "data/BreakdownBar",
     "data/Candlestick",
     "data/CompositeChart",
-    "data/DeveloperRequestInspector"
+    "data/DataTable"
   ],
   "contract": {
     "category": "Data display",
@@ -29,18 +29,9 @@
       ],
       "cssVariables": [
         {
-          "name": "--reddb-color-background",
-          "sources": [
-            "kits/app/src/composites/toolbar.variants.ts",
-            "kits/base/src/badge.variants.ts",
-            "kits/base/src/input.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-color-control-edge",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts",
             "kits/data/src/developer-panel.variants.ts"
           ]
         },
@@ -65,9 +56,7 @@
         {
           "name": "--reddb-color-feedback-danger-border",
           "sources": [
-            "kits/base/src/badge.variants.ts",
-            "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts"
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -85,7 +74,6 @@
         {
           "name": "--reddb-color-feedback-danger-foreground",
           "sources": [
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -98,14 +86,12 @@
         {
           "name": "--reddb-color-feedback-danger-surface",
           "sources": [
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-feedback-info-border",
           "sources": [
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -124,7 +110,6 @@
         {
           "name": "--reddb-color-feedback-info-foreground",
           "sources": [
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -137,14 +122,12 @@
         {
           "name": "--reddb-color-feedback-info-surface",
           "sources": [
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-feedback-success-border",
           "sources": [
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -163,7 +146,6 @@
         {
           "name": "--reddb-color-feedback-success-foreground",
           "sources": [
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -176,14 +158,12 @@
         {
           "name": "--reddb-color-feedback-success-surface",
           "sources": [
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-feedback-warning-border",
           "sources": [
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -202,7 +182,6 @@
         {
           "name": "--reddb-color-feedback-warning-foreground",
           "sources": [
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -215,7 +194,6 @@
         {
           "name": "--reddb-color-feedback-warning-surface",
           "sources": [
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -223,8 +201,6 @@
           "name": "--reddb-color-focus",
           "sources": [
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts",
-            "kits/base/src/link.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
             "kits/base/src/tabs.variants.ts",
             "kits/data/src/developer-panel.variants.ts"
@@ -233,11 +209,7 @@
         {
           "name": "--reddb-color-foreground",
           "sources": [
-            "kits/app/src/primitives/list-row.variants.ts",
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts",
-            "kits/base/src/link.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
             "kits/base/src/tabs.variants.ts",
             "kits/base/src/type-roles.ts",
@@ -249,9 +221,7 @@
         {
           "name": "--reddb-color-ink-muted",
           "sources": [
-            "kits/app/src/primitives/list-row.variants.ts",
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
             "kits/base/src/tabs.variants.ts",
             "kits/data/src/developer-panel.variants.ts"
@@ -260,30 +230,19 @@
         {
           "name": "--reddb-color-muted",
           "sources": [
-            "kits/app/src/composites/toolbar.variants.ts",
-            "kits/app/src/primitives/list-row.variants.ts",
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/tabs.variants.ts",
             "kits/data/src/developer-panel.variants.ts"
           ]
         },
         {
-          "name": "--reddb-color-on-feedback",
-          "sources": [
-            "kits/base/src/badge.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-color-on-primary",
           "sources": [
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-color-primary",
           "sources": [
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
@@ -294,21 +253,28 @@
           ]
         },
         {
-          "name": "--reddb-editable-text-lg",
+          "name": "--reddb-color-state-hover",
           "sources": [
-            "kits/base/src/input.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
-          "name": "--reddb-editable-text-md",
+          "name": "--reddb-color-state-open",
           "sources": [
-            "kits/base/src/input.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
-          "name": "--reddb-editable-text-sm",
+          "name": "--reddb-color-state-pressed",
           "sources": [
-            "kits/base/src/input.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts",
+            "kits/base/src/tabs.variants.ts"
           ]
         },
         {
@@ -320,76 +286,66 @@
         {
           "name": "--reddb-font-size-base",
           "sources": [
-            "kits/app/src/composites/toolbar.variants.ts",
             "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/app/src/composites/toolbar.variants.ts",
-            "kits/app/src/primitives/list-row.variants.ts",
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-font-size-xs",
-          "sources": [
-            "kits/app/src/primitives/list-row.variants.ts",
-            "kits/base/src/badge.variants.ts"
           ]
         },
         {
           "name": "--reddb-font-weight-medium",
           "sources": [
-            "kits/app/src/primitives/list-row.variants.ts",
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts",
             "kits/base/src/quiet-control.variants.ts",
             "kits/base/src/tabs.variants.ts",
             "kits/data/react/src/DeveloperPanel.tsx",
-            "kits/data/react/src/DeveloperRequestInspector.tsx",
-            "kits/data/src/DeveloperPanel.svelte",
-            "kits/data/src/DeveloperRequestInspector.svelte"
+            "kits/data/src/DeveloperPanel.svelte"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/core/icon.ts"
+          ]
+        },
+        {
+          "name": "--reddb-layer-dock",
+          "sources": [
+            "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-layer-raised",
+          "sources": [
+            "kits/data/src/developer-panel.variants.ts"
           ]
         },
         {
           "name": "--reddb-line-height-normal",
           "sources": [
-            "kits/app/src/composites/toolbar.variants.ts",
-            "kits/app/src/primitives/list-row.variants.ts",
-            "kits/base/src/badge.variants.ts",
-            "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts"
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-line-height-tight",
           "sources": [
-            "kits/base/src/badge.variants.ts",
             "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-radius-md",
           "sources": [
-            "kits/app/src/composites/Toolbar.svelte",
-            "kits/app/src/composites/toolbar.variants.ts",
-            "kits/base/src/badge.variants.ts",
-            "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts"
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-radius-none",
           "sources": [
             "kits/base/src/tabs.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-radius-sm",
-          "sources": [
-            "kits/base/src/link.variants.ts"
           ]
         },
         {
@@ -401,9 +357,8 @@
         {
           "name": "--reddb-spatial-control-height-lg",
           "sources": [
-            "kits/app/src/composites/toolbar.variants.ts",
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts",
+            "kits/base/src/tabs.variants.ts",
             "kits/data/react/src/DeveloperPanel.tsx",
             "kits/data/src/DeveloperPanel.svelte"
           ]
@@ -411,10 +366,8 @@
         {
           "name": "--reddb-spatial-control-height-md",
           "sources": [
-            "kits/app/src/composites/toolbar.variants.ts",
-            "kits/app/src/primitives/list-row.variants.ts",
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts",
+            "kits/base/src/tabs.variants.ts",
             "kits/data/react/src/DeveloperPanel.tsx",
             "kits/data/src/DeveloperPanel.svelte",
             "kits/data/src/developer-panel.variants.ts"
@@ -423,72 +376,34 @@
         {
           "name": "--reddb-spatial-control-height-sm",
           "sources": [
-            "kits/app/src/composites/toolbar.variants.ts",
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts",
             "kits/base/src/tabs.variants.ts",
             "kits/data/src/developer-panel.variants.ts"
           ]
         },
         {
-          "name": "--reddb-spatial-gap-lg",
-          "sources": [
-            "kits/app/src/primitives/list-row.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-spatial-gap-md",
           "sources": [
-            "kits/app/src/primitives/list-row.variants.ts",
-            "kits/base/src/button.variants.ts",
             "kits/data/src/developer-panel.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-gap-sm",
           "sources": [
-            "kits/app/src/composites/toolbar.variants.ts",
-            "kits/base/src/badge.variants.ts",
-            "kits/base/src/link.variants.ts",
             "kits/base/src/tabs.variants.ts",
-            "kits/data/react/src/DeveloperRequestInspector.tsx",
-            "kits/data/src/DeveloperRequestInspector.svelte",
             "kits/data/src/developer-panel.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-lg",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-inset-lg",
           "sources": [
-            "kits/app/src/composites/toolbar.variants.ts",
-            "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts"
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
           "name": "--reddb-spatial-inset-md",
           "sources": [
-            "kits/app/src/composites/toolbar.variants.ts",
-            "kits/app/src/primitives/list-row.variants.ts",
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts",
             "kits/base/src/tabs.variants.ts",
             "kits/data/src/developer-panel.variants.ts"
           ]
@@ -496,11 +411,14 @@
         {
           "name": "--reddb-spatial-inset-sm",
           "sources": [
-            "kits/app/src/composites/toolbar.variants.ts",
-            "kits/app/src/primitives/list-row.variants.ts",
             "kits/base/src/button.variants.ts",
-            "kits/base/src/input.variants.ts",
             "kits/data/src/developer-panel.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -536,9 +454,7 @@
           "sources": [
             "kits/base/src/type-roles.ts",
             "kits/data/react/src/DeveloperPanel.tsx",
-            "kits/data/react/src/DeveloperRequestInspector.tsx",
             "kits/data/src/DeveloperPanel.svelte",
-            "kits/data/src/DeveloperRequestInspector.svelte",
             "kits/data/src/developer-panel.variants.ts"
           ]
         },
@@ -547,9 +463,7 @@
           "sources": [
             "kits/base/src/type-roles.ts",
             "kits/data/react/src/DeveloperPanel.tsx",
-            "kits/data/react/src/DeveloperRequestInspector.tsx",
             "kits/data/src/DeveloperPanel.svelte",
-            "kits/data/src/DeveloperRequestInspector.svelte",
             "kits/data/src/developer-panel.variants.ts"
           ]
         },
@@ -558,9 +472,7 @@
           "sources": [
             "kits/base/src/type-roles.ts",
             "kits/data/react/src/DeveloperPanel.tsx",
-            "kits/data/react/src/DeveloperRequestInspector.tsx",
             "kits/data/src/DeveloperPanel.svelte",
-            "kits/data/src/DeveloperRequestInspector.svelte",
             "kits/data/src/developer-panel.variants.ts"
           ]
         },
@@ -569,9 +481,7 @@
           "sources": [
             "kits/base/src/type-roles.ts",
             "kits/data/react/src/DeveloperPanel.tsx",
-            "kits/data/react/src/DeveloperRequestInspector.tsx",
             "kits/data/src/DeveloperPanel.svelte",
-            "kits/data/src/DeveloperRequestInspector.svelte",
             "kits/data/src/developer-panel.variants.ts"
           ]
         },
@@ -622,6 +532,42 @@
           "sources": [
             "kits/base/src/type-roles.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
         }
       ],
       "types": [
@@ -629,16 +575,6 @@
           "declaration": "/** A host-defined developer panel context. */\nexport interface DeveloperPanelContext {\n  /** Stable identifier for this context. */\n  value: string;\n  /** Visible context name. */\n  label: string;\n}",
           "name": "DeveloperPanelContext",
           "source": "kits/data/src/core/contracts/developerpanel.ts"
-        },
-        {
-          "declaration": "/** A caller-supplied request. The caller owns collection, redaction and retention. */\nexport interface DeveloperRequest {\n  /** Stable identifier within the request list. */\n  id: string;\n  /** Method or operation, for example GET or SELECT. */\n  method: string;\n  /** Sanitized URL or logical target. */\n  target: string;\n  /** Response status or transport state. */\n  status: string;\n  /** Optional source or category supplied by the host, such as an API name. */\n  source?: string;\n  /** Optional display-ready capture time supplied by the host. */\n  timeLabel?: string;\n  /** Total duration in milliseconds when measured. */\n  durationMs?: number;\n  /** Sanitized request headers, preserving duplicate names. */\n  requestHeaders?: readonly (readonly [string, string])[];\n  /** Sanitized response headers, preserving duplicate names. */\n  responseHeaders?: readonly (readonly [string, string])[];\n  /** Sanitized request body, if supplied. */\n  requestBody?: string;\n  /** Sanitized response body, if supplied. */\n  responseBody?: string;\n  /** Measured request phases. Missing phases are not inferred. */\n  phases?: readonly RequestPhase[];\n  /** Caller-supplied connection facts such as protocol, remote address or TLS version. */\n  connection?: readonly (readonly [string, string])[];\n  /** Transport failure, if any. */\n  error?: string;\n}",
-          "name": "DeveloperRequest",
-          "source": "kits/data/src/developer-panel.ts"
-        },
-        {
-          "declaration": "/** A measured phase of a request. Times are offsets and durations in milliseconds. */\nexport interface RequestPhase {\n  /** Human-readable phase, such as DNS, TCP or TLS. */\n  label: string;\n  /** Offset from the start of the request in milliseconds. */\n  startMs: number;\n  /** Duration of this phase in milliseconds. */\n  durationMs: number;\n}",
-          "name": "RequestPhase",
-          "source": "kits/data/src/developer-panel.ts"
         }
       ]
     },
@@ -648,16 +584,6 @@
         "dialect": "open",
         "name": "onopenchange",
         "type": "(open: boolean) => void"
-      },
-      {
-        "deprecated": {
-          "note": "Use `contextContent` to compose DeveloperRequestInspector with this handler; removed next release.",
-          "replacement": "contextContent"
-        },
-        "description": "Legacy callback for clearing the request log.",
-        "dialect": "alias",
-        "name": "onrequestschange",
-        "type": "(requests: readonly DeveloperRequest[]) => void"
       }
     ],
     "implementations": {
@@ -675,12 +601,6 @@
               "name": "label",
               "required": false,
               "type": "string"
-            },
-            {
-              "description": "Legacy request snapshot, enabling the built-in Requests context.",
-              "name": "requests",
-              "required": false,
-              "type": "readonly DeveloperRequest[]"
             },
             {
               "default": "[]",
@@ -735,13 +655,7 @@
               "type": "(open: boolean) => void"
             },
             {
-              "description": "Legacy callback for clearing the request log.",
-              "name": "onRequestsChange",
-              "required": false,
-              "type": "(requests: readonly DeveloperRequest[]) => void"
-            },
-            {
-              "description": "Caller-owned panel content; the legacy requests prop renders it in the Tools view.",
+              "description": "Caller-owned panel content, shown when no `contextContent` is supplied.",
               "name": "children",
               "required": false,
               "type": "ReactNode"
@@ -757,12 +671,6 @@
               "name": "contextToolbar",
               "required": false,
               "type": "(item: { value: string }) => ReactNode"
-            },
-            {
-              "description": "Legacy actions for the selected request.",
-              "name": "requestActions",
-              "required": false,
-              "type": "(request: DeveloperRequest) => ReactNode"
             },
             {
               "description": "Optional header controls before the close button.",
@@ -782,7 +690,9 @@
           "specifier": "@reddb-io/design-system/data/DeveloperPanel"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "developer-panel"
         },
         "source": "kits/data/react/src/DeveloperPanel.tsx",
         "specifier": "@reddb-io/design-system/data/DeveloperPanel",
@@ -790,7 +700,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "developer-panel"
         },
         "source": "kits/data/src/DeveloperPanel.svelte",
         "specifier": "@reddb-io/design-system/data/DeveloperPanel",
@@ -808,17 +720,6 @@
         "name": "label",
         "required": false,
         "type": "string"
-      },
-      {
-        "bindable": false,
-        "deprecated": {
-          "note": "Use `contextContent` to compose DeveloperRequestInspector; removed next release.",
-          "replacement": "contextContent"
-        },
-        "description": "Legacy request snapshot, enabling the built-in Requests context.",
-        "name": "requests",
-        "required": false,
-        "type": "readonly DeveloperRequest[]"
       },
       {
         "bindable": false,
@@ -880,18 +781,7 @@
       },
       {
         "bindable": false,
-        "deprecated": {
-          "note": "Use `contextContent` to compose DeveloperRequestInspector with this handler; removed next release.",
-          "replacement": "contextContent"
-        },
-        "description": "Legacy callback for clearing the request log.",
-        "name": "onrequestschange",
-        "required": false,
-        "type": "(requests: readonly DeveloperRequest[]) => void"
-      },
-      {
-        "bindable": false,
-        "description": "Caller-owned panel content; the legacy requests prop renders it in the Tools view.",
+        "description": "Caller-owned panel content, shown when no `contextContent` is supplied.",
         "name": "children",
         "required": false,
         "type": "Snippet"
@@ -912,17 +802,6 @@
       },
       {
         "bindable": false,
-        "deprecated": {
-          "note": "Use `contextContent` to compose DeveloperRequestInspector with these actions; removed next release.",
-          "replacement": "contextContent"
-        },
-        "description": "Legacy actions for the selected request.",
-        "name": "requestActions",
-        "required": false,
-        "type": "Snippet<[DeveloperRequest]>"
-      },
-      {
-        "bindable": false,
         "description": "Optional header controls before the close button.",
         "name": "headerActions",
         "required": false,
@@ -939,7 +818,9 @@
     ],
     "purpose": "Dock and resize caller-owned developer content with optional context tabs.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "developer-panel"
     },
     "sharedContract": {
       "core": [
@@ -976,7 +857,7 @@
     },
     "snippets": [
       {
-        "description": "Caller-owned panel content; the legacy requests prop renders it in the Tools view.",
+        "description": "Caller-owned panel content, shown when no `contextContent` is supplied.",
         "name": "children",
         "required": false,
         "type": "Snippet"
@@ -992,12 +873,6 @@
         "name": "contextToolbar",
         "required": false,
         "type": "Snippet<[{ value: string }]>"
-      },
-      {
-        "description": "Legacy actions for the selected request.",
-        "name": "requestActions",
-        "required": false,
-        "type": "Snippet<[DeveloperRequest]>"
       },
       {
         "description": "Optional header controls before the close button.",

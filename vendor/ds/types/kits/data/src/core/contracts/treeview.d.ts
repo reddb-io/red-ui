@@ -1,6 +1,7 @@
+import type { CollectionStateContract } from "@reddb-io/design-system/base";
 import type { TreeNode } from "../../tree";
-/** Portable TreeView properties shared by native adapters. */
-export interface TreeViewContract {
+/** Portable TreeView properties shared by native adapters; its state follows the shared collection contract (ADR 0056). */
+export interface TreeViewContract extends CollectionStateContract {
     /** Required visible name for the tree. */
     label: string;
     /**

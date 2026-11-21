@@ -25,6 +25,18 @@
           "sources": [
             "kits/base/src/core/icon.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-${name}-glyph-gap",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-${name}-glyph-size",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
         }
       ],
       "cssVariables": [
@@ -122,7 +134,8 @@
         {
           "name": "--reddb-color-foreground",
           "sources": [
-            "kits/base/src/card.variants.ts"
+            "kits/base/src/card.variants.ts",
+            "kits/base/src/type-roles.ts"
           ]
         },
         {
@@ -139,18 +152,6 @@
           ]
         },
         {
-          "name": "--reddb-color-on-primary",
-          "sources": [
-            "kits/base/src/card.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-color-primary",
-          "sources": [
-            "kits/base/src/card.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-color-primary-text",
           "sources": [
             "kits/base/src/loading-indicator.variants.ts"
@@ -159,25 +160,25 @@
         {
           "name": "--reddb-font-size-base",
           "sources": [
-            "kits/base/src/card.variants.ts",
             "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-glyph-gap",
           "sources": [
             "kits/base/src/card.variants.ts",
             "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-size-xs",
+          "name": "--reddb-glyph-size",
           "sources": [
+            "kits/base/src/core/icon.ts",
             "kits/base/src/loading-indicator.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-weight-medium",
+          "name": "--reddb-layer-raised",
           "sources": [
             "kits/base/src/card.variants.ts"
           ]
@@ -185,7 +186,6 @@
         {
           "name": "--reddb-line-height-normal",
           "sources": [
-            "kits/base/src/card.variants.ts",
             "kits/base/src/loading-indicator.variants.ts"
           ]
         },
@@ -211,8 +211,7 @@
         {
           "name": "--reddb-spatial-gap-md",
           "sources": [
-            "kits/base/src/card.variants.ts",
-            "kits/base/src/loading-indicator.variants.ts"
+            "kits/base/src/card.variants.ts"
           ]
         },
         {
@@ -255,6 +254,146 @@
         },
         {
           "name": "--reddb-spatial-layout-gap-sm",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-size",
+          "sources": [
+            "kits/base/src/card.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-font-weight",
+          "sources": [
+            "kits/base/src/card.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-gap",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-glyph-size",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-letter-spacing",
+          "sources": [
+            "kits/base/src/card.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-body-line-height",
+          "sources": [
+            "kits/base/src/card.variants.ts",
+            "kits/base/src/loading-indicator.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/loading-indicator.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-size",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-font-weight",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-letter-spacing",
+          "sources": [
+            "kits/base/src/card.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-heading-line-height",
           "sources": [
             "kits/base/src/card.variants.ts"
           ]
@@ -309,11 +448,6 @@
         {
           "declaration": "export type CardVariants = VariantProps<typeof card>;",
           "name": "CardVariants",
-          "source": "kits/base/src/card.variants.ts"
-        },
-        {
-          "declaration": "/** @deprecated `brand` is an emphasis, not a tone (ADR 0026). Removed next release. */\nexport type DeprecatedCardTone = (typeof DEPRECATED_CARD_TONES)[number];",
-          "name": "DeprecatedCardTone",
           "source": "kits/base/src/card.variants.ts"
         },
         {
@@ -421,16 +555,10 @@
             },
             {
               "default": "\"neutral\"",
-              "deprecatedValues": [
-                {
-                  "note": "`brand` is an emphasis, not a tone (ADR 0026). Removed next release.",
-                  "value": "brand"
-                }
-              ],
-              "description": "What the Card means: the shared tone vocabulary (ADR 0026), each on its Feedback Role's surface and paired readable foreground. Defaults to `neutral`. `brand` is deprecated for one release.",
+              "description": "What the Card means: the shared tone vocabulary (ADR 0026), each on its Feedback Role's surface and paired readable foreground. Defaults to `neutral`.",
               "name": "tone",
               "required": false,
-              "type": "CardTone | DeprecatedCardTone",
+              "type": "CardTone",
               "vocabulary": [
                 "neutral",
                 "info",
@@ -596,7 +724,9 @@
           "specifier": "@reddb-io/design-system/base/Card"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "card"
         },
         "source": "kits/base/react/src/Card.tsx",
         "specifier": "@reddb-io/design-system/base/Card",
@@ -676,16 +806,10 @@
       {
         "bindable": false,
         "default": "\"neutral\"",
-        "deprecatedValues": [
-          {
-            "note": "`brand` is an emphasis, not a tone (ADR 0026). Removed next release.",
-            "value": "brand"
-          }
-        ],
-        "description": "What the Card means: the shared tone vocabulary (ADR 0026), each on its Feedback Role's surface and paired readable foreground. Defaults to `neutral`. `brand` is deprecated for one release.",
+        "description": "What the Card means: the shared tone vocabulary (ADR 0026), each on its Feedback Role's surface and paired readable foreground. Defaults to `neutral`.",
         "name": "tone",
         "required": false,
-        "type": "CardTone | DeprecatedCardTone",
+        "type": "CardTone",
         "vocabulary": [
           "neutral",
           "info",

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { CodeBlock } from "@reddb-io/design-system/base"
-  import Table from "@reddb-io/design-system/data/Table"
+  import Table from "@reddb-io/design-system/data/DataTable"
   import { Button as DSButton } from '@reddb-io/design-system/base'
   import { Icon as DSIcon } from '@reddb-io/design-system/base'
   import { useWorkspace } from './workspace-context'

@@ -13,7 +13,20 @@
   "contract": {
     "category": "Data display",
     "documentation": {
-      "cssVariablePatterns": [],
+      "cssVariablePatterns": [
+        {
+          "name": "--reddb-color-${role}",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-icon-size-${size}",
+          "sources": [
+            "kits/base/src/core/icon.ts"
+          ]
+        }
+      ],
       "cssVariables": [
         {
           "name": "--reddb-color-control-edge",
@@ -214,13 +227,31 @@
           ]
         },
         {
-          "name": "--reddb-font-size-base",
+          "name": "--reddb-color-state-hover",
           "sources": [
-            "kits/base/src/button.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-size-base",
           "sources": [
             "kits/base/src/button.variants.ts"
           ]
@@ -230,6 +261,19 @@
           "sources": [
             "kits/base/src/button.variants.ts",
             "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts",
+            "kits/base/src/core/icon.ts"
           ]
         },
         {
@@ -270,30 +314,6 @@
           ]
         },
         {
-          "name": "--reddb-spatial-gap-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-lg",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-spatial-inset-lg",
           "sources": [
             "kits/base/src/button.variants.ts"
@@ -308,6 +328,12 @@
         },
         {
           "name": "--reddb-spatial-inset-sm",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
           "sources": [
             "kits/base/src/button.variants.ts"
           ]
@@ -383,6 +409,42 @@
           "sources": [
             "kits/base/src/type-roles.ts"
           ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
         }
       ],
       "types": []
@@ -392,16 +454,6 @@
         "description": "Called with the next open state (ADR 0026's open dialect).",
         "dialect": "open",
         "name": "onopenchange",
-        "type": "(open: boolean) => void"
-      },
-      {
-        "deprecated": {
-          "note": "Renamed `onopenchange` (ADR 0026); removed next release.",
-          "replacement": "onopenchange"
-        },
-        "description": "Deprecated alias. Renamed `onopenchange` (ADR 0026); removed next release.",
-        "dialect": "alias",
-        "name": "onchange",
         "type": "(open: boolean) => void"
       }
     ],
@@ -477,7 +529,9 @@
           "specifier": "@reddb-io/design-system/base/Disclosure"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "disclosure"
         },
         "source": "kits/base/react/src/Disclosure.tsx",
         "specifier": "@reddb-io/design-system/base/Disclosure",
@@ -547,17 +601,6 @@
         "bindable": false,
         "description": "Called with the next open state (ADR 0026's open dialect).",
         "name": "onopenchange",
-        "required": false,
-        "type": "(open: boolean) => void"
-      },
-      {
-        "bindable": false,
-        "deprecated": {
-          "note": "Renamed `onopenchange` (ADR 0026); removed next release.",
-          "replacement": "onopenchange"
-        },
-        "description": "Deprecated alias. Renamed `onopenchange` (ADR 0026); removed next release.",
-        "name": "onchange",
         "required": false,
         "type": "(open: boolean) => void"
       },

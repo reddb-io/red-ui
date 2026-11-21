@@ -11,7 +11,7 @@
     "data/ActivityTimeline",
     "data/BarChart",
     "data/BreakdownBar",
-    "data/DeveloperPanel"
+    "data/DataTable"
   ],
   "contract": {
     "category": "Data display",
@@ -125,9 +125,27 @@
           ]
         },
         {
-          "name": "--reddb-font-size-xs",
+          "name": "--reddb-color-state-hover",
           "sources": [
-            "kits/data/src/chart.variants.ts"
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
           ]
         },
         {
@@ -145,9 +163,9 @@
           ]
         },
         {
-          "name": "--reddb-line-height-normal",
+          "name": "--reddb-layer-raised",
           "sources": [
-            "kits/data/src/chart.variants.ts"
+            "kits/data/src/chart-layout.variants.ts"
           ]
         },
         {
@@ -228,11 +246,19 @@
           ]
         },
         {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/data/react/src/TimeSeries.tsx",
+            "kits/data/src/TimeSeries.svelte"
+          ]
+        },
+        {
           "name": "--reddb-type-caption-font-size",
           "sources": [
             "kits/base/src/type-roles.ts",
             "kits/data/react/src/TimeSeries.tsx",
-            "kits/data/src/TimeSeries.svelte"
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/chart.variants.ts"
           ]
         },
         {
@@ -240,7 +266,8 @@
           "sources": [
             "kits/base/src/type-roles.ts",
             "kits/data/react/src/TimeSeries.tsx",
-            "kits/data/src/TimeSeries.svelte"
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/chart.variants.ts"
           ]
         },
         {
@@ -248,7 +275,8 @@
           "sources": [
             "kits/base/src/type-roles.ts",
             "kits/data/react/src/TimeSeries.tsx",
-            "kits/data/src/TimeSeries.svelte"
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/chart.variants.ts"
           ]
         },
         {
@@ -256,7 +284,8 @@
           "sources": [
             "kits/base/src/type-roles.ts",
             "kits/data/react/src/TimeSeries.tsx",
-            "kits/data/src/TimeSeries.svelte"
+            "kits/data/src/TimeSeries.svelte",
+            "kits/data/src/chart.variants.ts"
           ]
         },
         {
@@ -635,7 +664,9 @@
           "specifier": "@reddb-io/design-system/data/TimeSeries"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "time-series"
         },
         "source": "kits/data/react/src/TimeSeries.tsx",
         "specifier": "@reddb-io/design-system/data/TimeSeries",
@@ -643,7 +674,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "time-series"
         },
         "source": "kits/data/src/TimeSeries.svelte",
         "specifier": "@reddb-io/design-system/data/TimeSeries",
@@ -898,7 +931,9 @@
     ],
     "purpose": "A token-painted LayerChart time series that supports line and area readings without an inline palette.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "time-series"
     },
     "sharedContract": {
       "core": [

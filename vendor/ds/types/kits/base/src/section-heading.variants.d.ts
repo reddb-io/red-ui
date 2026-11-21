@@ -5,14 +5,14 @@ export declare const sectionHeading: import("tailwind-variants").TVReturnType<{
             readonly title: "text-base font-medium leading-tight";
         };
         readonly md: {
-            readonly title: "text-lg font-medium leading-tight";
+            readonly title: "text-heading leading-tight";
         };
         readonly lg: {
-            readonly title: "text-2xl font-medium leading-tight";
+            readonly title: "text-title font-medium leading-tight";
         };
         readonly display: {
             readonly title: "text-display";
-            readonly description: "text-lg";
+            readonly description: "text-heading font-regular";
         };
     };
     rule: {
@@ -37,14 +37,14 @@ export declare const sectionHeading: import("tailwind-variants").TVReturnType<{
             readonly title: "text-base font-medium leading-tight";
         };
         readonly md: {
-            readonly title: "text-lg font-medium leading-tight";
+            readonly title: "text-heading leading-tight";
         };
         readonly lg: {
-            readonly title: "text-2xl font-medium leading-tight";
+            readonly title: "text-title font-medium leading-tight";
         };
         readonly display: {
             readonly title: "text-display";
-            readonly description: "text-lg";
+            readonly description: "text-heading font-regular";
         };
     };
     rule: {
@@ -69,14 +69,14 @@ export declare const sectionHeading: import("tailwind-variants").TVReturnType<{
             readonly title: "text-base font-medium leading-tight";
         };
         readonly md: {
-            readonly title: "text-lg font-medium leading-tight";
+            readonly title: "text-heading leading-tight";
         };
         readonly lg: {
-            readonly title: "text-2xl font-medium leading-tight";
+            readonly title: "text-title font-medium leading-tight";
         };
         readonly display: {
             readonly title: "text-display";
-            readonly description: "text-lg";
+            readonly description: "text-heading font-regular";
         };
     };
     rule: {

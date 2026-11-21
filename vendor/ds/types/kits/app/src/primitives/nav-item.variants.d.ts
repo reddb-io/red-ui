@@ -3,19 +3,12 @@ export declare const navItem: import("tailwind-variants").TVReturnType<{
     current: {
         /** Where you are. */
         readonly true: {
-            readonly root: "border-foreground bg-foreground/10 font-medium text-foreground";
+            readonly root: "border-foreground bg-state-selected font-medium text-foreground";
         };
         /** Everywhere else you could go. */
         readonly false: {
             readonly root: "border-transparent bg-transparent text-ink-muted";
         };
-    };
-    /** @deprecated Renamed `current` (ADR 0026); removed next release. */
-    active: {
-        true: {
-            readonly root: "border-foreground bg-foreground/10 font-medium text-foreground";
-        };
-        false: {};
     };
     disabled: {
         /** Present, visibly unavailable, and unreachable by pointer or by tab. */
@@ -35,19 +28,12 @@ export declare const navItem: import("tailwind-variants").TVReturnType<{
     current: {
         /** Where you are. */
         readonly true: {
-            readonly root: "border-foreground bg-foreground/10 font-medium text-foreground";
+            readonly root: "border-foreground bg-state-selected font-medium text-foreground";
         };
         /** Everywhere else you could go. */
         readonly false: {
             readonly root: "border-transparent bg-transparent text-ink-muted";
         };
-    };
-    /** @deprecated Renamed `current` (ADR 0026); removed next release. */
-    active: {
-        true: {
-            readonly root: "border-foreground bg-foreground/10 font-medium text-foreground";
-        };
-        false: {};
     };
     disabled: {
         /** Present, visibly unavailable, and unreachable by pointer or by tab. */
@@ -67,19 +53,12 @@ export declare const navItem: import("tailwind-variants").TVReturnType<{
     current: {
         /** Where you are. */
         readonly true: {
-            readonly root: "border-foreground bg-foreground/10 font-medium text-foreground";
+            readonly root: "border-foreground bg-state-selected font-medium text-foreground";
         };
         /** Everywhere else you could go. */
         readonly false: {
             readonly root: "border-transparent bg-transparent text-ink-muted";
         };
-    };
-    /** @deprecated Renamed `current` (ADR 0026); removed next release. */
-    active: {
-        true: {
-            readonly root: "border-foreground bg-foreground/10 font-medium text-foreground";
-        };
-        false: {};
     };
     disabled: {
         /** Present, visibly unavailable, and unreachable by pointer or by tab. */

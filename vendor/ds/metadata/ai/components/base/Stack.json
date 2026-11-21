@@ -172,7 +172,9 @@
           "specifier": "@reddb-io/design-system/base/Stack"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "stack"
         },
         "source": "kits/base/react/src/Stack.tsx",
         "specifier": "@reddb-io/design-system/base/Stack",

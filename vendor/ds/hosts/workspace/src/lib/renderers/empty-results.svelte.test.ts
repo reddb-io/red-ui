@@ -109,7 +109,7 @@ it("distinguishes queue payloads without event envelopes and recovers an empty f
   view.click();
   await flush();
   expect(document.activeElement).toBe(
-    target.querySelector('[data-queue-mode="messages"]')
+    target.querySelector('[data-queue-modes] [data-toggle-value="messages"]')
   );
   const input = target.querySelector<HTMLInputElement>("[data-queue-filter]")!;
   input.value = "missing";
@@ -142,7 +142,7 @@ it("opens read-only queue commands from an empty queue and keeps focus in the mo
   await flush();
   expect(target.querySelector("[data-renderer-empty]")).toBeNull();
   expect(document.activeElement).toBe(
-    target.querySelector('[data-queue-mode="commands"]')
+    target.querySelector('[data-queue-modes] [data-toggle-value="commands"]')
   );
   expect(target.textContent).toContain("read-only");
 });

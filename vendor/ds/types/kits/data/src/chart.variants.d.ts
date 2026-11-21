@@ -8,8 +8,8 @@ import { type VariantProps } from "tailwind-variants";
  * Brand red (DESIGN.md), so the figure routes that variable to the Series Role
  * the caller names — series 1 unless told otherwise — and an ancestor that has
  * to repaint a chart on its own ground (a KpiCard tone) still overrides it by
- * the same name. Axis text is set at the type scale's `xs`, never LayerChart's
- * 10px default.
+ * the same name. Axis text is set in the caption role, never LayerChart's 10px
+ * default.
  */
 export declare const chartFigure: import("tailwind-variants").TVReturnType<{
     /** The Series Role (1–6) the chart's marks are drawn in. */

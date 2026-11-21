@@ -1,0 +1,333 @@
+{
+  "schemaVersion": 1,
+  "id": "base/Fieldset",
+  "topics": [],
+  "related": [
+    "base/Calendar",
+    "base/Checkbox",
+    "base/Combobox",
+    "base/DateField",
+    "base/DatePicker",
+    "base/DateRangeField"
+  ],
+  "contract": {
+    "category": "Data input",
+    "documentation": {
+      "cssVariablePatterns": [],
+      "cssVariables": [
+        {
+          "name": "--reddb-color-feedback-danger-foreground",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-foreground",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts",
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-ink-muted",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-font-weight-regular",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-md",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-gap-sm",
+          "sources": [
+            "kits/base/src/field.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-layout-gap-sm",
+          "sources": [
+            "kits/base/src/fieldset.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-caption-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-display-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-size",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-font-weight",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-letter-spacing",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-eyebrow-line-height",
+          "sources": [
+            "kits/base/src/type-roles.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/field.variants.ts",
+            "kits/base/src/fieldset.variants.ts"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "declaration": "/** The framework-neutral association passed by Field to its control. */\nexport interface FieldControlProps {\n  /** The id the label targets. */\n  id: string;\n  /** Native required semantics, when the Field declares them. */\n  required?: true;\n  /** Space-separated help and error ids. */\n  \"aria-describedby\"?: string;\n  /** Present only while the Field has an error. */\n  \"aria-invalid\"?: \"true\";\n  /** The Field's current error id. */\n  \"aria-errormessage\"?: string;\n}",
+          "name": "FieldControlProps",
+          "source": "kits/base/src/core/field.ts"
+        },
+        {
+          "declaration": "/** A group association leaves every native control's id and requirement intact. */\nexport type FieldsetControlProps = Omit<FieldControlProps, \"id\" | \"required\">;",
+          "name": "FieldsetControlProps",
+          "source": "kits/base/src/core/fieldset.ts"
+        }
+      ]
+    },
+    "events": [],
+    "forwardsAttributesTo": [
+      "<fieldset>"
+    ],
+    "implementations": {
+      "react": {
+        "api": {
+          "forwardsNativeProps": true,
+          "kind": "Primitive",
+          "kit": "base",
+          "name": "Fieldset",
+          "nativeAttributes": [
+            "fieldset"
+          ],
+          "props": [
+            {
+              "description": "Accessible name rendered in the native legend.",
+              "name": "legend",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "description": "Supporting text associated with each grouped control.",
+              "name": "help",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Current group validation error.",
+              "name": "error",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Extra classes merged onto the legend.",
+              "name": "legendClass",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "description": "Render grouped controls with the shared help/error association.",
+              "name": "children",
+              "required": false,
+              "type": "(control: FieldsetControlProps) => ReactNode"
+            }
+          ],
+          "source": "kits/base/react/src/Fieldset.tsx",
+          "specifier": "@reddb-io/design-system/base/Fieldset"
+        },
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "fieldset"
+        },
+        "source": "kits/base/react/src/Fieldset.tsx",
+        "specifier": "@reddb-io/design-system/base/Fieldset",
+        "status": "available"
+      },
+      "svelte": {
+        "readiness": {
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "fieldset"
+        },
+        "source": "kits/base/src/Fieldset.svelte",
+        "specifier": "@reddb-io/design-system/base",
+        "status": "available"
+      }
+    },
+    "kind": "Primitive",
+    "kit": "base",
+    "name": "Fieldset",
+    "props": [
+      {
+        "bindable": false,
+        "description": "The accessible name rendered by the fieldset's native legend.",
+        "name": "legend",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Supporting text announced with every control that takes the group's contract.",
+        "name": "help",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Current validation error for the group, announced and associated with its controls.",
+        "name": "error",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": true,
+        "description": "The native fieldset element for rare imperative access.",
+        "name": "ref",
+        "required": false,
+        "type": "HTMLFieldSetElement"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the group.",
+        "name": "class",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "Extra classes merged onto the legend.",
+        "name": "legendClass",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "bindable": false,
+        "description": "The grouped controls; spread the received contract onto each one.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet<[FieldsetControlProps]>"
+      }
+    ],
+    "purpose": "A native named group whose related controls, disabled state, keyboard access, and legend semantics stay together.",
+    "readiness": {
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "implemented",
+      "capability": "fieldset"
+    },
+    "sharedContract": {
+      "core": [
+        "kits/base/src/fieldset.variants.ts",
+        "kits/base/src/core/fieldset.ts"
+      ],
+      "tests": [
+        "kits/base/test/framework-base.test.ts"
+      ],
+      "typeMappings": {
+        "children": {
+          "react": "(control: FieldsetControlProps) => ReactNode",
+          "reason": "Both render functions receive the same group associations; native group disabled behavior and reactive help/error changes are verified.",
+          "svelte": "Snippet<[FieldsetControlProps]>"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "description": "The grouped controls; spread the received contract onto each one.",
+        "name": "children",
+        "required": false,
+        "type": "Snippet<[FieldsetControlProps]>"
+      }
+    ],
+    "source": "kits/base/src/Fieldset.svelte",
+    "specifier": "@reddb-io/design-system/base"
+  }
+}

@@ -124,7 +124,9 @@
           "specifier": "@reddb-io/design-system/base/DescriptionList"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "implemented",
+          "capability": "description-list"
         },
         "source": "kits/base/react/src/DescriptionList.tsx",
         "specifier": "@reddb-io/design-system/base/DescriptionList",

@@ -13,22 +13,22 @@ import type { Component } from "svelte";
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 export { ICON_SIZES, ICON_COLORS, type IconSize, type IconColor } from "./core/icon";
-import { type IconColor, type IconSize, type DeprecatedIconColor } from "./core/icon";
+import { type IconColor, type IconSize } from "./core/icon";
 export type IconGlyphProps = LucideProps;
 export type IconGlyph = Component<IconGlyphProps>;
 import type { SVGAttributes } from "svelte/elements";
 interface Props extends Omit<SVGAttributes<SVGSVGElement>, "color" | "height" | "stroke" | "stroke-width" | "width"> {
     /** A consumer-supplied Lucide glyph, or a built-in glyph without loading the optional icon package. */
     icon: IconGlyph | "menu" | "chevron-down" | "x" | "maximize" | "restore" | "mic";
-    /** Density-responsive DS size. */
+    /** Density-responsive DS size for a glyph alone in a control, or `text` to follow the label it sits beside (ADR 0054). */
     size?: IconSize;
     /**
      * Semantic Theme color; raw color values are deliberately not accepted.
      * `current` inherits the surrounding ink, so a glyph follows its control's
-     * hover and selected states or a caller's token-backed text class.
-     * `muted` is a deprecated alias that draws in `ink-muted` for one release.
+     * hover and selected states or a caller's token-backed text class. It is
+     * the default (ADR 0054); `foreground` keeps full ink inside muted text.
      */
-    color?: IconColor | DeprecatedIconColor;
+    color?: IconColor;
 }
 declare const Icon: Component<Props, {}, "">;
 type Icon = ReturnType<typeof Icon>;

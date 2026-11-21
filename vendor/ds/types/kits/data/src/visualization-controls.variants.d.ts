@@ -5,8 +5,8 @@ export declare const visualizationControls: import("tailwind-variants").TVReturn
             root?: import("tailwind-variants").ClassValue;
             field?: import("tailwind-variants").ClassValue;
             summary?: import("tailwind-variants").ClassValue;
-            range?: import("tailwind-variants").ClassValue;
             action?: import("tailwind-variants").ClassValue;
+            range?: import("tailwind-variants").ClassValue;
         };
     };
 } | {
@@ -15,8 +15,8 @@ export declare const visualizationControls: import("tailwind-variants").TVReturn
             root?: import("tailwind-variants").ClassValue;
             field?: import("tailwind-variants").ClassValue;
             summary?: import("tailwind-variants").ClassValue;
-            range?: import("tailwind-variants").ClassValue;
             action?: import("tailwind-variants").ClassValue;
+            range?: import("tailwind-variants").ClassValue;
         };
     };
 } | {}, {
@@ -31,8 +31,8 @@ export declare const visualizationControls: import("tailwind-variants").TVReturn
             root?: import("tailwind-variants").ClassValue;
             field?: import("tailwind-variants").ClassValue;
             summary?: import("tailwind-variants").ClassValue;
-            range?: import("tailwind-variants").ClassValue;
             action?: import("tailwind-variants").ClassValue;
+            range?: import("tailwind-variants").ClassValue;
         };
     };
 } | {}, {

@@ -169,6 +169,24 @@
     "forwardsAttributesTo": [
       "native element"
     ],
+    "guidance": {
+      "family": "Headings",
+      "question": "Is it the page's one heading, a section, a card's heading, or a heading anywhere else?",
+      "related": [
+        "app/PageHeading",
+        "base/SectionHeading",
+        "app/CardHeading"
+      ],
+      "whenNotToUse": [
+        {
+          "instead": "base/SectionHeading",
+          "text": "A heading that also carries actions or a description."
+        }
+      ],
+      "whenToUse": [
+        "Any other heading: pick its outline level and its type role separately."
+      ]
+    },
     "implementations": {
       "react": {
         "api": {
@@ -217,7 +235,9 @@
           "specifier": "@reddb-io/design-system/base/Heading"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "heading"
         },
         "source": "kits/base/react/src/Heading.tsx",
         "specifier": "@reddb-io/design-system/base/Heading",
@@ -225,7 +245,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "heading"
         },
         "source": "kits/base/src/Heading.svelte",
         "specifier": "@reddb-io/design-system/base",
@@ -281,7 +303,9 @@
     ],
     "purpose": "A heading whose outline level and Theme type role are separate choices, so a section sits at the right depth and the right size.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "heading"
     },
     "sharedContract": {
       "core": [

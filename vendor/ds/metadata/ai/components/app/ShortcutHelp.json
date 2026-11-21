@@ -237,6 +237,30 @@
           ]
         },
         {
+          "name": "--reddb-color-state-hover",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-open",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-pressed",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-color-state-selected",
+          "sources": [
+            "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
           "name": "--reddb-container-wide",
           "sources": [
             "kits/base/src/dialog.variants.ts"
@@ -255,12 +279,6 @@
           ]
         },
         {
-          "name": "--reddb-font-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
           "name": "--reddb-font-size-xs",
           "sources": [
             "kits/base/src/kbd.variants.ts"
@@ -271,6 +289,18 @@
           "sources": [
             "kits/base/src/button.variants.ts",
             "kits/base/src/quiet-control.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -339,8 +369,7 @@
         {
           "name": "--reddb-spatial-gap-md",
           "sources": [
-            "kits/app/src/shortcut-help.variants.ts",
-            "kits/base/src/button.variants.ts"
+            "kits/app/src/shortcut-help.variants.ts"
           ]
         },
         {
@@ -349,24 +378,6 @@
             "kits/app/src/shortcut-help.variants.ts",
             "kits/base/src/Dialog.svelte",
             "kits/base/src/kbd.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-lg",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-md",
-          "sources": [
-            "kits/base/src/button.variants.ts"
-          ]
-        },
-        {
-          "name": "--reddb-spatial-icon-size-sm",
-          "sources": [
-            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -394,6 +405,12 @@
           "name": "--reddb-spatial-layout-gap-md",
           "sources": [
             "kits/app/src/shortcut-help.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-spatial-target-min",
+          "sources": [
+            "kits/base/src/button.variants.ts"
           ]
         },
         {
@@ -523,6 +540,42 @@
             "kits/app/src/shortcut-help.variants.ts",
             "kits/base/src/Dialog.svelte"
           ]
+        },
+        {
+          "name": "--reddb-type-label-font-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-font-weight",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-gap",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-glyph-size",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-letter-spacing",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
+        },
+        {
+          "name": "--reddb-type-label-line-height",
+          "sources": [
+            "kits/base/src/button.variants.ts"
+          ]
         }
       ],
       "types": [
@@ -608,7 +661,9 @@
           "specifier": "@reddb-io/design-system/app/ShortcutHelp"
         },
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "shortcut-help"
         },
         "source": "kits/app/react/src/ShortcutHelp.tsx",
         "specifier": "@reddb-io/design-system/app/ShortcutHelp",
@@ -616,7 +671,9 @@
       },
       "svelte": {
         "readiness": {
-          "adoptionReadiness": "not-declared"
+          "adoptionReadiness": "ready",
+          "baselineDisposition": "outside-baseline",
+          "capability": "shortcut-help"
         },
         "source": "kits/app/src/composites/ShortcutHelp.svelte",
         "specifier": "@reddb-io/design-system/app",
@@ -685,7 +742,9 @@
     ],
     "purpose": "Contextual keyboard reference inside the canonical Dialog without registering application commands.",
     "readiness": {
-      "adoptionReadiness": "not-declared"
+      "adoptionReadiness": "ready",
+      "baselineDisposition": "outside-baseline",
+      "capability": "shortcut-help"
     },
     "sharedContract": {
       "core": [
