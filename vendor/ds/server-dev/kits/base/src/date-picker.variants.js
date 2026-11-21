@@ -1,1 +1,1 @@
-import{tv as e}from"tailwind-variants";const t=e({slots:{root:"flex min-w-0 flex-wrap items-end gap-[var(--reddb-spatial-gap-sm)]",field:"min-w-min flex-1",trigger:"shrink-0",content:"w-fit max-w-none",calendar:"border-0 p-0"}});export{t as datePicker};
+import{tv as e}from"tailwind-variants";const t=e({slots:{root:"flex min-w-0 flex-wrap items-end gap-[var(--reddb-spatial-gap-sm)]",field:"min-w-min flex-1",trigger:"shrink-0",content:"w-fit",calendar:"border-0 p-0"}});export{t as datePicker};

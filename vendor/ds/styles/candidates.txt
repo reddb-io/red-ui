@@ -17,9 +17,11 @@
 !term
 !viewport
 *:flex-1
+--available-width
 --bits-collapsible-content-height
 --bits-combobox-anchor-width
 --bits-combobox-content-available-height
+--bits-floating-available-width
 --bits-popover-anchor-width
 --bits-popover-content-available-height
 --chart-layout-rows
@@ -28,6 +30,7 @@
 --color-surface-200
 --color-surface-300
 --color-surface-content
+--container-sm
 --lock
 --reddb-color-
 --reddb-color-background
@@ -2135,6 +2138,7 @@ drive
 drives
 drop
 dropEffect
+dropdown
 dropdownMenu
 dropdownMenuGroups
 dropdownMenuItems
@@ -2269,6 +2273,7 @@ everything
 exact
 exactly
 example
+exceeds
 except
 exception
 exclude
@@ -2442,6 +2447,8 @@ flex-wrap
 flip
 flipping
 flips
+floating
+floatingLayer
 floor
 flow
 flow-root
@@ -3401,6 +3408,7 @@ max-w-[calc(100%-var(--reddb-spatial-inset-sm)*2)]
 max-w-[calc(100vw-2*var(--reddb-spatial-inset-md))]
 max-w-[calc(var(--reddb-spatial-control-height-md)*8)]
 max-w-[min(100%,24rem)]
+max-w-[min(var(--container-sm),var(--bits-floating-available-width,var(--available-width,100vw)))]
 max-w-[var(--reddb-container-prose)]
 max-w-[var(--reddb-container-wide)]
 max-w-content
@@ -4185,6 +4193,7 @@ portals
 pos
 position
 positioned
+positioner
 positioning
 positions
 positive
@@ -4288,6 +4297,7 @@ pt-[var(--reddb-spatial-inset-md)]
 pt-[var(--reddb-spatial-layout-gap-sm)]
 pts
 public
+publish
 published
 publishes
 pull
@@ -5841,6 +5851,7 @@ z-[var(--reddb-layer-dropdown)]
 z-[var(--reddb-layer-raised)]
 z-[var(--reddb-layer-toast)]
 z-[var(--reddb-layer-tooltip)]
+z-index
 zero
 zero-data
 zero-length
