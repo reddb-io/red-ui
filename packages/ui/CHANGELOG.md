@@ -1,5 +1,33 @@
 # @reddb-io/ui
 
+## 0.8.9
+
+### Patch Changes
+
+- ff9a5e1: Sync Design System v2026.11.24 through the pinned Producer.
+
+  The workspace now renders at the Application sizes as specified. The host no longer shrinks every length to 87.5%, so text, controls and touch targets are larger than before. Below `md`, destinations sit in a bottom dock instead of an icon-only rail. Words wrap whole instead of breaking mid-letter, and targets meet the 24px (44px on touch) floor. The selective distribution names `data/DataTable` instead of the renamed `data/Table` alias, and it declares the `BottomNavigation` that the dock imports.
+
+- e36f382: Sync Design System v2026.11.25 through the pinned Producer.
+
+  Open menus and popovers are never wider than the space beside their trigger, so on a phone they no longer run past the screen or scroll the page sideways. A range calendar keeps its days at the 44px touch floor. A Navbar that keeps its rail open wraps instead of overflowing.
+
+- cefa670: Sync Design System v2026.11.26 through the pinned Producer.
+
+  The workspace spends two bars fewer above the query editor. The connection's state sits inline in the top bar, Run sits beside the query, and "System columns" and "View" sit on the results bar. The top bar stays on one row on a phone, and the build version moves to the foot of the connection menu.
+
+- 93d4add: Sync Design System v2026.11.27 through the pinned Producer.
+
+  The query editor is as tall as its statement, three lines up to two fifths of the pane, and a divider resizes it against the result. The collections panel keeps one row of tools: search, the system collections toggle and refresh. The side rail shows glyphs on a tablet and words from 1280px up.
+
+- a06c3ab: Sync Design System v2026.11.28 through the pinned Producer. The vendored components are the same as in v2026.11.27.
+- Updated dependencies [ff9a5e1]
+- Updated dependencies [e36f382]
+- Updated dependencies [cefa670]
+- Updated dependencies [93d4add]
+- Updated dependencies [a06c3ab]
+  - @reddb-io/ui-mcp@0.8.9
+
 ## 0.8.8
 
 ### Patch Changes
