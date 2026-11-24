@@ -1,6 +1,6 @@
 {
-  "version": "v2026.11.27",
-  "revision": "fdd97a937ce9b9dc536f585d5f5884e5fd032c8f",
+  "version": "v2026.11.28",
+  "revision": "a198eb3ad1a0ef4557b223f045da9283454652d8",
   "distribution": {
     "format": "compiled",
     "minify": true,
@@ -5139,7 +5139,7 @@
     "metadata/ai/components/data/TimeSeries.json": "3c49c859ff4cbeb0aa37aa4f9bb329f6c725e8734ab01fba5da701d130e441e0",
     "metadata/ai/components/data/TreeView.json": "cc886b020987007685bd398d418fc0f6eea6bc9ebdd8eceda25190e859b0c2a9",
     "metadata/ai/components/data/VectorExplorer.json": "6c5f678249f9910ad4fed789502bb0ddd6690158edfcafd4e1aaaea59b0906e0",
-    "metadata/ai/index.json": "af148d755e459199c13ba22e8f061007cc15ccdd353767991e7d3872de1b02af",
+    "metadata/ai/index.json": "b5721e1335f83ea33ce1def05671e40ccc96d2dcf2d1eedf8d5bf87e9d2d50f0",
     "metadata/ai/index.schema.json": "bf4c9036cf9e61e106242f8a315f59fcba4d8bbe27fc17945e8b8f041623e61f",
     "package.json": "717d7c8c462d267d91a9e9ea97bda1e75c45c6f512bd9f081e7802730be60fc1"
   }
