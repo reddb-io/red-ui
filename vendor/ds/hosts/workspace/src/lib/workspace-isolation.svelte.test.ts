@@ -239,9 +239,10 @@ test("Collections owns queries, direct creation and per-document result options"
   const nextId = runtime.tabs.activeId!;
   expect(nextId).not.toBe(originalId);
   expect(runtime.queryTabs.get(originalId)?.sql).toBe("SELECT 'draft'");
-  const toolbar = target.querySelector('[role="tabpanel"]:not([hidden]) [data-query-toolbar]')!;
-  expect(toolbar.querySelector('[aria-label="Run query"]')).not.toBeNull();
-  const columns = toolbar.querySelector<HTMLButtonElement>('[aria-label="System columns"]')!;
+  // The action sits beside the statement; the display controls sit on the result.
+  const panel = target.querySelector('[role="tabpanel"]:not([hidden])')!;
+  expect(panel.querySelector('[data-query-editor] [aria-label="Run query"]')).not.toBeNull();
+  const columns = panel.querySelector<HTMLButtonElement>('[data-query-results-bar] [aria-label="System columns"]')!;
   columns.click();
   await tick();
   flushSync();

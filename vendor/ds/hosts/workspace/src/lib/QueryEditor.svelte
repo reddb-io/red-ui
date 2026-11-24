@@ -80,25 +80,20 @@
 
 <div class="flex h-full min-h-0 flex-col" data-query-workspace>
   <section aria-label="Query editor" data-query-editor class="flex h-[30%] min-h-min shrink-0 flex-col border-b border-elevation-base-border bg-elevation-sunken-surface sm:h-2/5">
-    <div data-query-toolbar role="group" aria-label="Query actions" class="flex shrink-0 flex-wrap items-center justify-between gap-[var(--reddb-spatial-gap-md)] border-b border-elevation-base-border px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-sm)]">
-      <div class="flex min-w-0 items-center gap-[var(--reddb-spatial-gap-sm)]">
-        <DSButton variant="primary" size="sm" type="button" onclick={run}
-          disabled={qs?.running || !connection.connected}
-          aria-label={qs?.running ? 'Running query' : 'Run query'} aria-keyshortcuts="Control+Enter Meta+Enter" title="Run query (Ctrl/⌘ + Enter)">
-          {#if qs?.running}<DSIcon icon={Loader2} color="current" class="animate-spin" /><span class="hidden sm:inline">Running…</span>
-          {:else}<DSIcon icon={Play} color="current" /><span class="hidden sm:inline">Run</span>{/if}
-        </DSButton>
-        {#if connection.connected}
-          <span class="hidden min-w-0 truncate text-caption text-ink-muted sm:inline" title={connection.active.url}>{connection.active.label ?? connection.active.url}</span>
-        {:else}<span class="text-caption text-feedback-warning-foreground">Disconnected</span>{/if}
-      </div>
-      {@render controls?.()}
-    </div>
-    <div class="flex min-h-0 flex-1 p-[var(--reddb-spatial-inset-sm)]">
+    <!-- One row: the action sits beside the statement it runs, with no bar of
+         its own. The connection is named once, in the top bar. -->
+    <div class="flex min-h-0 flex-1 items-start gap-[var(--reddb-spatial-gap-sm)] p-[var(--reddb-spatial-inset-sm)]">
+      <DSButton variant="primary" size="sm" type="button" onclick={run} class="shrink-0"
+        disabled={qs?.running || !connection.connected}
+        aria-label={qs?.running ? 'Running query' : 'Run query'} aria-keyshortcuts="Control+Enter Meta+Enter"
+        title={connection.connected ? 'Run query (Ctrl/⌘ + Enter)' : 'Connect to run a query'}>
+        {#if qs?.running}<DSIcon icon={Loader2} color="current" class="animate-spin" /><span class="hidden sm:inline">Running…</span>
+        {:else}<DSIcon icon={Play} color="current" /><span class="hidden sm:inline">Run</span>{/if}
+      </DSButton>
       <DSTextarea
         bind:ref={textareaEl}
         aria-label="SQL query"
-        class="min-h-0 flex-1 resize-none font-mono focus-visible:-outline-offset-2"
+        class="h-full min-h-0 flex-1 resize-none font-mono focus-visible:-outline-offset-2"
         spellcheck="false"
         autocapitalize="off"
         placeholder={'SELECT * FROM users LIMIT 100'}
@@ -110,9 +105,15 @@
   </section>
 
   <section aria-label="Query results" data-query-results class="flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
-    <div class="flex shrink-0 items-center justify-between gap-[var(--reddb-spatial-gap-md)] border-b border-elevation-base-border bg-elevation-sunken-surface px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-sm)] text-caption">
-      <span class="font-medium">Query results</span>
-      {#if qs?.result}<span class="text-ink-muted tabular-nums">{qs.result.record_count.toLocaleString()} rows</span>{/if}
+    <div data-query-results-bar class="flex shrink-0 items-center sm:flex-wrap justify-between gap-[var(--reddb-spatial-gap-md)] border-b border-elevation-base-border bg-elevation-sunken-surface px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-sm)] text-caption">
+      <div class="flex min-w-0 items-baseline gap-[var(--reddb-spatial-gap-sm)] whitespace-nowrap">
+        <!-- A phone keeps this bar to one row: the count stays, and the
+             section's own label names it for assistive technology. -->
+        <span class="font-medium max-sm:sr-only">Query results</span>
+        {#if qs?.result}<span class="text-ink-muted tabular-nums">{qs.result.record_count.toLocaleString()} rows</span>{/if}
+      </div>
+      <!-- The display controls change the result, so they sit on its bar. -->
+      {@render controls?.()}
     </div>
     {#if qs?.running}
       <div class="h-full grid place-items-center p-6" aria-live="polite" aria-busy="true">

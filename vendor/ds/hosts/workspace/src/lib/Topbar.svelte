@@ -2,6 +2,7 @@
   import { useWorkspace } from './workspace-context'
   import { Button, Icon, Kbd, Logo } from '@reddb-io/design-system/base'
   import ConnectDropdown from './ConnectDropdown.svelte'
+  import StatusBar from './StatusBar.svelte'
   import Search from '@lucide/svelte/icons/search'
   import Sun from '@lucide/svelte/icons/sun'
   import Moon from '@lucide/svelte/icons/moon'
@@ -11,7 +12,12 @@
   const workspace = useWorkspace()
   const { theme } = workspace
 
-  let { showConnect = true, showCommands = true }: { showConnect?: boolean; showCommands?: boolean } = $props()
+  let { showConnect = true, showCommands = true, showStatus = false }: {
+    showConnect?: boolean
+    showCommands?: boolean
+    /** Show the connection's state inline; the entered workspace sets it. */
+    showStatus?: boolean
+  } = $props()
 
   const router = useRouter()
 
@@ -22,7 +28,10 @@
 </script>
 
 <header data-workspace-topbar class="flex flex-wrap items-center justify-between gap-2 p-[var(--reddb-spatial-inset-sm)] bg-elevation-base-surface border-b border-elevation-base-border relative z-10">
-  <div class="flex min-w-0 flex-1 flex-wrap items-center gap-[var(--reddb-spatial-gap-md)]">
+  <!-- One row on a phone too: the connection menu takes the room that is left
+       and truncates, and the state beside it wraps to a second row only when it
+       has something to say that does not fit. -->
+  <div class="flex min-w-0 flex-[1_1_12rem] items-center gap-[var(--reddb-spatial-gap-md)]">
     <Logo
       layout="horizontal"
       size={16}
@@ -35,10 +44,10 @@
       <div class="w-px h-[18px] bg-control-edge"></div>
       <ConnectDropdown />
     {/if}
-
   </div>
+  {#if showStatus}<StatusBar />{/if}
 
-  <div class="flex items-center gap-2.5">
+  <div class="ms-auto flex shrink-0 items-center gap-[var(--reddb-spatial-gap-sm)]">
     <Button
       size="sm"
       type="button"
@@ -60,8 +69,10 @@
       onclick={openPalette}
     >
       <Icon icon={Search} size="sm" />
-      <span>Search or run</span>
-      <span class="inline-flex gap-0.5 ml-1"><Kbd>⌘</Kbd><Kbd>K</Kbd></span>
+      <!-- A phone has room for the glyph only, and no keyboard to hint at. The
+           label stays in the DOM so the button's name is always its content. -->
+      <span class="max-sm:sr-only">Search or run</span>
+      <span class="ml-1 hidden gap-0.5 md:inline-flex"><Kbd>⌘</Kbd><Kbd>K</Kbd></span>
     </Button>
     {/if}
   </div>
