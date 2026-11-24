@@ -1,4 +1,16 @@
+<script module lang="ts">
+  // Where the reader last left the divider. It is one preference for every
+  // query tab, kept for the session; until they move it, the editor is as tall
+  // as its statement.
+  let chosenFraction = $state<number | null>(null)
+  /** Lines the editor shows before the reader has written that many. */
+  const RESTING_LINES = 3
+  /** The most of the pane a statement takes by its own length. */
+  const CONTENT_LIMIT = 0.4
+</script>
+
 <script lang="ts">
+  import { SplitView } from '@reddb-io/design-system/app'
   import { CodeBlock } from "@reddb-io/design-system/base"
   import { Button as DSButton, Textarea as DSTextarea } from '@reddb-io/design-system/base'
   import { Icon as DSIcon } from '@reddb-io/design-system/base'
@@ -35,6 +47,26 @@
   const tab = $derived(tabs.tabs.find((t) => t.id === tabId))
 
   let textareaEl: HTMLTextAreaElement | undefined = $state()
+  let paneHeight = $state(0)
+  let contentFraction = $state(0.2)
+
+  // The editor follows its statement: three lines at rest, growing a line at a
+  // time up to two fifths of the pane, so a short query leaves the room to its
+  // result. The divider overrides it.
+  $effect(() => {
+    const lines = Math.max(RESTING_LINES, (qs?.sql ?? '').split('\n').length)
+    const field = textareaEl
+    const row = field?.parentElement
+    if (!field || !row || paneHeight <= 0) return
+    const px = (value: string) => Number.parseFloat(value) || 0
+    const text = getComputedStyle(field)
+    const inset = getComputedStyle(row)
+    const height = lines * px(text.lineHeight)
+      + px(text.paddingTop) + px(text.paddingBottom) + px(text.borderTopWidth) + px(text.borderBottomWidth)
+      + px(inset.paddingTop) + px(inset.paddingBottom) + 1
+    contentFraction = Math.min(CONTENT_LIMIT, height / paneHeight)
+  })
+  const fraction = $derived(chosenFraction ?? contentFraction)
   let now = $state(Date.now())
   const elapsed = $derived(
     qs?.runningStartedAt ? formatElapsed(Math.max(0, now - qs.runningStartedAt)) : '0ms'
@@ -78,8 +110,11 @@
   }
 </script>
 
-<div class="flex h-full min-h-0 flex-col" data-query-workspace>
-  <section aria-label="Query editor" data-query-editor class="flex h-[30%] min-h-min shrink-0 flex-col border-b border-elevation-base-border bg-elevation-sunken-surface sm:h-2/5">
+<div class="h-full min-h-0" data-query-workspace bind:clientHeight={paneHeight}>
+<SplitView orientation="vertical" class="h-full" label="Resize query editor" min={0.1} max={0.8}
+  {fraction} onfractionchange={(next) => (chosenFraction = next)}>
+  {#snippet start()}
+  <section aria-label="Query editor" data-query-editor class="flex h-full min-h-0 flex-col bg-elevation-sunken-surface">
     <!-- One row: the action sits beside the statement it runs, with no bar of
          its own. The connection is named once, in the top bar. -->
     <div class="flex min-h-0 flex-1 items-start gap-[var(--reddb-spatial-gap-sm)] p-[var(--reddb-spatial-inset-sm)]">
@@ -103,8 +138,10 @@
       ></DSTextarea>
     </div>
   </section>
+  {/snippet}
 
-  <section aria-label="Query results" data-query-results class="flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
+  {#snippet end()}
+  <section aria-label="Query results" data-query-results class="flex h-full min-h-0 flex-col overflow-hidden bg-background">
     <div data-query-results-bar class="flex shrink-0 items-center sm:flex-wrap justify-between gap-[var(--reddb-spatial-gap-md)] border-b border-elevation-base-border bg-elevation-sunken-surface px-[var(--reddb-spatial-inset-md)] py-[var(--reddb-spatial-inset-sm)] text-caption">
       <div class="flex min-w-0 items-baseline gap-[var(--reddb-spatial-gap-sm)] whitespace-nowrap">
         <!-- A phone keeps this bar to one row: the count stays, and the
@@ -164,4 +201,6 @@
       {/if}
     {/if}
   </section>
+  {/snippet}
+</SplitView>
 </div>

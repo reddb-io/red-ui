@@ -12,10 +12,7 @@
   } from './capability'
   import { useRouter } from './router.svelte'
   import Plug from '@lucide/svelte/icons/plug'
-  import Database from '@lucide/svelte/icons/database'
   import Lock from '@lucide/svelte/icons/lock'
-  import Search from '@lucide/svelte/icons/search'
-  import X from '@lucide/svelte/icons/x'
   import Eye from '@lucide/svelte/icons/eye'
   import RefreshCw from '@lucide/svelte/icons/refresh-cw'
 
@@ -40,7 +37,6 @@
   let refreshGeneration = 0
   let capabilityFilter = $state<Capability | 'all'>('all')
   const skeletonRows = Array.from({ length: 10 }, (_, i) => i)
-  const skeletonChips = Array.from({ length: 4 }, (_, i) => i)
 
   const connected = $derived(connection.connected)
   const activeUrl = $derived(connection.active.url)
@@ -106,24 +102,18 @@
 
 </script>
 
-<div class="px-3 py-2 border-b border-muted flex items-center justify-between text-ink-muted">
-  <div class="flex items-center gap-2">
-    <DSIcon icon={Database} color="current" class="" />
-    <span class="type-label">Collections</span>
-  </div>
-  {#if connected}
-    <div class="flex items-center gap-[var(--reddb-spatial-gap-sm)]">
-      <span class="text-caption tabular-nums">{items.length}</span>
-      <DSButton variant="ghost" size="sm" aria-label="Refresh collections" title="Refresh collections" onclick={refresh} disabled={loading || secureStore.requiresUnlock}><DSIcon icon={RefreshCw} color="current" /></DSButton>
-    </div>
-  {/if}
-</div>
-
+<!-- One row of tools, not a title bar over an options bar over a search bar:
+     the panel is already named by its landmark and by the rail. -->
 {#if connected && !secureStore.requiresUnlock}
-  <div role="group" aria-label="Collection browser options" class="border-b border-elevation-base-border bg-elevation-sunken-surface p-[var(--reddb-spatial-inset-sm)]">
-    <ToggleButton label="System collections" pressed={showSystemCollections} onpressedchange={value => showSystemCollections = value} title="Include internal RedDB collections in this browser">
-      <DSIcon icon={Eye} color="current" /><span>System collections</span>
+  <div role="group" aria-label="Collection browser options" data-collection-tools
+    class="flex items-center gap-[var(--reddb-spatial-gap-xs)] border-b border-elevation-base-border bg-elevation-sunken-surface p-[var(--reddb-spatial-inset-sm)]">
+    <DSInput type="search" bind:value={search} aria-label="Search collections" size="sm"
+      placeholder="Search" class="min-w-0 flex-1" />
+    <ToggleButton label="System collections" pressed={showSystemCollections} onpressedchange={value => showSystemCollections = value}
+      title="Include internal RedDB collections" class="shrink-0">
+      <DSIcon icon={Eye} color="current" />
     </ToggleButton>
+    <DSButton variant="ghost" size="sm" class="shrink-0" aria-label="Refresh collections" title="Refresh collections" onclick={refresh} disabled={loading}><DSIcon icon={RefreshCw} color="current" /></DSButton>
   </div>
 {/if}
 
@@ -146,19 +136,6 @@
   </div>
 {:else if loading && items.length === 0}
   <div class="schema-skeleton" aria-busy="true" aria-label="Loading schema">
-    <div class="p-2 border-b border-muted grid gap-2">
-      <div class="flex items-center gap-1.5 h-7 rounded border border-muted bg-background px-2">
-        <DSIcon icon={Search} color="current" class=" text-ink-muted" />
-        <div class="h-3 w-32 rounded bg-muted motion-safe:animate-pulse"></div>
-      </div>
-
-      <div class="flex flex-wrap gap-1">
-        {#each skeletonChips as chip (chip)}
-          <div class="h-5 rounded border border-muted bg-elevation-base-surface px-1.5 motion-safe:animate-pulse" style={`width: ${chip === 0 ? 42 : 28 + chip * 8}px`}></div>
-        {/each}
-      </div>
-    </div>
-
     <ul class="py-1" role="presentation">
       {#each skeletonRows as row (row)}
         <li class="flex h-7 items-center gap-2 px-3">
@@ -175,44 +152,21 @@
     <code class="px-2 py-1 bg-muted border border-muted rounded text-[11px]">./scripts/seed.sh {activeUrl}</code>
   </div>
 {:else}
-  <div class="p-2 border-b border-muted grid gap-2">
-    <div class="flex items-center gap-1.5 h-7 rounded border border-muted bg-background px-2 text-[11px] font-mono">
-      <DSIcon icon={Search} color="current" class=" text-ink-muted" />
-      <DSInput
-        type="text"
-        bind:value={search}
-        aria-label="Search collections"
-        placeholder="search collections…"
-        class="min-w-0 flex-1"
-      />
-      {#if search}
-        <DSButton variant="ghost" size="sm" type="button"  aria-label="Clear collection search" onclick={() => (search = '')}>
-          <DSIcon icon={X} color="current" class="" />
-        </DSButton>
-      {/if}
-    </div>
-
-    <div class="flex flex-wrap gap-1">
-      <DSButton variant="ghost" size="sm" aria-pressed={capabilityFilter === 'all'}
-        type="button"
-        onclick={() => (capabilityFilter = 'all')}
-
-      >
+  <!-- Type filters only earn a row when there is more than one type. -->
+  {#if capabilityCounts.length > 1}
+    <div role="group" aria-label="Filter by type" class="flex flex-wrap gap-[var(--reddb-spatial-gap-xs)] border-b border-elevation-base-border p-[var(--reddb-spatial-inset-sm)]">
+      <DSButton variant="ghost" size="sm" aria-pressed={capabilityFilter === 'all'} type="button" onclick={() => (capabilityFilter = 'all')}>
         all {items.length}
       </DSButton>
       {#each capabilityCounts as [cap, count] (cap)}
         {@const g = CAPABILITY_GLYPHS[cap]}
-        <DSButton variant="ghost" size="sm" aria-pressed={capabilityFilter === cap}
-          type="button"
-          onclick={() => (capabilityFilter = cap)}
-          title={g.label}
-
-        >
+        <DSButton variant="ghost" size="sm" aria-pressed={capabilityFilter === cap} type="button"
+          onclick={() => (capabilityFilter = cap)} title={g.label}>
           {g.glyph} {count}
         </DSButton>
       {/each}
     </div>
-  </div>
+  {/if}
   <ul class="py-1" role="list">
     {#if filteredItems.length === 0}
       <li class="px-3 py-2 font-mono text-[12px] text-ink-muted">No matching collections.</li>
