@@ -4,6 +4,7 @@
   import { Alert, Button, Checkbox, Disclosure, Field, Icon, Input, Popover } from '@reddb-io/design-system/base'
   import type { LocalConnectionProfile } from './local-connections.svelte'
   import { makeCustomConnection, parseConnectionInput } from './connections.svelte'
+  import { readBuildInfo } from './build-info'
   import Zap from '@lucide/svelte/icons/zap'
   import Loader2 from '@lucide/svelte/icons/loader-2'
   import AlertCircle from '@lucide/svelte/icons/alert-circle'
@@ -15,6 +16,7 @@
   import FolderOpen from '@lucide/svelte/icons/folder-open'
 
   const workspace = useWorkspace()
+  const build = readBuildInfo()
   const { connection, secureStore, localConnections, openDatabaseFile, unreachableConnectHint } = workspace
 
   // Reuse authentication and credential opt-in for entry and navbar contexts.
@@ -341,6 +343,7 @@
       </div>
     </section>
   {/if}
+  <p class="mt-[var(--reddb-spatial-gap-md)] text-caption text-ink-muted" data-build-version title={`${build.gitSha} · built ${build.buildTime}`}>red-ui v{build.version}</p>
 {/snippet}
 
 {#if presentation === 'inline'}

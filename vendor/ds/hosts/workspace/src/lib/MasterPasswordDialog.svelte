@@ -71,7 +71,8 @@
   onopenchange={(open) => { if (!open) { secureStore.dialogOpen = false; password = ''; confirm = '' } }} size="sm"
   onkeydown={(event: KeyboardEvent) => { if (event.key === 'Escape' && secureStore.backend !== 'reddb') { event.preventDefault(); event.stopPropagation() } }}>
   <form onsubmit={submit} class="grid gap-3">
-    <input name="username" value="RedUI local Vault" autocomplete="username" hidden tabindex="-1" aria-hidden="true" />
+    <!-- Names the account for a password manager; never shown or focusable. -->
+    <Input name="username" value="RedUI local Vault" autocomplete="username" hidden tabindex={-1} aria-hidden="true" readonly />
     <Field label="Master password">
       {#snippet children(control)}
         <Input {...control} bind:ref={inputEl} bind:value={password} type="password"
