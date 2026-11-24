@@ -227,8 +227,9 @@ test("Collections owns queries, direct creation and per-document result options"
   await tick();
   flushSync();
   const rail = target.querySelector('[data-sidebar-rail]')!;
-  expect(rail.querySelector('[aria-current="page"]')?.textContent).toContain("Collections");
-  expect(rail.textContent).not.toMatch(/Query/);
+  // The rail shows glyphs below `xl`, so its destinations are read by name.
+  expect(rail.querySelector('[aria-current="page"]')?.getAttribute("aria-label")).toContain("Collections");
+  expect([...rail.querySelectorAll("a")].map(link => link.getAttribute("aria-label")).join(" ")).not.toMatch(/Query/);
   const originalId = runtime.tabs.activeId!;
   runtime.queryTabs.setSql(originalId, "SELECT 'draft'");
   const createQuery = target.querySelector<HTMLButtonElement>('[aria-label="New query"]')!;
@@ -265,7 +266,7 @@ test("narrow screens dock the destinations below the content instead of a side r
   expect(rail.className).toContain("md:flex");
   expect(dock.className).toContain("md:hidden");
   expect(dock.querySelector('[aria-current="page"]')?.textContent).toContain("Collections");
-  const labels = (nav: HTMLElement) => [...nav.querySelectorAll("a")].map(link => link.textContent?.trim());
+  const labels = (nav: HTMLElement) => [...nav.querySelectorAll("a")].map(link => link.getAttribute("aria-label") ?? link.textContent?.trim());
   expect(labels(dock)).toEqual(labels(rail));
   // The dock follows the content, so focus reaches it after the work area.
   const body = target.querySelector('[data-workspace-body]')!;

@@ -9,11 +9,21 @@
   import Settings2 from '@lucide/svelte/icons/settings-2'
   import { useRouter } from './router.svelte'
 
-  // The workspace draws its destinations twice: a labelled rail beside the
-  // content from the chrome's `md` step, and a bottom dock below it on narrower
-  // screens, where a side rail would take width the content needs (ADR 0021).
+  // The workspace draws its destinations twice: a rail beside the content from
+  // the chrome's `md` step, and a bottom dock below it on narrower screens, where
+  // a side rail would take width the content needs (ADR 0021). The rail names
+  // its destinations in words from `xl`; between the two steps (a tablet) it
+  // shows glyphs, each with its tooltip and accessible name.
   let { label = 'Workspace', placement }: { label?: string; placement: 'rail' | 'dock' } = $props()
   const router = useRouter()
+  const roomy = typeof matchMedia === 'function' ? matchMedia('(min-width: 80rem)') : undefined
+  let showLabels = $state(roomy?.matches ?? true)
+  $effect(() => {
+    if (!roomy) return
+    const follow = () => (showLabels = roomy.matches)
+    roomy.addEventListener('change', follow)
+    return () => roomy.removeEventListener('change', follow)
+  })
   const destinations = [
     { id: 'ask', label: 'Ask', icon: Sparkles },
     { id: 'collections', label: 'Collections', icon: Database },
@@ -33,7 +43,7 @@
   if (item) router.go({ view: item.id })
 }}>
   {#if placement === 'rail'}
-    <SidebarRail label={`${label} navigation`} {items} {currentId} showLabels class="hidden md:flex" />
+    <SidebarRail label={`${label} navigation`} {items} {currentId} {showLabels} class="hidden md:flex" />
   {:else}
     <BottomNavigation label={`${label} navigation`} {items} {currentId} class="md:hidden" />
   {/if}
